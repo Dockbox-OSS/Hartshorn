@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.ast;
 
 /**
  * Represents a keyword that causes a flow control change in the interpreter. This is used to signal
- * to the interpreter that a loop or switch statement should be exited, or that the current iteration
- * should be skipped.
+ * to the interpreter that a loop or switch statement should be exited, or that the current
+ * iteration should be skipped.
  *
  * @since 0.4.12
  *

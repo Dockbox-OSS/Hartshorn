@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A while statement, which repeatedly executes a block of code as long as a given
- * condition evaluates to true.
+ * A while statement, which repeatedly executes a block of code as long as a given condition
+ * evaluates to true.
  *
  * <p>For example, the statement below will execute the loop body as long as the
  * value of <code>condition</code> is true:

@@ -31,9 +31,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AtNameModule implements ExpressionModule<AtNameExpression> {
 
     public static final TokenType TOKEN_TYPE = SimpleTokenType.builder()
-            .characters(SimpleTokenCharacter.of('@', true))
-            .tokenName("AT")
-            .build();
+        .characters(SimpleTokenCharacter.of('@', true))
+        .tokenName("AT")
+        .build();
 
     private final AtomicBoolean resolverAccessed = new AtomicBoolean(false);
 

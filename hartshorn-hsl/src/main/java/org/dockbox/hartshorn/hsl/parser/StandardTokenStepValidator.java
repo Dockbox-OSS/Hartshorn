@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Default implementation of {@link TokenStepValidator}, based around the {@link TokenParser#consume(TokenType, String)}
- * method.
+ * Default implementation of {@link TokenStepValidator}, based around the
+ * {@link TokenParser#consume(TokenType, String)} method.
  *
  * @since 0.4.13
  *
@@ -69,6 +69,7 @@ public class StandardTokenStepValidator implements TokenStepValidator {
 
     @Override
     public Token expectAround(TokenType type, String where, String position) {
-        return this.parser.consume(type, EXPECTED_X_AROUND_Y.formatted(type.representation(), position, where));
+        return this.parser.consume(type,
+            EXPECTED_X_AROUND_Y.formatted(type.representation(), position, where));
     }
 }

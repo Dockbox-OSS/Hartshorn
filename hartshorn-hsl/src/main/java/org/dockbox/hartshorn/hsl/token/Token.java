@@ -23,13 +23,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
- * Represents a single token which exists within an HSL script. A token is always of
- * a valid {@link TokenType}.
+ * Represents a single token which exists within an HSL script. A token is always of a valid
+ * {@link TokenType}.
  *
  * <p>Within the context of the HSL language, a token is a single unit of meaning. For
- * example, the token {@code "Hello"} is a single token of type {@link LiteralTokenType#STRING}
- * with the literal value {@code "Hello"}. Tokens are used to build up the AST of a
- * script, which can then be parsed into a series of statements.
+ * example, the token {@code "Hello"} is a single token of type {@link LiteralTokenType#STRING} with
+ * the literal value {@code "Hello"}. Tokens are used to build up the AST of a script, which can
+ * then be parsed into a series of statements.
  *
  * <p>Tokens will always have a {@link TokenType} and a {@link #lexeme()}. The lexeme
  *
@@ -78,12 +78,12 @@ public class Token extends ASTNode {
     }
 
     /**
-     * Adds the lexical meaning of the given token to the lexical meaning of
-     * this token.
+     * Adds the lexical meaning of the given token to the lexical meaning of this token.
+     *
      * @param token The token of which the lexical meaning is to be concatenated.
      */
     public void concat(Token token) {
-        if(token == null) {
+        if (token == null) {
             return;
         }
         this.lexeme += token.lexeme;
@@ -91,6 +91,7 @@ public class Token extends ASTNode {
 
     /**
      * Gets the lexical meaning of this token.
+     *
      * @return The lexical meaning of this token.
      */
     public String lexeme() {
@@ -98,8 +99,8 @@ public class Token extends ASTNode {
     }
 
     /**
-     * Gets the literal value of this token, this is commonly used for
-     * {@link TokenType}s which are literal types.
+     * Gets the literal value of this token, this is commonly used for {@link TokenType}s which are
+     * literal types.
      *
      * @return The literal value of this token.
      */
@@ -110,6 +111,7 @@ public class Token extends ASTNode {
 
     /**
      * Gets the type of this token.
+     *
      * @return The type of this token.
      */
     public TokenType type() {
@@ -119,11 +121,11 @@ public class Token extends ASTNode {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type)
-                .field("lexeme", this.lexeme)
-                .field("literal", this.literal)
-                .field("line", this.line())
-                .field("column", this.column())
-                .describe();
+            .field("type", this.type)
+            .field("lexeme", this.lexeme)
+            .field("literal", this.literal)
+            .field("line", this.line())
+            .field("column", this.column())
+            .describe();
     }
 }

@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 
 /**
- * The type of the function that is currently being resolved. This is used to determine
- * whether certain operations are allowed or not.
+ * The type of the function that is currently being resolved. This is used to determine whether
+ * certain operations are allowed or not.
  *
  * @since 0.4.12
  *

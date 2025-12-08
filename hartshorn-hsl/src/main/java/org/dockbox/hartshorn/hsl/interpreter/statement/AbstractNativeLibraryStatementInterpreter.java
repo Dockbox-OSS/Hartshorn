@@ -36,31 +36,35 @@ import java.util.stream.Collectors;
  * interpreter's settings.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class AbstractNativeLibraryStatementInterpreter {
 
     protected void registerModuleFunction(
-            String moduleName,
-            String functionName,
-            Interpreter interpreter,
-            List<NativeFunctionStatement> supportedFunctions,
-            NativeModule module
+        String moduleName,
+        String functionName,
+        Interpreter interpreter,
+        List<NativeFunctionStatement> supportedFunctions,
+        NativeModule module
     ) {
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, functionName)
-                        .at(supportedFunctions.getFirst().name())
-                        .build();
+                    .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE,
+                        moduleName,
+                        functionName)
+                    .at(supportedFunctions.getFirst().name())
+                    .build();
             }
             else {
                 Set<NativeLibrary> libraries = supportedFunctions.stream()
-                        .map(function -> new NativeLibrary(function, moduleName, module))
-                        .collect(Collectors.toSet());
-                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousNativeLibraryFunction(libraries));
+                    .map(function -> new NativeLibrary(function, moduleName, module))
+                    .collect(Collectors.toSet());
+                interpreter.global()
+                    .define(supportedFunctions.getFirst().name().lexeme(),
+                        new AmbiguousNativeLibraryFunction(libraries));
             }
         }
         else {

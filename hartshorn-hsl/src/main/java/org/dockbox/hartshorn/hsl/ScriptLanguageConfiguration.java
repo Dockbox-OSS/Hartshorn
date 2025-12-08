@@ -70,6 +70,7 @@ public class ScriptLanguageConfiguration {
      * Provides a standard resolver for script semantics.
      *
      * @param interpreter the interpreter related to the resolver
+     *
      * @return the standard resolver
      */
     @Prototype
@@ -84,14 +85,15 @@ public class ScriptLanguageConfiguration {
      * @param applicationContext the application context in which the runtime operates
      * @param factory the script component factory used to create necessary components
      * @param parserCustomizer the parser customizer for script statements
+     *
      * @return the standard script runtime
      */
     @Prototype
     @SupportPriority
     public ScriptRuntime runtime(
-            ApplicationContext applicationContext,
-            ScriptComponentFactory factory,
-            ParserCustomizer parserCustomizer
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
     ) {
         return new StandardRuntime(applicationContext, factory, parserCustomizer);
     }
@@ -102,14 +104,15 @@ public class ScriptLanguageConfiguration {
      * @param applicationContext the application context in which the runtime operates
      * @param factory the script component factory used to create necessary components
      * @param parserCustomizer the parser customizer for script statements
+     *
      * @return the validate expression runtime
      */
     @Prototype
     @SupportPriority
     public ValidateExpressionRuntime expressionRuntime(
-            ApplicationContext applicationContext,
-            ScriptComponentFactory factory,
-            ParserCustomizer parserCustomizer
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
     ) {
         return new ValidateExpressionRuntime(applicationContext, factory, parserCustomizer);
     }

@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.hsl.semantic;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 
 /**
- * The type of the class that is currently being resolved. This is used to determine
- * whether certain operations are allowed or not.
+ * The type of the class that is currently being resolved. This is used to determine whether certain
+ * operations are allowed or not.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public enum ClassType {
@@ -36,8 +36,8 @@ public enum ClassType {
      */
     CLASS,
     /**
-     * A subclass, which is a class that extends another class, indicated by the presence
-     * of a {@link ClassStatement#superClass() superclass expression}.
+     * A subclass, which is a class that extends another class, indicated by the presence of a
+     * {@link ClassStatement#superClass() superclass expression}.
      */
     SUBCLASS,
 }

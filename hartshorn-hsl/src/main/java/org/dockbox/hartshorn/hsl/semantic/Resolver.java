@@ -65,8 +65,8 @@ public interface Resolver {
     void resolve(Statement statement);
 
     /**
-     * Resolves the given list of statements. This method will resolve each statement in the list
-     * by calling {@link #resolve(Statement)}.
+     * Resolves the given list of statements. This method will resolve each statement in the list by
+     * calling {@link #resolve(Statement)}.
      *
      * @param statements The list of statements to resolve
      */
@@ -84,7 +84,8 @@ public interface Resolver {
 
     /**
      * Resolves the given name token in the active scopes. This method will resolve the name token
-     * by passing it to the active {@link Interpreter} to resolve the expression in the given scope.
+     * by passing it to the active {@link Interpreter} to resolve the expression in the given
+     * scope.
      *
      * <p>If the name is not known (declared) in any currently known scope, it is assumed to be a
      * global variable. This is not an error, as this is a valid use-case for scripting through
@@ -108,22 +109,22 @@ public interface Resolver {
      * whether certain operations are allowed or not.
      *
      * @param type The current class type that is being resolved
+     *
      * @return This resolver
      */
     Resolver currentClassType(ClassType type);
 
     /**
-     * Returns whether the resolver has defined any scopes. A scope is defined when a new scope
-     * is created using {@link #beginScope()} and removed using {@link #endScope()}.
+     * Returns whether the resolver has defined any scopes. A scope is defined when a new scope is
+     * created using {@link #beginScope()} and removed using {@link #endScope()}.
      *
      * @return {@code true} if the resolver has defined any scopes, {@code false} otherwise
      */
     boolean hasDefinedScopes();
 
     /**
-     * Returns the current scope that is being resolved. The scope is a map of variable
-     * lexemes (names) to a boolean that indicates whether the variable has been fully
-     * initialized.
+     * Returns the current scope that is being resolved. The scope is a map of variable lexemes
+     * (names) to a boolean that indicates whether the variable has been fully initialized.
      *
      * @return The current scope that is being resolved
      */
@@ -150,8 +151,8 @@ public interface Resolver {
     FlowControlKeyword.ScopeType currentScopeType();
 
     /**
-     * Returns the current function type that is being resolved. The function type is used to determine
-     * whether certain operations are allowed or not.
+     * Returns the current function type that is being resolved. The function type is used to
+     * determine whether certain operations are allowed or not.
      *
      * @return The current function type that is being resolved
      */
@@ -162,6 +163,7 @@ public interface Resolver {
      * whether certain operations are allowed or not.
      *
      * @param type The current function type that is being resolved
+     *
      * @return This resolver
      */
     Resolver currentFunction(FunctionType type);
@@ -171,14 +173,15 @@ public interface Resolver {
      * whether certain operations are allowed or not.
      *
      * @param type The current scope type that is being resolved
+     *
      * @return This resolver
      */
     Resolver currentScopeType(FlowControlKeyword.ScopeType type);
 
     /**
      * Declares a new variable in the current scope. This method will declare the variable by adding
-     * it to the current scope map. If the variable is already declared in the current scope, an error
-     * is thrown.
+     * it to the current scope map. If the variable is already declared in the current scope, an
+     * error is thrown.
      *
      * @param name The name token of the variable to declare
      *
@@ -198,12 +201,11 @@ public interface Resolver {
     void define(Token name);
 
     /**
-     * Makes the given node final. This method will add the node to the current finals map, indicating
-     * that it is a final variable. If the node is already final, an error as it is considered a
-     * re-definition of the final variable.
+     * Makes the given node final. This method will add the node to the current finals map,
+     * indicating that it is a final variable. If the node is already final, an error as it is
+     * considered a re-definition of the final variable.
      *
      * @param <R> The type of the node
-     *
      * @param node The node to make final
      * @param what The type of the node
      *
@@ -212,9 +214,10 @@ public interface Resolver {
     <R extends Finalizable & NamedNode> void makeFinal(R node, String what);
 
     /**
-     * Resolves the given function. This method will open a scope for the function, which has declarations
-     * and definitions present for its parameters. All statements within the function body will be
-     * resolved in this scope. After the function body has been resolved, the scope is closed.
+     * Resolves the given function. This method will open a scope for the function, which has
+     * declarations and definitions present for its parameters. All statements within the function
+     * body will be resolved in this scope. After the function body has been resolved, the scope is
+     * closed.
      *
      * @param executable The function to resolve
      * @param type The type of the function
@@ -222,8 +225,8 @@ public interface Resolver {
     void resolveFunction(ParametricExecutableStatement executable, FunctionType type);
 
     /**
-     * Returns the current final variables that are being resolved. The finals are a map of statement
-     * lexemes to a string that indicates what kind of final variable it is.
+     * Returns the current final variables that are being resolved. The finals are a map of
+     * statement lexemes to a string that indicates what kind of final variable it is.
      *
      * @return The current final variables that are being resolved
      */

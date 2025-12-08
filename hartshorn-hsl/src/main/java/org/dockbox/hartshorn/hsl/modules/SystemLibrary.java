@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * Standard library granting access to environment variables.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class SystemLibrary {
@@ -37,7 +37,9 @@ public class SystemLibrary {
 
     /**
      * @param program The name of the environment variable to retrieve.
-     * @return The value of the environment variable, or {@code null} if the variable is not defined.
+     *
+     * @return The value of the environment variable, or {@code null} if the variable is not
+     * defined.
      *
      * @see System#getenv(String)
      */
@@ -57,10 +59,11 @@ public class SystemLibrary {
     }
 
     /**
-     * Stringifies the given object, converting nulls to "null" and handling
-     * special cases such as doubles ending with ".0".
+     * Stringifies the given object, converting nulls to "null" and handling special cases such as
+     * doubles ending with ".0".
      *
      * @param object The object to stringify.
+     *
      * @return The string representation of the object.
      */
     public String stringify(Object object) {
@@ -77,8 +80,8 @@ public class SystemLibrary {
         }
 
         return object.toString()
-                .replaceAll("\\\\n", "\n")
-                .replaceAll("\\\\t", "\t");
+            .replaceAll("\\\\n", "\n")
+            .replaceAll("\\\\t", "\t");
     }
 }
 

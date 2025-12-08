@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 /**
  * A {@link BitwiseAdditionStrategy} for adding {@link Number}s and {@link Character}s. No matter
- * the order of the operands, the result will always be a {@code double} representation of the
- * sum of the two operands.
+ * the order of the operands, the result will always be a {@code double} representation of the sum
+ * of the two operands.
  *
  * @since 0.7.0
  *
@@ -29,7 +29,7 @@ public class NumberCharBitwiseAdditionStrategy implements BitwiseAdditionStrateg
     @Override
     public boolean supports(Object left, Object right) {
         return (left instanceof Number && right instanceof Character)
-                || (left instanceof Character && right instanceof Number);
+            || (left instanceof Character && right instanceof Number);
     }
 
     @Override

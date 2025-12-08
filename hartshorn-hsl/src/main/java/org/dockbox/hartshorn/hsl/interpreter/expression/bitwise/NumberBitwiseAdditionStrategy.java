@@ -37,7 +37,7 @@ public class NumberBitwiseAdditionStrategy implements BitwiseAdditionStrategy {
         Number leftNumber = (Number) left;
         Number rightNumber = (Number) right;
         BigDecimal sum = BigDecimal.valueOf(leftNumber.doubleValue())
-                .add(BigDecimal.valueOf(rightNumber.doubleValue()));
+            .add(BigDecimal.valueOf(rightNumber.doubleValue()));
         return sum.doubleValue();
     }
 }

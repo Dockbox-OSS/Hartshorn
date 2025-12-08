@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  * Interpreter for {@link SwitchStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SwitchStatementInterpreter implements StatementInterpreter<SwitchStatement> {
@@ -40,9 +40,9 @@ public class SwitchStatementInterpreter implements StatementInterpreter<SwitchSt
         for (SwitchCase switchCase : node.cases()) {
             if (switchCase.isDefault()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.UNEXPECTED_DEFAULT_CASE)
-                        .at(switchCase)
-                        .build();
+                    .message(DiagnosticMessage.UNEXPECTED_DEFAULT_CASE)
+                    .at(switchCase)
+                    .build();
             }
             if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
                 interpreter.execute(switchCase);

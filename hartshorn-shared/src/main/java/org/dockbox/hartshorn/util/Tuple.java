@@ -47,10 +47,24 @@ public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
         return new Tuple<>(key, value);
     }
 
+    /**
+     * Alias for {@link #key()}
+     *
+     * @return the key
+     *
+     * @see #key()
+     */
     public K left() {
         return this.key();
     }
 
+    /**
+     * Alias for {@link #value()}
+     *
+     * @return the value
+     *
+     * @see #value()
+     */
     public V right() {
         return this.value();
     }

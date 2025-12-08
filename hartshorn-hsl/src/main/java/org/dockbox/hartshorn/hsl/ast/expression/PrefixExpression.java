@@ -20,13 +20,14 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a prefix operation, which is an operation that applies an operator
- * to an expression before the expression has been evaluated.
+ * An expression representing a prefix operation, which is an operation that applies an operator to
+ * an expression before the expression has been evaluated.
  *
- * <p>For example, in the expression <code>++a</code>, the <code>++</code> operator is a prefix operator
- * that increments the value of <code>a</code> by 1 before the expression is evaluated. Thus, the result
- * of this expression is the incremented value of <code>a</code>, and the value of <code>a</code> itself
- * is also incremented by 1.
+ * <p>For example, in the expression <code>++a</code>, the <code>++</code> operator is a prefix
+ * operator
+ * that increments the value of <code>a</code> by 1 before the expression is evaluated. Thus, the
+ * result of this expression is the incremented value of <code>a</code>, and the value of
+ * <code>a</code> itself is also incremented by 1.
  *
  * @see PostfixExpression the counterpart to this expression, which applies an operator after the
  * expression is evaluated.

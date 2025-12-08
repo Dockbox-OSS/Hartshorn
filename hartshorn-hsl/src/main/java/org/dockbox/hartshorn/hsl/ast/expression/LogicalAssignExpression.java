@@ -21,10 +21,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a logical assignment operation, which combines a logical operator
- * with an assignment.
+ * An expression representing a logical assignment operation, which combines a logical operator with
+ * an assignment.
  *
- * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a logical
+ * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a
+ * logical
  * assignment operator that assigns the result of the logical operation <code>a && b</code> back to
  * <code>a</code>.
  *

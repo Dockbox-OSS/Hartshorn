@@ -27,17 +27,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Customizer that allows for the registration of custom statement and expression modules. Custom AST nodes are used to
- * extend the HSL language with custom syntax. This can be used to add new expressions, statements, or even entire new
- * languages. All custom nodes must implement the {@link CustomASTNode} interface, which ensures that the node is associated
- * with a module that defines the required definitions for the node.
+ * Customizer that allows for the registration of custom statement and expression modules. Custom
+ * AST nodes are used to extend the HSL language with custom syntax. This can be used to add new
+ * expressions, statements, or even entire new languages. All custom nodes must implement the
+ * {@link CustomASTNode} interface, which ensures that the node is associated with a module that
+ * defines the required definitions for the node.
  *
- * <p>Custom nodes can be used in the same way as any other node, and can be used in any context where the node type is
- * accepted. This includes expressions and statements. Note that custom nodes are not automatically resolved, if this is
- * required the {@link ASTExtensionModule#resolver()} method must be overridden to provide a resolver.
+ * <p>Custom nodes can be used in the same way as any other node, and can be used in any context
+ * where the node type is
+ * accepted. This includes expressions and statements. Note that custom nodes are not automatically
+ * resolved, if this is required the {@link ASTExtensionModule#resolver()} method must be overridden
+ * to provide a resolver.
  *
- * <p>The customizer is applied before tokenizing, and is thus considered mutable until the tokenization phase has been
- * called. This allows for the registration of custom modules at (JVM) runtime, which is useful for dynamic languages.
+ * <p>The customizer is applied before tokenizing, and is thus considered mutable until the
+ * tokenization phase has been
+ * called. This allows for the registration of custom modules at (JVM) runtime, which is useful for
+ * dynamic languages.
  *
  * @since 0.6.0
  *
@@ -59,8 +64,12 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
 
     private void customizeContext(ScriptContext context) {
         if (context.runtime() instanceof MutableScriptRuntime mutableScriptRuntime) {
-            this.statementModules.forEach(module -> mutableScriptRuntime.statementParser(module.parser()));
-            this.expressionModules.forEach(module -> mutableScriptRuntime.expressionParser(module.parser()));
+            this.statementModules.forEach(module -> {
+                mutableScriptRuntime.statementParser(module.parser());
+            });
+            this.expressionModules.forEach(module -> {
+                mutableScriptRuntime.expressionParser(module.parser());
+            });
         }
         else {
             throw new IllegalStateException("Cannot customize context, runtime is not mutable");
@@ -68,11 +77,16 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
 
         TokenRegistry tokenRegistry = context.lexer().tokenRegistry();
         if (tokenRegistry instanceof MutableTokenRegistry mutableTokenRegistry) {
-            this.statementModules.forEach(module -> mutableTokenRegistry.addTokens(module.tokenType()));
-            this.expressionModules.forEach(module -> mutableTokenRegistry.addTokens(module.tokenType()));
+            this.statementModules.forEach(module -> {
+                mutableTokenRegistry.addTokens(module.tokenType());
+            });
+            this.expressionModules.forEach(module -> {
+                mutableTokenRegistry.addTokens(module.tokenType());
+            });
         }
         else {
-            throw new IllegalStateException("Cannot customize context, token registry is not mutable");
+            throw new IllegalStateException(
+                "Cannot customize context, token registry is not mutable");
         }
     }
 

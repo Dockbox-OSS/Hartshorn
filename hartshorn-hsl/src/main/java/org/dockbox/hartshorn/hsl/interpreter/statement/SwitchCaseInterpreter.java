@@ -37,16 +37,17 @@ public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
         interpreter.withNextScope(() -> {
             try {
                 interpreter.execute(node.body());
-            } catch (FlowControlKeyword keyword) {
+            }
+            catch (FlowControlKeyword keyword) {
                 if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .message(
-                                    DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
-                                    keyword.moveType().name().toLowerCase(),
-                                    "switch case"
-                            )
-                            .at(keyword.origin())
-                            .build();
+                        .message(
+                            DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
+                            keyword.moveType().name().toLowerCase(),
+                            "switch case"
+                        )
+                        .at(keyword.origin())
+                        .build();
                 }
             }
         });

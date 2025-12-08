@@ -55,16 +55,18 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
             BlockStatement body = this.blockStatement("test", name, parser, validator);
             if (body.statements().isEmpty()) {
                 throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.EMPTY_TEST_BODY)
-                        .at(testToken)
-                        .build();
+                    .message(DiagnosticMessage.EMPTY_TEST_BODY)
+                    .at(testToken)
+                    .build();
             }
-            else if (!(CollectionUtilities.last(body.statements()) instanceof ReturnStatement returnStatement)
-                    || returnStatement.returnType() != ReturnStatement.ReturnType.YIELD) {
+            else if (
+                !(CollectionUtilities.last(body.statements())
+                    instanceof ReturnStatement returnStatement)
+                || returnStatement.returnType() != ReturnStatement.ReturnType.YIELD) {
                 throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD)
-                        .at(testToken)
-                        .build();
+                    .message(DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD)
+                    .at(testToken)
+                    .build();
             }
             return Option.of(new TestStatement(name, body));
         }

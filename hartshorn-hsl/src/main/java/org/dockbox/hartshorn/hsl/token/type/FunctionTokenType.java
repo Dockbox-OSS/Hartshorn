@@ -22,12 +22,13 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
 /**
- * Represents various token types that are related to functions, such as constructors, operators, and overrides.
+ * Represents various token types that are related to functions, such as constructors, operators,
+ * and overrides.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum FunctionTokenType implements EnumTokenType {
@@ -37,35 +38,39 @@ public enum FunctionTokenType implements EnumTokenType {
      */
     FUNCTION(false),
     /**
-     * Represents the constructor of a class. Constructors are unnamed initializer functions that are used
-     * to create new instances of a class. As constructors are unnamed, they are represented by the default
-     * lexical meaning '{@code <init>}'.
+     * Represents the constructor of a class. Constructors are unnamed initializer functions that
+     * are used to create new instances of a class. As constructors are unnamed, they are
+     * represented by the default lexical meaning '{@code <init>}'.
      */
-    CONSTRUCTOR(builder -> builder.keyword(true).standaloneStatement(false).defaultLexeme("<init>")),
+    CONSTRUCTOR(builder -> builder.keyword(true)
+        .standaloneStatement(false)
+        .defaultLexeme("<init>")),
 
     /**
-     * Represents a prefix function, which is a function that is used as a prefix to an expression. Prefix
-     * functions are comparable to unary operators, but are not limited to the set of predefined operators.
+     * Represents a prefix function, which is a function that is used as a prefix to an expression.
+     * Prefix functions are comparable to unary operators, but are not limited to the set of
+     * predefined operators.
      */
     PREFIX(false),
     /**
-     * Represents an infix function, which is a function that is used as an infix to an expression. Infix
-     * functions are comparable to binary operators, but are not limited to the set of predefined operators.
+     * Represents an infix function, which is a function that is used as an infix to an expression.
+     * Infix functions are comparable to binary operators, but are not limited to the set of
+     * predefined operators.
      */
     INFIX(false),
     /**
-     * Represents a native function, which is a function that is implemented in the runtime environment, and
-     * is not part of the script itself.
+     * Represents a native function, which is a function that is implemented in the runtime
+     * environment, and is not part of the script itself.
      */
     NATIVE(false),
     /**
-     * Represents an operator function, which is a function that is used to override the behavior of an operator
-     * for a specific type.
+     * Represents an operator function, which is a function that is used to override the behavior of
+     * an operator for a specific type.
      */
     OPERATOR(false),
     /**
-     * Represents an override function, which is a function that is used to override the behavior of a function
-     * that is defined in a superclass or interface.
+     * Represents an override function, which is a function that is used to override the behavior of
+     * a function that is defined in a superclass or interface.
      */
     OVERRIDE(false),
     ;

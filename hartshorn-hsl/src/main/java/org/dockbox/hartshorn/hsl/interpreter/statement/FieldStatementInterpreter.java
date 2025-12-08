@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  * Interpreter for {@link FieldStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class FieldStatementInterpreter implements StatementInterpreter<FieldStatement> {
@@ -38,7 +38,7 @@ public class FieldStatementInterpreter implements StatementInterpreter<FieldStat
         int distance = initializer != null ? interpreter.distance(initializer) : 0;
 
         PropertyContainer object = (PropertyContainer) interpreter.visitingScope()
-                .getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
+            .getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
         object.set(interpreter, node.name(), value, interpreter.visitingScope());
         return null;
     }

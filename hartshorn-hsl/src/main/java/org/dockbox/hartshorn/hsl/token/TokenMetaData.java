@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.type.DelegateTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * A set of metadata providing extra information about a single {@link TokenType}. Token
- * metadata is immutable, as it is part of the lexical definition of a token.
+ * A set of metadata providing extra information about a single {@link TokenType}. Token metadata is
+ * immutable, as it is part of the lexical definition of a token.
  *
  * @since 0.4.12
  *
@@ -39,6 +39,7 @@ public class TokenMetaData implements DelegateTokenType {
 
     /**
      * Get the associated {@link TokenType} which is represented by this {@link TokenMetaData}.
+     *
      * @return The associated {@link TokenType}.
      */
     public TokenType type() {
@@ -57,7 +58,9 @@ public class TokenMetaData implements DelegateTokenType {
 
     /**
      * Creates a new builder for the given {@link TokenType}.
+     *
      * @param type The {@link TokenType} to attach to.
+     *
      * @return A new {@link TokenMetaDataBuilder}.
      */
     public static TokenMetaDataBuilder builder(TokenType type) {

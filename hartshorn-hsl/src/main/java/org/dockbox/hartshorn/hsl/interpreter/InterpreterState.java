@@ -32,12 +32,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The state of an {@link Interpreter}, holding variable scopes, resolved locals, and external modules and variables.
- * This state is mutable and can be reset when the interpreter is reused.
+ * The state of an {@link Interpreter}, holding variable scopes, resolved locals, and external
+ * modules and variables. This state is mutable and can be reset when the interpreter is reused.
  *
- * <p>Due to its mutability, care must be taken when sharing state instances across multiple threads. In principle,
- * all values tracked by this state are stored in thread-safe collections, but the variable scopes themselves are not
- * inherently thread-safe.
+ * <p>Due to its mutability, care must be taken when sharing state instances across multiple
+ * threads. In principle,
+ * all values tracked by this state are stored in thread-safe collections, but the variable scopes
+ * themselves are not inherently thread-safe.
  *
  * @since 0.5.0
  *
@@ -61,7 +62,8 @@ public class InterpreterState {
     }
 
     /**
-     * Gets the global variable scope. This is the highest-level scope that contains all global variables.
+     * Gets the global variable scope. This is the highest-level scope that contains all global
+     * variables.
      *
      * @return the global variable scope
      *
@@ -72,8 +74,8 @@ public class InterpreterState {
     }
 
     /**
-     * Gets the currently visiting variable scope. This is the scope that is currently being executed
-     * by the interpreter.
+     * Gets the currently visiting variable scope. This is the scope that is currently being
+     * executed by the interpreter.
      *
      * @return the currently visiting variable scope
      *
@@ -131,8 +133,10 @@ public class InterpreterState {
      */
     public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            TypeView<Object> typeView = this.owner.applicationContext().environment().introspector().introspect(instance);
-            this.externalVariables.put(name, new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
+            TypeView<Object> typeView =
+                this.owner.applicationContext().environment().introspector().introspect(instance);
+            this.externalVariables.put(name,
+                new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
         });
     }
 
@@ -146,8 +150,8 @@ public class InterpreterState {
     }
 
     /**
-     * Enters the given variable scope, making it the currently visiting scope. The previous scope is not
-     * preserved unless manually stored beforehand.
+     * Enters the given variable scope, making it the currently visiting scope. The previous scope
+     * is not preserved unless manually stored beforehand.
      *
      * @param scope the variable scope to enter
      *
@@ -158,8 +162,8 @@ public class InterpreterState {
     }
 
     /**
-     * Executes the given runnable within the context of the specified variable scope. The previous scope
-     * is restored after the runnable has been executed.
+     * Executes the given runnable within the context of the specified variable scope. The previous
+     * scope is restored after the runnable has been executed.
      *
      * @param scope the variable scope to enter
      * @param runnable the runnable to execute within the scope
@@ -176,8 +180,8 @@ public class InterpreterState {
     }
 
     /**
-     * Executes the given runnable within a new child scope of the currently visiting scope. The previous scope
-     * is restored after the runnable has been executed.
+     * Executes the given runnable within a new child scope of the currently visiting scope. The
+     * previous scope is restored after the runnable has been executed.
      *
      * @param runnable the runnable to execute within the new child scope
      *
@@ -218,6 +222,7 @@ public class InterpreterState {
      *
      * @param name the token representing the variable name
      * @param expression the expression associated with the variable
+     *
      * @return the value of the variable
      *
      * @see Interpreter#lookUpVariable(Token, Expression)
@@ -240,14 +245,15 @@ public class InterpreterState {
             return this.externalVariables.get(name.lexeme());
         }
         else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
-            Option<ExternalClass<?>> externalClass = this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
+            Option<ExternalClass<?>> externalClass =
+                this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
             if (externalClass.present()) {
                 return externalClass.get();
             }
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-                .at(name)
-                .build();
+            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+            .at(name)
+            .build();
     }
 }

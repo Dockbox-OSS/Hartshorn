@@ -21,13 +21,15 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing a ternary operation, which is a shorthand for an if-else statement. It
- * consists of a condition, followed by a question mark, then an expression to evaluate if the condition
- * is true, followed by a colon, and finally an expression to evaluate if the condition is false.
+ * consists of a condition, followed by a question mark, then an expression to evaluate if the
+ * condition is true, followed by a colon, and finally an expression to evaluate if the condition is
+ * false.
  *
  * <p>For example, in the expression <code>condition ? trueExpression : falseExpression</code>, the
- * <code>condition</code> is evaluated first. If it evaluates to true, the <code>trueExpression</code> is
- * evaluated and returned; if it evaluates to false, the <code>falseExpression</code> is evaluated and
- * returned instead.
+ * <code>condition</code> is evaluated first. If it evaluates to true, the
+ * <code>trueExpression</code> is
+ * evaluated and returned; if it evaluates to false, the <code>falseExpression</code> is evaluated
+ * and returned instead.
  *
  * @since 0.4.12
  *
@@ -41,9 +43,11 @@ public class TernaryExpression extends Expression {
     private final Token colon;
     private final Expression secondExp;
 
-    public TernaryExpression(Expression condition, Token ternaryOp,
-                             Expression firstExp, Token colon,
-                             Expression secondExp) {
+    public TernaryExpression(
+        Expression condition, Token ternaryOp,
+        Expression firstExp, Token colon,
+        Expression secondExp
+    ) {
         super(condition);
         this.condition = condition;
         this.ternaryOp = ternaryOp;

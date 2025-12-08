@@ -49,13 +49,14 @@ import java.util.List;
  * }</pre>
  *
  * <p>In this example, <code>Vector</code> is the name of the class, which extends the superclass
- * <code>Point</code>. The class has two private fields, <code>x</code> and <code>y</code>, a constructor
- * that initializes these fields, and a public method <code>magnitude</code> that calculates the magnitude
- * of the vector. As the class name is followed by a question mark, it is marked as dynamic, allowing
- * additional properties to be added at runtime.
+ * <code>Point</code>. The class has two private fields, <code>x</code> and <code>y</code>, a
+ * constructor
+ * that initializes these fields, and a public method <code>magnitude</code> that calculates the
+ * magnitude of the vector. As the class name is followed by a question mark, it is marked as
+ * dynamic, allowing additional properties to be added at runtime.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ClassStatement extends FinalizableStatement implements NamedNode {
@@ -67,17 +68,21 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     private final List<FieldStatement> fields;
     private final boolean isDynamic;
 
-    public ClassStatement(Token name,
-                          VariableExpression superClass, ConstructorStatement constructor,
-                          List<FunctionStatement> methods, List<FieldStatement> fields,
-                          boolean isDynamic) {
+    public ClassStatement(
+        Token name,
+        VariableExpression superClass, ConstructorStatement constructor,
+        List<FunctionStatement> methods, List<FieldStatement> fields,
+        boolean isDynamic
+    ) {
         this(name, false, name, superClass, constructor, methods, fields, isDynamic);
     }
 
-    public ClassStatement(ASTNode at, boolean finalized, Token name,
-                          VariableExpression superClass, ConstructorStatement constructor,
-                          List<FunctionStatement> methods, List<FieldStatement> fields,
-                          boolean isDynamic) {
+    public ClassStatement(
+        ASTNode at, boolean finalized, Token name,
+        VariableExpression superClass, ConstructorStatement constructor,
+        List<FunctionStatement> methods, List<FieldStatement> fields,
+        boolean isDynamic
+    ) {
         super(at, finalized);
         this.name = name;
         this.superClass = superClass;

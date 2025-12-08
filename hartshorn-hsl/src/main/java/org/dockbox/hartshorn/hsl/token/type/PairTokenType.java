@@ -22,14 +22,15 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenPairList;
 
 /**
- * Represents the different types of pair tokens that can be used in the HSL language. A pair token is a token that
- * represents the start or end of a pair of tokens, such as parentheses, braces, or brackets. These tokens are used to
- * create {@link TokenTypePair pairs} of tokens, which can be used to match the start and end of a block of code.
+ * Represents the different types of pair tokens that can be used in the HSL language. A pair token
+ * is a token that represents the start or end of a pair of tokens, such as parentheses, braces, or
+ * brackets. These tokens are used to create {@link TokenTypePair pairs} of tokens, which can be
+ * used to match the start and end of a block of code.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum PairTokenType implements EnumTokenType {
@@ -106,10 +107,10 @@ public enum PairTokenType implements EnumTokenType {
 
     PairTokenType(TokenCharacter character, PairPosition position) {
         this.metaData = TokenMetaData.builder(this)
-                .representation(String.valueOf(character.character()))
-                .defaultLexeme(String.valueOf(character.character()))
-                .characters(character)
-                .build();
+            .representation(String.valueOf(character.character()))
+            .defaultLexeme(String.valueOf(character.character()))
+            .characters(character)
+            .build();
         this.position = position;
     }
 
@@ -119,8 +120,9 @@ public enum PairTokenType implements EnumTokenType {
     }
 
     /**
-     * Returns the position of this pair token. This is either {@link PairPosition#LEFT} or {@link PairPosition#RIGHT}
-     * indicating that this token is the start or end of a pair of tokens.
+     * Returns the position of this pair token. This is either {@link PairPosition#LEFT} or
+     * {@link PairPosition#RIGHT} indicating that this token is the start or end of a pair of
+     * tokens.
      *
      * @return the position of this pair token
      */
@@ -134,22 +136,23 @@ public enum PairTokenType implements EnumTokenType {
      * @return the current token and its inverse as a pair
      */
     public TokenTypePair pair() {
-        return switch(this.position) {
+        return switch (this.position) {
             case LEFT -> new TokenTypePair(this, this.inverse());
             case RIGHT -> new TokenTypePair(this.inverse(), this);
         };
     }
 
     /**
-     * Returns the inverse of this token. This is the token that represents the end of the pair that this token
-     * represents the start of, or vice versa.
+     * Returns the inverse of this token. This is the token that represents the end of the pair that
+     * this token represents the start of, or vice versa.
      *
      * @return the inverse of this token
      */
     public abstract TokenType inverse();
 
     /**
-     * Represents the position of a pair token. This is either the start or end of a pair of tokens.
+     * Represents the position of a pair token. This is either the start or end of a pair of
+     * tokens.
      *
      * @see PairTokenType#position()
      *
@@ -164,8 +167,8 @@ public enum PairTokenType implements EnumTokenType {
          */
         LEFT,
         /**
-         * Indicates that a token is on the right side of an expression or statement, and is thus the
-         * end of a pair of tokens.
+         * Indicates that a token is on the right side of an expression or statement, and is thus
+         * the end of a pair of tokens.
          */
         RIGHT,
     }

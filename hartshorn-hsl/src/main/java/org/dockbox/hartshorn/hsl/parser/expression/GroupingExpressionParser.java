@@ -23,8 +23,10 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 
 /**
  * Parser for grouping expressions, which are expressions enclosed in parentheses. This is commonly
- * used to override the default precedence of operations in expressions. For example, in the expression
- * <code>(a + b) * c</code>, the addition operation is performed before the multiplication due to the
+ * used to override the default precedence of operations in expressions. For example, in the
+ * expression
+ * <code>(a + b) * c</code>, the addition operation is performed before the multiplication due to
+ * the
  * grouping of <code>a + b</code> within parentheses.
  *
  * @since 0.7.0
@@ -33,13 +35,17 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
  */
 public class GroupingExpressionParser implements ExpressionParser {
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         if (parser.match(parser.tokenRegistry().tokenPairs().parameters().open())) {
             Expression expression = parser.expression();
-            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "expression");
+            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(),
+                "expression");
             return new GroupingExpression(expression);
         }
         return chain.next(parser, validator);
     }
-
 }

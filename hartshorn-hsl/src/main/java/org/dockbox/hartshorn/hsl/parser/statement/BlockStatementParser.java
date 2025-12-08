@@ -32,15 +32,18 @@ import org.dockbox.hartshorn.util.option.Option;
  * A parser for block statements which respects the block token pair defined in the token registry.
  *
  * @see BlockStatement
- *
+ * 
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class BlockStatementParser implements StatementParser<BlockStatement> {
 
     @Override
-    public Option<? extends BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends BlockStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.check(block.open())) {
             Token start = parser.advance();

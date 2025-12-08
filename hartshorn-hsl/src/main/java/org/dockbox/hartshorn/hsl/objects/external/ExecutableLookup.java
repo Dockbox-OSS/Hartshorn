@@ -41,7 +41,8 @@ public class ExecutableLookup {
      * Lookup a method by name and a list of arguments. This will first try to get all methods of
      * the declaring type, and filter them based on the given name. If the list of arguments is
      * empty, the method will be looked up without arguments. If the list of arguments is not empty,
-     * the method will be looked up with the given arguments through {@link #executable(List, List)}.
+     * the method will be looked up with the given arguments through
+     * {@link #executable(List, List)}.
      *
      * @param at The token at which the lookup is performed. This is used for error reporting.
      * @param declaring The declaring type of the method.
@@ -51,15 +52,20 @@ public class ExecutableLookup {
      *
      * @return The found executable.
      */
-    public static <T> MethodView<T, ?> method(Token at, TypeView<T> declaring, String function, List<Object> arguments) {
+    public static <T> MethodView<T, ?> method(
+        Token at,
+        TypeView<T> declaring,
+        String function,
+        List<Object> arguments
+    ) {
         Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
         List<MethodView<T, ?>> methods = declaring.methods().all().stream()
-                .filter(method -> method.name().equals(function))
-                .filter(method -> method.parameters().count() == arguments.size())
-                .toList();
+            .filter(method -> method.name().equals(function))
+            .filter(method -> method.parameters().count() == arguments.size())
+            .toList();
 
         MethodView<T, ?> executable = executable(methods, arguments);
         if (executable != null) {
@@ -67,15 +73,19 @@ public class ExecutableLookup {
         }
 
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, function, arguments, declaring.name())
-                .at(at)
-                .build();
+            .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS,
+                function,
+                arguments,
+                declaring.name())
+            .at(at)
+            .build();
     }
 
     /**
-     * Lookup an executable based on a list of arguments. This will filter the list of executables based on
-     * the number of arguments. If the amount of parameters matches the amount of arguments, the parameter
-     * types are checked against the argument types. If the arguments are compatible, the executable is returned.
+     * Lookup an executable based on a list of arguments. This will filter the list of executables
+     * based on the number of arguments. If the amount of parameters matches the amount of
+     * arguments, the parameter types are checked against the argument types. If the arguments are
+     * compatible, the executable is returned.
      *
      * @param executables The list of executables.
      * @param arguments The list of arguments.
@@ -84,7 +94,10 @@ public class ExecutableLookup {
      *
      * @return The found executable.
      */
-    public static <P, T extends ExecutableElementView<P>> T executable(List<T> executables, List<Object> arguments) {
+    public static <P, T extends ExecutableElementView<P>> T executable(
+        List<T> executables,
+        List<Object> arguments
+    ) {
         for (T executable : executables) {
             boolean pass = true;
             if (executable.parameters().count() != arguments.size()) {

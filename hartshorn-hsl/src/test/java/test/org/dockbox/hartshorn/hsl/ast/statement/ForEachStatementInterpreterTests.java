@@ -46,11 +46,11 @@ public class ForEachStatementInterpreterTests {
 
     public static Stream<Arguments> arrayInputs() {
         return Stream.of(
-                Arguments.of(new Array(new Object[]{"a", "b", "c"})),
-                Arguments.of(List.of("a", "b", "c")),
-                // Note: first array is captured as varargs. Inner array
-                // is the actual input array.
-                Arguments.of(new Object[]{new Object[]{"a", "b", "c"}})
+            Arguments.of(new Array(new Object[] {"a", "b", "c"})),
+            Arguments.of(List.of("a", "b", "c")),
+            // Note: first array is captured as varargs. Inner array
+            // is the actual input array.
+            Arguments.of(new Object[] {new Object[] {"a", "b", "c"}})
         );
     }
 
@@ -58,16 +58,16 @@ public class ForEachStatementInterpreterTests {
     @MethodSource("arrayInputs")
     void forEachWithIterableCollectionIteratesAllEntries(Object iterable) {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        for (var item in items) {
-                            checkpoint(item)
-                        }
-                        """)
-                .statementParser(new ForStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineGlobal("items", iterable)
-                .build();
+                for (var item in items) {
+                    checkpoint(item)
+                }
+                """)
+            .statementParser(new ForStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineGlobal("items", iterable)
+            .build();
 
         helper.interpret();
 
@@ -81,20 +81,20 @@ public class ForEachStatementInterpreterTests {
     @Test
     void forEachWithNonIterableCollectionFails() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        for (var item in items) {
-                            checkpoint(item)
-                        }
-                        """)
-                .statementParser(new ForStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineGlobal("items", "not an iterable")
-                .build();
+                for (var item in items) {
+                    checkpoint(item)
+                }
+                """)
+            .statementParser(new ForStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineGlobal("items", "not an iterable")
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpret
+            ScriptEvaluationError.class,
+            helper::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.NON_ITERABLE_COLLECTION);
     }
@@ -102,16 +102,16 @@ public class ForEachStatementInterpreterTests {
     @Test
     void forEachWithEmptyCollectionDoesNotIterate() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        for (var item in items) {
-                            checkpoint(item)
-                        }
-                        """)
-                .statementParser(new ForStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineGlobal("items", List.of())
-                .build();
+                for (var item in items) {
+                    checkpoint(item)
+                }
+                """)
+            .statementParser(new ForStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineGlobal("items", List.of())
+            .build();
 
         helper.interpret();
 

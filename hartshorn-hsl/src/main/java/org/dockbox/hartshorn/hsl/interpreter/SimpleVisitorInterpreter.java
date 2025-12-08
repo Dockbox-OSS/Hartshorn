@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
- * step by step. The interpreter is capable of handling all types of statements and expressions. The
- * interpreter is also capable of handling external classes and modules, as well as virtual classes and
- * functions.
+ * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the
+ * AST step by step. The interpreter is capable of handling all types of statements and expressions.
+ * The interpreter is also capable of handling external classes and modules, as well as virtual
+ * classes and functions.
  *
  * <p>During the execution of a script, the interpreter will track its global variables in a
  * {@link VariableScope}, and report any results to the configured {@link ResultCollector}.
@@ -44,15 +44,17 @@ import java.util.List;
  * <p>{@code print} statements are handled by the configured {@link Logger}, and are not persisted
  * in a local state.
  *
- * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use. This
+ * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use.
+ * This
  * is to prevent scope pollution, and potential leaking of errors and results.
  *
- * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
- * which have been previously parsed by a {@link StatementParser}, and
- * preferably resolved by a {@link Resolver}.
+ * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of
+ * statements
+ * which have been previously parsed by a {@link StatementParser}, and preferably resolved by a
+ * {@link Resolver}.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Interpreter {
@@ -68,9 +70,9 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     private boolean isRunning;
 
     public SimpleVisitorInterpreter(
-            ResultCollector resultCollector,
-            ApplicationContext applicationContext,
-            TokenRegistry tokenRegistry
+        ResultCollector resultCollector,
+        ApplicationContext applicationContext,
+        TokenRegistry tokenRegistry
     ) {
         this.resultCollector = resultCollector;
         this.applicationContext = applicationContext;
@@ -117,7 +119,8 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     @Override
     public void interpret(List<Statement> statements) {
         if (this.isRunning) {
-            throw new ConcurrentInterpreterExecutionException("Cannot reuse the same interpreter instance for multiple executions");
+            throw new ConcurrentInterpreterExecutionException(
+                "Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
@@ -132,7 +135,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
 
     @Override
     public Object evaluate(Expression expression) {
-        if (expression instanceof CustomASTNode<?,?> customASTNode) {
+        if (expression instanceof CustomASTNode<?, ?> customASTNode) {
             return customASTNode.interpret(this.visitor().interpreter());
         }
         else {
@@ -142,7 +145,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
 
     @Override
     public void execute(Statement statement) {
-        if (statement instanceof CustomASTNode<?,?> customASTNode) {
+        if (statement instanceof CustomASTNode<?, ?> customASTNode) {
             customASTNode.interpret(this.visitor().interpreter());
         }
         else {

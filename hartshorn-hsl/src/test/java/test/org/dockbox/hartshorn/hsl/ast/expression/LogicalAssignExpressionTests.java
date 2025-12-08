@@ -46,30 +46,30 @@ public class LogicalAssignExpressionTests {
 
     public static Stream<Arguments> logicalTokenTypes() {
         return Stream.of(
-                Arguments.of(BitwiseAssignmentTokenType.SHIFT_RIGHT_EQUAL, 0b10), // 2
-                Arguments.of(BitwiseAssignmentTokenType.SHIFT_LEFT_EQUAL, 0b1010), // 10
-                Arguments.of(BitwiseAssignmentTokenType.LOGICAL_SHIFT_RIGHT_EQUAL, 0b10), // 2
-                Arguments.of(BitwiseAssignmentTokenType.BITWISE_AND_EQUAL, 0b1), // 1
-                Arguments.of(BitwiseAssignmentTokenType.BITWISE_OR_EQUAL, 0b101), // 5
-                Arguments.of(BitwiseAssignmentTokenType.XOR_EQUAL, 0b100), // 4
-                Arguments.of(BitwiseAssignmentTokenType.COMPLEMENT_EQUAL, -0b110) // -6
+            Arguments.of(BitwiseAssignmentTokenType.SHIFT_RIGHT_EQUAL, 0b10), // 2
+            Arguments.of(BitwiseAssignmentTokenType.SHIFT_LEFT_EQUAL, 0b1010), // 10
+            Arguments.of(BitwiseAssignmentTokenType.LOGICAL_SHIFT_RIGHT_EQUAL, 0b10), // 2
+            Arguments.of(BitwiseAssignmentTokenType.BITWISE_AND_EQUAL, 0b1), // 1
+            Arguments.of(BitwiseAssignmentTokenType.BITWISE_OR_EQUAL, 0b101), // 5
+            Arguments.of(BitwiseAssignmentTokenType.XOR_EQUAL, 0b100), // 4
+            Arguments.of(BitwiseAssignmentTokenType.COMPLEMENT_EQUAL, -0b110) // -6
         );
     }
 
     @Test
     void verifyCasesCovered() {
         List<TokenType> coveredTokenTypes = logicalTokenTypes()
-                .map(Arguments::get)
-                .map(args -> (TokenType) args[0])
-                .toList();
+            .map(Arguments::get)
+            .map(args -> (TokenType) args[0])
+            .toList();
         DefaultTokenRegistry.createDefault()
-                .tokenTypes(token -> token.assignsWith() != null)
-                .forEach(tokenType -> {
-                    Assertions.assertTrue(coveredTokenTypes.contains(tokenType),
-                            "Token type %s is not covered by tests".formatted(
-                                    tokenType.representation()
-                            ));
-                });
+            .tokenTypes(token -> token.assignsWith() != null)
+            .forEach(tokenType -> {
+                Assertions.assertTrue(coveredTokenTypes.contains(tokenType),
+                    "Token type %s is not covered by tests".formatted(
+                        tokenType.representation()
+                    ));
+            });
     }
 
     @ParameterizedTest
@@ -77,15 +77,15 @@ public class LogicalAssignExpressionTests {
     void logicalAssignUpdatesVariableAndReturnsNewValue(TokenType tokenType, int result) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
                 this.applicationContext,
-                        "a %s 1".formatted(tokenType.representation())
-                )
-                .parser(parser -> {
-                    parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
-                })
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .defineLocal("a", 0b101)
-                .build();
+                "a %s 1".formatted(tokenType.representation())
+            )
+            .parser(parser -> {
+                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
+            })
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .defineLocal("a", 0b101)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(result, value);
@@ -97,17 +97,17 @@ public class LogicalAssignExpressionTests {
     void logicalAssignCanNotAssignToNonVariable(TokenType tokenType) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
                 this.applicationContext,
-                        "1 %s 1".formatted(tokenType.representation())
-                )
-                .parser(parser -> {
-                    parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
-                })
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                "1 %s 1".formatted(tokenType.representation())
+            )
+            .parser(parser -> {
+                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
+            })
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET);
     }

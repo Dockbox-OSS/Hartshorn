@@ -35,8 +35,8 @@ public class BinaryEqualityExpressionParser extends AbstractBitwiseOrLogicalExpr
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-                ConditionTokenType.BANG_EQUAL,
-                ConditionTokenType.EQUAL_EQUAL,
+            ConditionTokenType.BANG_EQUAL,
+            ConditionTokenType.EQUAL_EQUAL,
         };
     }
 

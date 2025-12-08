@@ -26,12 +26,12 @@ import java.util.List;
 
 /**
  * A statement representing a native function declaration, which defines a function that is
- * implemented in the host language (e.g., Java) rather than in the scripting language itself,
- * but can be called from the scripting language.
+ * implemented in the host language (e.g., Java) rather than in the scripting language itself, but
+ * can be called from the scripting language.
  *
  * <p>Native functions declarations are always prepended with their module name, which is used
- * to resolve the function at runtime. Invoking a native function is done without the module
- * name, as if it were a regular function defined in the script.
+ * to resolve the function at runtime. Invoking a native function is done without the module name,
+ * as if it were a regular function defined in the script.
  *
  * <p>For example, the statement below defines a native function named <code>calculateSum</code>
  * that takes two parameters and is implemented in a module named <code>math</code> (where the
@@ -49,7 +49,7 @@ import java.util.List;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class NativeFunctionStatement extends Function implements NamedNode {
@@ -59,7 +59,12 @@ public class NativeFunctionStatement extends Function implements NamedNode {
     private final MethodView<?, ?> method;
     private final List<Parameter> params;
 
-    public NativeFunctionStatement(Token name, Token moduleName, MethodView<?, ?> method, List<Parameter> params) {
+    public NativeFunctionStatement(
+        Token name,
+        Token moduleName,
+        MethodView<?, ?> method,
+        List<Parameter> params
+    ) {
         super(name);
         this.name = name;
         this.moduleName = moduleName;

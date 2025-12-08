@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,19 +39,20 @@ public class TokenMetaDataBuilder extends SimpleTokenType.Builder<TokenMetaDataB
     }
 
     /**
-     * Combines multiple token types into a single token type. This merges the
-     * representations and characters of the given types.
+     * Combines multiple token types into a single token type. This merges the representations and
+     * characters of the given types.
      *
      * @param types the types to combine
+     *
      * @return the builder
      */
     public TokenMetaDataBuilder combines(TokenType... types) {
         StringBuilder combined = new StringBuilder();
         List<TokenCharacter> tokenCharacters = new LinkedList<>();
         boolean inheritCharacters = true;
-        for(TokenType type : types) {
+        for (TokenType type : types) {
             combined.append(type.representation());
-            if(type.characters().length > 0) {
+            if (type.characters().length > 0) {
                 tokenCharacters.addAll(List.of(type.characters()));
             }
             else {
@@ -69,6 +70,7 @@ public class TokenMetaDataBuilder extends SimpleTokenType.Builder<TokenMetaDataB
      * Repeats a token type. This is a shortcut for combining a type with itself.
      *
      * @param type the type to repeat
+     *
      * @return the builder
      */
     public TokenMetaDataBuilder repeats(TokenType type) {
@@ -76,11 +78,11 @@ public class TokenMetaDataBuilder extends SimpleTokenType.Builder<TokenMetaDataB
     }
 
     /**
-     * Repeats multiple characters. This merges the characters to determine the
-     * representation, and uses the given characters as the characters of the new
-     * token type.
+     * Repeats multiple characters. This merges the characters to determine the representation, and
+     * uses the given characters as the characters of the new token type.
      *
      * @param characters the characters to repeat
+     *
      * @return the builder
      */
     public TokenMetaDataBuilder combines(TokenCharacter... characters) {
@@ -97,6 +99,7 @@ public class TokenMetaDataBuilder extends SimpleTokenType.Builder<TokenMetaDataB
      * Repeats a character. This is a shortcut for combining a character with itself.
      *
      * @param type the type to repeat
+     *
      * @return the builder
      */
     public TokenMetaDataBuilder repeats(TokenCharacter type) {

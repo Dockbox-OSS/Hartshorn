@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing an array comprehension, which allows for the creation of a new array by
- * performing a transformation on an existing collection, with optional filtering.
+ * An expression representing an array comprehension, which allows for the creation of a new array
+ * by performing a transformation on an existing collection, with optional filtering.
  *
  * <p>In its most basic form, an array comprehension consists of a collection, and a transformation
  * expression. For example:
@@ -34,16 +34,17 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * [x * 2 for x in collection if x > 10]
  * }</pre>
  *
- * <p>Additionally, a default expression can be provided, which is used when the condition is not met:
+ * <p>Additionally, a default expression can be provided, which is used when the condition is not
+ * met:
  * <pre>{@code
  * [x * 2 for x in collection if x > 10 else 0]
  * }</pre>
  *
- * <p>The transformation, condition, and default expression can all be arbitrary expressions, with access
- * to the current element of the collection via the provided selector token.
+ * <p>The transformation, condition, and default expression can all be arbitrary expressions, with
+ * access to the current element of the collection via the provided selector token.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ArrayComprehensionExpression extends Expression {
@@ -64,13 +65,15 @@ public class ArrayComprehensionExpression extends Expression {
     private final Token elseToken;
     private final Expression elseExpression;
 
-    public ArrayComprehensionExpression(Expression collection,
-                                        Expression expression,
-                                        Token selector,
-                                        Token forToken, Token inToken,
-                                        Token open, Token close,
-                                        Token ifToken, Expression condition,
-                                        Token elseToken, Expression elseExpression) {
+    public ArrayComprehensionExpression(
+        Expression collection,
+        Expression expression,
+        Token selector,
+        Token forToken, Token inToken,
+        Token open, Token close,
+        Token ifToken, Expression condition,
+        Token elseToken, Expression elseExpression
+    ) {
         super(open);
         this.collection = collection;
         this.expression = expression;

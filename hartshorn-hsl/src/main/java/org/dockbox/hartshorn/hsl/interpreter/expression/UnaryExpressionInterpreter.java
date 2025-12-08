@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
  * Interpreter for {@link UnaryExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
@@ -45,17 +45,20 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
 
         Object newValue;
         if (type instanceof ArithmeticTokenType arithmeticTokenType) {
-             newValue = switch (arithmeticTokenType) {
+            newValue = switch (arithmeticTokenType) {
                 case MINUS -> {
-                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber =
+                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
                     yield -rightNumber.doubleValue();
                 }
                 case PLUS_PLUS -> {
-                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber =
+                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() + 1;
                 }
                 case MINUS_MINUS -> {
-                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber =
+                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() - 1;
                 }
                 default -> null;
@@ -71,9 +74,9 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
-                    .at(node.operator())
-                    .build();
+                .message(DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
+                .at(node.operator())
+                .build();
         }
 
         if (node.rightExpression() instanceof VariableExpression variable) {

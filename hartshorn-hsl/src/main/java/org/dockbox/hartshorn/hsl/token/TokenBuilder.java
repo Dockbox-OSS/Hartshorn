@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * used to create virtual tokens that do not have a specific position in the source code.
  *
  * @see Token
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class TokenBuilder {
@@ -43,10 +43,12 @@ public class TokenBuilder {
     }
 
     /**
-     * Sets the literal value of the token. This is the value that the token represents in the source
-     * code, and is used to determine the value of the token when it is a literal token type.
+     * Sets the literal value of the token. This is the value that the token represents in the
+     * source code, and is used to determine the value of the token when it is a literal token
+     * type.
      *
      * @param literal the literal value of the token
+     *
      * @return this builder
      *
      * @see Token#literal()
@@ -64,6 +66,7 @@ public class TokenBuilder {
      * token.
      *
      * @param lexeme the lexeme of the token
+     *
      * @return this builder
      *
      * @see Token#lexeme()
@@ -78,6 +81,7 @@ public class TokenBuilder {
      * located.
      *
      * @param line the line number of the token
+     *
      * @return this builder
      *
      * @see Token#line()
@@ -92,6 +96,7 @@ public class TokenBuilder {
      * located.
      *
      * @param column the column number of the token
+     *
      * @return this builder
      *
      * @see Token#column()
@@ -106,6 +111,7 @@ public class TokenBuilder {
      * method that sets the line and column of the token to the line and column of the given token.
      *
      * @param token the token to base the position on
+     *
      * @return this builder
      *
      * @see Token#line()
@@ -113,8 +119,8 @@ public class TokenBuilder {
      */
     public TokenBuilder position(Token token) {
         return this
-                .line(token.line())
-                .column(token.column());
+            .line(token.line())
+            .column(token.column());
     }
 
     /**
@@ -129,8 +135,8 @@ public class TokenBuilder {
      */
     public TokenBuilder virtual() {
         return this
-                .line(-1)
-                .column(-1);
+            .line(-1)
+            .column(-1);
     }
 
     /**
@@ -152,7 +158,11 @@ public class TokenBuilder {
                 this.lexeme = "";
             }
             else {
-                throw new IllegalArgumentException("Cannot create a token of a non-keyword type without a lexeme at line " + this.line + ", column " + this.column);
+                throw new IllegalArgumentException(
+                    "Cannot create a token of a non-keyword type without a lexeme at line "
+                        + this.line
+                        + ", column "
+                        + this.column);
             }
         }
         return new Token(this.type, this.lexeme, this.literal, this.line, this.column);

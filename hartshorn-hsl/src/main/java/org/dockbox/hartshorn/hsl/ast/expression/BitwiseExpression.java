@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * that defines the operation to be performed on those expressions.
  *
  * @see org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class BitwiseExpression extends Expression {

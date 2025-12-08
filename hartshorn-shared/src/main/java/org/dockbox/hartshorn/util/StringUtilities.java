@@ -450,11 +450,25 @@ public final class StringUtilities {
             return this.segment(List.of(segment));
         }
 
+        /**
+         * Adds an optional segment to the matrix. An optional segment may be omitted in the
+         * resulting combinations.
+         *
+         * @param segment the optional segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
         public MatrixBuilder optionalSegment(Collection<String> segment) {
             this.segments.add(new Segment(segment, true));
             return this;
         }
 
+        /**
+         * Adds an optional segment to the matrix. An optional segment may be omitted in the
+         * resulting combinations.
+         *
+         * @param segment the optional segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
         public MatrixBuilder optionalSegment(String... segment) {
             return this.optionalSegment(List.of(segment));
         }

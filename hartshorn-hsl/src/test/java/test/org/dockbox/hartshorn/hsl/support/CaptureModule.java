@@ -38,10 +38,10 @@ import java.util.Set;
 public class CaptureModule implements StatementModule<CaptureModule.CaptureStatement> {
 
     public static final TokenType CAPTURE = SimpleTokenType.builder()
-            .keyword(true)
-            .standaloneStatement(true)
-            .tokenName("capture")
-            .build();
+        .keyword(true)
+        .standaloneStatement(true)
+        .tokenName("capture")
+        .build();
 
     private Object capturedValue;
 
@@ -49,7 +49,10 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
     public StatementParser<CaptureStatement> parser() {
         return new StatementParser<>() {
             @Override
-            public Option<? extends CaptureStatement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
+            public Option<? extends CaptureStatement> parse(
+                TokenParser parser,
+                TokenStepValidator validator
+            ) throws ScriptEvaluationError {
                 if (parser.match(CAPTURE)) {
                     Token capture = parser.previous();
                     TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
@@ -99,15 +102,14 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
         return this.capturedValue;
     }
 
-
     public static class CaptureStatement extends CustomStatement<CaptureStatement> {
 
         private final Expression expression;
 
         public CaptureStatement(
-                ASTNode at,
-                StatementModule<CaptureStatement> module,
-                Expression expression
+            ASTNode at,
+            StatementModule<CaptureStatement> module,
+            Expression expression
         ) {
             super(at, module);
             this.expression = expression;

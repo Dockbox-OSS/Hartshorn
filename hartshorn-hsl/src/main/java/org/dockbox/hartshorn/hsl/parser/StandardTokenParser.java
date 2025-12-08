@@ -45,20 +45,22 @@ import java.util.stream.Stream;
 
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
- * abstract syntax tree (AST). This implementation delegates the parsing of statements and expressions
- * to a set of registered {@link StatementParser parsers}.
+ * abstract syntax tree (AST). This implementation delegates the parsing of statements and
+ * expressions to a set of registered {@link StatementParser parsers}.
  *
- * <p>The primary function of this implementation directly is the tracking of tokens and the current
+ * <p>The primary function of this implementation directly is the tracking of tokens and the
+ * current
  * position in the token stream. It also provides a set of methods to parse the tokens into an AST.
  *
- * <p>When parsing a script, the parser will attempt to parse the tokens into a list of statements. As
- * this parser tracks the state directly, it is not thread-safe. It is expected that a new instance is
- * created for each parsing operation.
+ * <p>When parsing a script, the parser will attempt to parse the tokens into a list of statements.
+ * As
+ * this parser tracks the state directly, it is not thread-safe. It is expected that a new instance
+ * is created for each parsing operation.
  *
  * @see StatementParser
- *
+ * 
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class StandardTokenParser extends DefaultFallbackCompatibleContext implements TokenParser {
@@ -66,7 +68,8 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     private int current = 0;
     private final List<Token> tokens;
 
-    private final Set<StatementParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
+    private final Set<StatementParser<? extends Statement>> statementParsers =
+        ConcurrentHashMap.newKeySet();
     private final MutableExpressionParserChain expressionParserChain;
     private final TokenStepValidator validator;
     private final TokenRegistry tokenRegistry;
@@ -181,9 +184,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
         }
         if (type != this.tokenRegistry().statementEnd()) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(message)
-                    .at(this.peek())
-                    .build();
+                .message(message)
+                .at(this.peek())
+                .build();
         }
         return null;
     }
@@ -200,9 +203,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
         TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.UNSUPPORTED_STANDALONE_STATEMENT, type)
-                    .at(this.peek())
-                    .build();
+                .message(DiagnosticMessage.UNSUPPORTED_STANDALONE_STATEMENT, type)
+                .at(this.peek())
+                .build();
         }
         return this.expressionStatement();
     }
@@ -219,9 +222,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
         Expression expression = this.expressionParserChain.next(this, this.validator);
         if (expression == null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.EXPECTED_EXPRESSION, this.peek())
-                    .at(this.peek())
-                    .build();
+                .message(DiagnosticMessage.EXPECTED_EXPRESSION, this.peek())
+                .at(this.peek())
+                .build();
         }
         return expression;
     }
@@ -229,7 +232,7 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     @Override
     public <T extends Statement> Set<StatementParser<T>> compatibleParsers(Class<T> type) {
         return this.compatibleParserStream(type)
-                .collect(Collectors.toUnmodifiableSet());
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -244,9 +247,13 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
         return Stream.empty();
     }
 
-    private <T extends Statement, N extends Statement> Stream<StatementParser<T>> compatibleParserStream(Collection<? extends StatementParser<? extends N>> parsers, Class<T> type) {
+    private <T extends Statement, N extends Statement>
+    Stream<StatementParser<T>> compatibleParserStream(
+        Collection<? extends StatementParser<? extends N>> parsers,
+        Class<T> type
+    ) {
         return parsers.stream()
-                .filter(parser -> parser.types().contains(type))
-                .map(parser -> TypeUtils.unchecked(parser, StatementParser.class));
+            .filter(parser -> parser.types().contains(type))
+            .map(parser -> TypeUtils.unchecked(parser, StatementParser.class));
     }
 }

@@ -31,7 +31,8 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
+public class ArrayLiteralExpressionInterpreter
+    implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
 
     @Override
     public Object interpret(ArrayLiteralExpression node, Interpreter interpreter) {

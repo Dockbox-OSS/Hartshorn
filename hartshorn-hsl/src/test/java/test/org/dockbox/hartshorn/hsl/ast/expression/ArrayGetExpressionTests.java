@@ -35,14 +35,14 @@ public class ArrayGetExpressionTests {
     void testArrayGetExpressionCanGetIfInRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[0]")
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("array", new Array(realArray))
-                .build();
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("array", new Array(realArray))
+            .build();
 
         Object interpretedValue = helper.evaluateWith(
-                ArrayGetExpression.class,
-                new ArrayGetExpressionInterpreter()
+            ArrayGetExpression.class,
+            new ArrayGetExpressionInterpreter()
         ).interpretValue();
         Assertions.assertSame(realArray[0], interpretedValue);
     }
@@ -51,15 +51,15 @@ public class ArrayGetExpressionTests {
     void testArrayGetExpressionThrowsIfOutOfRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[1]")
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("array", new Array(realArray))
-                .build();
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("array", new Array(realArray))
+            .build();
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
             helper.evaluateWith(
-                    ArrayGetExpression.class,
-                    new ArrayGetExpressionInterpreter()
+                ArrayGetExpression.class,
+                new ArrayGetExpressionInterpreter()
             ).interpretValue();
         });
     }

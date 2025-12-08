@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@
 package org.dockbox.hartshorn.hsl.lexer;
 
 /**
- * Represents a single comment in a script. A comment is a piece of non-code
- * which can be located anywhere in a script.
+ * Represents a single comment in a script. A comment is a piece of non-code which can be located
+ * anywhere in a script.
  *
- * @param line The first line the comment was found on. If a comment spans multiple lines,
- *             this number represents the first of these lines.
+ * @param line The first line the comment was found on. If a comment spans multiple lines, this
+ * number represents the first of these lines.
  * @param text The untrimmed text content of the comment, excluding any comment tokens.
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public record Comment(int line, String text) { }
+public record Comment(int line, String text) {
+}

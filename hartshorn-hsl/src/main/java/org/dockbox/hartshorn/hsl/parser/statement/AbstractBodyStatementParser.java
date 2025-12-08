@@ -29,10 +29,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * A parser for a statement that contains a block of statements. Examples of this include functions, if statements, and
- * loops.
+ * A parser for a statement that contains a block of statements. Examples of this include functions,
+ * if statements, and loops.
  *
- * <p>The actual parsing of the block is delegated to the parser that is compatible with the block statement type.
+ * <p>The actual parsing of the block is delegated to the parser that is compatible with the block
+ * statement type.
  *
  * @param <T> the type of the AST node that is being parsed
  *
@@ -40,26 +41,34 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBodyStatementParser<T extends Statement> implements StatementParser<T> {
+public abstract class AbstractBodyStatementParser<T extends Statement>
+    implements StatementParser<T> {
 
     /**
-     * Parses a block statement from the given parser. The actual parsing of the block is delegated to the parser that is
-     * compatible with the block statement type. If no compatible parser is found, a {@link ScriptEvaluationError} is
-     * thrown.
+     * Parses a block statement from the given parser. The actual parsing of the block is delegated
+     * to the parser that is compatible with the block statement type. If no compatible parser is
+     * found, a {@link ScriptEvaluationError} is thrown.
      *
      * @param afterStatement the name of the statement that precedes the block
      * @param at the AST node at which the parsing is taking place
      * @param parser the parser to use
      * @param validator the validator to use
+     *
      * @return the parsed block statement
      */
-    protected BlockStatement blockStatement(String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
-        Set<StatementParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
+    protected BlockStatement blockStatement(
+        String afterStatement,
+        ASTNode at,
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
+        Set<StatementParser<BlockStatement>> parsers =
+            parser.compatibleParsers(BlockStatement.class);
         if (parsers.isEmpty()) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
-                    .at(at)
-                    .build();
+                .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
+                .at(at)
+                .build();
         }
 
         for (StatementParser<BlockStatement> nodeParser : parsers) {
@@ -69,8 +78,8 @@ public abstract class AbstractBodyStatementParser<T extends Statement> implement
             }
         }
         throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
-                .at(at)
-                .build();
+            .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
+            .at(at)
+            .build();
     }
 }

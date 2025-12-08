@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.hsl.token;
 
 /**
- * Represents the default characters that are always available to lexers, and are typically
- * not retained in the token stream. These characters are used for various purposes, such as
- * whitespace handling, line number tracking, and representing characters that are out of bounds.
+ * Represents the default characters that are always available to lexers, and are typically not
+ * retained in the token stream. These characters are used for various purposes, such as whitespace
+ * handling, line number tracking, and representing characters that are out of bounds.
  *
  * @see TokenCharacter
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum SharedTokenCharacter implements SimpleTokenCharacter {
@@ -45,8 +45,8 @@ public enum SharedTokenCharacter implements SimpleTokenCharacter {
      */
     CARRIAGE_RETURN('\r'),
     /**
-     * The null character. By default, this will be used to represent characters that
-     * are looked up outside the bounds of a string.
+     * The null character. By default, this will be used to represent characters that are looked up
+     * outside the bounds of a string.
      */
     NULL('\0'),
     ;

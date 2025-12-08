@@ -37,14 +37,18 @@ public class InterpreterTests {
     @Test
     void testAmbiguousExternalFunctionsAreAllowedByDefault() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         Assertions.assertDoesNotThrow(script::evaluate);
     }
 
     @Test
     void testAmbiguousExternalFunctionsAreAllowedWhenEnabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
         Assertions.assertDoesNotThrow(script::evaluate);
     }
@@ -52,7 +56,9 @@ public class InterpreterTests {
     @Test
     void testAmbiguousExternalFunctionsAreNotAllowedWhenDisabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
         Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
     }

@@ -37,7 +37,10 @@ import java.util.Set;
 public class RepeatStatementParser extends AbstractBodyStatementParser<RepeatStatement> {
 
     @Override
-    public Option<? extends RepeatStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends RepeatStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(LoopTokenType.REPEAT)) {
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), "repeat");

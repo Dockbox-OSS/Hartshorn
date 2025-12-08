@@ -30,27 +30,29 @@ import java.util.stream.Collectors;
  * Interpreter for {@link ModuleStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class ModuleStatementInterpreter extends AbstractNativeLibraryStatementInterpreter implements StatementInterpreter<ModuleStatement> {
+public class ModuleStatementInterpreter extends AbstractNativeLibraryStatementInterpreter
+    implements StatementInterpreter<ModuleStatement> {
 
     @Override
     public Void interpret(ModuleStatement node, Interpreter interpreter) {
         String moduleName = node.name().lexeme();
         NativeModule module = interpreter.state().externalModules().get(moduleName);
 
-        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.name(), interpreter);
+        List<NativeFunctionStatement> supportedFunctions =
+            module.supportedFunctions(node.name(), interpreter);
         Map<String, List<NativeFunctionStatement>> functionsByName = supportedFunctions.stream()
-                .collect(Collectors.groupingBy(function -> function.name().lexeme()));
+            .collect(Collectors.groupingBy(function -> function.name().lexeme()));
 
         EntryStream.of(functionsByName).forEach((name, functions) -> {
             this.registerModuleFunction(
-                    moduleName,
-                    name,
-                    interpreter,
-                    functions,
-                    module
+                moduleName,
+                name,
+                interpreter,
+                functions,
+                module
             );
         });
         return null;

@@ -20,14 +20,14 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing a repeat loop, which repeats a block of code a specified number
- * of times. The number of repetitions is determined by the value of the associated expression.
+ * A statement representing a repeat loop, which repeats a block of code a specified number of
+ * times. The number of repetitions is determined by the value of the associated expression.
  *
  * <p>For example, in the statement {@code repeat(5) { ... }}, the loop body will be executed
  * 5 times.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class RepeatStatement extends BodyStatement {

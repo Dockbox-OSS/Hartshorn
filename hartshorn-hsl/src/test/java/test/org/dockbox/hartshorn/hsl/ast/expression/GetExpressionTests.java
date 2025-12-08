@@ -40,28 +40,30 @@ public class GetExpressionTests {
     void getExpressionReturnsPropertyContainerValue(@Inject ApplicationContext applicationContext) {
         PropertyContainer container = Mockito.mock(PropertyContainer.class);
         Mockito.when(container.get(
-                Mockito.any(Interpreter.class),
-                Mockito.any(Token.class),
-                Mockito.any(VariableScope.class)
+            Mockito.any(Interpreter.class),
+            Mockito.any(Token.class),
+            Mockito.any(VariableScope.class)
         )).thenReturn("Hello, World!");
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("object", container)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("object", container)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello, World!", value);
     }
 
     @Test
-    void getExpressionWithExternalObjectReferenceReturnsExternalObject(@Inject ApplicationContext applicationContext) {
+    void getExpressionWithExternalObjectReferenceReturnsExternalObject(
+        @Inject ApplicationContext applicationContext
+    ) {
         PropertyContainer container = Mockito.mock(PropertyContainer.class);
         Mockito.when(container.get(
-                Mockito.any(Interpreter.class),
-                Mockito.any(Token.class),
-                Mockito.any(VariableScope.class)
+            Mockito.any(Interpreter.class),
+            Mockito.any(Token.class),
+            Mockito.any(VariableScope.class)
         )).thenAnswer(invocation -> {
             ExternalObjectReference objectReference = Mockito.mock(ExternalObjectReference.class);
             Mockito.when(objectReference.externalObject()).thenReturn("Hello, World!");
@@ -69,10 +71,10 @@ public class GetExpressionTests {
         });
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("object", container)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("object", container)
+            .build();
 
         Object value = helper.interpretValue();
         // String, not ExternalObjectReference. Should unwrap automatically.
@@ -81,32 +83,35 @@ public class GetExpressionTests {
     }
 
     @Test
-    void getExpressionWithInstanceReferenceAndExternalFunctionShouldReturnBoundFunction(@Inject ApplicationContext applicationContext) {
+    void getExpressionWithInstanceReferenceAndExternalFunctionShouldReturnBoundFunction(
+        @Inject ApplicationContext applicationContext
+    ) {
         InstanceReference instanceReference = Mockito.mock(InstanceReference.class);
         Mockito.when(instanceReference.get(
-                Mockito.any(Interpreter.class),
-                Mockito.any(Token.class),
-                Mockito.any(VariableScope.class)
+            Mockito.any(Interpreter.class),
+            Mockito.any(Token.class),
+            Mockito.any(VariableScope.class)
         )).thenAnswer(invocation -> {
             ExternalFunction function = Mockito.mock(ExternalFunction.class);
             Mockito.when(function.bind(Mockito.any(InstanceReference.class)))
-                    .thenAnswer(functionInvocation -> {
-                        InstanceReference argument = functionInvocation
-                                .getArgument(0, InstanceReference.class);
-                        Mockito.when(function.bound()).thenReturn(argument);
-                        return function;
-                    });
+                .thenAnswer(functionInvocation -> {
+                    InstanceReference argument = functionInvocation
+                        .getArgument(0, InstanceReference.class);
+                    Mockito.when(function.bound()).thenReturn(argument);
+                    return function;
+                });
             return function;
         });
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("object", instanceReference)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("object", instanceReference)
+            .build();
 
         Object value = helper.interpretValue();
-        ExternalFunction externalFunction = Assertions.assertInstanceOf(ExternalFunction.class, value);
+        ExternalFunction externalFunction =
+            Assertions.assertInstanceOf(ExternalFunction.class, value);
         InstanceReference bound = externalFunction.bound();
         Assertions.assertSame(instanceReference, bound);
     }

@@ -23,18 +23,18 @@ import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for range expressions. Range expressions produce a sequence of values between a start and end value,
- * denoted by the range operator (e.g., <code>1..10</code>).
+ * Parser for range expressions. Range expressions produce a sequence of values between a start and
+ * end value, denoted by the range operator (e.g., <code>1..10</code>).
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class RangeExpressionParser extends AbstractBitwiseOrLogicalExpressionParser {
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-                LoopTokenType.RANGE,
+            LoopTokenType.RANGE,
         };
     }
 

@@ -33,13 +33,16 @@ import org.dockbox.hartshorn.util.StringUtilities;
  *     <li>5xxx - Common validation</li>
  * </ul>
  *
- * <p>Note that 'Common validation' messages (5xxx) are not tied to a specific phase, and can be used
+ * <p>Note that 'Common validation' messages (5xxx) are not tied to a specific phase, and can be
+ * used across multiple phases.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
 public enum DiagnosticMessage {
+    // checkstyle:off LineLength
+
     // 1xxx - Lexical analysis
     UNEXPECTED_CHAR(Phase.TOKENIZING, "Unexpected character: {0}."),
     UNTERMINATED_STRING(Phase.TOKENIZING, "Unterminated string."),
@@ -157,6 +160,8 @@ public enum DiagnosticMessage {
     UNDEFINED_PROPERTY("Property '{0}' is not defined on {1}."),
     UNDEFINED_VARIABLE("Variable '{0}' is not defined."),
     ;
+
+    // checkstyle:on LineLength
 
     static {
         for (final DiagnosticMessage index : DiagnosticMessage.values()) {

@@ -44,16 +44,16 @@ public class ClassStatementInterpreterTests {
     @Test
     void virtualClassDefinitionCanInitialize() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        class Person {
-                            name;
-                        }
-                        capture(Person())
-                        """)
-                .withCaptureModule()
-                .statementParser(new ClassStatementParser(new FieldStatementParser()))
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                class Person {
+                    name;
+                }
+                capture(Person())
+                """)
+            .withCaptureModule()
+            .statementParser(new ClassStatementParser(new FieldStatementParser()))
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
 
@@ -67,8 +67,8 @@ public class ClassStatementInterpreterTests {
 
         Object instance = helper.captures().capturedValue();
         VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-                VirtualInstance.class,
-                instance
+            VirtualInstance.class,
+            instance
         );
         Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
     }
@@ -76,16 +76,16 @@ public class ClassStatementInterpreterTests {
     @Test
     void dynamicClassDefinitionCanInitialize() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        class Person? {
-                            name;
-                        }
-                        capture(Person())
-                        """)
-                .withCaptureModule()
-                .statementParser(new ClassStatementParser(new FieldStatementParser()))
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                class Person? {
+                    name;
+                }
+                capture(Person())
+                """)
+            .withCaptureModule()
+            .statementParser(new ClassStatementParser(new FieldStatementParser()))
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
 
@@ -99,8 +99,8 @@ public class ClassStatementInterpreterTests {
 
         Object instance = helper.captures().capturedValue();
         VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-                VirtualInstance.class,
-                instance
+            VirtualInstance.class,
+            instance
         );
         Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
     }
@@ -108,19 +108,19 @@ public class ClassStatementInterpreterTests {
     @Test
     void virtualChildClassDefinitionCanInitialize() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        class LivingThing {
-                            age;
-                        }
-                        class Person extends LivingThing {
-                            name;
-                        }
-                        capture(Person())
-                        """)
-                .withCaptureModule()
-                .statementParser(new ClassStatementParser(new FieldStatementParser()))
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                class LivingThing {
+                    age;
+                }
+                class Person extends LivingThing {
+                    name;
+                }
+                capture(Person())
+                """)
+            .withCaptureModule()
+            .statementParser(new ClassStatementParser(new FieldStatementParser()))
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
 
@@ -135,7 +135,8 @@ public class ClassStatementInterpreterTests {
         Assertions.assertNotNull(superClass);
         Assertions.assertEquals("LivingThing", superClass.name());
 
-        VirtualClass virtualSuperClass = Assertions.assertInstanceOf(VirtualClass.class, superClass);
+        VirtualClass virtualSuperClass =
+            Assertions.assertInstanceOf(VirtualClass.class, superClass);
         VirtualProperty age = virtualSuperClass.property("age");
         Assertions.assertNotNull(age);
 
@@ -145,8 +146,8 @@ public class ClassStatementInterpreterTests {
 
         Object instance = helper.captures().capturedValue();
         VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-                VirtualInstance.class,
-                instance
+            VirtualInstance.class,
+            instance
         );
         Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
     }
@@ -158,19 +159,19 @@ public class ClassStatementInterpreterTests {
     @Test
     void virtualChildClassOfExternalClassDefinitionCanInitialize() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        class Person extends ExternalThing {
-                            name;
-                        }
-                        capture(Person())
-                        """)
-                .withCaptureModule()
-                .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
-                    context.runtime().imports(ExternalThing.class);
-                }))
-                .statementParser(new ClassStatementParser(new FieldStatementParser()))
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                class Person extends ExternalThing {
+                    name;
+                }
+                capture(Person())
+                """)
+            .withCaptureModule()
+            .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+                context.runtime().imports(ExternalThing.class);
+            }))
+            .statementParser(new ClassStatementParser(new FieldStatementParser()))
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
 
@@ -182,14 +183,15 @@ public class ClassStatementInterpreterTests {
         Assertions.assertNotNull(name);
 
         ClassReference superClass = virtualClass.superClass();
-        ExternalClass<?> externalClass = Assertions.assertInstanceOf(ExternalClass.class, superClass);
+        ExternalClass<?> externalClass =
+            Assertions.assertInstanceOf(ExternalClass.class, superClass);
         Assertions.assertEquals("ExternalThing", externalClass.name());
         Assertions.assertTrue(externalClass.type().is(ExternalThing.class));
 
         Object instance = helper.captures().capturedValue();
         CompositeInstance<?> compositeInstance = Assertions.assertInstanceOf(
-                CompositeInstance.class,
-                instance
+            CompositeInstance.class,
+            instance
         );
         Assertions.assertEquals(virtualClass, compositeInstance.virtualClass());
 

@@ -36,18 +36,23 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class NativeFunctionStatementParser extends AbstractBodyStatementParser<NativeFunctionStatement> implements ParametricStatementParser {
+public class NativeFunctionStatementParser
+    extends AbstractBodyStatementParser<NativeFunctionStatement>
+    implements ParametricStatementParser {
 
     @Override
-    public Option<? extends NativeFunctionStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends NativeFunctionStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(FunctionTokenType.NATIVE) && parser.match(FunctionTokenType.FUNCTION)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token moduleName = validator.expect(identifier, "module name");
 
             while (parser.match(BaseTokenType.DOT)) {
                 Token token = Token.of(BaseTokenType.DOT)
-                        .position(moduleName)
-                        .build();
+                    .position(moduleName)
+                    .build();
                 moduleName.concat(token);
 
                 Token submodule = validator.expect(identifier, "module name");
@@ -56,7 +61,11 @@ public class NativeFunctionStatementParser extends AbstractBodyStatementParser<N
 
             validator.expectBefore(BaseTokenType.COLON, "function name");
             Token funcName = validator.expect(identifier, "function name");
-            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "function name", -1, FunctionTokenType.NATIVE);
+            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser,
+                validator,
+                "function name",
+                -1,
+                FunctionTokenType.NATIVE);
 
             validator.expectAfter(parser.tokenRegistry().statementEnd(), "value");
             // Do not resolve actual methods at this point, as we might not have loaded

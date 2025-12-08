@@ -56,9 +56,9 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
  * used to add custom token types.
  *
  * @see TokenRegistry
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public final class DefaultTokenRegistry implements MutableTokenRegistry {
@@ -104,7 +104,8 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public TokenCharacter character(char character) {
-        return this.characterMapping().computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
+        return this.characterMapping()
+            .computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
     }
 
     @Override
@@ -115,18 +116,18 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
     @Override
     public Set<TokenType> tokenTypes() {
         List<TokenType> commentTokenTypes = this.comments().commentTypes()
-                .allValues().stream()
-                .flatMap(tokenTypePair -> Stream.of(tokenTypePair.open(), tokenTypePair.close()))
-                .filter(Objects::nonNull) // Closing tokens are optional, thus may be null
-                .toList();
+            .allValues().stream()
+            .flatMap(tokenTypePair -> Stream.of(tokenTypePair.open(), tokenTypePair.close()))
+            .filter(Objects::nonNull) // Closing tokens are optional, thus may be null
+            .toList();
         return CollectionUtilities.merge(this.types, commentTokenTypes);
     }
 
     @Override
     public Set<TokenType> tokenTypes(Predicate<TokenType> predicate) {
         return this.tokenTypes().stream()
-                .filter(predicate)
-                .collect(Collectors.toUnmodifiableSet());
+            .filter(predicate)
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -183,25 +184,25 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
     private void collectSpecialTokens(Map<Character, TokenCharacter> allCharacters) {
         TokenCharacterList characterList = this.characterList();
         Set<TokenCharacter> specialCharacters = Set.of(
-                characterList.nullCharacter(),
-                characterList.charCharacter(),
-                characterList.quoteCharacter(),
-                characterList.numberDelimiter(),
-                characterList.numberSeparator()
+            characterList.nullCharacter(),
+            characterList.charCharacter(),
+            characterList.quoteCharacter(),
+            characterList.numberDelimiter(),
+            characterList.numberSeparator()
         );
-        for(TokenCharacter character : specialCharacters) {
+        for (TokenCharacter character : specialCharacters) {
             allCharacters.put(character.character(), character);
         }
     }
 
     private void collectSharedTokens(Map<Character, TokenCharacter> allCharacters) {
-        for(SharedTokenCharacter character : SharedTokenCharacter.values()) {
+        for (SharedTokenCharacter character : SharedTokenCharacter.values()) {
             allCharacters.put(character.character(), character);
         }
     }
 
     private void collectTokenGraphRoots(Map<Character, TokenCharacter> allCharacters) {
-        for(GraphNode<TokenNode> node : this.tokenGraph().roots()) {
+        for (GraphNode<TokenNode> node : this.tokenGraph().roots()) {
             TokenCharacter character = node.value().character();
             allCharacters.put(character.character(), character);
         }

@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import java.util.List;
 
 /**
- * An expression representing a function call, which is an operation that invokes a function
- * with a specified set of arguments. This may be a function on an object, a static function,
- * or a global function.
+ * An expression representing a function call, which is an operation that invokes a function with a
+ * specified set of arguments. This may be a function on an object, a static function, or a global
+ * function.
  *
  * @since 0.4.12
  *
@@ -37,7 +37,12 @@ public class FunctionCallExpression extends Expression {
     private final Token openParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(Expression callee, Token open, Token close, List<Expression> arguments) {
+    public FunctionCallExpression(
+        Expression callee,
+        Token open,
+        Token close,
+        List<Expression> arguments
+    ) {
         super(callee);
         this.callee = callee;
         this.openParenthesis = open;

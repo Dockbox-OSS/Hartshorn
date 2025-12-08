@@ -36,14 +36,13 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.Map;
 
 /**
- * Represents a single nullable {@link Object} instance that can be accessed from an HSL
- * runtime. This instance can be used to access properties of the instance. The instance
- * needs to be made available to the runtime through {@link ScriptRuntime#global(String, Object)}
- * or {@link ScriptRuntime#global(Map)}, where the instance is made available globally
- * to the runtime.
+ * Represents a single nullable {@link Object} instance that can be accessed from an HSL runtime.
+ * This instance can be used to access properties of the instance. The instance needs to be made
+ * available to the runtime through {@link ScriptRuntime#global(String, Object)} or
+ * {@link ScriptRuntime#global(Map)}, where the instance is made available globally to the runtime.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ExternalInstance implements ExternalObjectReference {
@@ -54,8 +53,10 @@ public class ExternalInstance implements ExternalObjectReference {
     public <T> ExternalInstance(T instance, ExternalClass<T> type) {
         if (instance != null && !type.type().isInstance(instance)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X, type.name(), instance.getClass().getName())
-                    .build();
+                .message(DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X,
+                    type.name(),
+                    instance.getClass().getName())
+                .build();
         }
         this.instance = instance;
         this.type = type;
@@ -63,6 +64,7 @@ public class ExternalInstance implements ExternalObjectReference {
 
     /**
      * Returns the {@link Object} instance represented by this instance.
+     *
      * @return The {@link Object} instance represented by this instance.
      */
     public Object instance() {
@@ -70,15 +72,20 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
+    public void set(
+        final Interpreter interpreter,
+        final Token name,
+        final Object value,
+        VariableScope fromScope
+    ) {
         Option<FieldView<?, ?>> field = this.type.type().fields()
-                .named(name.lexeme())
-                .map(f -> TypeUtils.unchecked(f, FieldView.class));
+            .named(name.lexeme())
+            .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 field.get().set(this.instance(), value);
             }
-            catch(Throwable throwable) {
+            catch (Throwable throwable) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .at(name)
                     .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
@@ -98,10 +105,11 @@ public class ExternalInstance implements ExternalObjectReference {
     @Override
     public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
         Object[] methods = this.type.type().methods().all().stream()
-                .filter(method -> method.name().equals(name.lexeme()))
-                .toArray();
+            .filter(method -> method.name().equals(name.lexeme()))
+            .toArray();
 
-        if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
+        if (methods.length > 1 && !interpreter.executionOptions()
+            .permitAmbiguousExternalFunctions()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .at(name)
                 .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_CALL, name.lexeme())
@@ -113,13 +121,13 @@ public class ExternalInstance implements ExternalObjectReference {
         }
 
         Option<FieldView<?, ?>> field = this.type.type().fields()
-                .named(name.lexeme())
-                .map(f -> TypeUtils.unchecked(f, FieldView.class));
+            .named(name.lexeme())
+            .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 return field.get().get(this.instance());
             }
-            catch(Throwable throwable) {
+            catch (Throwable throwable) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .at(name)
                     .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
@@ -147,8 +155,8 @@ public class ExternalInstance implements ExternalObjectReference {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("instance", this.instance)
-                .describe();
+            .field("instance", this.instance)
+            .describe();
     }
 
     @NonNull

@@ -67,9 +67,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 
 /**
- * A visitor that walks the AST and visits all nodes. This visitor can be extended
- * to implement custom logic for each node type, without having to manually walk
- * the AST.
+ * A visitor that walks the AST and visits all nodes. This visitor can be extended to implement
+ * custom logic for each node type, without having to manually walk the AST.
  *
  * @param <R> the return type of the visitor
  *
@@ -145,7 +144,7 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
     @Override
     public R visit(FunctionCallExpression expression) {
         expression.callee().accept(this);
-        for(Expression arg : expression.arguments()) {
+        for (Expression arg : expression.arguments()) {
             arg.accept(this);
         }
         return null;
@@ -209,7 +208,7 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
 
     @Override
     public R visit(ArrayLiteralExpression expression) {
-        for(Expression element : expression.elements()) {
+        for (Expression element : expression.elements()) {
             element.accept(this);
         }
         return null;
@@ -245,7 +244,7 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
 
     @Override
     public R visit(BlockStatement statement) {
-        for(Statement innerStatement : statement.statements()) {
+        for (Statement innerStatement : statement.statements()) {
             innerStatement.accept(this);
         }
         return null;
@@ -364,11 +363,11 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
     @Override
     public R visit(ClassStatement statement) {
         statement.superClass().accept(this);
-        for(FieldStatement field : statement.fields()) {
+        for (FieldStatement field : statement.fields()) {
             field.accept(this);
         }
         statement.constructor().accept(this);
-        for(FunctionStatement method : statement.methods()) {
+        for (FunctionStatement method : statement.methods()) {
             method.accept(this);
         }
         return null;
@@ -393,7 +392,7 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
     @Override
     public R visit(SwitchStatement statement) {
         statement.expression().accept(this);
-        for(SwitchCase switchCase : statement.cases()) {
+        for (SwitchCase switchCase : statement.cases()) {
             switchCase.accept(this);
         }
         statement.defaultCase().accept(this);

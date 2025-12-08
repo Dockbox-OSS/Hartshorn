@@ -60,8 +60,8 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
             return this.xor(left, right);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
-                .at(node.operator())
-                .build();
+            .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
+            .at(node.operator())
+            .build();
     }
 }

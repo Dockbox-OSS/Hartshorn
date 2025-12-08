@@ -20,14 +20,17 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing a for loop, which is a control flow statement that allows code to be executed
- * repeatedly based on a condition. The for loop consists of an initializer, a condition, an increment statement,
- * and a body that contains the statements to be executed in each iteration.
+ * A statement representing a for loop, which is a control flow statement that allows code to be
+ * executed repeatedly based on a condition. The for loop consists of an initializer, a condition,
+ * an increment statement, and a body that contains the statements to be executed in each
+ * iteration.
  *
- * <p>The initializer is typically a variable declaration, the condition is an expression that evaluates to a boolean,
+ * <p>The initializer is typically a variable declaration, the condition is an expression that
+ * evaluates to a boolean,
  * and the increment is a statement that modifies the loop variable after each iteration.
  *
- * <p>For example, the statement below represents a for loop that initializes a variable `i` to 0, continues looping
+ * <p>For example, the statement below represents a for loop that initializes a variable `i` to 0,
+ * continues looping
  * while `i` is less than 10, and increments `i` by 1 in each iteration:
  * <pre>{@code
  * for (var i = 0; i < 10; i++) {
@@ -45,7 +48,12 @@ public class ForStatement extends BodyStatement {
     private final Expression condition;
     private final Statement increment;
 
-    public ForStatement(VariableStatement initializer, Expression condition, Statement increment, BlockStatement loopBody) {
+    public ForStatement(
+        VariableStatement initializer,
+        Expression condition,
+        Statement increment,
+        BlockStatement loopBody
+    ) {
         super(initializer, loopBody);
         this.initializer = initializer;
         this.condition = condition;

@@ -42,26 +42,31 @@ import java.util.Set;
  * A parser for {@link FieldStatement} nodes, including support for parsing field members.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class FieldStatementParser extends AbstractBodyStatementParser<FieldStatement> {
 
     @Override
-    public Option<? extends FieldStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
+    public Option<? extends FieldStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
+        Token modifier =
+            parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
         boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
         TokenType identifier = parser.tokenRegistry().literals().identifier();
         Token name = validator.expect(identifier, "variable name");
 
         Expression initializer = null;
-        if(parser.match(BaseTokenType.EQUAL)) {
+        if (parser.match(BaseTokenType.EQUAL)) {
             initializer = parser.expression();
         }
 
         validator.expectAfter(parser.tokenRegistry().statementEnd(), "variable declaration");
         VariableStatement variable = new VariableStatement(name, initializer);
-        FieldStatement fieldStatement = new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
+        FieldStatement fieldStatement =
+            new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
 
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(block.open())) {
@@ -73,28 +78,42 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
         return Option.of(fieldStatement);
     }
 
-    private void fieldMemberStatement(TokenParser parser, TokenStepValidator validator, FieldStatement fieldStatement) {
-        Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
+    private void fieldMemberStatement(
+        TokenParser parser,
+        TokenStepValidator validator,
+        FieldStatement fieldStatement
+    ) {
+        Token modifier =
+            parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
         if (parser.match(ClassTokenType.GET, ClassTokenType.SET)) {
             Token member = parser.previous();
             switch (member.type()) {
                 case ClassTokenType.GET -> {
-                    final FieldGetStatement statement = this.fieldGetStatement(parser, validator, modifier, member, fieldStatement);
+                    final FieldGetStatement statement =
+                        this.fieldGetStatement(parser, validator, modifier, member, fieldStatement);
                     fieldStatement.withGetter(statement);
                 }
                 case ClassTokenType.SET -> {
-                    final FieldSetStatement statement = this.fieldSetStatement(parser, validator, modifier, member, fieldStatement);
+                    final FieldSetStatement statement =
+                        this.fieldSetStatement(parser, validator, modifier, member, fieldStatement);
                     fieldStatement.withSetter(statement);
                 }
                 default -> throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.UNSUPPORTED_FIELD_MEMBER, member.type())
-                        .at(member)
-                        .build();
-            };
+                    .message(DiagnosticMessage.UNSUPPORTED_FIELD_MEMBER, member.type())
+                    .at(member)
+                    .build();
+            }
+            ;
         }
     }
 
-    private FieldGetStatement fieldGetStatement(TokenParser parser, TokenStepValidator validator, Token modifier, final Token get, final FieldStatement field) {
+    private FieldGetStatement fieldGetStatement(
+        TokenParser parser,
+        TokenStepValidator validator,
+        Token modifier,
+        final Token get,
+        final FieldStatement field
+    ) {
         TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
         final BlockStatement body;
         if (parser.match(parameters.open())) {
@@ -108,18 +127,26 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
         return new FieldGetStatement(modifier, get, field, body);
     }
 
-    private FieldSetStatement fieldSetStatement(TokenParser parser, TokenStepValidator validator,  Token modifier, final Token set, final FieldStatement field) {
+    private FieldSetStatement fieldSetStatement(
+        TokenParser parser,
+        TokenStepValidator validator,
+        Token modifier,
+        final Token set,
+        final FieldStatement field
+    ) {
         TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
         if (parser.match(parameters.open())) {
-            final Token parameterName = validator.expect(parser.tokenRegistry().literals().identifier(), "parameter name");
-            final ParametricExecutableStatement.Parameter parameter = new ParametricExecutableStatement.Parameter(parameterName);
+            final Token parameterName =
+                validator.expect(parser.tokenRegistry().literals().identifier(), "parameter name");
+            final ParametricExecutableStatement.Parameter parameter =
+                new ParametricExecutableStatement.Parameter(parameterName);
             validator.expectAfter(parameters.close(), "field set declaration");
 
             BlockStatement body =
                 this.blockStatement("field set declaration", set, parser, validator);
             return new FieldSetStatement(modifier, set, field, body, parameter);
         }
-        else{
+        else {
             validator.expectAfter(parser.tokenRegistry().statementEnd(), "field set declaration");
             return new FieldSetStatement(modifier, set, field, null, null);
         }

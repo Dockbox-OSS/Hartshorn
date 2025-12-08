@@ -27,9 +27,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
  * Represents a token type that is used to define conditions in the HSL language.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ConditionTokenType implements EnumTokenType {
@@ -66,17 +66,18 @@ public enum ConditionTokenType implements EnumTokenType {
      */
     AND(builder -> builder.repeats(BitwiseTokenType.BITWISE_AND)),
     /**
-     * '||' character, representing a 'logical or' condition. Logical or conditions are
-     * used to combine two or more conditions, and are true if at least one condition is true.
+     * '||' character, representing a 'logical or' condition. Logical or conditions are used to
+     * combine two or more conditions, and are true if at least one condition is true.
      */
     OR(builder -> builder.repeats(BitwiseTokenType.BITWISE_OR)),
 
     /**
      * '?:' character, representing a shorthand ternary (elvis) condition. Ternary conditions are
-     * used to evaluate a condition and return one of two values, based on the result of the condition.
-     * The shorthand ternary condition is used to return a value if the condition is truthy, and a default
-     * value if the condition is falsy. This is a shorthand for the full ternary condition, which is
-     * not expressed in a single token, but rather an expression of multiple individual tokens.
+     * used to evaluate a condition and return one of two values, based on the result of the
+     * condition. The shorthand ternary condition is used to return a value if the condition is
+     * truthy, and a default value if the condition is falsy. This is a shorthand for the full
+     * ternary condition, which is not expressed in a single token, but rather an expression of
+     * multiple individual tokens.
      */
     ELVIS(builder -> builder.combines(BaseTokenType.QUESTION_MARK, BaseTokenType.COLON)),
 
@@ -86,8 +87,8 @@ public enum ConditionTokenType implements EnumTokenType {
 
     ConditionTokenType(TokenCharacter character) {
         this(builder -> builder
-                .representation(String.valueOf(character.character()))
-                .characters(character)
+            .representation(String.valueOf(character.character()))
+            .characters(character)
         );
     }
 

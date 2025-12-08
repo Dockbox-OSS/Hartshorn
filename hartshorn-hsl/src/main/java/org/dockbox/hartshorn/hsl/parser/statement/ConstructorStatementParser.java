@@ -32,17 +32,22 @@ import java.util.Set;
  * A parser for {@link ConstructorStatement} nodes.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
-public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement> implements ParametricStatementParser {
+public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement>
+    implements ParametricStatementParser {
 
     @Override
-    public Option<? extends ConstructorStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends ConstructorStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         Token keyword = parser.peek();
         if (keyword.type() == FunctionTokenType.CONSTRUCTOR) {
             parser.advance();
-            List<Parameter> parameters = this.parameters(parser, validator, "constructor", -1, keyword.type());
+            List<Parameter> parameters =
+                this.parameters(parser, validator, "constructor", -1, keyword.type());
             BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
             return Option.of(new ConstructorStatement(keyword, parameters, body));
         }

@@ -37,16 +37,18 @@ import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 public class SuperExpressionTests {
 
     @Test
-    void superMethodCanBeAccessedWithCurrentInstance(@Inject ApplicationContext applicationContext) {
+    void superMethodCanBeAccessedWithCurrentInstance(
+        @Inject ApplicationContext applicationContext
+    ) {
         // 'super.hello' rather than 'super.hello()', as we want to test resolution, not
         // invocation (which would be CallExpressionParser -> FunctionCallExpression).
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "super.hello")
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    // To access 'super', we need to be in a subclass context
-                    context.resolver().currentClassType(ClassType.SUBCLASS);
-                }))
-                .build();
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                // To access 'super', we need to be in a subclass context
+                context.resolver().currentClassType(ClassType.SUBCLASS);
+            }))
+            .build();
 
         Expression expression = helper.expression();
         // Resolve scope distance for 'super' to 1 (one level up, to parent)
@@ -55,13 +57,13 @@ public class SuperExpressionTests {
         ClassReference classReference = Mockito.mock(ClassReference.class);
         MethodReference methodReference = Mockito.mock(MethodReference.class);
         Mockito.when(classReference.method("hello"))
-                .thenReturn(methodReference);
+            .thenReturn(methodReference);
         Mockito.when(methodReference.bind(Mockito.any(InstanceReference.class)))
-                .thenAnswer(invocation -> {
-                    InstanceReference argument = invocation.getArgument(0, InstanceReference.class);
-                    Mockito.when(methodReference.bound()).thenReturn(argument);
-                    return methodReference;
-                });
+            .thenAnswer(invocation -> {
+                InstanceReference argument = invocation.getArgument(0, InstanceReference.class);
+                Mockito.when(methodReference.bound()).thenReturn(argument);
+                return methodReference;
+            });
 
         // Define 'super' in the parent scope (parent class)
         VariableScope parentScope = helper.interpreter().visitingScope();
@@ -74,8 +76,8 @@ public class SuperExpressionTests {
         helper.interpreter().enterScope(subScope);
 
         Object value = helper.interpretOnly()
-                .captures()
-                .capturedValue();
+            .captures()
+            .capturedValue();
         Assertions.assertSame(methodReference, value);
         Assertions.assertSame(instanceReference, methodReference.bound());
     }

@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A common library containing multiple {@link NativeModule native modules} which can be
- * used to invoke native functions. The library is loaded into the interpreter when a
+ * A common library containing multiple {@link NativeModule native modules} which can be used to
+ * invoke native functions. The library is loaded into the interpreter when a
  * {@link NativeFunctionStatement} or {@link ModuleStatement} is encountered.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class NativeLibrary implements CallableNode {
@@ -44,12 +44,19 @@ public class NativeLibrary implements CallableNode {
     private final NativeFunctionStatement declaration;
     private final Map<String, NativeModule> externalModules;
 
-    public NativeLibrary(NativeFunctionStatement declaration, Map<String, NativeModule> externalModules) {
+    public NativeLibrary(
+        NativeFunctionStatement declaration,
+        Map<String, NativeModule> externalModules
+    ) {
         this.declaration = declaration;
         this.externalModules = externalModules;
     }
 
-    public NativeLibrary(NativeFunctionStatement declaration, String moduleName, NativeModule externalModule) {
+    public NativeLibrary(
+        NativeFunctionStatement declaration,
+        String moduleName,
+        NativeModule externalModule
+    ) {
         this(declaration, Map.of(moduleName, externalModule));
     }
 
@@ -63,14 +70,19 @@ public class NativeLibrary implements CallableNode {
     }
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) throws ApplicationException {
         String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(at)
-                    .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
-                    .build();
+                .at(at)
+                .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
+                .build();
         }
 
         NativeModule module = this.externalModules.get(moduleName);

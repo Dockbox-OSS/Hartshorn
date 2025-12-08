@@ -55,23 +55,23 @@ import java.util.stream.Collectors;
  *
  * <p>Note that this lexer is not aware of any specific tokens on its own, and requires a
  * {@link TokenRegistry} to be provided. This registry should be configured with the
- * {@link TokenType token types} that are to be recognized by the lexer. As such, this lexer
- * is not aware of any specific language, and can be used to tokenize any language.
+ * {@link TokenType token types} that are to be recognized by the lexer. As such, this lexer is not
+ * aware of any specific language, and can be used to tokenize any language.
  *
  * <p>Tokens are matched by traversing a {@link TokenGraph}, which is built by the
  * {@link TokenRegistry}. This graph is traversed by matching the characters of available
- * {@link TokenType token types} to the characters of the source code. The most accurate
- * match is used to determine the token type. Keywords are matched individually based on their
+ * {@link TokenType token types} to the characters of the source code. The most accurate match is
+ * used to determine the token type. Keywords are matched individually based on their
  * {@link TokenType#tokenName() token name}.
  *
  * <p>Literals like strings, characters, and numbers are parsed separately, albeit with the
- * rules provided by the {@link TokenCharacterList} of the {@link TokenRegistry}. This allows
- * for a more flexible configuration of the lexer, as the {@link TokenCharacterList} can be
- * configured to match the needs of the language that is to be tokenized.
+ * rules provided by the {@link TokenCharacterList} of the {@link TokenRegistry}. This allows for a
+ * more flexible configuration of the lexer, as the {@link TokenCharacterList} can be configured to
+ * match the needs of the language that is to be tokenized.
  *
  * <p>Comments are also parsed separately, and are matched based on their {@link CommentType}
- * as provided by the {@link TokenRegistry}. Comments are not added to the list of tokens, but
- * are instead added to the list of {@link Comment comments}.
+ * as provided by the {@link TokenRegistry}. Comments are not added to the list of tokens, but are
+ * instead added to the list of {@link Comment comments}.
  *
  * <p>Whitespace is ignored, except for newlines (unless the whitespace is inside a string
  * literal or comment). Newlines are used to determine the current line number, which is used to
@@ -143,8 +143,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * The current column number. This is the column number of the character that is currently
-     * being matched.
+     * The current column number. This is the column number of the character that is currently being
+     * matched.
      *
      * @return The current column number.
      */
@@ -162,9 +162,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Increments the current index by one. This moves the index to the next character in the
-     * source code. This does not check if the end of the source code has been reached, nor
-     * does it update the current line and column numbers.
+     * Increments the current index by one. This moves the index to the next character in the source
+     * code. This does not check if the end of the source code has been reached, nor does it update
+     * the current line and column numbers.
      */
     protected void incrementCurrent() {
         this.current++;
@@ -183,27 +183,27 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     @Override
     public List<Token> scanTokens() {
-        synchronized(this) {
+        synchronized (this) {
             this.reset();
 
-            while(!this.isAtEnd()) {
+            while (!this.isAtEnd()) {
                 this.start = this.current;
                 this.scanToken();
             }
 
             Token token = Token.of(this.tokenRegistry.literals().eof())
-                    .line(this.line)
-                    .column(this.start)
-                    .build();
+                .line(this.line)
+                .column(this.start)
+                .build();
             this.tokens.add(token);
             return this.tokens;
         }
     }
 
     /**
-     * Resets the state of this lexer. This clears the list of tokens and comments, and resets
-     * the line and column numbers. This method should always be called before a new tokenization
-     * is started.
+     * Resets the state of this lexer. This clears the list of tokens and comments, and resets the
+     * line and column numbers. This method should always be called before a new tokenization is
+     * started.
      */
     protected void reset() {
         this.tokens.clear();
@@ -218,44 +218,44 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     /**
      * Refreshes the list of keywords. This method should be called whenever the list of
-     * {@link TokenType#keyword() keywords} in the {@link TokenRegistry} has changed, or
-     * a new tokenization is started.
+     * {@link TokenType#keyword() keywords} in the {@link TokenRegistry} has changed, or a new
+     * tokenization is started.
      */
     protected void refreshKeywords() {
         this.keywords.clear();
 
         Map<String, TokenType> tokensByName = this.tokenRegistry.tokenTypes(TokenType::keyword)
-                .stream()
-                .collect(Collectors.toMap(TokenType::tokenName, Function.identity()));
+            .stream()
+            .collect(Collectors.toMap(TokenType::tokenName, Function.identity()));
         this.keywords.putAll(tokensByName);
     }
 
     /**
      * Scans the next token. This method is called for each character in the source code. The
      * character is matched against the {@link TokenRegistry} to determine the type of character
-     * that is being scanned. Based on the type of character, the appropriate method is called
-     * to scan the token.
+     * that is being scanned. Based on the type of character, the appropriate method is called to
+     * scan the token.
      */
     protected void scanToken() {
         TokenCharacter tokenCharacter = this.pointToNextChar();
         TokenCharacter nullCharacter = this.tokenRegistry().characterList().nullCharacter();
-        if(tokenCharacter == nullCharacter) {
+        if (tokenCharacter == nullCharacter) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNEXPECTED_NULL)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNEXPECTED_NULL)
+                .position(this.line(), this.column())
+                .build();
         }
-        else if(this.tokenRegistry().isLineSeparator(tokenCharacter)) {
+        else if (this.tokenRegistry().isLineSeparator(tokenCharacter)) {
             this.nextLine();
         }
         else if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
-            switch(sharedTokenCharacter) {
+            switch (sharedTokenCharacter) {
                 case SPACE, CARRIAGE_RETURN, TAB -> { /* Ignore whitespace. */ }
                 case NEWLINE -> this.nextLine();
                 case NULL -> throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                        .message(DiagnosticMessage.UNEXPECTED_NULL)
-                        .position(this.line(), this.column())
-                        .build();
+                    .message(DiagnosticMessage.UNEXPECTED_NULL)
+                    .position(this.line(), this.column())
+                    .build();
             }
         }
         else {
@@ -282,39 +282,44 @@ public class SimpleTokenRegistryLexer implements Lexer {
      *
      * @param tokenCharacter The character to scan.
      * @param characterList The list of special characters.
+     *
      * @return {@code true} if the character is a special character, {@code false} otherwise.
      *
      * @throws ScriptEvaluationError If the character is invalid.
      */
-    protected boolean scanCharacterList(TokenCharacter tokenCharacter, TokenCharacterList characterList) throws ScriptEvaluationError {
+    protected boolean scanCharacterList(
+        TokenCharacter tokenCharacter,
+        TokenCharacterList characterList
+    ) throws ScriptEvaluationError {
         if (tokenCharacter == characterList.nullCharacter()) {
-            // Null character is not allowed. This is injected into the analysis when the source length is exceeded.
+            // Null character is not allowed. This is injected into the analysis when the source
+            // length is exceeded.
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNEXPECTED_NULL)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNEXPECTED_NULL)
+                .position(this.line(), this.column())
+                .build();
         }
-        else if(tokenCharacter == characterList.quoteCharacter()) {
+        else if (tokenCharacter == characterList.quoteCharacter()) {
             this.scanString();
             return true;
         }
-        else if(tokenCharacter == characterList.charCharacter()) {
+        else if (tokenCharacter == characterList.charCharacter()) {
             this.scanChar();
             return true;
         }
-        else if(tokenCharacter == characterList.numberSeparator()) {
+        else if (tokenCharacter == characterList.numberSeparator()) {
             // Should only occur in #scanNumber(), so any other occurrence is an error.
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNEXPECTED_DANGLING_NUMBER_SEPARATOR)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNEXPECTED_DANGLING_NUMBER_SEPARATOR)
+                .position(this.line(), this.column())
+                .build();
         }
         return false;
     }
 
     /**
-     * Scans a token that is represented by one or more standalone characters. This will resolve
-     * the appropriate token type by traversing the {@link TokenGraph} of the {@link TokenRegistry}.
+     * Scans a token that is represented by one or more standalone characters. This will resolve the
+     * appropriate token type by traversing the {@link TokenGraph} of the {@link TokenRegistry}.
      *
      * @param tokenCharacter The character that is being scanned.
      */
@@ -323,7 +328,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         int depth = 1;
         while (next != null) {
             boolean match = false;
-            for(GraphNode<TokenNode> child : next.children()) {
+            for (GraphNode<TokenNode> child : next.children()) {
                 if (this.match(child.value().character())) {
                     next = (ContainableGraphNode<TokenNode>) child;
                     match = true;
@@ -344,14 +349,16 @@ public class SimpleTokenRegistryLexer implements Lexer {
                         this.addMatchedToken(parent.get().value());
                     }
                     else {
-                        String expectedTokens = CollectionUtilities.toString(next.children(), node -> {
-                            TokenNode tokenNode = node.value();
-                            return "'%s' (%s)".formatted(tokenNode.tokenType().representation(), tokenNode.tokenType().tokenName());
-                        });
+                        String expectedTokens =
+                            CollectionUtilities.toString(next.children(), node -> {
+                                TokenNode tokenNode = node.value();
+                                return "'%s' (%s)".formatted(tokenNode.tokenType().representation(),
+                                    tokenNode.tokenType().tokenName());
+                            });
                         throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                                .message(DiagnosticMessage.UNEXPECTED_EOT, expectedTokens)
-                                .position(this.line(), this.column())
-                                .build();
+                            .message(DiagnosticMessage.UNEXPECTED_EOT, expectedTokens)
+                            .position(this.line(), this.column())
+                            .build();
                     }
                 }
                 return;
@@ -360,20 +367,22 @@ public class SimpleTokenRegistryLexer implements Lexer {
             depth++;
         }
         throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_CHAR, this.currentChar().character())
-                .position(this.line(), this.column())
-                .build();
+            .message(DiagnosticMessage.UNEXPECTED_CHAR, this.currentChar().character())
+            .position(this.line(), this.column())
+            .build();
     }
 
     /**
-     * Attempts to find a valid parent for the given node. This method is used to find a valid
-     * token if we encounter a leaf node that does not have a token type. This method will traverse
-     * the parents of the given node, and will return the first parent that has a valid token type.
+     * Attempts to find a valid parent for the given node. This method is used to find a valid token
+     * if we encounter a leaf node that does not have a token type. This method will traverse the
+     * parents of the given node, and will return the first parent that has a valid token type.
      *
-     * <p>This is used to find the correct token type when the token is incomplete as a combination,
-     * but can be read as separate tokens. For example, the source "1 =++ 1" can be read as "1", "=", "++", "1"
-     * but the initial matching would attempt to match "=++" as a single token. This method will then
-     * attempt to find the valid parent, which is the "=" token, and will return that token type.
+     * <p>This is used to find the correct token type when the token is incomplete as a
+     * combination,
+     * but can be read as separate tokens. For example, the source "1 =++ 1" can be read as "1",
+     * "=", "++", "1" but the initial matching would attempt to match "=++" as a single token. This
+     * method will then attempt to find the valid parent, which is the "=" token, and will return
+     * that token type.
      *
      * <p>To account for the characters that were already matched, the depth of the current token
      * is provided. This is used to step back the correct number of characters to ensure that the
@@ -381,11 +390,15 @@ public class SimpleTokenRegistryLexer implements Lexer {
      *
      * @param node The node for which a valid parent is to be found.
      * @param depth The depth of the current token.
+     *
      * @return The first valid parent, if any.
      */
-    protected Option<GraphNode<TokenNode>> tryFindValidParent(ContainableGraphNode<TokenNode> node, int depth) {
+    protected Option<GraphNode<TokenNode>> tryFindValidParent(
+        ContainableGraphNode<TokenNode> node,
+        int depth
+    ) {
         Queue<GraphNode<TokenNode>> parents = new ArrayDeque<>(node.parents());
-        while(!parents.isEmpty()) {
+        while (!parents.isEmpty()) {
             GraphNode<TokenNode> parent = parents.poll();
             if (parent.value().tokenType() != null) {
                 // We found a valid parent, so we can use that. Make sure to step back, to ensure
@@ -403,9 +416,10 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Adds a token to the list of tokens. If the token matches a {@link CommentType comment type
-     * definition} as provided by the active {@link TokenRegistry}, the token is added to the list
-     * of comments. Otherwise, the token is added to the list of tokens.
+     * Adds a token to the list of tokens. If the token matches a
+     * {@link CommentType comment type definition} as provided by the active {@link TokenRegistry},
+     * the token is added to the list of comments. Otherwise, the token is added to the list of
+     * tokens.
      *
      * @param next The token that is matched.
      */
@@ -414,18 +428,19 @@ public class SimpleTokenRegistryLexer implements Lexer {
         CommentTokenList commentTokenList = this.tokenRegistry().comments();
         Option<CommentType> commentType = commentTokenList.resolveFromOpenToken(tokenType);
         if (commentType.present()) {
-            Option<TokenTypePair> tokenTypePair = commentTokenList.resolveTokenPairFromOpen(tokenType);
+            Option<TokenTypePair> tokenTypePair =
+                commentTokenList.resolveTokenPairFromOpen(tokenType);
             if (tokenTypePair.absent()) {
                 throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                        .message(DiagnosticMessage.INVALID_COMMENT_TOKEN_PAIR, commentType.get().name())
-                        .position(this.line(), this.column())
-                        .build();
+                    .message(DiagnosticMessage.INVALID_COMMENT_TOKEN_PAIR, commentType.get().name())
+                    .position(this.line(), this.column())
+                    .build();
             }
             TokenType closeToken = tokenTypePair.get().close();
-            switch(commentType.get()) {
-            case LINE -> this.scanComment();
-            case BLOCK -> this.scanMultilineComment(closeToken);
-            default -> throw ScriptEvaluationError.builder(Phase.TOKENIZING)
+            switch (commentType.get()) {
+                case LINE -> this.scanComment();
+                case BLOCK -> this.scanMultilineComment(closeToken);
+                default -> throw ScriptEvaluationError.builder(Phase.TOKENIZING)
                     .message(DiagnosticMessage.UNSUPPORTED_COMMENT_TYPE)
                     .position(this.line(), this.column())
                     .build();
@@ -442,43 +457,44 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * only be used when scanning for a new token.
      *
      * @param tokenCharacter The character to match.
+     *
      * @return The next node in the token graph that matches the given character.
      *
      * @throws ScriptEvaluationError If the character is not matched.
      */
     protected ContainableGraphNode<TokenNode> findNext(TokenCharacter tokenCharacter) {
         Optional<ContainableGraphNode<TokenNode>> first = this.tokenGraph().roots().stream()
-                .filter(node -> node.value().character() == tokenCharacter)
-                .map(node -> (ContainableGraphNode<TokenNode>) node)
-                .findFirst();
+            .filter(node -> node.value().character() == tokenCharacter)
+            .map(node -> (ContainableGraphNode<TokenNode>) node)
+            .findFirst();
         return first.orElseThrow(() -> ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_CHAR, tokenCharacter.character())
-                .position(this.line(), this.column())
-                .build());
+            .message(DiagnosticMessage.UNEXPECTED_CHAR, tokenCharacter.character())
+            .position(this.line(), this.column())
+            .build());
     }
 
     /**
      * Attempts to match the given character to a non-standalone token. Non-standalone means that
-     * the character is not part of a pre-defined {@link TokenType}, but rather part of a literal
-     * or identifier. If the character is matched, the appropriate method is called to scan the
-     * token. If the character is not matched, an exception is thrown.
+     * the character is not part of a pre-defined {@link TokenType}, but rather part of a literal or
+     * identifier. If the character is matched, the appropriate method is called to scan the token.
+     * If the character is not matched, an exception is thrown.
      *
      * @param character The character to match.
      *
      * @throws ScriptEvaluationError If the character is not matched.
      */
     protected void scanOtherToken(TokenCharacter character) {
-        if(character.isDigit()) {
+        if (character.isDigit()) {
             this.scanNumber();
         }
-        else if(character.isAlpha()) {
+        else if (character.isAlpha()) {
             this.scanIdentifier();
         }
         else {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNEXPECTED_CHAR, character.character())
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNEXPECTED_CHAR, character.character())
+                .position(this.line(), this.column())
+                .build();
         }
     }
 
@@ -487,7 +503,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * the list of comments.
      *
      * @param closeToken The token that closes the block comment, or {@code null} if the comment is
-     *                   closed by a newline.
+     * closed by a newline.
      *
      * @see CommentTokenList#resolveTokenPairFromOpen(TokenType)
      * @see CommentTokenList#resolveFromOpenToken(TokenType)
@@ -497,14 +513,14 @@ public class SimpleTokenRegistryLexer implements Lexer {
         int line = this.line();
 
         TokenCharacter[] characters = closeToken != null
-                ? closeToken.characters()
-                // If no explicit close token is provided, the comment is closed by a newline
-                : new TokenCharacter[]{};
+            ? closeToken.characters()
+            // If no explicit close token is provided, the comment is closed by a newline
+            : new TokenCharacter[] {};
 
         while (!this.isAtEnd()) {
             // Ensure we don't match if there is no explicit close token
             boolean match = characters.length > 0;
-            for(int i = 0; i < characters.length; i++) {
+            for (int i = 0; i < characters.length; i++) {
                 if (this.peekChar(i) != characters[i]) {
                     match = false;
                     break;
@@ -516,7 +532,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
             }
             if (this.tokenRegistry().isLineSeparator(this.currentChar())) {
                 this.nextLine();
-                // If there is no explicit close token, treat line separators as the end of the comment
+                // If there is no explicit close token, treat line separators as the end of
+                // the comment
                 if (characters.length == 0) {
                     break;
                 }
@@ -531,7 +548,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * the list of tokens as a string literal.
      */
     protected void scanString() {
-        while (this.currentChar() != this.tokenRegistry().characterList().quoteCharacter() && !this.isAtEnd()) {
+        while (this.currentChar() != this.tokenRegistry().characterList().quoteCharacter()
+            && !this.isAtEnd()) {
             if (this.tokenRegistry().isLineSeparator(this.currentChar())) {
                 this.nextLine();
             }
@@ -541,9 +559,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         // Unterminated string
         if (this.isAtEnd()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNTERMINATED_STRING)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNTERMINATED_STRING)
+                .position(this.line(), this.column())
+                .build();
         }
 
         // The closing quote
@@ -563,9 +581,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         this.pointToNextChar();
         if (this.currentChar() != this.tokenRegistry().characterList().charCharacter()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNTERMINATED_CHAR)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.UNTERMINATED_CHAR)
+                .position(this.line(), this.column())
+                .build();
         }
         this.pointToNextChar();
         this.addToken(this.tokenRegistry().literals().character(), value.charAt(0));
@@ -591,20 +609,22 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     /**
      * Continues to match all text until the end of a number literal is found. The text is added to
-     * the list of tokens as a number literal. This method also matches fractional parts of a
-     * number literal. For example, the source "123.456" is matched as a single number literal.
-     * The fractional part is not matched as a separate token.
+     * the list of tokens as a number literal. This method also matches fractional parts of a number
+     * literal. For example, the source "123.456" is matched as a single number literal. The
+     * fractional part is not matched as a separate token.
      *
      * <p>Numbers can contain underscores, which are ignored. For example, the source "1_000_000"
      * is matched as a single number literal with the value 1000000.
      */
     protected void scanNumber() {
-        while (this.currentChar().isDigit() || this.tokenRegistry.characterList().numberSeparator() == this.currentChar()) {
+        while (this.currentChar().isDigit()
+            || this.tokenRegistry.characterList().numberSeparator() == this.currentChar()) {
             this.pointToNextChar();
         }
 
         // Look for a fractional part.
-        if (this.tokenRegistry.characterList().numberDelimiter() == this.currentChar() && this.nextChar().isDigit()) {
+        if (this.tokenRegistry.characterList().numberDelimiter() == this.currentChar()
+            && this.nextChar().isDigit()) {
             // Consume the delimiter
             do {
                 this.pointToNextChar();
@@ -624,13 +644,14 @@ public class SimpleTokenRegistryLexer implements Lexer {
      */
     protected void scanIdentifier() {
         TokenCharacter previousCharacter = this.peekChar(-1);
-        // Ensure that the identifier is valid. The previous char should be consumed by the caller, so we need to ensure
-        // that that's the case.
-        if (!previousCharacter.isAlpha() && previousCharacter != this.tokenRegistry.characterList().nullCharacter()) {
+        // Ensure that the identifier is valid. The previous char should be consumed by the caller,
+        // so we need to ensure that that's the case.
+        if (!previousCharacter.isAlpha() && previousCharacter != this.tokenRegistry.characterList()
+            .nullCharacter()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.IDENTIFIER_STARTED_WITH_DIGIT)
-                    .position(this.line(), this.column())
-                    .build();
+                .message(DiagnosticMessage.IDENTIFIER_STARTED_WITH_DIGIT)
+                .position(this.line(), this.column())
+                .build();
         }
 
         while (this.currentChar().isAlphaNumeric()) {
@@ -648,16 +669,18 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Looks up the token type that represents the given text as a literal (e.g. {@code null}, {@code true},
-     * {@code false}). If the text does not match any known literal, the identifier token type is returned.
+     * Looks up the token type that represents the given text as a literal (e.g. {@code null},
+     * {@code true}, {@code false}). If the text does not match any known literal, the identifier
+     * token type is returned.
      *
      * @param text The text to look up.
+     *
      * @return The token type that represents the given text as a literal.
      */
     @NonNull
     protected TokenType lookupLiteralToken(String text) {
         Set<TokenType> literals = this.tokenRegistry.literals().literals();
-        for(TokenType literal : literals) {
+        for (TokenType literal : literals) {
             if (literal.defaultLexeme() != null && literal.defaultLexeme().equals(text)) {
                 return literal;
             }
@@ -666,8 +689,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Advances to the next character in the source code. This increments the current index and
-     * the column number. The character at the new current index is returned.
+     * Advances to the next character in the source code. This increments the current index and the
+     * column number. The character at the new current index is returned.
      *
      * @return The character at the new current index.
      */
@@ -679,24 +702,28 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Adds a token to the list of tokens. The token is created based on the current
-     * state of the lexer.
+     * Adds a token to the list of tokens. The token is created based on the current state of the
+     * lexer.
      *
      * @param type the type of the token
      */
     protected void addToken(TokenType type) {
         if (type.reserved()) {
             LOG.warn(
-                    "Reserved token type used: {} at line {}, column {}. Reserved tokens are not supported and may not be implemented yet. This may cause unexpected behavior.",
-                    type, this.line, this.column
+                "Reserved token type used: {} at line {}, column {}. "
+                    + "Reserved tokens are not supported and may not be implemented yet. "
+                    + "This may cause unexpected behavior.",
+                type,
+                this.line,
+                this.column
             );
         }
         this.addToken(type, null);
     }
 
     /**
-     * Adds a token to the list of tokens. The token is created based on the current
-     * state of the lexer.
+     * Adds a token to the list of tokens. The token is created based on the current state of the
+     * lexer.
      *
      * @param type the type of the token
      * @param literal the literal value of the token
@@ -704,17 +731,18 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void addToken(TokenType type, Object literal) {
         String text = this.source.substring(this.start, this.current);
         Token token = Token.of(type, text)
-                .literal(literal)
-                .line(this.line)
-                .column(this.column - text.length() + 1)
-                .build();
+            .literal(literal)
+            .line(this.line)
+            .column(this.column - text.length() + 1)
+            .build();
         this.tokens.add(token);
     }
 
     /**
      * Checks if the lexer has reached the end of the source code.
      *
-     * @return {@code true} if the lexer has reached the end of the source code, {@code false} otherwise.
+     * @return {@code true} if the lexer has reached the end of the source code, {@code false}
+     * otherwise.
      */
     protected boolean isAtEnd() {
         return this.current >= this.source.length();
@@ -722,10 +750,11 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     /**
      * Attempts to match the current character to the expected character. If the characters match,
-     * the current position is advanced and {@code true} is returned. If the characters do not match,
-     * or if the lexer has reached the end of the source code, {@code false} is returned.
+     * the current position is advanced and {@code true} is returned. If the characters do not
+     * match, or if the lexer has reached the end of the source code, {@code false} is returned.
      *
      * @param expected The expected character.
+     *
      * @return {@code true} if the characters match, {@code false} otherwise.
      */
     protected boolean match(TokenCharacter expected) {
@@ -759,10 +788,11 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     /**
-     * Peeks at the character at the given delta from the current position. This does not
-     * advance the current position.
+     * Peeks at the character at the given delta from the current position. This does not advance
+     * the current position.
      *
      * @param delta The delta from the current position.
+     *
      * @return The character at the given delta.
      */
     protected TokenCharacter peekChar(int delta) {

@@ -84,8 +84,8 @@ public class ComplexArrayExpressionParser implements ExpressionParser {
         }
         while (parser.match(BaseTokenType.COMMA));
         Token close = validator.expectAfter(
-                parser.tokenRegistry().tokenPairs().array().close(),
-                "array"
+            parser.tokenRegistry().tokenPairs().array().close(),
+            "array"
         );
         return new ArrayLiteralExpression(open, close, List.copyOf(elements));
     }

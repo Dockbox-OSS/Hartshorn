@@ -32,7 +32,8 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
+public class ArrayComprehensionExpressionInterpreter
+    implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
 
     @Override
     public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
@@ -46,8 +47,10 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
         return new Array(values.toArray());
     }
 
-    private static void visitIterable(ArrayComprehensionExpression node, Interpreter interpreter,
-                                      List<Object> values, Iterable<?> iterable) {
+    private static void visitIterable(
+        ArrayComprehensionExpression node, Interpreter interpreter,
+        List<Object> values, Iterable<?> iterable
+    ) {
         for (Object element : iterable) {
             interpreter.visitingScope().assign(node.selector(), element);
 

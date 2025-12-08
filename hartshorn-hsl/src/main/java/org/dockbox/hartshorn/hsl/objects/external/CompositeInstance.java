@@ -65,17 +65,17 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
         if (superClass == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
-                    .at(virtualClass.constructor().declaration())
-                    .build();
+                .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
+                .at(virtualClass.constructor().declaration())
+                .build();
         }
         this.firstExternalClass =
             TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
-                    .at(virtualClass.constructor().declaration())
-                    .build();
+                .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
+                .at(virtualClass.constructor().declaration())
+                .build();
         }
     }
 
@@ -113,10 +113,10 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
         catch (Throwable throwable) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
-                    .at(at)
-                    .cause(throwable)
-                    .build();
+                .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                .at(at)
+                .cause(throwable)
+                .build();
         }
 
         // Virtual class constructor

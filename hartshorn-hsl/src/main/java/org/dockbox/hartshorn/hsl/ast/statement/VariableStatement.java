@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A variable statement, which declares a variable with an optional initializer. If the
- * initializer is not provided, the variable will be initialized to <code>null</code>.
+ * A variable statement, which declares a variable with an optional initializer. If the initializer
+ * is not provided, the variable will be initialized to <code>null</code>.
  *
  * <p>For example, the statement below declares a variable named <code>x</code> with an
  * initializer of <code>10</code>:

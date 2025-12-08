@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.hsl.objects;
 
 /**
- * Represents a node that can be bound to an instance. This can be used to bind properties
- * to specific holders or executors.
+ * Represents a node that can be bound to an instance. This can be used to bind properties to
+ * specific holders or executors.
  *
  * @param <T> the type of the bound object
  *
@@ -29,18 +29,19 @@ package org.dockbox.hartshorn.hsl.objects;
 public interface BindableNode<T> {
 
     /**
-     * Creates a new instance of the node, and binds it to the given instance. The returned
-     * instance may be the same as the instance on which this method is invoked, if the current
-     * node is already bound to the given instance.
+     * Creates a new instance of the node, and binds it to the given instance. The returned instance
+     * may be the same as the instance on which this method is invoked, if the current node is
+     * already bound to the given instance.
      *
      * @param instance the instance to bind to
+     *
      * @return the bound instance
      */
     T bind(InstanceReference instance);
 
     /**
-     * Returns the instance to which this node is bound. If this node is not bound, {@code null}
-     * is returned.
+     * Returns the instance to which this node is bound. If this node is not bound, {@code null} is
+     * returned.
      *
      * @return the bound instance
      */

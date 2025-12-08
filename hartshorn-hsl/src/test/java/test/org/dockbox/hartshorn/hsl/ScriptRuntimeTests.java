@@ -57,7 +57,10 @@ public class ScriptRuntimeTests {
     @SuppressWarnings("StreamResourceLeak")
     public static Stream<Arguments> scripts() throws IOException {
         Path resources = Paths.get("src", "test", "resources");
-        BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");
+        BiPredicate<Path, BasicFileAttributes> filter =
+            (path, attributes) -> attributes.isRegularFile() && path.getFileName()
+                .toString()
+                .endsWith(".hsl");
         return Files.find(resources, 5, filter).map(Arguments::of);
     }
 
@@ -67,12 +70,12 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> bitwise() {
         return Stream.of(
-                Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
-                Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
-                Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
-                Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
-                Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
-                Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
+            Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
+            Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
+            Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
+            Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
+            Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
+            Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
         );
     }
 
@@ -125,27 +128,30 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithNativeAccess() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "isClosed() == false");
-        expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
+        ExpressionScript expression =
+            ExpressionScript.of(this.applicationContext, "isClosed() == false");
+        expression.runtime()
+            .module("application",
+                new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
 
     @Test
     void testMultilineWithComments() {
         String expression = """
-                print("Hello world!");
-                
-                # This is a comment
-                print("Hello world 2!");
-                
-                // This is also a comment, print("Hello world 3!");
-                print("Hello world 4!");
-                
-                /* This is a multi-line comment
-                see?!
-                */
-                print("Hello world 5!");
-                """;
+            print("Hello world!");
+            
+            # This is a comment
+            print("Hello world 2!");
+            
+            // This is also a comment, print("Hello world 3!");
+            print("Hello world 4!");
+            
+            /* This is a multi-line comment
+            see?!
+            */
+            print("Hello world 5!");
+            """;
         ScriptContext context = this.assertNoErrorsReported(expression);
 
         List<Comment> comments = context.comments();
@@ -157,7 +163,8 @@ public class ScriptRuntimeTests {
         Assertions.assertEquals(3, commentOne.line());
 
         Comment commentTwo = comments.get(1);
-        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", commentTwo.text());
+        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");",
+            commentTwo.text());
         Assertions.assertEquals(6, commentTwo.line());
 
         Comment commentThree = comments.get(2);
@@ -168,10 +175,10 @@ public class ScriptRuntimeTests {
     @Test
     void testGlobalResultTracking() {
         String expression = """
-                var a = 12;
-                var b = 13;
-                var c = a + b;
-                """;
+            var a = 12;
+            var b = 13;
+            var c = a + b;
+            """;
         ScriptContext context = this.assertNoErrorsReported(expression);
 
         Map<String, Object> results = context.interpreter().global().values();
@@ -218,12 +225,12 @@ public class ScriptRuntimeTests {
     @Test
     void testInterpreterCanBeReused() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                var x = 1;
-                test ("Variable has not been modified") {
-                    yield x == 1;
-                }
-                x = 2;
-                """);
+            var x = 1;
+            test ("Variable has not been modified") {
+                yield x == 1;
+            }
+            x = 2;
+            """);
         script.evaluate();
         script.evaluate();
     }

@@ -25,9 +25,9 @@ import java.util.function.Consumer;
  * Represents keyword tokens that are related to class definitions in the HSL language.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ClassTokenType implements EnumTokenType {

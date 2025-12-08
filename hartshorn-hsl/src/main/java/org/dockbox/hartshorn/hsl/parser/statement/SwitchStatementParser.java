@@ -40,7 +40,7 @@ import java.util.Set;
  * A parser for {@link SwitchStatement} nodes.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class SwitchStatementParser implements StatementParser<SwitchStatement> {
@@ -54,7 +54,10 @@ public class SwitchStatementParser implements StatementParser<SwitchStatement> {
     }
 
     @Override
-    public Option<? extends SwitchStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends SwitchStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ControlTokenType.SWITCH)) {
@@ -76,32 +79,34 @@ public class SwitchStatementParser implements StatementParser<SwitchStatement> {
                     Expression caseExpression = parser.expression();
                     if (!(caseExpression instanceof LiteralExpression literal)) {
                         throw ScriptEvaluationError.builder(Phase.PARSING)
-                                .message(DiagnosticMessage.NON_LITERAL_CASE_EXPRESSION, caseExpression)
-                                .at(caseToken)
-                                .build();
+                            .message(DiagnosticMessage.NON_LITERAL_CASE_EXPRESSION, caseExpression)
+                            .at(caseToken)
+                            .build();
                     }
 
                     if (matchedLiterals.contains(literal.value())) {
                         throw ScriptEvaluationError.builder(Phase.PARSING)
-                                .message(DiagnosticMessage.DUPLICATE_CASE_EXPRESSION, literal.value())
-                                .at(caseToken)
-                                .build();
+                            .message(DiagnosticMessage.DUPLICATE_CASE_EXPRESSION, literal.value())
+                            .at(caseToken)
+                            .build();
                     }
                     matchedLiterals.add(literal.value());
 
-                    Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if(body.present()) {
+                    Option<? extends Statement> body =
+                        this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.present()) {
                         cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                     }
                 }
                 else {
                     if (defaultBody != null) {
                         throw ScriptEvaluationError.builder(Phase.PARSING)
-                                .message(DiagnosticMessage.MULTIPLE_DEFAULT_CASES)
-                                .at(caseToken)
-                                .build();
+                            .message(DiagnosticMessage.MULTIPLE_DEFAULT_CASES)
+                            .at(caseToken)
+                            .build();
                     }
-                    Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
+                    Option<? extends Statement> body =
+                        this.caseBodyStatementParser.parse(parser, validator);
                     if (body.present()) {
                         defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                     }
@@ -111,9 +116,9 @@ public class SwitchStatementParser implements StatementParser<SwitchStatement> {
             validator.expectAfter(block.close(), SWITCH);
             if (cases.isEmpty() && defaultBody == null) {
                 throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT)
-                        .at(switchToken)
-                        .build();
+                    .message(DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT)
+                    .at(switchToken)
+                    .build();
             }
 
             return Option.of(new SwitchStatement(switchToken, expression, cases, defaultBody));

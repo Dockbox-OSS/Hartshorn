@@ -35,8 +35,8 @@ import java.util.List;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
- * {@link org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime} to wrap the script body in
- * a {@link TestStatement} and inline any required {@link NativeModule}s without the need for a
+ * {@link org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime} to wrap the script body in a
+ * {@link TestStatement} and inline any required {@link NativeModule}s without the need for a
  * standard library or a module header.
  *
  * @since 0.4.12
@@ -45,7 +45,8 @@ import java.util.List;
  */
 public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
-    public static final String VALIDATION_ID = ScriptContext.createSafeRuntimeVariable("validation");
+    public static final String VALIDATION_ID =
+        ScriptContext.createSafeRuntimeVariable("validation");
 
     public ExpressionCustomizer() {
         super(Phase.SEMANTIC_ANALYSIS);
@@ -62,11 +63,14 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     private void verifyIsExpression(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
-        if (!(lastStatement instanceof ExpressionStatement || (lastStatement instanceof ReturnStatement returnStatement && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
+        if (!(lastStatement instanceof ExpressionStatement
+            || (lastStatement instanceof ReturnStatement returnStatement
+            && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                    .at(lastStatement)
-                    .message(DiagnosticMessage.INVALID_EXPRESSION, lastStatement.getClass().getSimpleName())
-                    .build();
+                .at(lastStatement)
+                .message(DiagnosticMessage.INVALID_EXPRESSION,
+                    lastStatement.getClass().getSimpleName())
+                .build();
         }
     }
 
@@ -75,11 +79,13 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
         if (lastStatement instanceof ExpressionStatement expressionStatement) {
             Token returnToken = Token.of(ControlTokenType.YIELD)
-                    .lexeme(VALIDATION_ID)
-                    .virtual()
-                    .build();
+                .lexeme(VALIDATION_ID)
+                .virtual()
+                .build();
 
-            ReturnStatement returnStatement = new ReturnStatement(returnToken, expressionStatement.expression(), ReturnStatement.ReturnType.YIELD);
+            ReturnStatement returnStatement = new ReturnStatement(returnToken,
+                expressionStatement.expression(),
+                ReturnStatement.ReturnType.YIELD);
             statements.set(statements.size() - 1, returnStatement);
         }
 

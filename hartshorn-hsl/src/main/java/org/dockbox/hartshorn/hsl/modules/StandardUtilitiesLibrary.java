@@ -26,10 +26,10 @@ import java.util.function.Function;
 
 /**
  * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},
- * making them accessible to the {@link SimpleVisitorInterpreter}, but are
- * not guaranteed to be.
+ * making them accessible to the {@link SimpleVisitorInterpreter}, but are not guaranteed to be.
  *
- * <p>The libraries in this class are sorted alphabetically by name, and should never contain duplicate
+ * <p>The libraries in this class are sorted alphabetically by name, and should never contain
+ * duplicate
  * names.
  *
  * @since 0.4.12
@@ -54,8 +54,9 @@ public enum StandardUtilitiesLibrary {
     }
 
     /**
-     * Get the name of this library. This is the name used to load the library when
-     * using {@link org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement}s.
+     * Get the name of this library. This is the name used to load the library when using
+     * {@link org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement}s.
+     *
      * @return The name of this library.
      */
     public String libaryName() {
@@ -63,9 +64,11 @@ public enum StandardUtilitiesLibrary {
     }
 
     /**
-     * Get the {@link NativeModule} instance for this library. This is lazily loaded, and only created
-     * when it is requested.
+     * Get the {@link NativeModule} instance for this library. This is lazily loaded, and only
+     * created when it is requested.
+     *
      * @param context The application context.
+     *
      * @return The {@link NativeModule} instance for this library.
      */
     public NativeModule asModule(ScriptContext context) {
@@ -73,9 +76,11 @@ public enum StandardUtilitiesLibrary {
     }
 
     /**
-     * Get the {@link NativeModule} instances for all libraries. This is lazily loaded, and only created
-     * when it is requested.
+     * Get the {@link NativeModule} instances for all libraries. This is lazily loaded, and only
+     * created when it is requested.
+     *
      * @param context The application context.
+     *
      * @return The {@link NativeModule} instances for all libraries.
      */
     public static Map<String, NativeModule> asModules(ScriptContext context) {

@@ -26,28 +26,30 @@ import java.util.List;
  * Interpreter for {@link NativeFunctionStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class NativeFunctionStatementInterpreter extends AbstractNativeLibraryStatementInterpreter implements StatementInterpreter<NativeFunctionStatement> {
+public class NativeFunctionStatementInterpreter extends AbstractNativeLibraryStatementInterpreter
+    implements StatementInterpreter<NativeFunctionStatement> {
 
     @Override
     public Void interpret(NativeFunctionStatement node, Interpreter interpreter) {
         String functionName = node.name().lexeme();
         String moduleName = node.moduleName().lexeme();
         NativeModule module = interpreter.state().externalModules().get(moduleName);
-        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.moduleName(), interpreter)
+        List<NativeFunctionStatement> supportedFunctions =
+            module.supportedFunctions(node.moduleName(), interpreter)
                 .stream()
                 .filter(func -> func.name().lexeme().equals(functionName))
                 .filter(func -> func.params().size() == node.params().size())
                 .toList();
 
         this.registerModuleFunction(
-                moduleName,
-                functionName,
-                interpreter,
-                supportedFunctions,
-                module
+            moduleName,
+            functionName,
+            interpreter,
+            supportedFunctions,
+            module
         );
         return null;
     }

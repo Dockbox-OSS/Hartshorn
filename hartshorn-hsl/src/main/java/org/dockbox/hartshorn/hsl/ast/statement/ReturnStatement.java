@@ -21,11 +21,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A return statement, which returns a value from a function. This will exit the current
- * function immediately.
+ * A return statement, which returns a value from a function. This will exit the current function
+ * immediately.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ReturnStatement extends Statement {
@@ -46,7 +46,11 @@ public class ReturnStatement extends Statement {
     private final Token keyword;
     private final Expression expression;
 
-    public ReturnStatement(final Token keyword, final Expression expression, final ReturnType returnType) {
+    public ReturnStatement(
+        final Token keyword,
+        final Expression expression,
+        final ReturnType returnType
+    ) {
         super(keyword);
         this.keyword = keyword;
         this.expression = expression;

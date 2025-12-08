@@ -19,29 +19,29 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents the different types of member modifiers that can be used in the HSL language. These are used to specify
- * the visibility and behavior of class members and optionally variables.
+ * Represents the different types of member modifiers that can be used in the HSL language. These
+ * are used to specify the visibility and behavior of class members and optionally variables.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum MemberModifierTokenType implements EnumTokenType {
     /**
-     * 'public' token, representing a public member modifier. This modifier makes the member visible to all other
-     * classes.
+     * 'public' token, representing a public member modifier. This modifier makes the member visible
+     * to all other classes.
      */
     PUBLIC,
     /**
-     * 'private' token, representing a private member modifier. This modifier makes the member visible only within the
-     * class in which it is defined.
+     * 'private' token, representing a private member modifier. This modifier makes the member
+     * visible only within the class in which it is defined.
      */
     PRIVATE,
     /**
-     * 'final' token, representing a final member modifier. This modifier makes the member or variable unchangeable after
-     * it has been initialized.
+     * 'final' token, representing a final member modifier. This modifier makes the member or
+     * variable unchangeable after it has been initialized.
      */
     FINAL,
     ;
@@ -50,8 +50,8 @@ public enum MemberModifierTokenType implements EnumTokenType {
 
     MemberModifierTokenType() {
         this.metaData = TokenMetaData.builder(this)
-                .keyword(true)
-                .build();
+            .keyword(true)
+            .build();
     }
 
     @Override

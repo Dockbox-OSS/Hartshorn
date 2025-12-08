@@ -44,7 +44,7 @@ import java.util.Set;
  * within the class body.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class ClassStatementParser implements StatementParser<ClassStatement> {
@@ -56,7 +56,10 @@ public class ClassStatementParser implements StatementParser<ClassStatement> {
     }
 
     @Override
-    public Option<? extends ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends ClassStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ClassTokenType.CLASS)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
@@ -77,16 +80,19 @@ public class ClassStatementParser implements StatementParser<ClassStatement> {
             ConstructorStatement constructor = null;
             while (!parser.check(block.close()) && !parser.isAtEnd()) {
                 Statement declaration = this.classBodyStatement(parser, validator);
-                switch(declaration) {
-                case ConstructorStatement constructorStatement -> constructor = constructorStatement;
-                case FunctionStatement function -> methods.add(function);
-                case FieldStatement field -> fields.add(field);
-                case null -> throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT, parser.tokenRegistry().literals().nullLiteral().representation())
+                switch (declaration) {
+                    case ConstructorStatement constructorStatement ->
+                        constructor = constructorStatement;
+                    case FunctionStatement function -> methods.add(function);
+                    case FieldStatement field -> fields.add(field);
+                    case null -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
+                            parser.tokenRegistry().literals().nullLiteral().representation())
                         .at(parser.peek())
                         .build();
-                default -> throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT, declaration.getClass().getSimpleName())
+                    default -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
+                            declaration.getClass().getSimpleName())
                         .at(parser.peek())
                         .build();
                 }
@@ -94,28 +100,39 @@ public class ClassStatementParser implements StatementParser<ClassStatement> {
 
             validator.expectAfter(block.close(), "class body");
 
-            return Option.of(new ClassStatement(name, superClass, constructor, methods, fields, isDynamic));
+            return Option.of(new ClassStatement(name,
+                superClass,
+                constructor,
+                methods,
+                fields,
+                isDynamic));
         }
         return Option.empty();
     }
 
     private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(FunctionTokenType.CONSTRUCTOR)) {
-            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
+            return this.handleDelegate(parser,
+                validator,
+                parser.firstCompatibleParser(ConstructorStatement.class));
         }
         else if (parser.check(FunctionTokenType.FUNCTION)) {
-            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
+            return this.handleDelegate(parser,
+                validator,
+                parser.firstCompatibleParser(FunctionStatement.class));
         }
         else {
             return this.handleDelegate(parser, validator, Option.of(this.fieldParser));
         }
     }
 
-    private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
-                                                   Option<StatementParser<T>> statement) {
+    private <T extends Statement> T handleDelegate(
+        TokenParser parser, TokenStepValidator validator,
+        Option<StatementParser<T>> statement
+    ) {
         return statement
-                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                .orNull();
+            .flatMap(nodeParser -> nodeParser.parse(parser, validator))
+            .orNull();
     }
 
     @Override

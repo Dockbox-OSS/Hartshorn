@@ -37,9 +37,13 @@ import java.util.Set;
 public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileStatement> {
 
     @Override
-    public Option<? extends DoWhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends DoWhileStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(LoopTokenType.DO)) {
-            BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
+            BlockStatement loopBody =
+                this.blockStatement("do", parser.previous(), parser, validator);
             validator.expect(LoopTokenType.WHILE);
 
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();

@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * Module activator annotation for HSL components.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 @ModuleActivator

@@ -22,13 +22,14 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
 /**
- * Represents the different types of loop tokens that can be used in the HSL language. Loop tokens are used to define
- * blocks of code that are executed repeatedly, based on a condition or a range of values.
+ * Represents the different types of loop tokens that can be used in the HSL language. Loop tokens
+ * are used to define blocks of code that are executed repeatedly, based on a condition or a range
+ * of values.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum LoopTokenType implements EnumTokenType {
@@ -37,17 +38,18 @@ public enum LoopTokenType implements EnumTokenType {
      */
     REPEAT(true),
     /**
-     * 'do' token, representing a loop that is executed at least once, and then repeatedly as long as a condition is
-     * met.
+     * 'do' token, representing a loop that is executed at least once, and then repeatedly as long
+     * as a condition is met.
      */
     DO(true),
     /**
-     * 'while' token, representing a loop that is executed repeatedly as long as a condition is met.
+     * 'while' token, representing a loop that is executed repeatedly as long as a condition is
+     * met.
      */
     WHILE(true),
     /**
-     * 'for' token, representing a loop that is executed repeatedly either for a range of values (for-each) or for a
-     * condition (for-i).
+     * 'for' token, representing a loop that is executed repeatedly either for a range of values
+     * (for-each) or for a condition (for-i).
      */
     FOR(true),
     /**
@@ -55,7 +57,8 @@ public enum LoopTokenType implements EnumTokenType {
      */
     IN(false),
     /**
-     * 'range' token, representing a loop that is executed repeatedly for a range of values from a start to an end.
+     * 'range' token, representing a loop that is executed repeatedly for a range of values from a
+     * start to an end.
      */
     RANGE(builder -> builder.repeats(BaseTokenType.DOT).build()),
     ;
@@ -64,8 +67,8 @@ public enum LoopTokenType implements EnumTokenType {
 
     LoopTokenType(boolean standalone) {
         this(builder -> builder
-                .keyword(true)
-                .standaloneStatement(standalone)
+            .keyword(true)
+            .standaloneStatement(standalone)
         );
     }
 

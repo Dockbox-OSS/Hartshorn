@@ -43,14 +43,14 @@ public class ReturnStatementInterpreterTests {
     @Test
     void returnStatementThrowsCaptureExceptionForReturn() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return 42")
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    // Cannot return from top-level code, so we mark the current context
-                    // as being inside a function
-                    context.resolver().currentFunction(FunctionType.INLINE_FUNCTION);
-                }))
-                .build();
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                // Cannot return from top-level code, so we mark the current context
+                // as being inside a function
+                context.resolver().currentFunction(FunctionType.INLINE_FUNCTION);
+            }))
+            .build();
 
         Return returnCapture = Assertions.assertThrows(Return.class, helper::interpret);
         Assertions.assertEquals(42d, returnCapture.value());
@@ -59,14 +59,14 @@ public class ReturnStatementInterpreterTests {
     @Test
     void returnStatementThrowsCaptureExceptionForYield() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return 3.14")
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    // Cannot return from top-level code, so we mark the current context
-                    // as being inside a generator function
-                    context.resolver().currentFunction(FunctionType.FIELD_MEMBER);
-                }))
-                .build();
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                // Cannot return from top-level code, so we mark the current context
+                // as being inside a generator function
+                context.resolver().currentFunction(FunctionType.FIELD_MEMBER);
+            }))
+            .build();
 
         Return returnCapture = Assertions.assertThrows(Return.class, helper::interpret);
         Assertions.assertEquals(3.14d, returnCapture.value());
@@ -75,15 +75,16 @@ public class ReturnStatementInterpreterTests {
     @Test
     void topLevelCodeCannotReturn() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.RETURN, FunctionType.NONE)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOP_LEVEL_RETURN);
     }
+
     @Test
     void topLevelCodeCannotYield() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.NONE)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOP_LEVEL_RETURN);
@@ -92,7 +93,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void inlineFunctionCanReturnWithExpression() {
         Return returnCapture = Assertions.assertThrows(
-                Return.class,
+            Return.class,
             this.getBasicReturn(ControlTokenType.RETURN, FunctionType.INLINE_FUNCTION)::interpret
         );
         Assertions.assertEquals(0d, returnCapture.value());
@@ -101,7 +102,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void inlineFunctionCannotYield() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INLINE_FUNCTION)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FUNCTION_YIELD);
@@ -110,7 +111,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void classFunctionCanReturnWithExpression() {
         Return returnCapture = Assertions.assertThrows(
-                Return.class,
+            Return.class,
             this.getBasicReturn(ControlTokenType.RETURN, FunctionType.CLASS_FUNCTION)::interpret
         );
         Assertions.assertEquals(0d, returnCapture.value());
@@ -119,7 +120,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void classFunctionCannotYield() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.CLASS_FUNCTION)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FUNCTION_YIELD);
@@ -128,7 +129,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void testFunctionCannotReturn() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.RETURN, FunctionType.TEST)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BLOCK_RETURN);
@@ -137,7 +138,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void testFunctionCanYieldWithExpression() {
         Yield yieldCapture = Assertions.assertThrows(
-                Yield.class,
+            Yield.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.TEST)::interpret
         );
         Assertions.assertEquals(0d, yieldCapture.value());
@@ -146,7 +147,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void fieldMemberCannotReturn() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.FIELD_MEMBER)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FIELD_MEMBER_YIELD);
@@ -155,7 +156,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void fieldMemberCannotReturnWithExpression() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INITIALIZER_RETURN);
@@ -164,7 +165,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void initializerCanReturnWithExpression() {
         Return returnCapture = Assertions.assertThrows(
-                Return.class,
+            Return.class,
             this.getBasicReturn(ControlTokenType.RETURN, FunctionType.FIELD_MEMBER)::interpret
         );
         Assertions.assertEquals(0d, returnCapture.value());
@@ -173,7 +174,7 @@ public class ReturnStatementInterpreterTests {
     @Test
     void initializerCannotYieldWithExpression() {
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
+            ScriptEvaluationError.class,
             this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INITIALIZER_RETURN);
@@ -182,15 +183,15 @@ public class ReturnStatementInterpreterTests {
     @Test
     void initializerCanReturnWithoutExpression() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return;")
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    context.resolver().currentFunction(FunctionType.INITIALIZER);
-                }))
-                .build();
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                context.resolver().currentFunction(FunctionType.INITIALIZER);
+            }))
+            .build();
         Return returnCapture = Assertions.assertThrows(
-                Return.class,
-                helper::interpret
+            Return.class,
+            helper::interpret
         );
         Assertions.assertNull(returnCapture.value());
     }
@@ -198,26 +199,27 @@ public class ReturnStatementInterpreterTests {
     @Test
     void initializerCanYieldWithoutExpression() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "yield;")
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    context.resolver().currentFunction(FunctionType.INITIALIZER);
-                }))
-                .build();
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                context.resolver().currentFunction(FunctionType.INITIALIZER);
+            }))
+            .build();
         Yield yieldCapture = Assertions.assertThrows(
-                Yield.class,
-                helper::interpret
+            Yield.class,
+            helper::interpret
         );
         Assertions.assertNull(yieldCapture.value());
     }
 
     private HSLTestHelper getBasicReturn(ControlTokenType returnType, FunctionType functionType) {
-        return HSLTestHelper.of(this.applicationContext, "%s 0".formatted(returnType.representation()))
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    context.resolver().currentFunction(functionType);
-                }))
-                .build();
+        return HSLTestHelper.of(this.applicationContext,
+                "%s 0".formatted(returnType.representation()))
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                context.resolver().currentFunction(functionType);
+            }))
+            .build();
     }
 }

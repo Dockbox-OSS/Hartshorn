@@ -37,15 +37,15 @@ public class TestStatementInterpreterTests {
     @Test
     void testStatementWithYieldReturnsValue(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        test("explicit yield") {
-                            yield true;
-                        }
-                        """)
-                .statementParser(new TestStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                test("explicit yield") {
+                    yield true;
+                }
+                """)
+            .statementParser(new TestStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
 
@@ -55,58 +55,62 @@ public class TestStatementInterpreterTests {
     }
 
     @Test
-    void testStatementWithIncorrectReturnFailsParser(@Inject ApplicationContext applicationContext) {
+    void testStatementWithIncorrectReturnFailsParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        test("wrong return") {
-                            return true;
-                        }
-                        """)
-                .statementParser(new TestStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                test("wrong return") {
+                    return true;
+                }
+                """)
+            .statementParser(new TestStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::parse
+            ScriptEvaluationError.class,
+            helper::parse
         );
-        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
+        ScriptAssertions.assertEvaluationError(error,
+            DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
     void testStatementWithoutYieldFailsParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        test("implicit yield") {
-                            true;
-                        }
-                        """)
-                .statementParser(new TestStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new ReturnStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                test("implicit yield") {
+                    true;
+                }
+                """)
+            .statementParser(new TestStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new ReturnStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::parse
+            ScriptEvaluationError.class,
+            helper::parse
         );
-        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
+        ScriptAssertions.assertEvaluationError(error,
+            DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
     void testStatementStatementsFailsParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        test("empty body") { }
-                        """)
-                .statementParser(new TestStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                test("empty body") { }
+                """)
+            .statementParser(new TestStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::parse
+            ScriptEvaluationError.class,
+            helper::parse
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EMPTY_TEST_BODY);
     }

@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing an if-else conditional structure, which executes a block of code
- * based on the evaluation of a condition. If the condition evaluates to true, the "then
- * branch" is executed; otherwise, the "else branch" is executed if it is provided.
+ * A statement representing an if-else conditional structure, which executes a block of code based
+ * on the evaluation of a condition. If the condition evaluates to true, the "then branch" is
+ * executed; otherwise, the "else branch" is executed if it is provided.
  *
  * <p>The else branch is optional and may be null, indicating that no action should be taken
  * if the condition is false.
@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class IfStatement extends Statement {

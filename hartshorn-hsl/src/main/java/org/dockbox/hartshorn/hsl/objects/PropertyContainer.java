@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * Represents a class instance which is capable of carrying properties. This instance can
- * be virtual or native, depending on its implementation.
+ * Represents a class instance which is capable of carrying properties. This instance can be virtual
+ * or native, depending on its implementation.
  *
  * @see org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance
  * @see org.dockbox.hartshorn.hsl.objects.external.ExternalInstance
@@ -35,8 +35,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public interface PropertyContainer {
 
     /**
-     * Sets a property on the instance. If the property is not supported or accessible,
-     * an {@link ScriptEvaluationError} is thrown.
+     * Sets a property on the instance. If the property is not supported or accessible, an
+     * {@link ScriptEvaluationError} is thrown.
      *
      * @param interpreter The interpreter calling this method.
      * @param name The name of the property.
@@ -48,16 +48,16 @@ public interface PropertyContainer {
     void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope);
 
     /**
-     * Gets a property from the instance. This may either return a {@link CallableNode}
-     * if the property is a function, or any other {@link Object} if the property is
-     * a field. If the property is not supported or accessible, a {@link ScriptEvaluationError}
-     * is thrown.
+     * Gets a property from the instance. This may either return a {@link CallableNode} if the
+     * property is a function, or any other {@link Object} if the property is a field. If the
+     * property is not supported or accessible, a {@link ScriptEvaluationError} is thrown.
      *
      * @param interpreter The interpreter calling this method.
      * @param name The name of the property.
      * @param fromScope The scope from which the property is retrieved.
      *
      * @return The value of the property.
+     *
      * @throws ScriptEvaluationError If the property is not supported or accessible.
      */
     Object get(Interpreter interpreter, Token name, VariableScope fromScope);

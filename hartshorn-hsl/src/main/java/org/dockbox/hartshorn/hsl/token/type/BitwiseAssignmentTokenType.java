@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents a token type that combines a bitwise operator with an assignment operator. This
- * allows for the creation of a single token type that allows users to express a bitwise operation
- * and an assignment in a single token. This is purely a convenience feature, as the same effect
- * can be achieved by using the bitwise operator and the assignment operator separately.
+ * Represents a token type that combines a bitwise operator with an assignment operator. This allows
+ * for the creation of a single token type that allows users to express a bitwise operation and an
+ * assignment in a single token. This is purely a convenience feature, as the same effect can be
+ * achieved by using the bitwise operator and the assignment operator separately.
  *
  * @see BitwiseTokenType
  * @see BaseTokenType#EQUAL
@@ -34,36 +34,43 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 public enum BitwiseAssignmentTokenType implements EnumTokenType {
     /**
      * Represents the bitwise XOR assignment operator.
+     *
      * @see BitwiseTokenType#XOR
      */
     XOR_EQUAL(BitwiseTokenType.XOR),
     /**
      * Represents the bitwise AND assignment operator.
+     *
      * @see BitwiseTokenType#BITWISE_AND
      */
     BITWISE_AND_EQUAL(BitwiseTokenType.BITWISE_AND),
     /**
      * Represents the bitwise OR assignment operator.
+     *
      * @see BitwiseTokenType#BITWISE_OR
      */
     BITWISE_OR_EQUAL(BitwiseTokenType.BITWISE_OR),
     /**
      * Represents the bitwise complement assignment operator.
+     *
      * @see BitwiseTokenType#COMPLEMENT
      */
     COMPLEMENT_EQUAL(BitwiseTokenType.COMPLEMENT),
     /**
      * Represents the bitwise shift right assignment operator.
+     *
      * @see BitwiseTokenType#SHIFT_RIGHT
      */
     SHIFT_LEFT_EQUAL(BitwiseTokenType.SHIFT_LEFT),
     /**
      * Represents the bitwise shift left assignment operator.
+     *
      * @see BitwiseTokenType#SHIFT_LEFT
      */
     SHIFT_RIGHT_EQUAL(BitwiseTokenType.SHIFT_RIGHT),
     /**
      * Represents the logical shift right assignment operator.
+     *
      * @see BitwiseTokenType#LOGICAL_SHIFT_RIGHT
      */
     LOGICAL_SHIFT_RIGHT_EQUAL(BitwiseTokenType.LOGICAL_SHIFT_RIGHT),
@@ -73,10 +80,11 @@ public enum BitwiseAssignmentTokenType implements EnumTokenType {
 
     BitwiseAssignmentTokenType(TokenType assignsWithToken) {
         this.metaData = TokenMetaData.builder(this)
-                .combines(assignsWithToken, BaseTokenType.EQUAL)
-                .assignsWith(assignsWithToken)
-                .build();
+            .combines(assignsWithToken, BaseTokenType.EQUAL)
+            .assignsWith(assignsWithToken)
+            .build();
     }
+
     @Override
     public TokenType delegate() {
         return this.metaData;

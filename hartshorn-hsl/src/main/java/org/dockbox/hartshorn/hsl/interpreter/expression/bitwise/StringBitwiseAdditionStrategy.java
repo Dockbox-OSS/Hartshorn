@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
  * converting the non-string operand to a string using {@link String#valueOf(Object)}.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class StringBitwiseAdditionStrategy implements BitwiseAdditionStrategy {

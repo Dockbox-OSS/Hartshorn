@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.util.introspect.Parameter;
 import java.util.List;
 
 /**
- * A constructor statement, which defines a special method used to initialize new objects
- * of a class. Unlike Java, constructors in HSL are defined using the <code>constructor</code>
- * keyword, followed by a parameter list and a body.
+ * A constructor statement, which defines a special method used to initialize new objects of a
+ * class. Unlike Java, constructors in HSL are defined using the <code>constructor</code> keyword,
+ * followed by a parameter list and a body.
  *
  * <p>Constructors cannot carry access modifiers (e.g., public, private), and are thus public
  * by default.
@@ -41,16 +41,18 @@ import java.util.List;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ConstructorStatement extends ParametricExecutableBodyStatement {
 
     private final Token keyword;
 
-    public ConstructorStatement(Token keyword,
-                                List<Parameter> params,
-                                BlockStatement body) {
+    public ConstructorStatement(
+        Token keyword,
+        List<Parameter> params,
+        BlockStatement body
+    ) {
         super(keyword, params, body);
         this.keyword = keyword;
     }
@@ -61,9 +63,9 @@ public class ConstructorStatement extends ParametricExecutableBodyStatement {
 
     public Token initializerIdentifier() {
         return Token.of(this.type())
-                .literal(this.keyword().line())
-                .position(this.keyword())
-                .build();
+            .literal(this.keyword().line())
+            .position(this.keyword())
+            .build();
     }
 
     protected TokenType type() {

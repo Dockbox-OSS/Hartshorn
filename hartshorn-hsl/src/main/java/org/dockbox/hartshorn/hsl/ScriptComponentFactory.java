@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The {@link ScriptComponentFactory} is a service that provides the necessary components to
- * create and execute a script, which cannot be directly provided by the IoC container due to
- * them requiring additional context or state.
+ * The {@link ScriptComponentFactory} is a service that provides the necessary components to create
+ * and execute a script, which cannot be directly provided by the IoC container due to them
+ * requiring additional context or state.
  *
  * @see Lexer
  * @see TokenParser
@@ -50,6 +50,7 @@ public interface ScriptComponentFactory {
      *
      * @param tokenRegistry the token registry to use
      * @param source the source to tokenize
+     *
      * @return a new lexer instance
      */
     Lexer lexer(TokenRegistry tokenRegistry, String source);
@@ -59,6 +60,7 @@ public interface ScriptComponentFactory {
      *
      * @param tokenRegistry the token registry to use
      * @param tokens the tokens to parse
+     *
      * @return a new token parser instance
      */
     TokenParser parser(TokenRegistry tokenRegistry, List<Token> tokens);
@@ -67,18 +69,26 @@ public interface ScriptComponentFactory {
      * Creates a new resolver instance for the given interpreter.
      *
      * @param interpreter the interpreter to use
+     *
      * @return a new resolver instance
      */
     Resolver resolver(Interpreter interpreter);
 
     /**
-     * Creates a new interpreter instance for the given result collector, modules, token registry and application context.
+     * Creates a new interpreter instance for the given result collector, modules, token registry
+     * and application context.
      *
      * @param resultCollector the result collector to use
      * @param modules the modules to use
      * @param tokenRegistry the token registry to use
      * @param applicationContext the application context to use
+     *
      * @return a new interpreter instance
      */
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, TokenRegistry tokenRegistry, ApplicationContext applicationContext);
+    Interpreter interpreter(
+        ResultCollector resultCollector,
+        Map<String, NativeModule> modules,
+        TokenRegistry tokenRegistry,
+        ApplicationContext applicationContext
+    );
 }

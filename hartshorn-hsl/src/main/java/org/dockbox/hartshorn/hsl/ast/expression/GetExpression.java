@@ -21,12 +21,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing the retrieval of a value from an object or structure using a named property.
- * For example, the expression <code>object.property</code> retrieves the value of the property named
+ * An expression representing the retrieval of a value from an object or structure using a named
+ * property. For example, the expression <code>object.property</code> retrieves the value of the
+ * property named
  * <code>property</code> from the object named <code>object</code>.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class GetExpression extends Expression implements NamedNode {

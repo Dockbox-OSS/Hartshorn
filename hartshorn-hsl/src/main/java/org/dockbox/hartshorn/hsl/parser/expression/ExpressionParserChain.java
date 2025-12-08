@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 
 /**
- * Chain interface for expression parsers. As expressions can be nested and have different precedence levels,
- * this interface allows expression parsers to delegate parsing to the next parser in the chain, while retaining
- * the correct order of operations.
+ * Chain interface for expression parsers. As expressions can be nested and have different
+ * precedence levels, this interface allows expression parsers to delegate parsing to the next
+ * parser in the chain, while retaining the correct order of operations.
  *
  * @since 0.7.0
  *
@@ -36,6 +36,7 @@ public interface ExpressionParserChain {
      *
      * @param parser the token parser owning this chain
      * @param validator the token step validator
+     *
      * @return the parsed expression, or null if no expression could be parsed
      */
     Expression next(TokenParser parser, TokenStepValidator validator);

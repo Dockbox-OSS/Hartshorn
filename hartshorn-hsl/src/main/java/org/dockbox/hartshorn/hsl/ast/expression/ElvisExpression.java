@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing the Elvis operator, which is used to provide a default value when a
- * condition evaluates to null or false. For example, the expression <code>nullableValue ?: defaultValue</code>
- * will return the value of <code>nullableValue</code> if it is not null or false (truthy), otherwise
- * it will return <code>defaultValue</code>.
+ * condition evaluates to null or false. For example, the expression <code>nullableValue ?:
+ * defaultValue</code> will return the value of <code>nullableValue</code> if it is not null or
+ * false (truthy), otherwise it will return <code>defaultValue</code>.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ElvisExpression extends Expression {
@@ -35,9 +35,11 @@ public class ElvisExpression extends Expression {
     private final Token elvisOpe;
     private final Expression rightExp;
 
-    public ElvisExpression(Expression condition,
-                           Token elvisOpe,
-                           Expression rightExp) {
+    public ElvisExpression(
+        Expression condition,
+        Token elvisOpe,
+        Expression rightExp
+    ) {
         super(elvisOpe);
         this.condition = condition;
         this.elvisOpe = elvisOpe;

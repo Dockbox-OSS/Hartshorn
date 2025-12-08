@@ -31,9 +31,9 @@ public class ElvisExpressionTests {
     @Test
     void elvisWithTruthyValueReturnsLeft(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "42 ?: 24")
-                .expressionParser(new ElvisExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new ElvisExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(42d, value);
@@ -42,9 +42,9 @@ public class ElvisExpressionTests {
     @Test
     void elvisWithFalsyValueReturnsRight(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "null ?: 24")
-                .expressionParser(new ElvisExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new ElvisExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(24d, value);

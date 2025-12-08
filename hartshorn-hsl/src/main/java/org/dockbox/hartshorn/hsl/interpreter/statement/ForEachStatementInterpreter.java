@@ -33,7 +33,8 @@ public class ForEachStatementInterpreter implements StatementInterpreter<ForEach
     public Void interpret(ForEachStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             Object collection = interpreter.evaluate(node.collection());
-            Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
+            Iterable<?> iterable =
+                InterpreterUtilities.checkIterable(node.collection(), collection);
             interpreter.visitingScope().define(node.selector().name().lexeme(), null);
 
             for (Object item : iterable) {

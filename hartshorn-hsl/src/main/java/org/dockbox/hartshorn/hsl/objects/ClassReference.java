@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
  * defined in a Java class file. Exact semantics are defined by the implementation.
  *
  * <p>Class references are {@link CallableNode}s, and can thus be instantiated. Implementations may
- * choose to provide a default constructor, or require arguments to be provided. If an implementation
- * provides a default constructor, it may choose to ignore the given arguments when constructing the
- * instance.
+ * choose to provide a default constructor, or require arguments to be provided. If an
+ * implementation provides a default constructor, it may choose to ignore the given arguments when
+ * constructing the instance.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface ClassReference extends CallableNode, Finalizable {
@@ -47,6 +47,7 @@ public interface ClassReference extends CallableNode, Finalizable {
      * will return {@code null}.
      *
      * @param name The name of the method.
+     *
      * @return The method with the given name, or {@code null} if no method with the given name
      */
     MethodReference method(String name);
@@ -55,7 +56,8 @@ public interface ClassReference extends CallableNode, Finalizable {
      * Returns the super class of the class. If the class does not have a super class, this method
      * will return {@code null}.
      *
-     * @return The super class of the class, or {@code null} if the class does not have a super class.
+     * @return The super class of the class, or {@code null} if the class does not have a super
+     * class.
      */
     ClassReference superClass();
 
@@ -67,5 +69,4 @@ public interface ClassReference extends CallableNode, Finalizable {
      * @return The name of the class.
      */
     String name();
-
 }

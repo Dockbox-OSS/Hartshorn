@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A field statement, which represents the declaration of a field within a class. A field may
- * have an optional modifier (e.g., public, private) and an optional initializer expression.
+ * A field statement, which represents the declaration of a field within a class. A field may have
+ * an optional modifier (e.g., public, private) and an optional initializer expression.
  *
  * <p>For example, the following field declaration includes a modifier and an initializer:
  * <pre>{@code
@@ -34,9 +34,9 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * <p>In this example, <code>public</code> is the modifier, <code>myField</code> is the name of
- * the field, and <code>42</code> is the initializer expression that sets the initial value of
- * the field. Additionally, the field is marked as <code>final</code>, indicating that its value
- * cannot be changed after initialization.
+ * the field, and <code>42</code> is the initializer expression that sets the initial value of the
+ * field. Additionally, the field is marked as <code>final</code>, indicating that its value cannot
+ * be changed after initialization.
  *
  * @since 0.4.12
  *
@@ -88,15 +88,19 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
     public void withGetter(FieldGetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "getter", this.name.lexeme())
-                    .at(statement.modifier())
-                    .build();
+                .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y,
+                    "getter",
+                    this.name.lexeme())
+                .at(statement.modifier())
+                .build();
         }
         if (this.getter != null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "getter", this.name.lexeme())
-                    .at(statement.modifier())
-                    .build();
+                .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y,
+                    "getter",
+                    this.name.lexeme())
+                .at(statement.modifier())
+                .build();
         }
         this.getter = statement;
     }
@@ -104,15 +108,19 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
     public void withSetter(FieldSetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "setter", this.name.lexeme())
-                    .at(statement.modifier())
-                    .build();
+                .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y,
+                    "setter",
+                    this.name.lexeme())
+                .at(statement.modifier())
+                .build();
         }
         if (this.setter != null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "setter", this.name.lexeme())
-                    .at(statement.modifier())
-                    .build();
+                .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y,
+                    "setter",
+                    this.name.lexeme())
+                .at(statement.modifier())
+                .build();
         }
         this.setter = statement;
     }

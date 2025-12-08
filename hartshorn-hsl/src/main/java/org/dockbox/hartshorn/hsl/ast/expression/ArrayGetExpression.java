@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * named <code>array</code>.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ArrayGetExpression extends Expression implements NamedNode {

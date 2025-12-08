@@ -39,21 +39,21 @@ public class ConstructorStatementInterpreterTests {
     @Test
     void constructorDefinesInitializer(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        constructor(name, age) { }
-                        """)
-                .statementParser(new ConstructorStatementParser())
-                .statementParser(new BlockStatementParser())
-                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                    context.resolver().currentClassType(ClassType.CLASS);
-                }))
-                .build();
+                constructor(name, age) { }
+                """)
+            .statementParser(new ConstructorStatementParser())
+            .statementParser(new BlockStatementParser())
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                context.resolver().currentClassType(ClassType.CLASS);
+            }))
+            .build();
 
         helper.interpret();
 
         Object constructor = helper.findVariable(FunctionTokenType.CONSTRUCTOR.defaultLexeme());
         VirtualFunction virtualFunction = Assertions.assertInstanceOf(
-                VirtualFunction.class,
-                constructor
+            VirtualFunction.class,
+            constructor
         );
         Assertions.assertTrue(virtualFunction.isInitializer());
     }
@@ -61,15 +61,15 @@ public class ConstructorStatementInterpreterTests {
     @Test
     void constructorOutsideClassFails(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        constructor(name, age) { }
-                        """)
-                .statementParser(new ConstructorStatementParser())
-                .statementParser(new BlockStatementParser())
-                .build();
+                constructor(name, age) { }
+                """)
+            .statementParser(new ConstructorStatementParser())
+            .statementParser(new BlockStatementParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpret
+            ScriptEvaluationError.class,
+            helper::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.CONSTRUCTOR_OUTSIDE_CLASS);
     }

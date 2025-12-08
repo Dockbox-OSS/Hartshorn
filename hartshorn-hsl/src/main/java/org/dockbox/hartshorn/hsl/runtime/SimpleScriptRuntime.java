@@ -40,8 +40,8 @@ import java.util.Map;
 
 /**
  * Base implementation of {@link ScriptRuntime} that provides a default implementation for the
- * runtime phases. This class is designed to be extended by specific runtime implementations, such as
- * {@link ValidateExpressionRuntime}.
+ * runtime phases. This class is designed to be extended by specific runtime implementations, such
+ * as {@link ValidateExpressionRuntime}.
  *
  * <p>Implementations of this class should only have to provide the standard libraries and external
  * modules that are used by the runtime. The runtime itself is provided by this class.
@@ -54,7 +54,8 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public class SimpleScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
+public class SimpleScriptRuntime extends ExpressionConditionContext
+    implements MutableScriptRuntime {
 
     private final ScriptComponentFactory factory;
     private final ApplicationContext applicationContext;
@@ -90,6 +91,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
      * available to the script during the interpretation phase.
      *
      * @param context the context in which the libraries are used
+     *
      * @return the standard libraries
      */
     protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
@@ -137,12 +139,13 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
     @Override
     public ScriptContext runOnly(ScriptContext context, Phase only) {
         try {
-            switch(only) {
-            case TOKENIZING -> this.tokenize(context);
-            case PARSING -> this.parse(context);
-            case SEMANTIC_ANALYSIS -> this.resolve(context);
-            case INTERPRETING -> this.interpret(context);
-            default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
+            switch (only) {
+                case TOKENIZING -> this.tokenize(context);
+                case PARSING -> this.parse(context);
+                case SEMANTIC_ANALYSIS -> this.resolve(context);
+                case INTERPRETING -> this.interpret(context);
+                default ->
+                    throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
         }
         catch (ScriptEvaluationError e) {
@@ -157,6 +160,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
      * the execution.
      *
      * @param source the source code to execute
+     *
      * @return the context that was created during the execution
      */
     public ScriptContext createScriptContext(String source) {
@@ -170,10 +174,14 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
      * script's statements and expressions.
      *
      * @param context the context in which the interpreter is used
+     *
      * @return the interpreter that was created
      */
     protected Interpreter createInterpreter(ScriptContext context) {
-        Interpreter interpreter = this.factory.interpreter(context, this.standardLibraries(context), context.tokenRegistry(), this.applicationContext());
+        Interpreter interpreter = this.factory.interpreter(context,
+            this.standardLibraries(context),
+            context.tokenRegistry(),
+            this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
@@ -194,8 +202,8 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
     }
 
     /**
-     * Parses the tokens that are stored in the given context, and stores the resulting statements in
-     * the context.
+     * Parses the tokens that are stored in the given context, and stores the resulting statements
+     * in the context.
      *
      * @param context the context in which the parsing is performed
      */
@@ -293,7 +301,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
             String[] lines = source.split("\n");
             String lineText = lines[line - 1];
 
-            StringBuilder builder = new StringBuilder(" ".repeat(column+1));
+            StringBuilder builder = new StringBuilder(" ".repeat(column + 1));
             builder.setCharAt(column, '^');
             String marker = builder.toString();
 
@@ -301,11 +309,11 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
         }
 
         ScriptEvaluationError evaluationError = ScriptEvaluationError.builder(phase)
-                .at(error.at())
-                .position(line, column)
-                .cause(error)
-                .message(message)
-                .build();
+            .at(error.at())
+            .position(line, column)
+            .cause(error)
+            .message(message)
+            .build();
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());
@@ -320,7 +328,8 @@ public class SimpleScriptRuntime extends ExpressionConditionContext implements M
 
     @Override
     public void statementParser(StatementParser<? extends Statement> statementParser) {
-        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
+        this.parserCustomizer =
+            this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
     }
 
     @Override

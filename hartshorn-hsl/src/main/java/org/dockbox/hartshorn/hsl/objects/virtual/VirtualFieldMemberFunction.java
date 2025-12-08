@@ -22,9 +22,10 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * A virtual representation of a field member function. This is typically linked directly to a {@link
- * VirtualClass}. Field members are special in the sense that they can be accessed like properties, but
- * they are actually functions. This allows for lazy evaluation and computed properties.
+ * A virtual representation of a field member function. This is typically linked directly to a
+ * {@link VirtualClass}. Field members are special in the sense that they can be accessed like
+ * properties, but they are actually functions. This allows for lazy evaluation and computed
+ * properties.
  *
  * @see org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement
  * @see org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement

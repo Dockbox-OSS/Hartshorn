@@ -62,30 +62,30 @@ public class VirtualClassTests {
             .argument("User")
             .build();
         return Stream.of(
-                Arguments.of("public", "getName()", null),
-                Arguments.of("private", "getName()", null),
-                Arguments.of("", "getName()", null),
-                Arguments.of("public", "name", null),
-                Arguments.of("private", "name", readPrivateMessage),
-                Arguments.of("", "name", null),
-                Arguments.of("public", "setName(\"Foo\")", null),
-                Arguments.of("private", "setName(\"Foo\")", null),
-                Arguments.of("", "setName(\"Foo\")", null),
-                Arguments.of("public", "name = \"Foo\"", null),
-                Arguments.of("private", "name = \"Foo\"", writePrivateMessage),
-                Arguments.of("", "name = \"Foo\"", null),
-                Arguments.of("public final", "getName()", null),
-                Arguments.of("private final", "getName()", null),
-                Arguments.of("final", "getName()", null),
-                Arguments.of("public final", "name", null),
-                Arguments.of("private final", "name", readPrivateMessage),
-                Arguments.of("final", "name", null),
-                Arguments.of("public final", "setName(\"Foo\")", reassignFinalMessage),
-                Arguments.of("private final", "setName(\"Foo\")", reassignFinalMessage),
-                Arguments.of("final", "setName(\"Foo\")", reassignFinalMessage),
-                Arguments.of("public final", "name = \"Foo\"", reassignFinalMessage),
-                Arguments.of("private final", "name = \"Foo\"", writePrivateMessage),
-                Arguments.of("final", "name = \"Foo\"", reassignFinalMessage)
+            Arguments.of("public", "getName()", null),
+            Arguments.of("private", "getName()", null),
+            Arguments.of("", "getName()", null),
+            Arguments.of("public", "name", null),
+            Arguments.of("private", "name", readPrivateMessage),
+            Arguments.of("", "name", null),
+            Arguments.of("public", "setName(\"Foo\")", null),
+            Arguments.of("private", "setName(\"Foo\")", null),
+            Arguments.of("", "setName(\"Foo\")", null),
+            Arguments.of("public", "name = \"Foo\"", null),
+            Arguments.of("private", "name = \"Foo\"", writePrivateMessage),
+            Arguments.of("", "name = \"Foo\"", null),
+            Arguments.of("public final", "getName()", null),
+            Arguments.of("private final", "getName()", null),
+            Arguments.of("final", "getName()", null),
+            Arguments.of("public final", "name", null),
+            Arguments.of("private final", "name", readPrivateMessage),
+            Arguments.of("final", "name", null),
+            Arguments.of("public final", "setName(\"Foo\")", reassignFinalMessage),
+            Arguments.of("private final", "setName(\"Foo\")", reassignFinalMessage),
+            Arguments.of("final", "setName(\"Foo\")", reassignFinalMessage),
+            Arguments.of("public final", "name = \"Foo\"", reassignFinalMessage),
+            Arguments.of("private final", "name = \"Foo\"", writePrivateMessage),
+            Arguments.of("final", "name = \"Foo\"", reassignFinalMessage)
         );
     }
 
@@ -93,27 +93,29 @@ public class VirtualClassTests {
     @MethodSource("propertyAccessors")
     void test(String modifier, String accessor, FormattedDiagnostic message) {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                class User {
-                    %s name;
-                    constructor(name) {
-                        this.name = name;
-                    }
-                    function getName() {
-                        return this.name;
-                    }
-                    function setName(name) {
-                        this.name = name;
-                    }
+            class User {
+                %s name;
+                constructor(name) {
+                    this.name = name;
                 }
-                var user = User("Bar");
-                user.%s;
-                """.formatted(modifier, accessor));
+                function getName() {
+                    return this.name;
+                }
+                function setName(name) {
+                    this.name = name;
+                }
+            }
+            var user = User("Bar");
+            user.%s;
+            """.formatted(modifier, accessor));
 
         // If an error message is expected, assert that the script evaluation fails with the expected message
         if (message != null) {
-            ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+            ScriptEvaluationError error =
+                Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
             ScriptAssertions.assertEvaluationError(error, message);
-        } else {
+        }
+        else {
             Assertions.assertDoesNotThrow(script::evaluate);
         }
     }

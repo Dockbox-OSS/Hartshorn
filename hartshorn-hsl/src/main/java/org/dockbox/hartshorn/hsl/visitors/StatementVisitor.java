@@ -42,10 +42,11 @@ import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 
 /**
  * Visitor interface for all supported {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s.
+ *
  * @param <R> The return type for the visitor.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface StatementVisitor<R> {

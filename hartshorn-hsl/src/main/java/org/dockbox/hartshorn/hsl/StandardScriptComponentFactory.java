@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A standard implementation of the {@link ScriptComponentFactory} interface, using
- * the default implementations of the various components.
+ * A standard implementation of the {@link ScriptComponentFactory} interface, using the default
+ * implementations of the various components.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
@@ -58,8 +58,14 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
     }
 
     @Override
-    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, TokenRegistry tokenRegistry, ApplicationContext applicationContext) {
-        Interpreter interpreter = new SimpleVisitorInterpreter(resultCollector, applicationContext, tokenRegistry);
+    public Interpreter interpreter(
+        ResultCollector resultCollector,
+        Map<String, NativeModule> modules,
+        TokenRegistry tokenRegistry,
+        ApplicationContext applicationContext
+    ) {
+        Interpreter interpreter =
+            new SimpleVisitorInterpreter(resultCollector, applicationContext, tokenRegistry);
         interpreter.state().externalModules(modules);
         return interpreter;
     }

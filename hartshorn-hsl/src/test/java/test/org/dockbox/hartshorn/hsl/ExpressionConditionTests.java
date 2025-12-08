@@ -48,11 +48,11 @@ public class ExpressionConditionTests {
 
     public static Stream<Arguments> scripts() {
         return Stream.of(
-                Arguments.of("1==1", true), // Yield true
-                Arguments.of("1==2", false), // Yield false
-                Arguments.of("1==a", false), // Undefined variable, runtime error
-                Arguments.of("1@=1", false), // Tokenizing error
-                Arguments.of("1++=1", false) // Parsing error
+            Arguments.of("1==1", true), // Yield true
+            Arguments.of("1==2", false), // Yield false
+            Arguments.of("1==a", false), // Undefined variable, runtime error
+            Arguments.of("1@=1", false), // Tokenizing error
+            Arguments.of("1++=1", false) // Parsing error
         );
     }
 
@@ -65,8 +65,11 @@ public class ExpressionConditionTests {
 
     @Test
     void testApplicationContextIsOptInAvailable() {
-        ExpressionConditionContext context = new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
-        String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass().getName());
+        ExpressionConditionContext context =
+            new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
+        String expression =
+            "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass()
+                .getName());
         ConditionResult result = this.match(expression, context);
         Assertions.assertTrue(result.matches());
     }
@@ -90,8 +93,10 @@ public class ExpressionConditionTests {
 
     private AnnotatedElementView createAnnotatedElement(String expression) {
         RequiresExpression condition = TypeUtils.annotation(RequiresExpression.class, expression);
-        ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
+        ElementAnnotationsIntrospector annotationsIntrospector =
+            Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(RequiresExpression.class))
+            .thenReturn(Option.of(condition));
 
         AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
         Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);

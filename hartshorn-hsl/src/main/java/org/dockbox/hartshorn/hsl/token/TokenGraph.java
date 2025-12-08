@@ -60,11 +60,12 @@ import java.util.Objects;
 public class TokenGraph extends SimpleGraph<TokenNode> {
 
     /**
-     * Generates a token graph from the given token registry. The graph is built by visiting each token type and its characters,
-     * and adding them to the graph. The graph is built by adding a root node for each character, and then adding children for
-     * each subsequent character.
+     * Generates a token graph from the given token registry. The graph is built by visiting each
+     * token type and its characters, and adding them to the graph. The graph is built by adding a
+     * root node for each character, and then adding children for each subsequent character.
      *
      * @param tokenRegistry the token registry to build the graph from
+     *
      * @return the token graph
      */
     public static TokenGraph of(TokenRegistry tokenRegistry) {
@@ -76,9 +77,13 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         return graph;
     }
 
-    private static void visitTokenCharacters(TokenType tokenType, TokenCharacter[] characters, TokenGraph graph) {
+    private static void visitTokenCharacters(
+        TokenType tokenType,
+        TokenCharacter[] characters,
+        TokenGraph graph
+    ) {
         MutableGraphNode<TokenNode> previous = null;
-        for(int i = 0; i < characters.length; i++) {
+        for (int i = 0; i < characters.length; i++) {
             TokenCharacter character = characters[i];
             MutableGraphNode<TokenNode> node = findExistingNode(previous, graph, character);
             TokenType nodeType = determineNodeType(tokenType, i, characters);
@@ -86,9 +91,11 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         }
     }
 
-    private static MutableGraphNode<TokenNode> visitToken(TokenGraph graph, MutableGraphNode<TokenNode> node,
-            TokenCharacter character, TokenType nodeType, MutableGraphNode<TokenNode> previous) {
-        if(node == null) {
+    private static MutableGraphNode<TokenNode> visitToken(
+        TokenGraph graph, MutableGraphNode<TokenNode> node,
+        TokenCharacter character, TokenType nodeType, MutableGraphNode<TokenNode> previous
+    ) {
+        if (node == null) {
             node = new SimpleGraphNode<>(new TokenNode(character, nodeType));
             graph.addRoot(node);
         }
@@ -99,37 +106,50 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         return previous;
     }
 
-    private static MutableGraphNode<TokenNode> findExistingNode(MutableGraphNode<TokenNode> previous, TokenGraph graph,
-            TokenCharacter character) {
-        Collection<GraphNode<TokenNode>> candidates = previous != null ? previous.children() : graph.roots();
+    private static MutableGraphNode<TokenNode> findExistingNode(
+        MutableGraphNode<TokenNode> previous, TokenGraph graph,
+        TokenCharacter character
+    ) {
+        Collection<GraphNode<TokenNode>> candidates =
+            previous != null ? previous.children() : graph.roots();
         return getExisting(candidates, character);
     }
 
-    private static TokenType determineNodeType(TokenType tokenType, int i, TokenCharacter[] characters) {
+    private static TokenType determineNodeType(
+        TokenType tokenType,
+        int i,
+        TokenCharacter[] characters
+    ) {
         return i == characters.length - 1 ? tokenType : null;
     }
 
-    private static MutableGraphNode<TokenNode> finalizeNode(MutableGraphNode<TokenNode> previous,
-            MutableGraphNode<TokenNode> node) {
-        if(previous != null) {
+    private static MutableGraphNode<TokenNode> finalizeNode(
+        MutableGraphNode<TokenNode> previous,
+        MutableGraphNode<TokenNode> node
+    ) {
+        if (previous != null) {
             previous.addChild(node);
         }
         previous = node;
         return previous;
     }
 
-    private static MutableGraphNode<TokenNode> getExisting(Collection<GraphNode<TokenNode>> candidates, TokenCharacter character) {
+    private static MutableGraphNode<TokenNode> getExisting(
+        Collection<GraphNode<TokenNode>> candidates,
+        TokenCharacter character
+    ) {
         return (MutableGraphNode<TokenNode>) candidates.stream()
-                .filter(node -> node.value().character().equals(character))
-                .findFirst()
-                .orElse(null);
+            .filter(node -> node.value().character().equals(character))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
-     * Represents a node in the token graph. Each node contains a {@link TokenCharacter character} and a {@link TokenType type}.
-     * The character is the character that is added by the node, any preceding characters are added by the parent node (if any).
-     * The type is the type of the token that is represented by the characters that are added by the node and its parents, if
-     * this is an intermediate node, the type is {@code null}.
+     * Represents a node in the token graph. Each node contains a {@link TokenCharacter character}
+     * and a {@link TokenType type}. The character is the character that is added by the node, any
+     * preceding characters are added by the parent node (if any). The type is the type of the token
+     * that is represented by the characters that are added by the node and its parents, if this is
+     * an intermediate node, the type is {@code null}.
      *
      * @since 0.6.0
      *
@@ -146,8 +166,8 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         }
 
         /**
-         * Returns the character that is added by this node. Any preceding characters are added by the parent node (if any),
-         * and are not composed by this node.
+         * Returns the character that is added by this node. Any preceding characters are added by
+         * the parent node (if any), and are not composed by this node.
          *
          * @return the character that is added by this node
          */
@@ -156,20 +176,23 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         }
 
         /**
-         * Returns the type of the token that is represented by the characters that are added by this node and its parents. If
-         * this is an intermediate node, the type is {@code null}.
+         * Returns the type of the token that is represented by the characters that are added by
+         * this node and its parents. If this is an intermediate node, the type is {@code null}.
          *
-         * @return the type of the token that is represented by the characters that are added by this node and its parents
+         * @return the type of the token that is represented by the characters that are added by
+         * this node and its parents
          */
         public TokenType tokenType() {
             return this.tokenType;
         }
 
         /**
-         * Sets the type of the token that is represented by the characters that are added by this node and its parents. If
-         * this node already contains a type, an {@link IllegalStateException} is thrown.
+         * Sets the type of the token that is represented by the characters that are added by this
+         * node and its parents. If this node already contains a type, an
+         * {@link IllegalStateException} is thrown.
          *
-         * @param tokenType the type of the token that is represented by the characters that are added by this node and its parents
+         * @param tokenType the type of the token that is represented by the characters that are
+         * added by this node and its parents
          *
          * @throws IllegalStateException if this node already contains a type
          */
@@ -182,15 +205,15 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
 
         @Override
         public boolean equals(Object obj) {
-            if(obj == this) {
+            if (obj == this) {
                 return true;
             }
-            if(obj == null || obj.getClass() != this.getClass()) {
+            if (obj == null || obj.getClass() != this.getClass()) {
                 return false;
             }
             var that = (TokenNode) obj;
             return Objects.equals(this.character, that.character) &&
-                    Objects.equals(this.tokenType, that.tokenType);
+                Objects.equals(this.tokenType, that.tokenType);
         }
 
         @Override
@@ -201,9 +224,9 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         @Override
         public String toString() {
             return ObjectDescriber.of(this)
-                    .field("character", this.character)
-                    .field("tokenType", this.tokenType)
-                    .describe();
+                .field("character", this.character)
+                .field("tokenType", this.tokenType)
+                .describe();
         }
     }
 }

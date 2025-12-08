@@ -48,6 +48,7 @@ public class VariableScope {
 
     /**
      * Gets all variable values declared inside the scope, identified by their name.
+     *
      * @return The variable values.
      */
     public Map<String, Object> values() {
@@ -55,13 +56,14 @@ public class VariableScope {
     }
 
     /**
-     * Gets the variable value for the given identifier, if it exists. If the variable
-     * doesn't exist in this scope, an attempt is made to look it up in the enclosing
-     * scope. If the token doesn't exist in any of the accessible scopes, a
-     * {@link ScriptEvaluationError} is thrown.
+     * Gets the variable value for the given identifier, if it exists. If the variable doesn't exist
+     * in this scope, an attempt is made to look it up in the enclosing scope. If the token doesn't
+     * exist in any of the accessible scopes, a {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable.
+     *
      * @return The value of the variable.
+     *
      * @throws ScriptEvaluationError If the variable is not defined.
      */
     public Object get(Token name) {
@@ -74,14 +76,14 @@ public class VariableScope {
             return this.enclosing.get(name);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-                .at(name)
-                .build();
+            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+            .at(name)
+            .build();
     }
 
     /**
-     * Defines a new variable and assigns the given value to it. If there is already a
-     * variable with the given name, the value is modified to equal the given value.
+     * Defines a new variable and assigns the given value to it. If there is already a variable with
+     * the given name, the value is modified to equal the given value.
      *
      * @param name The name of the variable.
      * @param value The value to assign.
@@ -91,12 +93,13 @@ public class VariableScope {
     }
 
     /**
-     * Reassigns the given value to an existing variable. If the variable does not exist
-     * within this scope, it will be looked up in enclosing scopes. If the variable does
-     * not exist in any enclosing scope, a {@link ScriptEvaluationError} is thrown.
+     * Reassigns the given value to an existing variable. If the variable does not exist within this
+     * scope, it will be looked up in enclosing scopes. If the variable does not exist in any
+     * enclosing scope, a {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable.
      * @param value The value to assign.
+     *
      * @throws ScriptEvaluationError If the variable does not exist.
      */
     public void assign(Token name, Object value) {
@@ -110,20 +113,21 @@ public class VariableScope {
             return;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-                .at(name)
-                .build();
+            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+            .at(name)
+            .build();
     }
 
     /**
-     * Assigns the given value to a variable in a scope which is a given amount of steps
-     * up from the current scope. Every step up indicates the enclosing scope of
-     * the previous step is selected. If there is no enclosing scope matching the amount of
-     * steps, a {@link ScriptEvaluationError} is thrown.
+     * Assigns the given value to a variable in a scope which is a given amount of steps up from the
+     * current scope. Every step up indicates the enclosing scope of the previous step is selected.
+     * If there is no enclosing scope matching the amount of steps, a {@link ScriptEvaluationError}
+     * is thrown.
      *
      * @param distance The amount of steps up.
      * @param name The identifier for the variable.
      * @param value The value to assign.
+     *
      * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
      */
     public void assignAt(int distance, Token name, Object value) {
@@ -135,6 +139,7 @@ public class VariableScope {
      * to look up the variable in an enclosing scope.
      *
      * @param token The token representing the variable.
+     *
      * @return {@code true} if the variable exists, or {@code false}.
      */
     public boolean contains(Token token) {
@@ -142,10 +147,11 @@ public class VariableScope {
     }
 
     /**
-     * Checks if this scope contains a variable with the given name. This does not attempt
-     * to look up the variable in an enclosing scope.
+     * Checks if this scope contains a variable with the given name. This does not attempt to look
+     * up the variable in an enclosing scope.
      *
      * @param name The name of the variable.
+     *
      * @return {@code true} if the variable exists, or {@code false}.
      */
     public boolean contains(String name) {
@@ -153,15 +159,17 @@ public class VariableScope {
     }
 
     /**
-     * Gets the value of the variable with the given name in a scope which is a given amount
-     * of steps up from the current scope. Every step up indicates the enclosing scope of
-     * the previous step is selected. If there is no enclosing scope matching the amount of
-     * steps, a {@link ScriptEvaluationError} is thrown.
+     * Gets the value of the variable with the given name in a scope which is a given amount of
+     * steps up from the current scope. Every step up indicates the enclosing scope of the previous
+     * step is selected. If there is no enclosing scope matching the amount of steps, a
+     * {@link ScriptEvaluationError} is thrown.
      *
      * @param at The position from where the request is made.
      * @param distance The amount of steps up.
      * @param name The name of the variable.
+     *
      * @return The value of the variable.
+     *
      * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
      */
     public Object getAt(Token at, int distance, String name) {
@@ -169,14 +177,16 @@ public class VariableScope {
     }
 
     /**
-     * Gets the value of the variable with the given name in a scope which is a given amount
-     * of steps up from the current scope. Every step up indicates the enclosing scope of
-     * the previous step is selected. If there is no enclosing scope matching the amount of
-     * steps, a {@link ScriptEvaluationError} is thrown.
+     * Gets the value of the variable with the given name in a scope which is a given amount of
+     * steps up from the current scope. Every step up indicates the enclosing scope of the previous
+     * step is selected. If there is no enclosing scope matching the amount of steps, a
+     * {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable
      * @param distance The amount of steps up.
+     *
      * @return The value of the variable.
+     *
      * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
      */
     public Object getAt(Token name, int distance) {
@@ -189,17 +199,17 @@ public class VariableScope {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
-                        .at(name)
-                        .build();
+                    .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
+                    .at(name)
+                    .build();
             }
         }
         return variableScope;
     }
 
     /**
-     * Gets the enclosing scope, if it exists. If no existing scope exists, {@code null}
-     * is returned.
+     * Gets the enclosing scope, if it exists. If no existing scope exists, {@code null} is
+     * returned.
      *
      * @return The enclosing {@link VariableScope}, or {@code null}.
      */

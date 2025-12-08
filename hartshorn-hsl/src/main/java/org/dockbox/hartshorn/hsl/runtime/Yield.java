@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 /**
- * Represents a specific return value, which immediately exits the current
- * scope, even if there are more statements to evaluate.
+ * Represents a specific return value, which immediately exits the current scope, even if there are
+ * more statements to evaluate.
  *
  * @since 0.7.0
  *
@@ -35,6 +35,7 @@ public class Yield extends RuntimeException {
 
     /**
      * Gets the value of the return statement.
+     *
      * @return The value of the statement.
      */
     public Object value() {

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
  * A statement representing a member of a class, for example a property field.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface MemberStatement extends NamedNode {

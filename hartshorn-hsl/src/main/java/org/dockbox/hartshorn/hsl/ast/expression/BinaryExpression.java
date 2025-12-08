@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 /**
  * An expression representing a binary operation, which consists of two expressions and an operator
  * that defines the operation to be performed on those expressions. The operator can be any valid
- * operator in the HSL language, such as addition, subtraction, multiplication, division, or
- * logical operations.
+ * operator in the HSL language, such as addition, subtraction, multiplication, division, or logical
+ * operations.
  *
  * @see org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType
  * @see org.dockbox.hartshorn.hsl.token.type.ConditionTokenType

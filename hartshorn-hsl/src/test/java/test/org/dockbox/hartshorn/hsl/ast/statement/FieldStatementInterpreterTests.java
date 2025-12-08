@@ -45,22 +45,22 @@ public class FieldStatementInterpreterTests {
 
     public static Stream<Arguments> fieldStatementVariants() {
         return StringUtilities.matrix()
-                .optionalSegment("private ", "public ")
-                .optionalSegment("final ")
-                .segment("age")
-                .build()
-                .stream()
-                .map(Arguments::of);
+            .optionalSegment("private ", "public ")
+            .optionalSegment("final ")
+            .segment("age")
+            .build()
+            .stream()
+            .map(Arguments::of);
     }
 
     public static Stream<Arguments> fieldStatementVariantsWithInitializer() {
         return StringUtilities.matrix()
-                .optionalSegment("private ", "public ")
-                .optionalSegment("final ")
-                .segment("age = 25")
-                .build()
-                .stream()
-                .map(Arguments::of);
+            .optionalSegment("private ", "public ")
+            .optionalSegment("final ")
+            .segment("age = 25")
+            .build()
+            .stream()
+            .map(Arguments::of);
     }
 
     @ParameterizedTest(name = "Field statement variant: ''{0}''")
@@ -81,28 +81,28 @@ public class FieldStatementInterpreterTests {
 
     private HSLTestHelper createHelper(String variant) {
         return HSLTestHelper.of(this.applicationContext, """
-                        class Dummy { %s }
-                        capture(Dummy())
-                        """.formatted(variant))
-                .extensions(extensions -> extensions.statementModules(new CaptureModule()))
-                .statementParser(new ClassStatementParser(new FieldStatementParser()))
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                class Dummy { %s }
+                capture(Dummy())
+                """.formatted(variant))
+            .extensions(extensions -> extensions.statementModules(new CaptureModule()))
+            .statementParser(new ClassStatementParser(new FieldStatementParser()))
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
     }
 
     private static void assertFieldInitialized(HSLTestHelper helper, Object expected) {
         Object value = helper.captures().capturedValue();
         VirtualInstance instance = Assertions.assertInstanceOf(VirtualInstance.class, value);
         Token ageToken = Token.of(LiteralTokenType.IDENTIFIER)
-                .lexeme("age")
-                .build();
+            .lexeme("age")
+            .build();
         Object age = instance.get(
-                helper.interpreter(),
-                ageToken,
-                // Class scope, to ensure private fields are accessible
-                instance.virtualClass().variableScope()
+            helper.interpreter(),
+            ageToken,
+            // Class scope, to ensure private fields are accessible
+            instance.virtualClass().variableScope()
         );
         Assertions.assertEquals(expected, age);
     }

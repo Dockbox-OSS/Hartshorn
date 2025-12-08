@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for binary multiplication, division, and modulo expressions. Handles the parsing of expressions
- * involving multiplication (<code>*</code>), division (<code>/</code>), and module (<code>%</code>) operators.
+ * Parser for binary multiplication, division, and modulo expressions. Handles the parsing of
+ * expressions involving multiplication (<code>*</code>), division (<code>/</code>), and module
+ * (<code>%</code>) operators.
  *
  * @since 0.7.0
  *
@@ -35,9 +36,9 @@ public class BinaryMultiplicationExpressionParser extends AbstractBitwiseOrLogic
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-                ArithmeticTokenType.SLASH,
-                ArithmeticTokenType.STAR,
-                ArithmeticTokenType.MODULO,
+            ArithmeticTokenType.SLASH,
+            ArithmeticTokenType.STAR,
+            ArithmeticTokenType.MODULO,
         };
     }
 

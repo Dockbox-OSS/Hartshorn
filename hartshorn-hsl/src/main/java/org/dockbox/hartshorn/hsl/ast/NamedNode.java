@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.hsl.ast;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * Represents a node in the AST that has a name. This is an optional interface, as not all nodes in the AST have a name.
+ * Represents a node in the AST that has a name. This is an optional interface, as not all nodes in
+ * the AST have a name.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface

@@ -23,17 +23,21 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * A switch statement, which allows for conditional branching based on the value of an expression. The switch
- * statement must have at least one case, which may be a {@link SwitchCase#isDefault() default case}.
+ * A switch statement, which allows for conditional branching based on the value of an expression.
+ * The switch statement must have at least one case, which may be a
+ * {@link SwitchCase#isDefault() default case}.
  *
- * <p>The switch statement consists of three main components: the switch expression, the list of cases, and an
- * optional default case. The switch expression is evaluated once, and its result is compared against the values
- * of each case in the list.
+ * <p>The switch statement consists of three main components: the switch expression, the list of
+ * cases, and an
+ * optional default case. The switch expression is evaluated once, and its result is compared
+ * against the values of each case in the list.
  *
- * <p>Unlike traditional switch statements in some programming languages, the HSL switch statement does not
- * require a break statement to prevent fall-through behavior. Each case is evaluated independently, and the
- * execution will not continue to the next case. The use of {@link BreakStatement break statements} is still
- * allowed to exit the switch statement early, if desired.
+ * <p>Unlike traditional switch statements in some programming languages, the HSL switch statement
+ * does not
+ * require a break statement to prevent fall-through behavior. Each case is evaluated independently,
+ * and the execution will not continue to the next case. The use of
+ * {@link BreakStatement break statements} is still allowed to exit the switch statement early, if
+ * desired.
  *
  * @since 0.4.12
  *
@@ -45,7 +49,12 @@ public class SwitchStatement extends Statement {
     private final List<SwitchCase> cases;
     private final SwitchCase defaultCase;
 
-    public SwitchStatement(Token switchToken, Expression expression, List<SwitchCase> cases, SwitchCase defaultCase) {
+    public SwitchStatement(
+        Token switchToken,
+        Expression expression,
+        List<SwitchCase> cases,
+        SwitchCase defaultCase
+    ) {
         super(switchToken);
         this.expression = expression;
         this.cases = cases;

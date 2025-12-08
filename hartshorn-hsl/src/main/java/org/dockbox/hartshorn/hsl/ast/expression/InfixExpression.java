@@ -23,16 +23,16 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 /**
  * An expression representing an infix operation, which is an operation that is placed between two
  * expressions. An infix expression differs from a binary expression in that it is not necessarily
- * based on a single operator, but rather a function or method that takes two values and produces
- * a result.
+ * based on a single operator, but rather a function or method that takes two values and produces a
+ * result.
  *
  * <p>For example, in the expression <code>value in list</code>, the <code>in</code> operator is an
  * infix operator that checks whether the <code>value</code> is present in the <code>list</code>.
  *
  * @see FunctionStatement#functionType()
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class InfixExpression extends Expression {

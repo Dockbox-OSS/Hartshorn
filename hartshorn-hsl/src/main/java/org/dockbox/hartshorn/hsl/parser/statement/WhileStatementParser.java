@@ -31,13 +31,16 @@ import java.util.Set;
  * A parser for {@link WhileStatement} nodes.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<? extends WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends WhileStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(LoopTokenType.WHILE)) {
 
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();

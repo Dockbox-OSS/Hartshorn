@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing access to a method or property on the superclass of the current class.
+ * An expression representing access to a method or property on the superclass of the current
+ * class.
  *
  * @since 0.4.12
  *

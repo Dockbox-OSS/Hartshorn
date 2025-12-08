@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.hsl.objects;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * The exception thrown by module loaders accessing native functions. This exception is thrown
- * when a native function is called that is not supported by the module, or is not accessible
- * to the active runtime.
+ * The exception thrown by module loaders accessing native functions. This exception is thrown when
+ * a native function is called that is not supported by the module, or is not accessible to the
+ * active runtime.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class NativeExecutionException extends ApplicationException {

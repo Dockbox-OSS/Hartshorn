@@ -27,14 +27,15 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 
 /**
- * A standard implementation of the {@link PropertyAccessVerifier} interface, which verifies access to properties
- * based on their visibility and the instance from which they are accessed.
+ * A standard implementation of the {@link PropertyAccessVerifier} interface, which verifies access
+ * to properties based on their visibility and the instance from which they are accessed.
  *
- * <p>If a field is public, access is always granted. If the field is not public, access is granted if the
+ * <p>If a field is public, access is always granted. If the field is not public, access is granted
+ * if the
  * field is within the current class scope or an enclosing scope.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
@@ -43,18 +44,39 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
     public static final String WRITE_ACTION = "assign to";
 
     @Override
-    public FormattedDiagnostic read(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
-        if (property.readModifier() == null || property.readModifier().type() == MemberModifierTokenType.PUBLIC) return null;
+    public FormattedDiagnostic read(
+        final Token at,
+        final VirtualProperty property,
+        final InstanceReference instance,
+        final VariableScope fromScope
+    ) {
+        if (property.readModifier() == null
+            || property.readModifier().type() == MemberModifierTokenType.PUBLIC) {
+            return null;
+        }
         return this.permittedScope(READ_ACTION, property, instance, fromScope);
     }
 
     @Override
-    public FormattedDiagnostic write(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
-        if (property.writeModifier() == null || property.writeModifier().type() == MemberModifierTokenType.PUBLIC) return null;
+    public FormattedDiagnostic write(
+        final Token at,
+        final VirtualProperty property,
+        final InstanceReference instance,
+        final VariableScope fromScope
+    ) {
+        if (property.writeModifier() == null
+            || property.writeModifier().type() == MemberModifierTokenType.PUBLIC) {
+            return null;
+        }
         return this.permittedScope(WRITE_ACTION, property, instance, fromScope);
     }
 
-    private FormattedDiagnostic permittedScope(final String action, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
+    private FormattedDiagnostic permittedScope(
+        final String action,
+        final VirtualProperty property,
+        final InstanceReference instance,
+        final VariableScope fromScope
+    ) {
         if (instance instanceof VirtualInstance virtualInstance) {
             VariableScope classScope = virtualInstance.type().variableScope();
             VariableScope currentScope = fromScope;
@@ -70,7 +92,9 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
         final String parent = instance.type().name();
 
         final Token modifierToken = property.fieldStatement().modifier();
-        final String modifier = modifierToken == null ? MemberModifierTokenType.PUBLIC.representation() : modifierToken.lexeme();
+        final String modifier =
+            modifierToken == null ? MemberModifierTokenType.PUBLIC.representation()
+                : modifierToken.lexeme();
 
         final String members;
         final VirtualFieldMemberFunction setter = property.setter();
@@ -78,25 +102,34 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
         if (setter == null && getter == null) {
             members = "no members";
-        } else {
+        }
+        else {
             final StringBuilder memberBuilder = new StringBuilder();
             if (setter != null) {
                 memberBuilder.append("a ");
-                memberBuilder.append(setter.modifier() == null ? "public" : setter.modifier().lexeme());
+                memberBuilder.append(
+                    setter.modifier() == null ? "public" : setter.modifier().lexeme());
                 memberBuilder.append(" setter");
             }
             if (getter != null) {
                 if (setter != null) {
                     memberBuilder.append(" and a ");
-                } else {
+                }
+                else {
                     memberBuilder.append("a ");
                 }
-                memberBuilder.append(getter.modifier() == null ? "public" : getter.modifier().lexeme());
+                memberBuilder.append(
+                    getter.modifier() == null ? "public" : getter.modifier().lexeme());
                 memberBuilder.append(" getter");
             }
             members = memberBuilder.toString();
         }
 
-        return new FormattedDiagnostic(DiagnosticMessage.INVALID_PROPERTY_ACCESS, action, name, parent, modifier, members);
+        return new FormattedDiagnostic(DiagnosticMessage.INVALID_PROPERTY_ACCESS,
+            action,
+            name,
+            parent,
+            modifier,
+            members);
     }
 }

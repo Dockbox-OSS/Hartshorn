@@ -58,8 +58,8 @@ public class VirtualProperty {
     }
 
     /**
-     * The getter function for this property. Getters are optional; if no getter is defined,
-     * the property is read directly.
+     * The getter function for this property. Getters are optional; if no getter is defined, the
+     * property is read directly.
      *
      * @return the getter function, or null if none is defined
      */
@@ -69,7 +69,9 @@ public class VirtualProperty {
 
     /**
      * Sets the getter function for this property.
+     *
      * @param getter the getter function
+     *
      * @return this property
      */
     public VirtualProperty getter(VirtualFieldMemberFunction getter) {
@@ -81,8 +83,8 @@ public class VirtualProperty {
     }
 
     /**
-     * The setter function for this property. Setters are optional; if no setter is defined,
-     * the property is written directly.
+     * The setter function for this property. Setters are optional; if no setter is defined, the
+     * property is written directly.
      *
      * @return the setter function, or null if none is defined
      */
@@ -92,7 +94,9 @@ public class VirtualProperty {
 
     /**
      * Sets the setter function for this property.
+     *
      * @param setter the setter function
+     *
      * @return this property
      */
     public VirtualProperty setter(VirtualFieldMemberFunction setter) {

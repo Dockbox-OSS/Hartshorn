@@ -31,7 +31,11 @@ public abstract class ParametricExecutableBodyStatement extends ParametricExecut
 
     private final BlockStatement body;
 
-    protected ParametricExecutableBodyStatement(Token token, List<Parameter> params, BlockStatement body) {
+    protected ParametricExecutableBodyStatement(
+        Token token,
+        List<Parameter> params,
+        BlockStatement body
+    ) {
         super(token, params);
         this.body = body;
     }

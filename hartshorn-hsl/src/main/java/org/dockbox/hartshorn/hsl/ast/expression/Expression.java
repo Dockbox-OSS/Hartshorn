@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * An abstract class representing an expression in the AST.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class Expression extends ASTNode {

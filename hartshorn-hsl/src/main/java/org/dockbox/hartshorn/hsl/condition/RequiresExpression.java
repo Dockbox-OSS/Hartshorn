@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,15 @@ import java.lang.annotation.Target;
  *
  * @author Guus Lieben
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = ExpressionCondition.class)
 public @interface RequiresExpression {
 
     /**
-     * The expression to evaluate. Context of the expression depends on the {@link ExpressionCondition}
-     * and any additional provided context.
+     * The expression to evaluate. Context of the expression depends on the
+     * {@link ExpressionCondition} and any additional provided context.
      *
      * @return The expression to evaluate.
      */

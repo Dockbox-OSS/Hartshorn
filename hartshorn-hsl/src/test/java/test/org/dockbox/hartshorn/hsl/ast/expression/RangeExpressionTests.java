@@ -33,48 +33,48 @@ public class RangeExpressionTests {
     @Test
     void rangeYieldsLeftRightInclusiveArray(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "1..5")
-                .expressionParser(new RangeExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new RangeExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
         Assertions.assertArrayEquals(
-                new Double[]{1d, 2d, 3d, 4d, 5d},
-                array.values()
+            new Double[] {1d, 2d, 3d, 4d, 5d},
+            array.values()
         );
     }
 
     @Test
     void rangeWithSameValueYieldsSingleElementArray(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "2..2")
-                .expressionParser(new RangeExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new RangeExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
         Assertions.assertArrayEquals(
-                new Double[]{2d},
-                array.values()
+            new Double[] {2d},
+            array.values()
         );
     }
 
     @Test
     void rangeSupportsIdentifierValues(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "min..max")
-                .expressionParser(new RangeExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .defineLocal("min", 1)
-                .defineLocal("max", 5)
-                .build();
+            .expressionParser(new RangeExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .defineLocal("min", 1)
+            .defineLocal("max", 5)
+            .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
         Assertions.assertArrayEquals(
-                new Double[]{1d, 2d, 3d, 4d, 5d},
-                array.values()
+            new Double[] {1d, 2d, 3d, 4d, 5d},
+            array.values()
         );
     }
 }

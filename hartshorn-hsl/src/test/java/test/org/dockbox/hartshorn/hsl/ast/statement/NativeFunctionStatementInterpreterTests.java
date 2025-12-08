@@ -38,20 +38,23 @@ import java.util.Set;
 public class NativeFunctionStatementInterpreterTests {
 
     @Test
-    void nativeFunctionImportsIndividualMethodFromModule(@Inject ApplicationContext applicationContext) {
+    void nativeFunctionImportsIndividualMethodFromModule(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "native function math:log(a)")
-                .statementParser(new NativeFunctionStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
-                .build();
+            .statementParser(new NativeFunctionStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
+            .build();
 
         helper.interpret();
 
         Object logFunction = helper.findVariable("log");
-        NativeLibrary nativeLogFunction = Assertions.assertInstanceOf(NativeLibrary.class, logFunction);
+        NativeLibrary nativeLogFunction =
+            Assertions.assertInstanceOf(NativeLibrary.class, logFunction);
         MethodView<?, ?> originalMethod = nativeLogFunction.declaration().method();
         Assertions.assertTrue(originalMethod.declaredBy().is(Math.class));
         Assertions.assertEquals("log", originalMethod.name());
@@ -62,8 +65,11 @@ public class NativeFunctionStatementInterpreterTests {
     }
 
     @Test
-    void nativeFunctionImportsAmbiguousOverloadMethodsFromModule(@Inject ApplicationContext applicationContext) {
-        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "native function math:max(a, b)")
+    void nativeFunctionImportsAmbiguousOverloadMethodsFromModule(
+        @Inject ApplicationContext applicationContext
+    ) {
+        HSLTestHelper helper =
+            HSLTestHelper.of(applicationContext, "native function math:max(a, b)")
                 .statementParser(new NativeFunctionStatementParser())
                 .statementParser(new BlockStatementParser())
                 .expressionParser(new CallExpressionParser())
@@ -76,8 +82,8 @@ public class NativeFunctionStatementInterpreterTests {
 
         Object maxFunction = helper.findVariable("max");
         AmbiguousNativeLibraryFunction ambiguousMaxFunction = Assertions.assertInstanceOf(
-                AmbiguousNativeLibraryFunction.class,
-                maxFunction
+            AmbiguousNativeLibraryFunction.class,
+            maxFunction
         );
         Set<NativeLibrary> overloadFunctions = ambiguousMaxFunction.libraries();
         // Math.max has 4 overloads: (int, int), (long, long), (float, float), (double, double)

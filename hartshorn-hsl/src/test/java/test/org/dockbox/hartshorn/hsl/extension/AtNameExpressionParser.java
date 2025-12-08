@@ -33,8 +33,12 @@ class AtNameExpressionParser implements ExpressionParser {
     }
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
-        if(parser.match(this.atNameModule.tokenType())) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
+        if (parser.match(this.atNameModule.tokenType())) {
             Token at = parser.previous();
             Token identifier = validator.expectAfter(LiteralTokenType.IDENTIFIER, "at");
             return new AtNameExpression(at, this.atNameModule, identifier);

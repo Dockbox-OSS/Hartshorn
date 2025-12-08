@@ -20,12 +20,12 @@ import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * A collection of standard token characters which can be used by the {@link SimpleTokenRegistryLexer}
- * to tokenize a given HSL script. This is also used by the standard {@link TokenType}s to specify their
- * representation.
+ * A collection of standard token characters which can be used by the
+ * {@link SimpleTokenRegistryLexer} to tokenize a given HSL script. This is also used by the
+ * standard {@link TokenType}s to specify their representation.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum DefaultTokenCharacter implements SimpleTokenCharacter {

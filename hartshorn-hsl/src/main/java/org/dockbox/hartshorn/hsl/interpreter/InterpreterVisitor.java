@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * interpret all default expressions and statements.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface InterpreterVisitor extends ExpressionVisitor<Object>, StatementVisitor<Void> {

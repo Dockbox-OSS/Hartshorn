@@ -39,7 +39,7 @@ import java.util.Set;
  * A parser for {@link ForStatement} and {@link ForEachStatement} nodes.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
@@ -48,14 +48,15 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
     public Option<? extends BodyStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(LoopTokenType.FOR)) {
             Token forToken = parser.advance();
-            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().open(), LoopTokenType.FOR);
+            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().open(),
+                LoopTokenType.FOR);
 
             VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
-                    .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                    .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
-                            .message(DiagnosticMessage.EXPECTED_VARIABLE_STATEMENT_FOR_EACH)
-                            .at(forToken)
-                            .build());
+                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
+                .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.EXPECTED_VARIABLE_STATEMENT_FOR_EACH)
+                    .at(forToken)
+                    .build());
 
             if (parser.match(LoopTokenType.IN)) {
                 return this.parseForEachStatement(forToken, parser, validator, initializer);
@@ -73,23 +74,35 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
     }
 
     @NonNull
-    private Option<BodyStatement> parseForStatement(Token forToken, TokenParser parser, TokenStepValidator validator, VariableStatement initializer) {
+    private Option<BodyStatement> parseForStatement(
+        Token forToken,
+        TokenParser parser,
+        TokenStepValidator validator,
+        VariableStatement initializer
+    ) {
         validator.expectAfter(parser.tokenRegistry().statementEnd(), "for assignment");
 
         Expression condition = parser.expression();
         validator.expectAfter(parser.tokenRegistry().statementEnd(), "for condition");
 
         Statement increment = parser.expressionStatement();
-        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "for increment");
+        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(),
+            "for increment");
 
         BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForStatement(initializer, condition, increment, loopBody));
     }
 
     @NonNull
-    private Option<BodyStatement> parseForEachStatement(Token forToken, TokenParser parser, TokenStepValidator validator, VariableStatement initializer) {
+    private Option<BodyStatement> parseForEachStatement(
+        Token forToken,
+        TokenParser parser,
+        TokenStepValidator validator,
+        VariableStatement initializer
+    ) {
         Expression collection = parser.expression();
-        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "for collection");
+        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(),
+            "for collection");
 
         BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForEachStatement(initializer, collection, loopBody));

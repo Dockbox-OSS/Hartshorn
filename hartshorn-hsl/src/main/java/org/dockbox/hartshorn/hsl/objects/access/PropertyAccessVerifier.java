@@ -23,38 +23,50 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * A verifier that checks if a property access is allowed. For example, a private property can only be
- * accessed from within the class that defines it.
+ * A verifier that checks if a property access is allowed. For example, a private property can only
+ * be accessed from within the class that defines it.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface PropertyAccessVerifier {
 
     /**
-     * Verifies if a read access to the given property is allowed. If the access is not allowed,
-     * a {@link FormattedDiagnostic} is returned describing the error. If the access is allowed,
-     * null is returned.
+     * Verifies if a read access to the given property is allowed. If the access is not allowed, a
+     * {@link FormattedDiagnostic} is returned describing the error. If the access is allowed, null
+     * is returned.
      *
      * @param at token at which the access is made
      * @param property the property being accessed
      * @param instance the instance from which the property is accessed
      * @param fromScope the scope from which the access is made
+     *
      * @return a diagnostic if the access is not allowed, or null if it is allowed
      */
-    FormattedDiagnostic read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+    FormattedDiagnostic read(
+        Token at,
+        VirtualProperty property,
+        InstanceReference instance,
+        VariableScope fromScope
+    );
 
     /**
-     * Verifies if a write access to the given property is allowed. If the access is not allowed,
-     * a {@link FormattedDiagnostic} is returned describing the error. If the access is allowed,
-     * null is returned.
+     * Verifies if a write access to the given property is allowed. If the access is not allowed, a
+     * {@link FormattedDiagnostic} is returned describing the error. If the access is allowed, null
+     * is returned.
      *
      * @param at token at which the access is made
      * @param property the property being accessed
      * @param instance the instance from which the property is accessed
      * @param fromScope the scope from which the access is made
+     *
      * @return a diagnostic if the access is not allowed, or null if it is allowed
      */
-    FormattedDiagnostic write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+    FormattedDiagnostic write(
+        Token at,
+        VirtualProperty property,
+        InstanceReference instance,
+        VariableScope fromScope
+    );
 }

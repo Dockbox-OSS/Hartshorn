@@ -39,14 +39,15 @@ public class ModuleStatementInterpreterTests {
     @Test
     void moduleStatementImportsKnownModuleFunctions(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "import math")
-                .statementParser(new ModuleStatementParser())
-                .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
-                .build();
+            .statementParser(new ModuleStatementParser())
+            .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
+            .build();
         helper.interpret();
 
         // Non-ambiguous function
         Object cosFunction = helper.findVariable("cos");
-        NativeLibrary nativeCosFunction = Assertions.assertInstanceOf(NativeLibrary.class, cosFunction);
+        NativeLibrary nativeCosFunction =
+            Assertions.assertInstanceOf(NativeLibrary.class, cosFunction);
         MethodView<?, ?> originalMethod = nativeCosFunction.declaration().method();
         Assertions.assertTrue(originalMethod.declaredBy().is(Math.class));
         Assertions.assertEquals("cos", originalMethod.name());
@@ -55,8 +56,8 @@ public class ModuleStatementInterpreterTests {
         // Ambiguous function (overloaded)
         Object maxFunction = helper.findVariable("max");
         AmbiguousNativeLibraryFunction ambiguousMaxFunction = Assertions.assertInstanceOf(
-                AmbiguousNativeLibraryFunction.class,
-                maxFunction
+            AmbiguousNativeLibraryFunction.class,
+            maxFunction
         );
         Set<NativeLibrary> overloadFunctions = ambiguousMaxFunction.libraries();
         // Math.max has 4 overloads: (int, int), (long, long), (float, float), (double, double)
@@ -71,12 +72,12 @@ public class ModuleStatementInterpreterTests {
     @Test
     void moduleStatementFailsOnUnknownModule(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "import math")
-                .statementParser(new ModuleStatementParser())
-                .build();
+            .statementParser(new ModuleStatementParser())
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpret
+            ScriptEvaluationError.class,
+            helper::interpret
         );
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.MISSING_MODULE);
     }

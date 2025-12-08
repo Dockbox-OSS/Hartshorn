@@ -42,7 +42,7 @@ import java.util.Map;
  * Interpreter for {@link ClassStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ClassStatementInterpreter implements StatementInterpreter<ClassStatement> {
@@ -56,35 +56,43 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
             superClass = interpreter.evaluate(superClassExpression);
             if (!(superClass instanceof ClassReference classReference)) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
-                        .at(superClassExpression)
-                        .build();
+                    .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
+                    .at(superClassExpression)
+                    .build();
             }
             if (classReference.isFinal()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
-                        .at(superClassExpression)
-                        .build();
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
+                    .at(superClassExpression)
+                    .build();
             }
         }
 
         interpreter.visitingScope().define(node.name().lexeme(), null);
         ClassReference superClassReference = (ClassReference) superClass;
-        interpreter.withNextScope(() -> this.visitClassScope(node, interpreter, superClassReference));
+        interpreter.withNextScope(() -> this.visitClassScope(node,
+            interpreter,
+            superClassReference));
 
         return null;
     }
 
-    private void visitClassScope(ClassStatement node, Interpreter interpreter, ClassReference superClassReference) {
+    private void visitClassScope(
+        ClassStatement node,
+        Interpreter interpreter,
+        ClassReference superClassReference
+    ) {
         if (node.superClass() != null) {
             interpreter.enterScope(new VariableScope(interpreter.visitingScope()));
-            interpreter.visitingScope().define(ObjectTokenType.SUPER.representation(), superClassReference);
+            interpreter.visitingScope()
+                .define(ObjectTokenType.SUPER.representation(), superClassReference);
         }
 
         Map<String, VirtualFunction> methods = this.methodsToVirtualFunctions(node, interpreter);
         VirtualFunction constructor = this.constructorToVirtualFunction(node, interpreter);
         Map<String, VirtualProperty> fields = this.fieldsToVirtualProperties(node, interpreter);
-        VirtualClass virtualClass = new VirtualClassBuilder(node.name(), interpreter.visitingScope())
+        VirtualClass virtualClass =
+            new VirtualClassBuilder(node.name(), interpreter.visitingScope())
                 .superClass(superClassReference)
                 .dynamic(node.isDynamic())
                 .isFinal(node.isFinal())
@@ -100,35 +108,48 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
         interpreter.visitingScope().enclosing().assign(node.name(), virtualClass);
     }
 
-    private VirtualFunction constructorToVirtualFunction(ClassStatement node, Interpreter interpreter) {
+    private VirtualFunction constructorToVirtualFunction(
+        ClassStatement node,
+        Interpreter interpreter
+    ) {
         VirtualFunction constructor = null;
         if (node.constructor() != null) {
-            constructor = new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
+            constructor =
+                new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
         }
         return constructor;
     }
 
-    private Map<String, VirtualProperty> fieldsToVirtualProperties(ClassStatement node, Interpreter interpreter) {
+    private Map<String, VirtualProperty> fieldsToVirtualProperties(
+        ClassStatement node,
+        Interpreter interpreter
+    ) {
         Map<String, VirtualProperty> properties = new LinkedHashMap<>();
         for (FieldStatement field : node.fields()) {
             VirtualProperty virtualProperty = new VirtualProperty(field);
             FieldGetStatement getter = field.getter();
             if (getter != null) {
-                virtualProperty.getter(new VirtualFieldMemberFunction(getter, new VariableScope(interpreter.visitingScope())));
+                virtualProperty.getter(new VirtualFieldMemberFunction(getter,
+                    new VariableScope(interpreter.visitingScope())));
             }
             FieldSetStatement setter = field.setter();
             if (setter != null) {
-                virtualProperty.setter(new VirtualFieldMemberFunction(setter, new VariableScope(interpreter.visitingScope())));
+                virtualProperty.setter(new VirtualFieldMemberFunction(setter,
+                    new VariableScope(interpreter.visitingScope())));
             }
             properties.put(field.name().lexeme(), virtualProperty);
         }
         return properties;
     }
 
-    private Map<String, VirtualFunction> methodsToVirtualFunctions(ClassStatement node, Interpreter interpreter) {
+    private Map<String, VirtualFunction> methodsToVirtualFunctions(
+        ClassStatement node,
+        Interpreter interpreter
+    ) {
         Map<String, VirtualFunction> methods = new LinkedHashMap<>();
         for (FunctionStatement method : node.methods()) {
-            VirtualFunction function = new VirtualFunction(method, interpreter.visitingScope(), false);
+            VirtualFunction function =
+                new VirtualFunction(method, interpreter.visitingScope(), false);
             methods.put(method.name().lexeme(), function);
         }
         return methods;
