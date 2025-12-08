@@ -133,8 +133,11 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             throw e;
         }
         catch (Throwable throwable) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new ApplicationException(throwable);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                    .at(at)
+                    .cause(throwable)
+                    .build();
         }
     }
 

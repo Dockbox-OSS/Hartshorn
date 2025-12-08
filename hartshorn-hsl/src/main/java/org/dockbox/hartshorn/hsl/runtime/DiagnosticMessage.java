@@ -19,9 +19,12 @@ package org.dockbox.hartshorn.hsl.runtime;
 import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
- * An enumeration of all diagnostic messages used in HSL, each with a unique code and a message template.
+ * An enumeration of all diagnostic messages used in HSL, each with a unique code and a message
+ * template. Diagnostic messages can be used to report errors and warnings during various phases
+ * of HSL processing, such as tokenizing, parsing, semantic analysis, and interpretation.
  *
- * <p>The codes are structured as follows:
+ * <p>The messages are categorized into groups based on the processing phase they belong to, with
+ * each group having a unique range of message IDs:
  * <ul>
  *     <li>1xxx - Lexical analysis (tokenizing)</li>
  *     <li>2xxx - Parsing</li>
@@ -30,7 +33,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
  *     <li>5xxx - Common validation</li>
  * </ul>
  *
- * <p>Each message can be formatted with arguments using the {@link #format(Object...)} method.
+ * <p>Note that 'Common validation' messages (5xxx) are not tied to a specific phase, and can be used
  *
  * @since 0.7.0
  *
@@ -65,7 +68,10 @@ public enum DiagnosticMessage {
     UNEXPECTED_TOKEN(Phase.PARSING, "Unexpected token '{0}'."),
     NOT_ENOUGH_PARAMETERS_FOR_X(Phase.PARSING, "Expected at least {0} parameters for {1} functions."),
     EMPTY_TEST_BODY(Phase.PARSING, "Test body cannot be empty."),
+    EMPTY_TEST_NAME(Phase.PARSING, "Test name cannot be empty."),
     TEST_BODY_MUST_END_WITH_YIELD(Phase.PARSING, "Test body must end with a yield return statement."),
+    FIELD_MEMBER_X_NOT_FOR_FIELD_Y(Phase.PARSING, "Field member '{0}' is not valid for field '{1}'."),
+    DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y(Phase.PARSING, "Duplicate field member '{0}' for field '{1}'."),
 
     // 3xxx - Semantic analysis
     CANNOT_USE_X_OUTSIDE_CLASS(Phase.SEMANTIC_ANALYSIS, "Cannot use '{0}' outside of a class."),
@@ -100,6 +106,7 @@ public enum DiagnosticMessage {
     UNSUPPORTED_UNARY(Phase.INTERPRETING, "Unsupported unary operator: {0}."),
     CONSTRUCTOR_CALL_ON_INSTANCE(Phase.INTERPRETING, "Cannot call constructor on instance."),
     MISSING_CONSTRUCTOR_WITH_PARAMETERS(Phase.INTERPRETING, "No constructor found for class {0} with arguments {1}."),
+    MISSING_DEFAULT_CONSTRUCTOR(Phase.INTERPRETING, "No default constructor found for class {0}."),
     NON_ITERABLE_COLLECTION(Phase.INTERPRETING, "Collection must be iterable, but got {0}."),
     NON_PROPERTY_CONTAINER(Phase.INTERPRETING, "Can only access properties of property containers, but received {0}."),
     NON_NUMBER_OPERAND(Phase.INTERPRETING, "Operand must be a number, but got '{0}'."),
@@ -127,6 +134,16 @@ public enum DiagnosticMessage {
     DEFERRED_INSTANCE_EAGER_ACCESS(Phase.INTERPRETING, "Cannot access deferred instance of type {0} before it has been initialized."),
     PROPERTY_ACCESS_FAILURE(Phase.INTERPRETING, "Failed to {0} property '{1}' on instance of type {2}: {3}."),
     ERROR_WHILE_INVOKING_NATIVE_METHOD(Phase.INTERPRETING, "Error while invoking native method '{0}': {1}."),
+    ILLEGAL_ARRAY_PROPERTY_X(Phase.INTERPRETING, "Cannot {0} property '{1}' on array instances."),
+    ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y(Phase.INTERPRETING, "Cannot {0} property '{1}' on array instances, except for '{2}'."),
+    ARRAY_INDEX_OUT_OF_BOUNDS(Phase.INTERPRETING, "Array index out of bounds: {0} (length: {1})."),
+    UNEXPECTED_FLOW_CONTROL_X_IN_Y(Phase.INTERPRETING, "Unexpected flow control statement '{0}' in {1}."),
+    OBJECT_NOT_INSTANCE_OF_X(Phase.INTERPRETING, "Object is not an instance of '{0}', got '{1}'."),
+    MODULE_X_CANNOT_FIND_Y_Z(Phase.INTERPRETING, "Module '{0}' cannot find {1} '{2}'."),
+    NO_SUCH_MODULE_X(Phase.INTERPRETING, "No such module: '{0}'."),
+    COMPOSITE_WITHOUT_EXTERNAL_SUPER(Phase.INTERPRETING, "Composite classes must have an external super class."),
+    UNEXPECTED_ERROR(Phase.INTERPRETING, "Unexpected error: {0}."),
+    BACKING_INSTANCE_ALREADY_CREATED(Phase.INTERPRETING, "Backing instance for external object reference has already been created."),
 
     // 5xxx - Common validation
     EXPECTED_EXPRESSION_AFTER_X("Expected expression after {0}."),
@@ -151,7 +168,6 @@ public enum DiagnosticMessage {
         }
     }
 
-    private final int id;
     private final int group;
     private final int member;
     private final String message;
@@ -160,8 +176,6 @@ public enum DiagnosticMessage {
     DiagnosticMessage(String message) {
         this.group = Phase.values().length + 1;
         this.member = MemberSequenceGenerator.nextMember(null);
-
-        this.id = (this.group * 1000) + this.member;
         this.message = message;
         this.phase = null;
     }
@@ -169,24 +183,25 @@ public enum DiagnosticMessage {
     DiagnosticMessage(Phase phase, String message) {
         this.group = phase.ordinal() + 1;
         this.member = MemberSequenceGenerator.nextMember(phase);
-
-        this.id = (this.group * 1000) + this.member;
         this.message = message;
         this.phase = phase;
     }
 
     /**
-     * Gets the unique identifier for this diagnostic message.
+     * Gets the unique identifier for this diagnostic message. The identifier is a combination of
+     * the group and member number, ensured to be unique across all messages.
+     *
      * @return the unique identifier
      */
     public int id() {
-        return this.id;
+        return (this.group * 1000) + this.member;
     }
 
     /**
-     * Gets the group of this diagnostic message. The group represents the category of the message (e.g., tokenizing, parsing,
-     * etc.). The group is determined by the thousands place of the message ID. For example, {@link #UNEXPECTED_TOKEN} has ID 2014,
-     * which means it belongs to group 2 (parsing).
+     * Gets the group of this diagnostic message. The group represents the category of the message
+     * (e.g., tokenizing, parsing, etc.). The group is determined by the thousands place of the
+     * message ID. For example, {@link #UNEXPECTED_TOKEN} has ID 2014, which means it belongs to
+     * group 2 (parsing).
      *
      * <p>The following groups are defined:
      * <ul>
@@ -204,8 +219,8 @@ public enum DiagnosticMessage {
     }
 
     /**
-     * Gets the member number within its group for this diagnostic message. For example, {@link #UNEXPECTED_TOKEN} has
-     * ID 2014, which means it belongs to group 2 (parsing) and is member 14 within that group.
+     * Gets the member number within its group for this diagnostic message. For example, a message
+     * with ID 2014 has a member number of 14 within group 2 (parsing).
      *
      * @return the member number
      */
@@ -214,9 +229,9 @@ public enum DiagnosticMessage {
     }
 
     /**
-     * Gets the phase associated with this diagnostic message. This indicates the stage of processing (e.g.,
-     * tokenizing, parsing, etc.) where the message is relevant. If no specific phase is associated, this method
-     * returns {@code null}.
+     * Gets the phase associated with this diagnostic message. This indicates the stage of
+     * processing (e.g., tokenizing, parsing, etc.) where the message is relevant. If no specific
+     * phase is associated, this method returns {@code null}.
      *
      * @return the associated phase, or {@code null} if none is associated
      */
@@ -225,13 +240,14 @@ public enum DiagnosticMessage {
     }
 
     /**
-     * Formats the diagnostic message with the given arguments. The message template may contain positional
-     * placeholders (e.g., {0}, {1}, etc.) that will be replaced by the corresponding arguments.
+     * Formats the diagnostic message with the given arguments. The message template may contain
+     * positional placeholders (e.g., {0}, {1}, etc.) that will be replaced by the corresponding
+     * arguments.
      *
      * @param args the arguments to format the message with
      * @return the formatted message
      */
     public String format(Object... args) {
-        return "HSL" + this.id + ": " + StringUtilities.format(this.message, args);
+        return "E" + this.id() + ": " + StringUtilities.format(this.message, args);
     }
 }

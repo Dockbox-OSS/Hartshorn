@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link IfStatement} nodes.
  *
  * @since 0.5.0
  *

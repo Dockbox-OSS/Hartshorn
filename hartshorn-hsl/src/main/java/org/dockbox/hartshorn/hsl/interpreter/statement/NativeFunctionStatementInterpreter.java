@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link NativeFunctionStatement} nodes.
  *
  * @since 0.5.0
  *

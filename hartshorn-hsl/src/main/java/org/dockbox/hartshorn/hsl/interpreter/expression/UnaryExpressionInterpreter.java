@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link UnaryExpression} nodes.
  *
  * @since 0.5.0
  *

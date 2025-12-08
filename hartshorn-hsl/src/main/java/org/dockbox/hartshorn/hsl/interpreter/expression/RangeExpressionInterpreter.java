@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.util.Tuple;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link RangeExpression} nodes.
  *
  * @since 0.5.0
  *

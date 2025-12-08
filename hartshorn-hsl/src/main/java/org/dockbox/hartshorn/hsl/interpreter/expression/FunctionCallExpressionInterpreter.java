@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link FunctionCallExpression} nodes.
  *
  * @author Guus Lieben
  * @since 0.5.0

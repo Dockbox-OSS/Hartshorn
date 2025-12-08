@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link Statement} nodes.
  *
  * @param <T> The type of {@link Statement} this interpreter can interpret.
  *

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link RepeatStatement} nodes.
  *
  * @since 0.5.0
  *

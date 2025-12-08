@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link TestStatement} nodes.
  *
  * @since 0.5.0
  *

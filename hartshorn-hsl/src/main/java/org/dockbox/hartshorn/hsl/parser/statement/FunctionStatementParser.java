@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link FunctionStatement} nodes.
  *
  * @since 0.4.13
  *

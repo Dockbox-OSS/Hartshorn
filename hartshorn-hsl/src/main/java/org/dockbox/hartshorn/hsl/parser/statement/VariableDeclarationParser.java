@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -28,8 +26,10 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.Set;
+
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link VariableStatement} nodes.
  *
  * @since 0.4.13
  *

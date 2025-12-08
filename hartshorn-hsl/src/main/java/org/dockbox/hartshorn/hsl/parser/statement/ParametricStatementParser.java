@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Base interface for parsers that parse statements with parameters, such as functions or
+ * constructors.
  *
  * @since 0.4.13
  *

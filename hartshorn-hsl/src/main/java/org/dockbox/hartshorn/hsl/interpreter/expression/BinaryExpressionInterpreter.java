@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link BinaryExpression} nodes.
  *
  * @since 0.5.0
  *

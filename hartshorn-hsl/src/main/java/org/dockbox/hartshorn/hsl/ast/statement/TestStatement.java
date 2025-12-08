@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
@@ -43,8 +46,10 @@ public class TestStatement extends BodyStatement implements NamedNode {
     public TestStatement(Token name, BlockStatement body) {
         super(name, body);
         if (name.literal() == null) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("Test name cannot be null");
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.EMPTY_TEST_NAME)
+                    .at(name)
+                    .build();
         }
         this.name = name;
     }

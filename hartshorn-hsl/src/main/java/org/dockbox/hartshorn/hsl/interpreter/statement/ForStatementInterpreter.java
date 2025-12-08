@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ForStatement} nodes.
  *
  * @since 0.5.0
  *

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ModuleStatement} nodes.
  *
  * @since 0.5.0
  *

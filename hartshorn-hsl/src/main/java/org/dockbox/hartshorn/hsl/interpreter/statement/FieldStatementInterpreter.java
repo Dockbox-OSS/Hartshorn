@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link FieldStatement} nodes.
  *
  * @since 0.5.0
  *

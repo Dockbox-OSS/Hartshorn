@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for class statements, including support for parsing fields, methods, and constructors
+ * within the class body.
  *
  * @since 0.4.13
  *

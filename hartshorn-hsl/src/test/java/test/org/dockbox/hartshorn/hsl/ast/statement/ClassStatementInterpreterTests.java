@@ -16,13 +16,18 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
+import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.statement.ClassStatementParser;
 import org.dockbox.hartshorn.hsl.parser.statement.FieldStatementParser;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -60,7 +65,12 @@ public class ClassStatementInterpreterTests {
         VirtualProperty name = virtualClass.property("name");
         Assertions.assertNotNull(name);
 
-        // TODO: Test instance behavior
+        Object instance = helper.captures().capturedValue();
+        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
+                VirtualInstance.class,
+                instance
+        );
+        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
     }
 
     @Test
@@ -87,7 +97,12 @@ public class ClassStatementInterpreterTests {
         VirtualProperty name = virtualClass.property("name");
         Assertions.assertNotNull(name);
 
-        // TODO: Test instance dynamic behavior
+        Object instance = helper.captures().capturedValue();
+        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
+                VirtualInstance.class,
+                instance
+        );
+        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
     }
 
     @Test
@@ -128,6 +143,57 @@ public class ClassStatementInterpreterTests {
         // No override, so definition remains in super class
         Assertions.assertNull(childAge);
 
-        // TODO: Test instance behavior
+        Object instance = helper.captures().capturedValue();
+        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
+                VirtualInstance.class,
+                instance
+        );
+        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
+    }
+
+    static class ExternalThing {
+        public int age;
+    }
+
+    @Test
+    void virtualChildClassOfExternalClassDefinitionCanInitialize() {
+        HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
+                        class Person extends ExternalThing {
+                            name;
+                        }
+                        capture(Person())
+                        """)
+                .withCaptureModule()
+                .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+                    context.runtime().imports(ExternalThing.class);
+                }))
+                .statementParser(new ClassStatementParser(new FieldStatementParser()))
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
+
+        helper.interpret();
+
+        Object classVariable = helper.findVariable("Person");
+        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
+        Assertions.assertFalse(virtualClass.isDynamic());
+
+        VirtualProperty name = virtualClass.property("name");
+        Assertions.assertNotNull(name);
+
+        ClassReference superClass = virtualClass.superClass();
+        ExternalClass<?> externalClass = Assertions.assertInstanceOf(ExternalClass.class, superClass);
+        Assertions.assertEquals("ExternalThing", externalClass.name());
+        Assertions.assertTrue(externalClass.type().is(ExternalThing.class));
+
+        Object instance = helper.captures().capturedValue();
+        CompositeInstance<?> compositeInstance = Assertions.assertInstanceOf(
+                CompositeInstance.class,
+                instance
+        );
+        Assertions.assertEquals(virtualClass, compositeInstance.virtualClass());
+
+        Object externalObject = compositeInstance.externalObject();
+        Assertions.assertInstanceOf(ExternalThing.class, externalObject);
     }
 }

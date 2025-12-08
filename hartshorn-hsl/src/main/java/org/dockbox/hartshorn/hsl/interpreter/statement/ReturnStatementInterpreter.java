@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ReturnStatement} nodes.
  *
  * @since 0.5.0
  *

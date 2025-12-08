@@ -39,7 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ClassStatement} nodes.
  *
  * @since 0.5.0
  *

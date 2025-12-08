@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link PostfixExpression} nodes.
  *
  * @since 0.5.0
  *

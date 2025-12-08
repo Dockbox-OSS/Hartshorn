@@ -64,14 +64,18 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             superClass = superClass.superClass();
         }
         if (superClass == null) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("No external class found in " + virtualClass.name());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
+                    .at(virtualClass.constructor().declaration())
+                    .build();
         }
         this.firstExternalClass =
             TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("No empty or default constructor found in " + this.firstExternalClass.name() + ", composite instances cannot carry complex constructors.");
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
+                    .at(virtualClass.constructor().declaration())
+                    .build();
         }
     }
 
@@ -93,8 +97,10 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         VirtualFunction virtualConstructor
     ) throws ApplicationException {
         if (this.instance != null) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalStateException("Instance already made");
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.BACKING_INSTANCE_ALREADY_CREATED)
+                .at(at)
+                .build();
         }
         // External class constructor
         ConstructorView<T> constructor =
@@ -106,8 +112,11 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             throw e;
         }
         catch (Throwable throwable) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new ApplicationException(throwable);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                    .at(at)
+                    .cause(throwable)
+                    .build();
         }
 
         // Virtual class constructor

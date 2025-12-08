@@ -16,12 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link SwitchCase} nodes.
  *
  * @since 0.5.0
  *
@@ -36,8 +39,14 @@ public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
                 interpreter.execute(node.body());
             } catch (FlowControlKeyword keyword) {
                 if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
-                    // TODO: Migrate to ScriptEvaluationError
-                    throw new RuntimeException("Unexpected move keyword " + keyword.moveType());
+                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                            .message(
+                                    DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
+                                    keyword.moveType().name().toLowerCase(),
+                                    "switch case"
+                            )
+                            .at(keyword.origin())
+                            .build();
                 }
             }
         });

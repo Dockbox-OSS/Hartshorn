@@ -16,8 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
@@ -82,26 +85,34 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
         return visitor.visit(this);
     }
 
-    public void withGetter(final FieldGetStatement statement) {
+    public void withGetter(FieldGetStatement statement) {
         if (statement.field() != this) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("Getter is not for field '%s'".formatted(this.name.lexeme()));
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "getter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         if (this.getter != null) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalStateException("Duplicate getter for field '%s'".formatted(this.name.lexeme()));
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "getter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         this.getter = statement;
     }
 
-    public void withSetter(final FieldSetStatement statement) {
+    public void withSetter(FieldSetStatement statement) {
         if (statement.field() != this) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("Setter is not for field '%s'".formatted(this.name.lexeme()));
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "setter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         if (this.setter != null) {
-            // TODO: Migrate to ScriptEvaluationError
-            throw new IllegalArgumentException("Duplicate setter for field '%s'".formatted(this.name.lexeme()));
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "setter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         this.setter = statement;
     }

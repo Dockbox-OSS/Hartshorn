@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Base interpreter for bitwise operations.
  *
- * @param <R> ...
- * @param <T> ...
+ * @param <R> the return type of the interpreter, typically a numeric type
+ * @param <T> the type of AST node this interpreter can handle
  *
  * @since 0.5.0
  *
