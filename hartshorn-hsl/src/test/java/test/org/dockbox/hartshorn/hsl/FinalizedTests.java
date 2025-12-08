@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -40,7 +41,7 @@ public class FinalizedTests {
                 final class User { }
                 class Admin extends User { }
                 """);
-        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
             .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
             .argument("User")
             .build());
@@ -61,7 +62,7 @@ public class FinalizedTests {
                 class Admin extends FinalUser { }
                 """);
         script.runtime().imports(FinalUser.class);
-        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
             .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
             .argument("FinalUser")
             .build());
@@ -73,7 +74,7 @@ public class FinalizedTests {
                 final var x = 1;
                 x = 2;
                 """);
-        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
             .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
             .argument("variable")
             .argument("x")
@@ -86,7 +87,7 @@ public class FinalizedTests {
                 final function x() { }
                 function x() { }
                 """);
-        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
             .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
             .argument("function")
             .argument("x")
@@ -99,7 +100,7 @@ public class FinalizedTests {
                 final class User { }
                 class User { }
                 """);
-        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
             .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
             .argument("class")
             .argument("User")
@@ -114,12 +115,12 @@ public class FinalizedTests {
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
-        HSLTestUtilities.assertEvaluationError(error, FormattedDiagnostic.builder()
+        ScriptAssertions.assertEvaluationError(error, FormattedDiagnostic.builder()
                         .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
                         .argument("native function")
                         .argument("x")
                         .build());
-        HSLTestUtilities.assertEvaluationFailedAtPosition(error, 2, 9);
+        ScriptAssertions.assertEvaluationFailedAtPosition(error, 2, 9);
     }
 
     public static class User {

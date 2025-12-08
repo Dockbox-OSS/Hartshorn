@@ -84,8 +84,9 @@ public class InterpreterState {
     }
 
     /**
-     * Restores the interpreter state to its initial condition, clearing all local variable resolutions
-     * and resetting the global and visiting scopes. External variables and modules are preserved.
+     * Restores the interpreter state to its initial condition, clearing all local variable
+     * resolutions and resetting the global and visiting scopes. External variables and modules are
+     * preserved.
      *
      * @see Interpreter#restore()
      */

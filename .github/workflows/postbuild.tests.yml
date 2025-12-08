@@ -15,14 +15,17 @@ jobs:
           distribution: temurin
       - name: Run tests
         id: test
-        # TODO: Restore `-Dcoverage.skip=false`, currently skipped as coverage is known to be too low
-        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true -Djacoco.skip=false"
+        run: "mvn clean verify 
+        -P ci 
+        -Djacoco.haltOnFailure=true 
+        -Djacoco.skip=false 
+        -Dcoverage.skip=false"
   testSourceCompat:
     needs: [coverage]
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-13]
+        os: [windows-latest, macos-latest]
     name: Unit tests (Compatibility, JDK 21, ${{ matrix.os }})
     runs-on: "${{ matrix.os }}"
     steps:
@@ -33,7 +36,10 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
-        # TODO: Restore `-Dcoverage.skip=false`, currently skipped as coverage is known to be too low
         # Note that coverage should still be enabled here, as specific instructions may differ per platform
-        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true -Djacoco.skip=false"
+        run: "mvn clean verify 
+        -P ci 
+        -Djacoco.haltOnFailure=true 
+        -Djacoco.skip=false 
+        -Dcoverage.skip=false"
         shell: bash

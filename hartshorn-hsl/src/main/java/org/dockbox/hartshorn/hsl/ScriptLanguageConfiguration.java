@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SimpleResolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
@@ -58,7 +59,7 @@ public class ScriptLanguageConfiguration {
     @Prototype
     @SupportPriority
     private Resolver resolver(Interpreter interpreter) {
-        return new Resolver(interpreter);
+        return new SimpleResolver(interpreter);
     }
 
     @Prototype

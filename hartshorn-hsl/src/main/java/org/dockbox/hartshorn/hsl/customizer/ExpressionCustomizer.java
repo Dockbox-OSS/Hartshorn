@@ -48,7 +48,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     public static final String VALIDATION_ID = ScriptContext.createSafeRuntimeVariable("validation");
 
     public ExpressionCustomizer() {
-        super(Phase.RESOLVING);
+        super(Phase.SEMANTIC_ANALYSIS);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     private void verifyIsExpression(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ExpressionStatement || (lastStatement instanceof ReturnStatement returnStatement && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .at(lastStatement)
                     .message(DiagnosticMessage.INVALID_EXPRESSION, lastStatement.getClass().getSimpleName())
                     .build();

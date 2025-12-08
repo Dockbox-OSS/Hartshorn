@@ -37,7 +37,8 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link FinalizableStatement} nodes, supporting final declarations for functions,
+ * variables, and classes.
  *
  * @since 0.4.13
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.util.Tuple;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link RangeExpression} nodes.
  *
  * @since 0.5.0
  *
@@ -36,10 +37,14 @@ public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, Ra
         Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
         Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
-        InterpreterUtilities.checkNumberOperands(node.operator(), start, end);
+        Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                node.operator(),
+                start,
+                end
+        );
 
-        int min = ((Number) start).intValue();
-        int max = ((Number) end).intValue();
+        int min = tuple.left().intValue();
+        int max = tuple.right().intValue();
 
         int length = max - min + 1;
         Object[] result = new Object[length];

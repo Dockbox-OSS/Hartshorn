@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -93,10 +94,10 @@ public interface Interpreter {
     Object lookUpVariable(Token name, Expression expression);
 
     /**
-     * Resolves the given expression at the specified depth in the variable scope hierarchy.
-     * This method is used to associate an expression with its corresponding variable scope,
-     * allowing for proper variable resolution during evaluation. As such, this method should
-     * only be called during the resolution phase, before any evaluation takes place.
+     * Resolves the given expression at the specified depth in the variable scope hierarchy. This
+     * method is used to associate an expression with its corresponding variable scope, allowing for
+     * proper variable symantic analysis during evaluation. As such, this method should only be
+     * called during symantic analysis, before any evaluation takes place.
      *
      * @param expression the expression to resolve
      * @param depth the depth in the variable scope hierarchy where the expression is defined
@@ -138,12 +139,12 @@ public interface Interpreter {
     void enterScope(VariableScope scope);
 
     /**
-     * Calculates the distance of the given expression from the current scope. This distance represents
-     * the number of scopes between the current scope and the scope in which the expression is defined
-     * and is used for variable resolution.
+     * Calculates the distance of the given expression from the current scope. This distance
+     * represents the number of scopes between the current scope and the scope in which the
+     * expression is defined and is used for variable resolution.
      *
-     * <p>The value returned by this method is typically set during the resolution phase of interpretation
-     * and is used to optimize variable lookups during evaluation.
+     * <p>The value returned by this method is typically set during the symantic analysis phase and
+     * is used to optimize variable lookups during evaluation.
      *
      * @param expression the expression for which to calculate the distance
      * @return the distance of the expression from the current scope
@@ -215,7 +216,7 @@ public interface Interpreter {
      * dynamic imports, as these can be reused safely.
      *
      * <p>This method should be called before starting a new runtime. This should be at least before a
-     * potential {@link org.dockbox.hartshorn.hsl.semantic.Resolver} is called, as the resolver will
+     * potential {@link Resolver} is called, as the resolver will
      * typically modify the {@link #state() interpreter state}.
      */
     void restore();

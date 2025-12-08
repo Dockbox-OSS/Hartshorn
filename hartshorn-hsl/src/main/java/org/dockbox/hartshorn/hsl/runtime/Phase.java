@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
 /**
  * Represents each of the primary runtime phases which are performed when evaluating
@@ -41,13 +42,13 @@ public enum Phase {
      */
     PARSING,
     /**
-     * Performed by the {@link org.dockbox.hartshorn.hsl.semantic.Resolver}, to look
+     * Performed by the {@link Resolver}, to look
      * up required identifiers before proceeding to runtime interpretation. During
      * this phase any duplicate variable declarations, invalid accessors, and unknown
      * identifiers are located and reported. This is the third step of the script
      * evaluation process.
      */
-    RESOLVING,
+    SEMANTIC_ANALYSIS,
     /**
      * Performed by the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter},
      * to execute the {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} output

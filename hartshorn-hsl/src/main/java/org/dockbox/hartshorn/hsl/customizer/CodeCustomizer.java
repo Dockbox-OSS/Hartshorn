@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.hsl.customizer;
 
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+
+import java.util.function.Consumer;
 
 /**
  * Code customizers run during a specific {@link Phase phase} of a script's execution.
@@ -41,5 +43,19 @@ public interface CodeCustomizer {
      * @param context the script context.
      */
     void call(ScriptContext context);
+
+    static CodeCustomizer of(Phase phase, Consumer<ScriptContext> action) {
+        return new CodeCustomizer() {
+            @Override
+            public Phase phase() {
+                return phase;
+            }
+
+            @Override
+            public void call(ScriptContext context) {
+                action.accept(context);
+            }
+        };
+    }
 
 }

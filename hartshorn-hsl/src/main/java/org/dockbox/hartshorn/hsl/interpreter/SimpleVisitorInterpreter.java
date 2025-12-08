@@ -16,20 +16,21 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.List;
-
-import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -48,7 +49,7 @@ import org.slf4j.Logger;
  *
  * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
  * which have been previously parsed by a {@link StatementParser}, and
- * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
+ * preferably resolved by a {@link Resolver}.
  *
  * @since 0.6.0
  *
@@ -75,6 +76,10 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
         this.applicationContext = applicationContext;
         this.tokenRegistry = tokenRegistry;
         this.state = new InterpreterState(this);
+    }
+
+    public InterpreterVisitor visitor() {
+        return this.visitor;
     }
 
     @Override
@@ -128,20 +133,20 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     @Override
     public Object evaluate(Expression expression) {
         if (expression instanceof CustomASTNode<?,?> customASTNode) {
-            return customASTNode.interpret(this.visitor.interpreter());
+            return customASTNode.interpret(this.visitor().interpreter());
         }
         else {
-            return expression.accept(this.visitor);
+            return expression.accept(this.visitor());
         }
     }
 
     @Override
     public void execute(Statement statement) {
         if (statement instanceof CustomASTNode<?,?> customASTNode) {
-            customASTNode.interpret(this.visitor.interpreter());
+            customASTNode.interpret(this.visitor().interpreter());
         }
         else {
-            statement.accept(this.visitor);
+            statement.accept(this.visitor());
         }
     }
 

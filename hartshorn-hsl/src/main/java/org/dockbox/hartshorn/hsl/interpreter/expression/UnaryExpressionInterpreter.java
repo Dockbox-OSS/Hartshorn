@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link UnaryExpression} nodes.
  *
  * @since 0.5.0
  *
@@ -47,16 +47,16 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         if (type instanceof ArithmeticTokenType arithmeticTokenType) {
              newValue = switch (arithmeticTokenType) {
                 case MINUS -> {
-                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                    yield -(double) right;
+                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield -rightNumber.doubleValue();
                 }
                 case PLUS_PLUS -> {
-                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                    yield (double) right + 1;
+                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield rightNumber.doubleValue() + 1;
                 }
                 case MINUS_MINUS -> {
-                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                    yield (double) right - 1;
+                    Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield rightNumber.doubleValue() - 1;
                 }
                 default -> null;
             };
@@ -65,12 +65,9 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
             newValue = !InterpreterUtilities.isTruthy(right);
         }
         else if (type == BitwiseTokenType.COMPLEMENT) {
-
-            InterpreterUtilities.checkNumberOperand(node.operator(), right);
-            int value = ((Number) right).intValue();
-            // Cast to int is redundant, but required to suppress false-positive inspections.
-            //noinspection RedundantCast
-            newValue = (int) ~value;
+            Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+            int value = rightNumber.intValue();
+            newValue = (double) ~value;
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)

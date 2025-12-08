@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,11 @@ public enum BitwiseAssignmentTokenType implements EnumTokenType {
      * @see BitwiseTokenType#SHIFT_LEFT
      */
     SHIFT_RIGHT_EQUAL(BitwiseTokenType.SHIFT_RIGHT),
+    /**
+     * Represents the logical shift right assignment operator.
+     * @see BitwiseTokenType#LOGICAL_SHIFT_RIGHT
+     */
+    LOGICAL_SHIFT_RIGHT_EQUAL(BitwiseTokenType.LOGICAL_SHIFT_RIGHT),
     ;
 
     private final TokenMetaData metaData;

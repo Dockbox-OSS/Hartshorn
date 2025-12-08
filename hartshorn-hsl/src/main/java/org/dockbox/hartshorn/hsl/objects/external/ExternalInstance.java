@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
+import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -51,7 +53,9 @@ public class ExternalInstance implements ExternalObjectReference {
 
     public <T> ExternalInstance(T instance, ExternalClass<T> type) {
         if (instance != null && !type.type().isInstance(instance)) {
-            throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X, type.name(), instance.getClass().getName())
+                    .build();
         }
         this.instance = instance;
         this.type = type;
@@ -76,10 +80,14 @@ public class ExternalInstance implements ExternalObjectReference {
             }
             catch(Throwable throwable) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message("Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()))
-                        .cause(throwable)
-                        .build();
+                    .at(name)
+                    .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                        StandardPropertyAccessVerifier.WRITE_ACTION,
+                        name.lexeme(),
+                        this.type().name(),
+                        throwable.getMessage())
+                    .cause(throwable)
+                    .build();
             }
         }
         else {
@@ -95,9 +103,9 @@ public class ExternalInstance implements ExternalObjectReference {
 
         if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(name)
-                    .message("Ambiguous method call for method %s".formatted(name.lexeme()))
-                    .build();
+                .at(name)
+                .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_CALL, name.lexeme())
+                .build();
         }
 
         if (methods.length > 0) {
@@ -113,10 +121,15 @@ public class ExternalInstance implements ExternalObjectReference {
             }
             catch(Throwable throwable) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message("Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()))
-                        .cause(throwable)
-                        .build();
+                    .at(name)
+                    .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                        StandardPropertyAccessVerifier.READ_ACTION,
+                        name.lexeme(),
+                        this.type().name(),
+                        throwable.getMessage()
+                    )
+                    .cause(throwable)
+                    .build();
             }
         }
         else {
@@ -126,9 +139,9 @@ public class ExternalInstance implements ExternalObjectReference {
 
     private ScriptEvaluationError propertyDoesNotExist(Token name) {
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(name)
-                .message("Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()))
-                .build();
+            .at(name)
+            .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type.name())
+            .build();
     }
 
     @Override

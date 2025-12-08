@@ -16,29 +16,24 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
-import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ModuleStatement} nodes.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class ModuleStatementInterpreter implements StatementInterpreter<ModuleStatement> {
+public class ModuleStatementInterpreter extends AbstractNativeLibraryStatementInterpreter implements StatementInterpreter<ModuleStatement> {
 
     @Override
     public Void interpret(ModuleStatement node, Interpreter interpreter) {
@@ -49,34 +44,15 @@ public class ModuleStatementInterpreter implements StatementInterpreter<ModuleSt
         Map<String, List<NativeFunctionStatement>> functionsByName = supportedFunctions.stream()
                 .collect(Collectors.groupingBy(function -> function.name().lexeme()));
 
-        for(List<NativeFunctionStatement> functions : functionsByName.values()) {
-            this.registerModuleFunction(node, interpreter, functions, moduleName, module);
-        }
-
+        EntryStream.of(functionsByName).forEach((name, functions) -> {
+            this.registerModuleFunction(
+                    moduleName,
+                    name,
+                    interpreter,
+                    functions,
+                    module
+            );
+        });
         return null;
-    }
-
-    private void registerModuleFunction(ModuleStatement node, Interpreter interpreter, List<NativeFunctionStatement> supportedFunctions,
-            String moduleName, NativeModule module) {
-        boolean ambiguousFunction = supportedFunctions.size() > 1;
-        if (ambiguousFunction) {
-            if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, node.name().lexeme())
-                        .at(supportedFunctions.getFirst().name())
-                        .build();
-            }
-            else {
-                Set<NativeLibrary> libraries = supportedFunctions.stream()
-                        .map(function -> new NativeLibrary(function, moduleName, module))
-                        .collect(Collectors.toSet());
-                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousNativeLibraryFunction(libraries));
-            }
-        }
-        else {
-            NativeFunctionStatement supportedFunction = supportedFunctions.getFirst();
-            NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
-            interpreter.global().define(supportedFunction.name().lexeme(), library);
-        }
     }
 }

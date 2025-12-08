@@ -322,12 +322,12 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Void visit(BreakStatement statement) {
-        throw new FlowControlKeyword(FlowControlKeyword.MoveType.BREAK);
+        throw new FlowControlKeyword(statement, FlowControlKeyword.MoveType.BREAK);
     }
 
     @Override
     public Void visit(ContinueStatement statement) {
-        throw new FlowControlKeyword(FlowControlKeyword.MoveType.CONTINUE);
+        throw new FlowControlKeyword(statement, FlowControlKeyword.MoveType.CONTINUE);
     }
 
     @Override

@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link FieldStatement} nodes.
  *
  * @since 0.5.0
  *
@@ -32,9 +33,12 @@ public class FieldStatementInterpreter implements StatementInterpreter<FieldStat
 
     @Override
     public Void interpret(FieldStatement node, Interpreter interpreter) {
-        Object value = interpreter.evaluate(node.initializer());
-        int distance = interpreter.distance(node.initializer());
-        PropertyContainer object = (PropertyContainer) interpreter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
+        Expression initializer = node.initializer();
+        Object value = initializer != null ? interpreter.evaluate(initializer) : null;
+        int distance = initializer != null ? interpreter.distance(initializer) : 0;
+
+        PropertyContainer object = (PropertyContainer) interpreter.visitingScope()
+                .getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
         object.set(interpreter, node.name(), value, interpreter.visitingScope());
         return null;
     }

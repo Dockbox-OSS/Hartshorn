@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link FieldStatement} nodes, including support for parsing field members.
  *
  * @since 0.4.13
  *
@@ -99,7 +99,7 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
         final BlockStatement body;
         if (parser.match(parameters.open())) {
             validator.expectAfter(parameters.close(), "field get declaration");
-            body = blockStatement("field get declaration", get, parser, validator);
+            body = this.blockStatement("field get declaration", get, parser, validator);
         }
         else {
             validator.expectAfter(parser.tokenRegistry().statementEnd(), "field get declaration");
@@ -115,7 +115,8 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
             final ParametricExecutableStatement.Parameter parameter = new ParametricExecutableStatement.Parameter(parameterName);
             validator.expectAfter(parameters.close(), "field set declaration");
 
-            BlockStatement body = blockStatement("field set declaration", set, parser, validator);
+            BlockStatement body =
+                this.blockStatement("field set declaration", set, parser, validator);
             return new FieldSetStatement(modifier, set, field, body, parameter);
         }
         else{

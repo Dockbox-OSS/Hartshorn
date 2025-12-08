@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,11 +52,17 @@ public class FlowControlKeyword extends RuntimeException {
         CONTINUE,
     }
 
+    private final ASTNode origin;
     private final MoveType moveType;
 
-    public FlowControlKeyword(MoveType type) {
+    public FlowControlKeyword(ASTNode origin, MoveType type) {
         super(null, null, false, false);
         this.moveType = type;
+        this.origin = origin;
+    }
+
+    public ASTNode origin() {
+        return origin;
     }
 
     public MoveType moveType() {

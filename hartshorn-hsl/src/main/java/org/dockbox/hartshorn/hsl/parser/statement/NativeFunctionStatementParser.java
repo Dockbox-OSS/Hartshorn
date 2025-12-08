@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link NativeFunctionStatement} nodes.
  *
  * @since 0.4.13
  *
@@ -56,9 +56,11 @@ public class NativeFunctionStatementParser extends AbstractBodyStatementParser<N
 
             validator.expectBefore(BaseTokenType.COLON, "function name");
             Token funcName = validator.expect(identifier, "function name");
-            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "function name", Integer.MAX_VALUE, FunctionTokenType.NATIVE);
+            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "function name", -1, FunctionTokenType.NATIVE);
 
             validator.expectAfter(parser.tokenRegistry().statementEnd(), "value");
+            // Do not resolve actual methods at this point, as we might not have loaded
+            // the module yet.
             return Option.of(new NativeFunctionStatement(funcName, moduleName, null, parameters));
         }
         return Option.empty();

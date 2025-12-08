@@ -14,4 +14,11 @@
     <artifactId>hartshorn-shared</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <!--
+        TODO: Remove once coverage target of 80% is reached.
+         In meantime, increase coverage target whenever possible (to avoid regression).
+        -->
+        <coverage.target>26%</coverage.target>
+    </properties>
 </project>

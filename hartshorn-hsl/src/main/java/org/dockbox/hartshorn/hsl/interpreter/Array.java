@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
@@ -82,7 +85,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("length", length())
+                .field("length", this.length())
                 .field("values", this.values)
                 .describe();
     }
@@ -94,7 +97,10 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
-        throw new UnsupportedOperationException("Cannot set properties on arrays.");
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
+                .at(name)
+                .build();
     }
 
     @Override
@@ -103,7 +109,15 @@ public class Array implements Iterable<Object>, PropertyContainer {
             return this.values.length;
         }
         else {
-            throw new UnsupportedOperationException("Cannot get properties on arrays, only 'length'.");
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(
+                            DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y,
+                            "read",
+                            name.lexeme(),
+                            "length"
+                    )
+                    .at(name)
+                    .build();
         }
     }
 }

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ForEachStatement} nodes.
  *
  * @since 0.5.0
  *
@@ -33,17 +33,12 @@ public class ForEachStatementInterpreter implements StatementInterpreter<ForEach
     public Void interpret(ForEachStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             Object collection = interpreter.evaluate(node.collection());
-            collection = InterpreterUtilities.unwrap(collection);
+            Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
+            interpreter.visitingScope().define(node.selector().name().lexeme(), null);
 
-            if (collection instanceof Iterable<?> iterable) {
-                interpreter.visitingScope().define(node.selector().name().lexeme(), null);
-                for (Object item : iterable) {
-                    interpreter.visitingScope().assign(node.selector().name(), item);
-                    interpreter.execute(node.body());
-                }
-            }
-            else {
-                throw new RuntimeException("Only iterables are supported for for-each.");
+            for (Object item : iterable) {
+                interpreter.visitingScope().assign(node.selector().name(), item);
+                interpreter.execute(node.body());
             }
         });
         return null;

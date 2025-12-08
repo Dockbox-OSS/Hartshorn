@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
-import java.util.Collection;
-import java.util.Objects;
-
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -27,16 +24,23 @@ import org.dockbox.hartshorn.util.graph.MutableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraph;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 
+import java.util.Collection;
+import java.util.Objects;
+
 /**
- * Represents a graph of tokens, where each node is a character in a token and each edge is a transition from one character to
- * another. The graph is used to determine the {@link TokenType type of a token} based on its {@link TokenCharacter characters}.
- * The graph is usually built from a {@link TokenRegistry}, which contains all the token types and their characters.
+ * Represents a graph of tokens, where each node is a character in a token and each edge is a
+ * transition from one character to another. The graph is used to determine the
+ * {@link TokenType type of a token} based on its {@link TokenCharacter characters}. The graph is
+ * usually built from a {@link TokenRegistry}, which contains all the token types and their
+ * characters.
  *
- * <p>Token graphs may be used by {@link org.dockbox.hartshorn.hsl.lexer.Lexer lexers} to dynamically tokenize input strings
- * without making any assumptions about the token types or their characters.
+ * <p>Token graphs may be used by {@link org.dockbox.hartshorn.hsl.lexer.Lexer lexers} to
+ * dynamically tokenize input strings without making any assumptions about the token types or their
+ * characters.
  *
- * <p>Token graphs are directed graphs, where each node has at most one parent and at most one child. The graph may have
- * multiple roots, which represent the starting characters of tokens. A basic example of a token graph is the following:
+ * <p>Token graphs are directed graphs, where each node has at most one parent and at most one
+ * child. The graph may have multiple roots, which represent the starting characters of tokens. A
+ * basic example of a token graph is the following:
  *
  * <pre>{@code
  * PLUS (+)
@@ -44,10 +48,10 @@ import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
  * |- PLUS_EQUALS (+=)
  * }</pre>
  *
- * <p>Here, the root node is the {@code PLUS} node, which has two children: {@code PLUS_PLUS} and {@code PLUS_EQUALS}. The root
- * node {@code PLUS} is identified by the character {@code +}, and its children are identified by the root character, combined
- * with the child character. For example {@code PLUS_EQUALS} consists of the characters {@code +} (from {@code PLUS} and {@code =}
- * (from {@code PLUS_EQUALS}).
+ * <p>Here, the root node is the {@code PLUS} node, which has two children: {@code PLUS_PLUS} and
+ * {@code PLUS_EQUALS}. The root node {@code PLUS} is identified by the character {@code +}, and its
+ * children are identified by the root character, combined with the child character. For example
+ * {@code PLUS_EQUALS} consists of the characters {@code +} and {@code =}.
  *
  * @since 0.6.0
  *

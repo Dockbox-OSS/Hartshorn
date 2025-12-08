@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Base interface for parsers that parse statements with parameters, such as functions or
+ * constructors.
  *
  * @since 0.4.13
  *
@@ -46,7 +47,7 @@ public interface ParametricStatementParser {
         if (!parser.check(parameterTokens.close())) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
-                if (parameters.size() >= expectedNumberOfArguments) {
+                if (expectedNumberOfArguments >= 0 && parameters.size() >= expectedNumberOfArguments) {
                     throw ScriptEvaluationError.builder(Phase.PARSING)
                             .message(DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
                                     expectedNumberOfArguments,
@@ -60,6 +61,14 @@ public interface ParametricStatementParser {
             while (parser.match(BaseTokenType.COMMA));
         }
 
+        if (expectedNumberOfArguments >= 0 && parameters.size() < expectedNumberOfArguments) {
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X,
+                            expectedNumberOfArguments,
+                            functionType.representation()
+                    ).at(parser.peek())
+                    .build();
+        }
         validator.expectAfter(parameterTokens.close(), "parameters");
         return parameters;
     }

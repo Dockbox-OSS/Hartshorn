@@ -32,7 +32,8 @@ import java.util.List;
 
 /**
  * Parser for complex array expressions, including array literals and array comprehensions. The most
- * basic array literal is a list of expressions enclosed in array brackets (e.g., <code>[1, 2, 3]</code>).
+ * basic array literal is a list of expressions enclosed in array brackets (e.g., <code>[1, 2,
+ * 3]</code>).
  *
  * <p>Array comprehensions allow for more complex array constructions using loops and conditions
  * (e.g., <code>[x * 2 for x in range if x > 5 else x]</code>).
@@ -44,29 +45,37 @@ import java.util.List;
 public class ComplexArrayExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         if (parser.match(parser.tokenRegistry().tokenPairs().array().open())) {
             Token open = parser.previous();
-            Expression expression = parser.expression();
-
             if (parser.match(parser.tokenRegistry().tokenPairs().array().close())) {
-                List<Expression> elements = new ArrayList<>();
-                elements.add(expression);
-                return new ArrayLiteralExpression(open, parser.previous(), elements);
-            } else if (parser.match(BaseTokenType.COMMA)) {
-                return this.arrayLiteralExpression(parser, validator, open, expression);
-            } else {
-                return this.arrayComprehensionExpression(parser, validator, open, expression);
+                return new ArrayLiteralExpression(open, parser.previous(), List.of());
+            }
+            else {
+                Expression expression = parser.expression();
+                if (parser.match(parser.tokenRegistry().tokenPairs().array().close())) {
+                    return new ArrayLiteralExpression(open, parser.previous(), List.of(expression));
+                }
+                else if (parser.match(BaseTokenType.COMMA)) {
+                    return this.arrayLiteralExpression(parser, validator, open, expression);
+                }
+                else {
+                    return this.arrayComprehensionExpression(parser, validator, open, expression);
+                }
             }
         }
         return chain.next(parser, validator);
     }
 
     private ArrayLiteralExpression arrayLiteralExpression(
-            TokenParser parser,
-            TokenStepValidator validator,
-            Token open,
-            Expression expression
+        TokenParser parser,
+        TokenStepValidator validator,
+        Token open,
+        Expression expression
     ) {
         List<Expression> elements = new ArrayList<>();
         elements.add(expression);
@@ -74,15 +83,18 @@ public class ComplexArrayExpressionParser implements ExpressionParser {
             elements.add(parser.expression());
         }
         while (parser.match(BaseTokenType.COMMA));
-        Token close = validator.expectAfter(parser.tokenRegistry().tokenPairs().array().close(), "array");
-        return new ArrayLiteralExpression(open, close, elements);
+        Token close = validator.expectAfter(
+                parser.tokenRegistry().tokenPairs().array().close(),
+                "array"
+        );
+        return new ArrayLiteralExpression(open, close, List.copyOf(elements));
     }
 
     private ArrayComprehensionExpression arrayComprehensionExpression(
-            TokenParser parser,
-            TokenStepValidator validator,
-            Token open,
-            Expression expression
+        TokenParser parser,
+        TokenStepValidator validator,
+        Token open,
+        Expression expression
     ) {
         Token forToken = validator.expectAfter(LoopTokenType.FOR, "expression");
         TokenType identifier = parser.tokenRegistry().literals().identifier();
@@ -105,14 +117,15 @@ public class ComplexArrayExpressionParser implements ExpressionParser {
             elseExpression = parser.expression();
         }
 
-        Token close = validator.expectAfter(parser.tokenRegistry().tokenPairs().array().close(), "array");
+        Token close =
+            validator.expectAfter(parser.tokenRegistry().tokenPairs().array().close(), "array");
 
         return new ArrayComprehensionExpression(
-                iterable, expression,
-                name, forToken, inToken,
-                open, close,
-                ifToken, condition,
-                elseToken, elseExpression
+            iterable, expression,
+            name, forToken, inToken,
+            open, close,
+            ifToken, condition,
+            elseToken, elseExpression
         );
     }
 }

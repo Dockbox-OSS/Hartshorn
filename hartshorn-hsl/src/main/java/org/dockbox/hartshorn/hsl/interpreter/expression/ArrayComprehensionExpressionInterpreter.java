@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ArrayComprehensionExpression}s
  *
  * @since 0.5.0
  *
@@ -41,19 +38,11 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
     public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
         Object collection = interpreter.evaluate(node.collection());
-        if (collection instanceof Iterable<?> iterable) {
-
-            interpreter.withNextScope(() -> {
-                interpreter.visitingScope().define(node.selector().lexeme(), null);
-                interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
-            });
-        }
-        else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
-                    .at(node)
-                    .build();
-        }
+        Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
+        interpreter.withNextScope(() -> {
+            interpreter.visitingScope().define(node.selector().lexeme(), null);
+            interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
+        });
         return new Array(values.toArray());
     }
 

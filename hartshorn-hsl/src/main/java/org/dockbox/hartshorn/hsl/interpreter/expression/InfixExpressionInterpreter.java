@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
 
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link InfixExpression} nodes.
  *
  * @since 0.5.0
  *
@@ -38,7 +39,8 @@ public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, In
 
     @Override
     public Object interpret(InfixExpression node, Interpreter interpreter) {
-        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
+        CallableNode value =
+            (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
         List<Object> args = new ArrayList<>();
         args.add(interpreter.evaluate(node.leftExpression()));
         args.add(interpreter.evaluate(node.rightExpression()));
@@ -48,10 +50,11 @@ public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, In
         }
         catch (ApplicationException e) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(node)
-                    .message("Error while evaluating infix expression with operator '" + node.infixOperatorName() + "': " + e.getMessage())
-                    .cause(e)
-                    .build();
+                .message(DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
+                    "infix", node.infixOperatorName(), e.getMessage())
+                .cause(e)
+                .at(node)
+                .build();
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.function.BiFunction;
-
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+import java.util.function.BiFunction;
+
 /**
- * TODO: #1061 Add documentation
+ * Base interpreter for array access expressions.
  *
- * @param <R> ...
- * @param <T> ...
+ * @param <R> return type, typically the element type of the array
+ * @param <T> the specific AST node type this interpreter handles
  *
  * @since 0.5.0
  *
@@ -46,7 +49,10 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
         int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
-            throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
+                    .at(indexExpression)
+                    .build();
         }
 
         return converter.apply(array, index);

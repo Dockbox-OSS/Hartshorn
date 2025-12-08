@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.extension;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.MutableScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.MutableTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Customizer that allows for the registration of custom statement and expression modules. Custom AST nodes are used to
@@ -80,7 +80,15 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
         this.statementModules.addAll(Set.of(modules));
     }
 
+    public Set<StatementModule<?>> statementModules() {
+        return this.statementModules;
+    }
+
     public void expressionModules(ExpressionModule<?>... modules) {
         this.expressionModules.addAll(Set.of(modules));
+    }
+
+    public Set<ExpressionModule<?>> expressionModules() {
+        return this.expressionModules;
     }
 }

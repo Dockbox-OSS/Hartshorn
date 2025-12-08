@@ -17,12 +17,15 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.Tuple;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * Utilities for interpreters, providing common functionality that should remain consistent across
@@ -97,11 +100,13 @@ public final class InterpreterUtilities {
      * @param operator the operator token
      * @param operand the operand to check
      *
+     * @return the operand cast to a {@link Number} if it is valid
+     *
      * @see #checkNumberOperands(Token, Object, Object) for binary operand checking
      */
-    public static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Number) {
-            return;
+    public static Number checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Number number) {
+            return number;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
@@ -117,15 +122,34 @@ public final class InterpreterUtilities {
      * @param left the left operand
      * @param right the right operand
      *
+     * @return a {@link Tuple} containing both operands cast to {@link Number} if they are valid
+     *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */
-    public static void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Number && right instanceof Number) {
-            return;
+    public static Tuple<Number, Number> checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
+            return new Tuple<>(leftNumber, rightNumber);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
                 .at(operator)
                 .build();
+    }
+
+    public static Iterable<?> checkIterable(ASTNode at, Object collection) {
+        collection = InterpreterUtilities.unwrap(collection);
+
+        if (collection instanceof Iterable<?> collectionIterable) {
+            return collectionIterable;
+        }
+        else if (collection != null && collection.getClass().isArray()) {
+            return Arrays.asList((Object[]) collection);
+        }
+        else {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                    .at(at)
+                    .build();
+        }
     }
 }

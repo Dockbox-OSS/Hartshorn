@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link VariableStatement} nodes.
  *
  * @since 0.5.0
  *

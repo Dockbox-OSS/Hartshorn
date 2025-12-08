@@ -63,7 +63,7 @@ public class SimpleExpressionParserChain implements MutableExpressionParserChain
 
     @Override
     public void addBefore(ExpressionParser parser, Class<? extends ExpressionParser> before) {
-        int index = find(before);
+        int index = this.find(before);
         this.parsers.add(index, parser);
     }
 
@@ -80,7 +80,7 @@ public class SimpleExpressionParserChain implements MutableExpressionParserChain
 
     @Override
     public void addAfter(ExpressionParser parser, Class<? extends ExpressionParser> after) {
-        int index = find(after) + 1;
+        int index = this.find(after) + 1;
         this.parsers.add(index, parser);
     }
 

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
@@ -24,48 +23,52 @@ import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Par
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
-import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link FunctionStatement} nodes.
  *
  * @since 0.4.13
  *
  * @author Guus Lieben
  */
-public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
+public class FunctionStatementParser extends AbstractBodyStatementParser<Function> implements ParametricStatementParser {
 
     @Override
     public Option<? extends Function> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
             Token functionType = parser.advance();
-            Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
+            FunctionTokenType functionTokenType = (FunctionTokenType) functionType.type();
+            if (functionType.type() != FunctionTokenType.FUNCTION) {
+                parser.advance();
+            }
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token name = validator.expect(identifier, "function name");
 
-            int expectedNumberOrArguments = Integer.MAX_VALUE;
+            int expectedNumberOfArguments = -1;
 
             if (functionType.type() == FunctionTokenType.PREFIX) {
                 this.functionParserContext(parser).addPrefixFunction(name.lexeme());
-                expectedNumberOrArguments = 1;
+                expectedNumberOfArguments = 1;
             }
             else if (functionType.type() == FunctionTokenType.INFIX) {
                 this.functionParserContext(parser).addInfixFunction(name.lexeme());
-                expectedNumberOrArguments = 2;
+                expectedNumberOfArguments = 2;
             }
 
-            List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
+            List<Parameter> parameters = this.parameters(
+                    parser,
+                    validator,
+                    "function name",
+                    expectedNumberOfArguments,
+                    functionTokenType
+            );
             BlockStatement body = this.blockStatement("function", name, parser, validator);
 
             return Option.of(new FunctionStatement(functionType, name, parameters, body));
@@ -81,31 +84,6 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
             parser.addContext(newContext);
             return newContext;
         }).get();
-    }
-
-    private List<Parameter> functionParameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOrArguments, Token token) {
-        TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
-        validator.expectAfter(parameter.open(), functionName);
-        List<Parameter> parameters = new ArrayList<>();
-        if (!parser.check(parameter.close())) {
-            TokenType identifier = parser.tokenRegistry().literals().identifier();
-            do {
-                if (parameters.size() >= expectedNumberOrArguments) {
-                    throw ScriptEvaluationError.builder(Phase.PARSING)
-                            .message(DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
-                                    expectedNumberOrArguments,
-                                    token.type().representation()
-                            ).at(parser.peek())
-                            .build();
-                }
-                Token parameterName = validator.expect(identifier, "parameter name");
-                parameters.add(new Parameter(parameterName));
-            }
-            while (parser.match(BaseTokenType.COMMA));
-        }
-
-        validator.expectAfter(parameter.close(), "parameters");
-        return parameters;
     }
 
     @Override

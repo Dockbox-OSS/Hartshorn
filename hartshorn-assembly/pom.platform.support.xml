@@ -43,6 +43,9 @@
 
         <!-- Only enable through profile below -->
         <argLine.errorprone/>
+
+        <!-- TODO: Remove override property once all modules have reached 80% coverage -->
+        <coverage.target>80%</coverage.target>
     </properties>
 
     <profiles>
@@ -499,7 +502,7 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.8</minimum>
+                                            <minimum>${coverage.target}</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

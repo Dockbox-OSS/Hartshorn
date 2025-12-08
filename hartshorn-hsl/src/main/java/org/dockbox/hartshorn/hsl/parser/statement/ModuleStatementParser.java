@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
@@ -26,8 +24,10 @@ import org.dockbox.hartshorn.hsl.token.type.ImportTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.Set;
+
 /**
- * TODO: #1061 Add documentation
+ * A parser for {@link ModuleStatement} nodes.
  *
  * @since 0.4.13
  *

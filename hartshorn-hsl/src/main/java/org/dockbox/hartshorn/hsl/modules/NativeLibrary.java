@@ -16,12 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
-import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
@@ -65,7 +67,10 @@ public class NativeLibrary implements CallableNode {
         String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
-            throw new NativeExecutionException("Module Loader : Can't find class with name : " + moduleName);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(at)
+                    .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
+                    .build();
         }
 
         NativeModule module = this.externalModules.get(moduleName);

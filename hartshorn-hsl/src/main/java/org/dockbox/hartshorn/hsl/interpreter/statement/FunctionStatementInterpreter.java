@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link FunctionStatement} nodes.
  *
  * @since 0.5.0
  *

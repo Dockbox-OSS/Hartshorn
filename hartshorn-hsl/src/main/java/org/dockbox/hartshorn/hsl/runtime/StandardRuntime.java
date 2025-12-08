@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
  *
  * @author Guus Lieben
  */
-public class StandardRuntime extends AbstractScriptRuntime {
+public class StandardRuntime extends SimpleScriptRuntime {
 
     public StandardRuntime(
         ApplicationContext applicationContext,
