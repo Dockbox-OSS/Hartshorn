@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.launchpad.lifecycle;
 
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 
-import java.util.Set;
+import java.util.SequencedSet;
 
 /**
  * An {@link ApplicationEnvironment} which can be observed by {@link Observer}s. Observers are notified of events
@@ -38,5 +38,5 @@ public interface ObservableApplicationEnvironment extends ApplicationEnvironment
      * @return All observers of the given type
      * @param <T> The type of observers to get
      */
-    <T extends Observer> Set<T> observers(Class<T> type);
+    <T extends Observer> SequencedSet<T> observers(Class<T> type);
 }

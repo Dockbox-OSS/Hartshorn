@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
- * Reflection-based implementation of {@link ObjectFactory}. This implementation uses reflection to create instances of
- * objects.
+ * Reflection-based implementation of {@link ObjectFactory}. This implementation uses reflection to
+ * create instances of objects.
  *
  * @since 0.7.0
  *
@@ -34,9 +34,12 @@ public class ReflectionObjectFactory implements ObjectFactory {
     public <T> T create(Class<T> type) {
         try {
             return type.getConstructor().newInstance();
-        }
-        catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
-              NoSuchMethodException | SecurityException e) {
+        } catch (InstantiationException
+                 | IllegalAccessException
+                 | IllegalArgumentException
+                 | InvocationTargetException
+                 | NoSuchMethodException
+                 | SecurityException e) {
             throw new ApplicationRuntimeException(e);
         }
     }

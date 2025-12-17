@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallback, AfterAllCallback, AfterEachCallback {
 
     @Override
-    public void beforeTestExecution(ExtensionContext context) throws Exception {
+    public void beforeTestExecution(ExtensionContext context) {
         HartshornJUnitNamespace.registerCleanupCallback(new ClearMockitoCachesCallback(), context);
     }
 
@@ -67,12 +67,15 @@ public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallbac
     }
 
     private void tryCloseApplication(ExtensionContext context) throws Exception {
-        Option<AutoCloseable> closeableApplication = HartshornJUnitNamespace
+        Option<ApplicationContext> closeableApplication = HartshornJUnitNamespace
                 .applicationIfPresent(context)
-                .ofType(AutoCloseable.class);
+                .ofType(ApplicationContext.class);
 
         if (closeableApplication.present()) {
-            closeableApplication.get().close();
+            ApplicationContext closeable = closeableApplication.get();
+            if (!closeable.isClosed()) {
+                closeable.close();
+            }
         }
     }
 }

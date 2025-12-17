@@ -216,22 +216,22 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
 
     @Override
     public boolean isInterface() {
-        return this.resolvedType().map(TypeView::isInterface).orElse(false);
+        return this.resolvedType().test(TypeView::isInterface);
     }
 
     @Override
     public boolean isEnum() {
-        return this.resolvedType().map(TypeView::isEnum).orElse(false);
+        return this.resolvedType().test(TypeView::isEnum);
     }
 
     @Override
     public boolean isAnnotation() {
-        return this.resolvedType().map(TypeView::isAnnotation).orElse(false);
+        return this.resolvedType().test(TypeView::isAnnotation);
     }
 
     @Override
     public boolean isRecord() {
-        return this.resolvedType().map(TypeView::isRecord).orElse(false);
+        return this.resolvedType().test(TypeView::isRecord);
     }
 
     @Override

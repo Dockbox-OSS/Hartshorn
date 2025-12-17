@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.reporting.serialize;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReport;
-import org.dockbox.hartshorn.reporting.ReportSerializationException;
-import org.dockbox.hartshorn.reporting.ReportSerializer;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.dockbox.hartshorn.reporting.DiagnosticsReport;
+import org.dockbox.hartshorn.reporting.ReportSerializationException;
+import org.dockbox.hartshorn.reporting.ReportSerializer;
 
 /**
  * A {@link ReportSerializer} which uses Jackson's {@link ObjectMapper} to serialize a {@link DiagnosticsReport} to a
@@ -44,7 +43,9 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
     public String serialize(DiagnosticsReport report) throws ReportSerializationException {
         try {
             JsonNode node = report.root().accept(new NodeToJacksonVisitor());
-            return this.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(node);
+            return this.objectMapper()
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(node);
         } catch (JsonProcessingException e) {
             throw new ReportSerializationException(e);
         }

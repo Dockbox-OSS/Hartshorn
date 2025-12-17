@@ -162,7 +162,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @return the auto-enabling of the key, or {@code true} if it cannot be determined
      */
     protected boolean isAutoEnabled(ElementAnnotationsIntrospector annotations) {
-        return annotations.get(Initialize.class).map(Initialize::value).orElse(true);
+        return annotations.get(Initialize.class).test(Initialize::value, true);
     }
 
     /**

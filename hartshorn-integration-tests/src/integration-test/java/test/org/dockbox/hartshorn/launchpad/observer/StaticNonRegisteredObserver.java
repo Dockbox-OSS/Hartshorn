@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +19,27 @@ package test.org.dockbox.hartshorn.launchpad.observer;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 
-public class NonRegisteredObserver implements LifecycleObserver {
+public class StaticNonRegisteredObserver implements LifecycleObserver {
 
-    private boolean started;
-    private boolean stopped;
+    private static boolean started;
+    private static boolean stopped;
 
     @Override
     public void onStarted(ApplicationContext applicationContext) {
-        this.started = true;
+        started = true;
     }
 
     @Override
     public void onExit(ApplicationContext applicationContext) {
-        this.stopped = true;
+        stopped = true;
     }
 
-    public boolean started() {
-        return this.started;
+    public static boolean started() {
+        return started;
     }
 
-    public boolean stopped() {
-        return this.stopped;
+    public static boolean stopped() {
+        return stopped;
     }
+
 }

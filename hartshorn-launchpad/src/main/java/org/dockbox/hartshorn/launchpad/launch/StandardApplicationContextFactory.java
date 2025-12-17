@@ -91,8 +91,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
                 this.buildContext.mainClass(),
                 this.buildContext.arguments(),
                 this.buildContext.logger(),
-                this.configurer.includeBasePackages.initialize(this.initializerContext)
-        );
+                this.configurer.includeBasePackages.initialize(this.initializerContext),
+                this.buildContext.applicationName());
 
         SingleElementContext<ApplicationBootstrapContext> bootstrapInitializerContext = this.initializerContext.transform(bootstrapContext);
 
@@ -111,6 +111,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         ApplicationContext applicationContext = environment.applicationContext();
         applicationContext.addContext(moduleActivatorContext);
         applicationContext.addContext(collectorContext);
+        applicationContext.addContext(bootstrapContext);
 
         this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.buildContext);
 

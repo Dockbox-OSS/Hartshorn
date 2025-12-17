@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.banner;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.dockbox.hartshorn.launchpad.logging.AnsiColor;
 import org.dockbox.hartshorn.launchpad.logging.AnsiMessage;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The default banner of Hartshorn. This banner is printed when the application starts if

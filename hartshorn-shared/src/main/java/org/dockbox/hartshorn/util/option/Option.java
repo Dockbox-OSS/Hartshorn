@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.util.option;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import javax.xml.transform.Result;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +32,6 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.Callable;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -34,13 +39,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.transform.Result;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@link #present()} will
@@ -403,7 +401,24 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return the result of the {@link Predicate} if a value is present, otherwise {@code false}.
      */
     default boolean test(@NonNull Predicate<T> predicate) {
-        return Boolean.TRUE.equals(this.map(predicate::test).orElse(false));
+        return this.test(predicate, false);
+    }
+
+    /**
+     * Tests the value wrapped by the current {@link Option} instance using the given {@link Predicate}. If a value is
+     * present, the result of the {@link Predicate} is returned. If no value is present, the given default value is
+     * returned.
+     *
+     * <p>This is particularly useful as a convenience method when returning primitive {@code boolean} values directly
+     * from a {@link Option}, as it does not require explicit unboxing on the caller's end.
+     *
+     * @param predicate the {@link Predicate} to test the value with.
+     * @param defaultValue the default value to return if no value is present.
+     *
+     * @return the result of the {@link Predicate} if a value is present, otherwise the given default value.
+     */
+    default boolean test(@NonNull Predicate<T> predicate, boolean defaultValue) {
+        return Boolean.TRUE.equals(this.map(predicate::test).orElse(defaultValue));
     }
 
     /**
@@ -419,28 +434,6 @@ public interface Option<T> extends Context, Iterable<T> {
      */
     default <E> E collect(@NonNull Collector<T, ?, E> collector) {
         return this.stream().collect(collector);
-    }
-
-    /**
-     * Similar to {@link #collect(Collector)}, but using explicit functions instead of a {@link Collector}. This
-     * produces a result equivalent to using {@link Stream#collect(Supplier, BiConsumer, BiConsumer)} through
-     * {@link #stream()}.
-     *
-     * @param supplier
-     *         the supplier function that provides a new mutable result container.
-     * @param accumulator
-     *         an associative, non-interfering, stateless function for incorporating an additional element
-     *         into a result container.
-     * @param combiner
-     *         an associative, non-interfering, stateless function for combining two values, which must be
-     *         compatible with the accumulator function.
-     * @param <E>
-     *         the type of the result
-     *
-     * @return the result of the reduction
-     */
-    default <E> E collect(@NonNull Supplier<E> supplier, @NonNull BiConsumer<E, T> accumulator, @NonNull BiConsumer<E, E> combiner) {
-        return this.stream().collect(supplier, accumulator, combiner);
     }
 
     /**

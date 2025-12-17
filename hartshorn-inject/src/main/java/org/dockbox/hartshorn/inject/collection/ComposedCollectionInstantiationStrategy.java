@@ -33,9 +33,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A {@link InstantiationStrategy} that composes multiple {@link CollectionInstantiationStrategy} instances into a single {@link ComponentCollection}.
- * This is useful when using non-strict lookups on a {@link ComponentCollection} that may contain multiple components for the
- * same key.
+ * A {@link InstantiationStrategy} that composes multiple {@link CollectionInstantiationStrategy}
+ * instances into a single {@link ComponentCollection}. This is useful when using fuzzy search on a
+ * {@link ComponentCollection} that may contain multiple components for the same key.
  *
  * @param <T> the type of the elements in the collection
  *

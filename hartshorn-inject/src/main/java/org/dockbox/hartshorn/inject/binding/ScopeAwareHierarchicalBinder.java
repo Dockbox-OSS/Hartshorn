@@ -55,9 +55,9 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
 
     @Override
     public <C> AliasBindingFunction<C> bind(Class<C> type) {
-        // Strict, so new hierarchies are created if needed, rather than using loose lookup
+        // Strict, so new hierarchies are created if needed, rather than using fuzzy search
         ComponentKey<C> componentKey = ComponentKey.builder(type)
-                .strict(true)
+                .strict()
                 .scope(this.scope) // No explicit scope provided, so expected to use the current scope instead
                 .build();
         return this.bind(componentKey);

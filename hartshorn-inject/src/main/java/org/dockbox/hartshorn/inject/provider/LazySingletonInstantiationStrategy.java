@@ -41,6 +41,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<T> {
 
     private final CheckedFunction<Scope, T> supplier;
+    private T instance;
 
     public LazySingletonInstantiationStrategy(CheckedFunction<Scope, T> supplier) {
         this.supplier = supplier;
@@ -48,11 +49,19 @@ public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstan
 
     @Override
     public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
-        T instance = this.supplier.apply(scope);
-        if (instance == null) {
-            throw new IllegalModificationException("Cannot bind null instance");
+        // TODO: Determine if we can avoid caching here, and capture all caching in
+        //  owning containers. Thus, we would only call this supplier once per component.
+        //  The main problem currently lies in component collections, which rely on the provider
+        //  instead of the container to provide instances.
+        //  Current implementation works, but is not ideal as it bypasses the central singleton
+        //  cache per scope.
+        if (this.instance == null) {
+            this.instance = this.supplier.apply(scope);
+            if (this.instance == null) {
+                throw new IllegalModificationException("Cannot bind null instance");
+            }
         }
-        return Option.of(ComponentObjectContainer.ofSingleton(instance));
+        return Option.of(ComponentObjectContainer.ofSingleton(this.instance));
     }
 
     @Override

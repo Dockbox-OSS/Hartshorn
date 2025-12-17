@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.hsl.StandardScriptComponentFactory;
+import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
@@ -80,8 +82,6 @@ public class ExpressionCondition implements Condition {
             return ConditionResult.of(result);
         }
         catch (ScriptEvaluationError e) {
-            context.application().environment().exceptionHandler()
-                    .handle("Failed to evaluate expression '%s'".formatted(expression), e);
             return ConditionResult.notMatched(e.getMessage());
         }
     }
@@ -95,7 +95,21 @@ public class ExpressionCondition implements Condition {
      * @return a new runtime
      */
     protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
-        ValidateExpressionRuntime runtime = context.application().defaultProvider().get(ValidateExpressionRuntime.class);
+        InjectionCapableApplication application = context.application();
+        ValidateExpressionRuntime runtime;
+        if (application instanceof ApplicationContext applicationContext) {
+            runtime = new ValidateExpressionRuntime(
+                    applicationContext,
+                    new StandardScriptComponentFactory(),
+                    new DefaultScriptStatementsParserCustomizer()
+            );
+        }
+        else {
+            // Less predictable, especially with inject configurations enabled. But if the
+            // application is not using the standard application context, we cannot make assumptions
+            // in any case.
+            runtime = application.defaultProvider().get(ValidateExpressionRuntime.class);
+        }
         return this.enhance(runtime, context);
     }
 

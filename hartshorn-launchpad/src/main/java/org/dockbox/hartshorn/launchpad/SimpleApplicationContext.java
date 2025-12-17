@@ -135,7 +135,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
         MultiMap<Integer, ComponentPreProcessor> processors = this.componentProvider().processorRegistry().preProcessors();
         for(int priority : processors.keySet()) {
             for(ComponentPreProcessor processor : processors.get(priority)) {
-                LOG.debug("Processing %s components with registered processor %s".formatted(containers.size(), processor.getClass().getSimpleName()));
+                LOG.debug(
+                        "Processing {} components with registered processor {}",
+                        containers.size(),
+                        processor.getClass().getSimpleName()
+                );
                 for (ComponentContainer<?> container : containers) {
                     this.processStandaloneComponent(container, processor);
                 }
@@ -149,7 +153,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor componentPreProcessor) {
         TypeView<?> componentType = container.type();
         ComponentKey<?> key = ComponentKey.of(componentType.type());
-        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), componentPreProcessor.getClass().getSimpleName()));
+        LOG.debug(
+                "Processing component {} with registered processor {}",
+                container.id(),
+                componentPreProcessor.getClass().getSimpleName()
+        );
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
                 this, ComponentRequestContext.createForComponent(),
                 key, ComponentObjectContainer.empty(), container.permitsProxying()

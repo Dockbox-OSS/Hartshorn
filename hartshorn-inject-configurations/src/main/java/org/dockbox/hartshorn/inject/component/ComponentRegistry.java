@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.component;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
@@ -45,6 +46,8 @@ public interface ComponentRegistry {
      * @return a component container for the provided type
      */
     Option<ComponentContainer<?>> container(Class<?> type);
+
+    Option<ComponentContainer<?>> container(ComponentKey<?> key);
 
     boolean addCustomContainer(ComponentContainer<?> container);
 }

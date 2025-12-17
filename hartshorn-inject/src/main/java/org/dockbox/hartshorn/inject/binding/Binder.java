@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,9 +42,9 @@ public interface Binder {
      * @return The binding function
      */
     default <C> BindingFunction<C> bind(Class<C> type) {
-        // Strict, so new hierarchies are created if needed, rather than using loose lookup
+        // Strict, so new hierarchies are created if needed, rather than using fuzzy search
         ComponentKey<C> componentKey = ComponentKey.builder(type)
-                .strict(true)
+                .strict()
                 .build();
         return this.bind(componentKey);
     }

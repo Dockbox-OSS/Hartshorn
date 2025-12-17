@@ -35,7 +35,7 @@ public class CountingComponentPreProcessor extends ComponentPreProcessor {
     @Override
     public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().is(EmptyComponent.class)) {
-            LOG.debug("Processing %s".formatted(processingContext));
+            LOG.debug("Processing {}", processingContext);
             this.processed++;
         }
     }

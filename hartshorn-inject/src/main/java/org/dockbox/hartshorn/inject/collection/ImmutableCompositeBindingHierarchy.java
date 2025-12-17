@@ -38,9 +38,10 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * A {@link BindingHierarchy} that composes multiple {@link CollectionBindingHierarchy} instances into a single hierarchy.
- * This implementation differs from {@link CollectionBindingHierarchy} in that it is immutable. It is used to represent
- * the composition of two non-strictly matching hierarchies, and are thus not expected to be bound to a key.
+ * A {@link BindingHierarchy} that composes multiple {@link CollectionBindingHierarchy} instances
+ * into a single hierarchy. This implementation differs from {@link CollectionBindingHierarchy} in
+ * that it is immutable. It is used to represent the composition of two fuzzy matching hierarchies,
+ * and are thus not expected to be bound to a key.
  *
  * @param <T> the type of the elements in the collection
  *

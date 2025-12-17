@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,17 @@
 
 package org.dockbox.hartshorn.inject.provider.singleton;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyView;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
+import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.ComponentKeyView;
-import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
@@ -61,11 +64,15 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
 
     @Override
     public <T> Option<T> get(ComponentKey<T> key) {
-        return Option.of(key.type().cast(this.cache.get(new ComponentKeyView<>(key))));
+        return EntryStream.of(this.cache)
+                .filterKeys(view -> SimpleComponentKeyMatcher.INSTANCE.matches(key, view))
+                .values()
+                .collect(CollectorUtilities.toOption())
+                .cast(key.type());
     }
 
     @Override
     public <T> boolean contains(ComponentKey<T> key) {
-        return this.cache.containsKey(new ComponentKeyView<>(key));
+        return this.get(key).present();
     }
 }

@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
@@ -28,14 +29,14 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -84,9 +85,9 @@ public class HierarchyCache {
             return this.hierarchies.get(view);
         }
         else {
-            List<BindingHierarchy<?>> compatibleAliases = this.hierarchies.values().stream()
+            SequencedSet<BindingHierarchy<?>> compatibleAliases = this.hierarchies.values().stream()
                     .filter(hierarchy -> hierarchy.isCompatible(key))
-                    .toList();
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             if (compatibleAliases.size() > 1) {
                 throw new AmbiguousComponentException(key, compatibleAliases.stream()
                         .map(BindingHierarchy::key)
@@ -133,9 +134,9 @@ public class HierarchyCache {
             hierarchy = null;
         }
         else {
-            // Don't bind this hierarchy, as it's a loose match. If the configuration changes, the loose
-            // match may not be valid anymore, so we don't want to cache it.
-            hierarchy = this.looseLookupHierarchy(key);
+            // Don't bind this hierarchy, as it's a fuzzy match. If the configuration changes, the
+            // fuzzy match may not be valid anymore, so we don't want to cache it.
+            hierarchy = this.fuzzyMatchHierarchy(key);
         }
         return hierarchy;
     }
@@ -151,10 +152,10 @@ public class HierarchyCache {
     }
 
     @Nullable
-    private <T> BindingHierarchy<?> looseLookupHierarchy(ComponentKey<T> key) {
+    private <T> BindingHierarchy<?> fuzzyMatchHierarchy(ComponentKey<T> key) {
         Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
         Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
-                .filter(hierarchyKey -> this.isCompatible(key, hierarchyKey))
+                .filter(hierarchyKey -> SimpleComponentKeyMatcher.FuzzyComponentKeyMatcher.INSTANCE.matches(key, hierarchyKey))
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
@@ -198,31 +199,6 @@ public class HierarchyCache {
             throw new AmbiguousComponentException(key, foundKeys);
         }
         return CollectionUtilities.first(highestPriority);
-    }
-
-    private boolean isCompatible(ComponentKey<?> key, ComponentKeyView<?> other) {
-        ParameterizableType originType = key.parameterizedType();
-        ParameterizableType targetType = other.type();
-        return this.isCompatible(originType, targetType);
-    }
-
-    private boolean isCompatible(ParameterizableType originType, ParameterizableType targetType) {
-        if (!originType.type().isAssignableFrom(targetType.type())) {
-            return false;
-        }
-        List<ParameterizableType> originalParameters = originType.parameters();
-        List<ParameterizableType> targetParameters = targetType.parameters();
-        if (originalParameters.size() != targetParameters.size()) {
-            return false;
-        }
-        for (int i = 0; i < originalParameters.size(); i++) {
-            ParameterizableType originalParameter = originalParameters.get(i);
-            ParameterizableType targetParameter = targetParameters.get(i);
-            if (!this.isCompatible(originalParameter, targetParameter)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private <T> BindingHierarchy<?> composeCollectionHierarchy(ComponentKey<ComponentCollection<T>> key, Set<ComponentKeyView<?>> compatibleKeys) {
