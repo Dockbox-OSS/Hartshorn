@@ -63,20 +63,28 @@ public record SimpleTokenType(
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;
-        SimpleTokenType that = (SimpleTokenType) o;
-        return this.keyword == that.keyword
-            && this.standaloneStatement == that.standaloneStatement
-            && this.reserved == that.reserved
-            && Objects.equals(this.tokenName, that.tokenName)
-            && Objects.equals(this.representation, that.representation)
-            && Objects.equals(this.assignsWith, that.assignsWith)
-            && Objects.equals(this.defaultLexeme, that.defaultLexeme)
-            && Arrays.equals(this.characters, that.characters);
+        TokenType that = (TokenType) o;
+        return this.keyword == that.keyword()
+            && this.standaloneStatement == that.standaloneStatement()
+            && this.reserved == that.reserved()
+            && Objects.equals(this.tokenName, that.tokenName())
+            && Objects.equals(this.representation, that.representation())
+            && Objects.equals(this.assignsWith, that.assignsWith())
+            && Objects.equals(this.defaultLexeme, that.defaultLexeme())
+            && Arrays.equals(this.characters, that.characters());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(this.tokenName, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme);
+        int result = Objects.hash(
+                this.tokenName,
+                this.representation,
+                this.keyword,
+                this.standaloneStatement,
+                this.reserved,
+                this.assignsWith,
+                this.defaultLexeme
+        );
         result = 31 * result + Arrays.hashCode(this.characters);
         return result;
     }
