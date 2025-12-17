@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,22 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @see #genericType()
      */
     TypeView<ReturnType> genericReturnType();
+
+    /**
+     * Attempts to find this method on the provided type. If the method is not found on the provided
+     * type, an empty {@link Option} is returned. If the given type does not declare this method's
+     * signature, an empty {@link Option} is returned, even if the method exists on a parent type.
+     *
+     * <p>If the given type is not a parent of the method's declaring type, an empty {@link Option}
+     * is returned, even if a method with the same signature exists on the given type.
+     *
+     * @param onType the type to find this method on
+     * @param <OP> the type of the provided type
+     *
+     * @return an {@link Option} containing the method view on the provided type, or an empty
+     * {@link Option} if the method is not found
+     */
+    <OP> Option<MethodView<OP, ?>> onType(Class<OP> onType);
 
     @Override
     default TypeView<?> resultType() {

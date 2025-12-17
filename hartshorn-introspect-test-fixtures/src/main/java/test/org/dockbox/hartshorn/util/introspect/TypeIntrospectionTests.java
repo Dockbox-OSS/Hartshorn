@@ -16,9 +16,6 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import java.lang.annotation.Annotation;
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -38,6 +35,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
 import test.org.dockbox.hartshorn.util.introspect.support.typeparameters.AbstractTypeWithTypeParameter;
 import test.org.dockbox.hartshorn.util.introspect.support.typeparameters.ImplementationWithTypeParameter;
 import test.org.dockbox.hartshorn.util.introspect.support.typeparameters.InterfaceWithTypeParameter;
+
+import java.lang.annotation.Annotation;
+import java.util.stream.Stream;
 
 /**
  * Tests to verify {@link Introspector} implementations correctly expose basic type information.
@@ -366,4 +366,32 @@ public abstract class TypeIntrospectionTests {
     }
 
     public void testNonStatic() {}
+
+    @Test
+    void testMethodOnTypeLookupCanResolveWithChangedReturnType() {
+        Option<MethodView<TypeWithOverrideMethodDeclaration, ?>> method = this.introspector()
+                .introspect(TypeWithOverrideMethodDeclaration.class)
+                .methods()
+                .named("methodWithArguments", String.class, Integer.class);
+        Assertions.assertTrue(method.present());
+
+        MethodView<TypeWithOverrideMethodDeclaration, ?> methodView = method.get();
+        Option<MethodView<TypeWithMethodDeclaration, ?>> onParent = methodView.onType(TypeWithMethodDeclaration.class);
+        Assertions.assertTrue(onParent.present());
+
+        MethodView<TypeWithMethodDeclaration, ?> parentMethodView = onParent.get();
+        Assertions.assertEquals(Number.class, parentMethodView.returnType().type());
+    }
+
+    static class TypeWithMethodDeclaration {
+        public Number methodWithArguments(String arg1, Integer arg2) {
+            return null;
+        }
+    }
+    static class TypeWithOverrideMethodDeclaration extends TypeWithMethodDeclaration {
+        @Override
+        public Integer methodWithArguments(String arg1, Integer arg2) {
+            return null;
+        }
+    }
 }
