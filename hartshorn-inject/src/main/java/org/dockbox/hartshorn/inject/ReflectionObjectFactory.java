@@ -24,8 +24,9 @@ import java.lang.reflect.InvocationTargetException;
  * Reflection-based implementation of {@link ObjectFactory}. This implementation uses reflection to
  * create instances of objects.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ReflectionObjectFactory implements ObjectFactory {
 

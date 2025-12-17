@@ -603,10 +603,10 @@ public final class ComponentKey<T> implements Reportable {
          *
          * @param strict whether the lookup for this component should be strict
          *
+         * @return this builder
+         *
          * @see #strict()
          * @see #fuzzy()
-         *
-         * @return this builder
          */
         public Builder<T> strict(boolean strict) {
             this.strict = Tristate.valueOf(strict);

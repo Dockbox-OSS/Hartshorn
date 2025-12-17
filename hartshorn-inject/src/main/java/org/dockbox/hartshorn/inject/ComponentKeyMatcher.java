@@ -16,9 +16,35 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * A matcher for component keys, to determine whether two component keys are considered equal for
+ * a specific purpose or context.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface ComponentKeyMatcher {
 
-    boolean matches(ComponentKey<?> left, ComponentKey<?> right);
+    /**
+     * Determines whether the {@code actual} component key is a match for the {@code requested}
+     * component key. Typically the {@code actual} key is the one registered in a container, while
+     * the {@code requested} key is the one being looked up.
+     *
+     * @param requested the component key being requested
+     * @param actual the component key being checked for a match
+     * @return true if the keys match, false otherwise
+     */
+    boolean matches(ComponentKey<?> requested, ComponentKey<?> actual);
 
-    boolean matches(ComponentKey<?> left, ComponentKeyView<?> right);
+    /**
+     * Determines whether the {@code actual} component key view is a match for the {@code requested}
+     * component key. Typically the {@code actual} key view is the one registered in a container,
+     * while the {@code requested} key is the one being looked up.
+     *
+     * @param requested the component key being requested
+     * @param actual the component key view being checked for a match
+     * @return true if the keys match, false otherwise
+     */
+    boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual);
 }

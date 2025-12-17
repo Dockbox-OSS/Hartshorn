@@ -22,6 +22,13 @@ import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A diagnostics reporter for {@link Observer} instances.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ObserverDiagnosticsReporter implements Reportable {
 
     private final Introspector introspector;

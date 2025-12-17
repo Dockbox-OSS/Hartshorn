@@ -33,11 +33,18 @@ import java.time.Duration;
  * <p>Note that this does not include banners or other forms of visual startup messages. This is purely for
  * practical logging purposes.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationStartupLogger {
 
+    /**
+     * Utility record that holds data about the application for logging purposes.
+     *
+     * @param runtimeMXBean runtime details of the application
+     * @param buildContext build context of the application
+     */
     public record ApplicationData(
             RuntimeMXBean runtimeMXBean,
             ApplicationBuildContext buildContext
@@ -271,6 +278,13 @@ public class ApplicationStartupLogger {
         };
     }
 
+    /**
+     * Configurer for the {@link ApplicationStartupLogger}.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private ContextualInitializer<ApplicationData, Boolean> includeApplicationName = ContextualInitializer.of(true);

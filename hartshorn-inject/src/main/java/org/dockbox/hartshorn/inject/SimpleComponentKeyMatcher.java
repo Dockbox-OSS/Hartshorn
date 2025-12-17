@@ -20,109 +20,145 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 import java.util.List;
 
+/**
+ * A simple implementation of {@link ComponentKeyMatcher} which delegates to either
+ * {@link StrictComponentKeyMatcher} or {@link FuzzyComponentKeyMatcher} based on the
+ * strictness of the requested and actual keys.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
 
     public static final ComponentKeyMatcher INSTANCE = new SimpleComponentKeyMatcher();
 
     @Override
-    public boolean matches(ComponentKey<?> left, ComponentKey<?> right) {
+    public boolean matches(ComponentKey<?> requested, ComponentKey<?> actual) {
         // Strict matching, use equality if either key is strict
-        if (left.strict().booleanValue() || right.strict().booleanValue()) {
-            return StrictComponentKeyMatcher.INSTANCE.matches(left, right);
+        if (requested.strict().booleanValue() || actual.strict().booleanValue()) {
+            return StrictComponentKeyMatcher.INSTANCE.matches(requested, actual);
         }
         // Fuzzy matching otherwise
-        return FuzzyComponentKeyMatcher.INSTANCE.matches(left, right);
+        return FuzzyComponentKeyMatcher.INSTANCE.matches(requested, actual);
     }
 
     @Override
-    public boolean matches(ComponentKey<?> left, ComponentKeyView<?> right) {
+    public boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual) {
         // Strict matching, use equality if the key is strict
-        if (left.strict().booleanValue()) {
-            return StrictComponentKeyMatcher.INSTANCE.matches(left, right);
+        if (requested.strict().booleanValue()) {
+            return StrictComponentKeyMatcher.INSTANCE.matches(requested, actual);
         }
         // Fuzzy matching otherwise
-        return FuzzyComponentKeyMatcher.INSTANCE.matches(left, right);
+        return FuzzyComponentKeyMatcher.INSTANCE.matches(requested, actual);
     }
 
+    /**
+     * An abstract base implementation of {@link ComponentKeyMatcher} which compares common
+     * properties of component keys.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class AbstractComponentKeyMatcher implements ComponentKeyMatcher {
 
         @Override
-        public boolean matches(ComponentKey<?> left, ComponentKey<?> right) {
-            if (left == right) {
+        public boolean matches(ComponentKey<?> requested, ComponentKey<?> actual) {
+            if (requested == actual) {
                 return true;
             }
-            if (right == null || left == null) {
+            if (actual == null || requested == null) {
                 return false;
             }
-            if (left.postConstructionAllowed() != right.postConstructionAllowed()) {
+            if (requested.postConstructionAllowed() != actual.postConstructionAllowed()) {
                 return false;
             }
-            if (!left.qualifier().equals(right.qualifier())) {
+            if (!requested.qualifier().equals(actual.qualifier())) {
                 return false;
             }
             return true;
         }
 
         @Override
-        public boolean matches(ComponentKey<?> left, ComponentKeyView<?> right) {
-            if (left == null || right == null) {
+        public boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual) {
+            if (requested == null || actual == null) {
                 return false;
             }
-            if (!left.qualifier().equals(right.qualifier())) {
+            if (!requested.qualifier().equals(actual.qualifier())) {
                 return false;
             }
             return true;
         }
     }
 
+    /**
+     * A strict implementation of {@link ComponentKeyMatcher} which requires exact matches of
+     * parameterized types. This means that not only the raw types must match, but also all type
+     * parameters must be equal.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class StrictComponentKeyMatcher extends AbstractComponentKeyMatcher {
 
         public static final ComponentKeyMatcher INSTANCE = new StrictComponentKeyMatcher();
 
         @Override
-        public boolean matches(ComponentKey<?> left, ComponentKey<?> right) {
-            if (!super.matches(left, right)) {
+        public boolean matches(ComponentKey<?> requested, ComponentKey<?> actual) {
+            if (!super.matches(requested, actual)) {
                 return false;
             }
-            if (!left.parameterizedType().equals(right.parameterizedType())) {
+            if (!requested.parameterizedType().equals(actual.parameterizedType())) {
                 return false;
             }
             return true;
         }
 
         @Override
-        public boolean matches(ComponentKey<?> requestedType, ComponentKeyView<?> actualType) {
-            if (!super.matches(requestedType, actualType)) {
+        public boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual) {
+            if (!super.matches(requested, actual)) {
                 return false;
             }
-            if (!requestedType.parameterizedType().equals(actualType.type())) {
+            if (!requested.parameterizedType().equals(actual.type())) {
                 return false;
             }
             return true;
         }
     }
 
+    /**
+     * A fuzzy implementation of {@link ComponentKeyMatcher} which allows for compatible matches
+     * of parameterized types. This means that the raw types must be assignable, and all type
+     * parameters must be compatible. As types only required to be assignable, this allows for
+     * more flexible matching.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class FuzzyComponentKeyMatcher extends AbstractComponentKeyMatcher {
 
         public static final ComponentKeyMatcher INSTANCE = new FuzzyComponentKeyMatcher();
 
         @Override
-        public boolean matches(ComponentKey<?> left, ComponentKey<?> right) {
-            if (!super.matches(left, right)) {
+        public boolean matches(ComponentKey<?> requested, ComponentKey<?> actual) {
+            if (!super.matches(requested, actual)) {
                 return false;
             }
-            if (!isCompatible(left.parameterizedType(), right.parameterizedType())) {
+            if (!isCompatible(requested.parameterizedType(), actual.parameterizedType())) {
                 return false;
             }
             return true;
         }
 
         @Override
-        public boolean matches(ComponentKey<?> requestedType, ComponentKeyView<?> actualType) {
-            if (!super.matches(requestedType, actualType)) {
+        public boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual) {
+            if (!super.matches(requested, actual)) {
                 return false;
             }
-            if (!isCompatible(requestedType.parameterizedType(), actualType.type())) {
+            if (!isCompatible(requested.parameterizedType(), actual.type())) {
                 return false;
             }
             return true;
@@ -132,6 +168,12 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
             if (!requestedType.type().isAssignableFrom(actualType.type())) {
                 return false;
             }
+
+            // Implementation note: We assume here that both types have the same number of
+            // parameters if they are parameterized types. If they do not, the types are not
+            // compatible. While this is a simplification, it is sufficient for most use cases in
+            // dependency injection (e.g. ComponentCollection<String> is still compatible with
+            // Collection<CharSequence>).
             List<ParameterizableType> originalParameters = requestedType.parameters();
             List<ParameterizableType> targetParameters = actualType.parameters();
             if (originalParameters.size() != targetParameters.size()) {
