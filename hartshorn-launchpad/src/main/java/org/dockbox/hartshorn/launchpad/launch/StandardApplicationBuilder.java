@@ -223,6 +223,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         private final LazyStreamableConfigurer<Class<?>, String> arguments =
             LazyStreamableConfigurer.empty();
 
+        private ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger =
+            ApplicationStartupLogger.create(Customizer.useDefaults());
+
         private ContextualInitializer<Class<?>, String> applicationName =
             ContextualInitializer.of(Class::getSimpleName);
         // checkstyle:on LineLength
