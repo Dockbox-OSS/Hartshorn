@@ -305,4 +305,13 @@ public final class CollectionUtilities {
         Collections.addAll(set, values);
         return Collections.unmodifiableSequencedSet(set);
     }
+
+    public static int compareUnordered(Collection<?> first, Collection<?> second) {
+        if (first.size() != second.size()) {
+            return Integer.compare(first.size(), second.size());
+        }
+        Set<?> firstSet = new HashSet<>(first);
+        Set<?> secondSet = new HashSet<>(second);
+        return firstSet.equals(secondSet) ? 0 : -1;
+    }
 }

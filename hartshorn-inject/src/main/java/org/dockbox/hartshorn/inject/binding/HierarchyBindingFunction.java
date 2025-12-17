@@ -218,7 +218,11 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy = this.binder.hierarchy(collectionComponentKey);
         if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T> collectionBindingHierarchy) {
             Binder updatedBinder = this.binder.bind(collectionBindingHierarchy);
-            CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(updatedBinder, collectionBindingHierarchy, this.priority);
+            CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
+                    updatedBinder,
+                    collectionBindingHierarchy,
+                    this.priority
+            );
             collector.configure(function);
             return updatedBinder;
         }

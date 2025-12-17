@@ -276,17 +276,13 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public boolean equals(Object other) {
-        if(this == other) {
+        if (other == this) {
             return true;
         }
-        if(other == null || this.getClass() != other.getClass()) {
+        if (!(other instanceof ComponentKey<?> otherKey)) {
             return false;
         }
-        ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
-        return this.postConstructionAllowed == otherComponentKey.postConstructionAllowed
-                && this.type.equals(otherComponentKey.type)
-                && Objects.equals(this.qualifier, otherComponentKey.qualifier)
-                && Objects.equals(this.scope, otherComponentKey.scope);
+        return SimpleComponentKeyMatcher.StrictComponentKeyMatcher.INSTANCE.matches(this, otherKey);
     }
 
     @Override
@@ -607,11 +603,38 @@ public final class ComponentKey<T> implements Reportable {
          *
          * @param strict whether the lookup for this component should be strict
          *
+         * @see #strict()
+         * @see #fuzzy()
+         *
          * @return this builder
          */
         public Builder<T> strict(boolean strict) {
             this.strict = Tristate.valueOf(strict);
             return this;
+        }
+
+        /**
+         * Sets that strict matching should be used for this component key. If strict matching is
+         * used, the type of the hierarchy has to match this key exactly.
+         *
+         * <p>Inverse of {@link #fuzzy()}, for convenience.
+         *
+         * @return this builder
+         */
+        public Builder<T> strict() {
+            return this.strict(true);
+        }
+
+        /**
+         * Sets that fuzzy matching should be used for this component key. If fuzzy matching is
+         * used, the type of the hierarchy can be a sub-type of this key.
+         *
+         * <p>Inverse of {@link #strict()}, for convenience.
+         *
+         * @return this builder
+         */
+        public Builder<T> fuzzy() {
+            return this.strict(false);
         }
 
         /**

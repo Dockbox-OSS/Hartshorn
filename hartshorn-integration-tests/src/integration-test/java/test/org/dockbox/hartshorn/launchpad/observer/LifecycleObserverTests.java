@@ -16,20 +16,44 @@
 
 package test.org.dockbox.hartshorn.launchpad.observer;
 
-import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.test.annotations.TestComponents;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@HartshornIntegrationTest(includeBasePackages = false)
+@TestComponents(LifecycleObserverTests.ObserverConfiguration.class)
 public class LifecycleObserverTests {
+
+    @Configuration
+    public static class ObserverConfiguration {
+
+        @Singleton
+        @CompositeMember
+        public LifecycleObserver observer() {
+            return new TestLifecycleObserver();
+        }
+    }
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @Test
     void testServiceLifecycleObserverIsPresentAndObserving() {
-        ApplicationContext applicationContext = HartshornApplication.create();
-        TestLifecycleObserver observer = applicationContext.get(TestLifecycleObserver.class);
+        TestLifecycleObserver observer = getObserver(TestLifecycleObserver.class);
+
         Assertions.assertTrue(observer.started());
 
         Assertions.assertDoesNotThrow(applicationContext::close);
@@ -38,7 +62,6 @@ public class LifecycleObserverTests {
 
     @Test
     void testNonRegisteredObserverIsNotPresentOnStart() {
-        ApplicationContext applicationContext = HartshornApplication.create();
         NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
         Assertions.assertFalse(observer.started());
         Assertions.assertFalse(observer.stopped());
@@ -56,7 +79,6 @@ public class LifecycleObserverTests {
 
     @Test
     void testRegistrationFromClassIsValid() {
-        ApplicationContext applicationContext = HartshornApplication.create();
         // Static as observer instance is lazily created by the observable, so we cannot
         // access it directly.
         Assertions.assertFalse(StaticNonRegisteredObserver.started());
@@ -71,5 +93,16 @@ public class LifecycleObserverTests {
         // Do not late-fire events
         Assertions.assertFalse(StaticNonRegisteredObserver.started());
         Assertions.assertTrue(StaticNonRegisteredObserver.stopped());
+    }
+
+    private <T extends LifecycleObserver> T getObserver(Class<T> type) {
+        ComponentCollection<LifecycleObserver> observers = applicationContext.get(
+                ComponentKey.collect(LifecycleObserver.class)
+        );
+        return observers.stream()
+                .filter(type::isInstance)
+                .collect(CollectorUtilities.toOption())
+                .cast(type)
+                .orElseGet(() -> Assertions.fail("Expected %s to be present in observers".formatted(type.getSimpleName())));
     }
 }

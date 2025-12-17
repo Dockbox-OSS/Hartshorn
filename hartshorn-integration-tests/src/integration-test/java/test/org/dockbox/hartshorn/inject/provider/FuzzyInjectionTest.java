@@ -31,13 +31,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(includeBasePackages = false)
-public class LooseInjectionTest {
+public class FuzzyInjectionTest {
 
     @Test
-    void testNonStrictModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
+    void testFuzzyModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
-                .strict(false)
+                .fuzzy()
                 .build();
         CharSequence sequence = context.get(key);
         Assertions.assertEquals("Hello World", sequence);
@@ -47,7 +47,7 @@ public class LooseInjectionTest {
     void testStrictModeOnlyMatchesExactBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
-                .strict(true)
+                .strict()
                 .build();
         Assertions.assertThrows(ComponentResolutionException.class, () -> context.get(key));
     }
@@ -60,7 +60,7 @@ public class LooseInjectionTest {
 
     @Test
     void testEnvironmentStrictModeIsEnabledByDefault() {
-        ApplicationEnvironment environment = HartshornApplication.create(LooseInjectionTest.class, application -> {
+        ApplicationEnvironment environment = HartshornApplication.create(FuzzyInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
             }));
@@ -69,7 +69,7 @@ public class LooseInjectionTest {
     }
 
     public static void main(String[] args) {
-        HartshornApplication.create(LooseInjectionTest.class, application -> {
+        HartshornApplication.create(FuzzyInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
             }));
@@ -79,7 +79,7 @@ public class LooseInjectionTest {
 
     @Test
     void testCustomizingEnvironmentStrictModeAffectsLookup() {
-        ApplicationContext applicationContext = HartshornApplication.create(LooseInjectionTest.class, application -> {
+        ApplicationContext applicationContext = HartshornApplication.create(FuzzyInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
                 constructor.environment(ConfigurableApplicationEnvironment.create(Configurer::disableStrictMode));

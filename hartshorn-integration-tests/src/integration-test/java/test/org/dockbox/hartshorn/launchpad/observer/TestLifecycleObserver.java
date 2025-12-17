@@ -16,11 +16,9 @@
 
 package test.org.dockbox.hartshorn.launchpad.observer;
 
-import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 
-@Component
 public class TestLifecycleObserver implements LifecycleObserver {
 
     private boolean started;

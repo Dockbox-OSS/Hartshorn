@@ -46,7 +46,7 @@ public class ManagedComponentProviderStrategy implements ComponentProviderStrate
     public <T> ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext, ComponentProviderStrategyChain<T> chain) throws ComponentResolutionException, ApplicationException {
         if (chain.application().defaultProvider() instanceof ComponentRegistryAwareComponentProvider componentRegistryAware) {
             ComponentRegistry componentRegistry = componentRegistryAware.componentRegistry();
-            if (componentRegistry.container(componentKey.type()).present()) {
+            if (componentRegistry.container(componentKey).present()) {
                 // Only redirect if the request is for another scope than the application scope. If we're already
                 // providing a component in the application scope, we can continue with the chain as usual.
                 boolean isScopedRequest = componentKey.scope()
@@ -56,11 +56,11 @@ public class ManagedComponentProviderStrategy implements ComponentProviderStrate
                             return !key.equals(applicationScope);
                         });
                 if (isScopedRequest) {
+                    // Redirect outside the chain to ensure that the component is resolved with the correct scope.
                     ComponentKey<T> rescopedKey = componentKey.mutable()
                             .scope(chain.application().defaultProvider().scope())
                             .build();
 
-                    // Redirect outside the chain to ensure that the component is resolved with the correct scope.
                     T instance = chain.application().defaultProvider().get(rescopedKey);
                     ComponentObjectContainer<T> container = ComponentObjectContainer.ofSingleton(instance);
                     container.processed(true);

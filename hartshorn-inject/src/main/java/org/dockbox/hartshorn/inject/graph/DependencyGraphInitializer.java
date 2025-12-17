@@ -16,10 +16,7 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
@@ -31,12 +28,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The dependency graph initializer is responsible for initializing the dependency graph. It does so by first
@@ -95,7 +95,7 @@ public final class DependencyGraphInitializer {
         Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
         this.graphValidator.validateAfterConfiguration(dependencyGraph, this.introspector, visitedDependencies, orchestrator);
 
-        LOG.debug("Validated %d dependencies".formatted(visitedDependencies.size()));
+        LOG.debug("Validated {} dependencies", visitedDependencies.size());
         return dependencyGraph;
     }
 

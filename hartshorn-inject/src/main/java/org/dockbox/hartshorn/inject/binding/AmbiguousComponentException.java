@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Thrown when two or more non-strict components match a lookup key. This indicates that two equally
+ * Thrown when two or more components fuzzy match a lookup key. This indicates that two equally
  * qualified components are compatible with the lookup key, and that there is no strict binding for
  * the lookup key.
  *

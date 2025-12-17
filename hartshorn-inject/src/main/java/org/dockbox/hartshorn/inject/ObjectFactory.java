@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 /**
- * A 'dumb' object factory, which is typically not aware of any IoC container or other context. It is used to create
- * instances of objects without any additional context. This is typically used in early bootstrapping of the application,
- * before the IoC container is fully initialized.
+ * A 'dumb' object factory, which is typically not aware of any IoC container or other context. It
+ * is used to create instances of objects without any additional context. This is typically used in
+ * early bootstrapping of the application, before the IoC container is fully initialized.
  *
  * @since 0.7.0
  *

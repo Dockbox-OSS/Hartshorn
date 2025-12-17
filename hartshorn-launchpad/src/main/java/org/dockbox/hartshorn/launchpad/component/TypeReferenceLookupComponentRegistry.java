@@ -16,12 +16,16 @@
 
 package org.dockbox.hartshorn.launchpad.component;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
@@ -51,10 +55,15 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
     private final Set<ComponentContainer<?>> containers = new ConcurrentSkipListSet<>(ComponentContainer.COMPARE_BY_ID);
     private final EnvironmentTypeResolver typeResolver;
+    private final InjectorConfiguration configuration;
     private boolean environmentTypesResolved = false;
 
-    public TypeReferenceLookupComponentRegistry(EnvironmentTypeResolver typeResolver) {
+    public TypeReferenceLookupComponentRegistry(
+            EnvironmentTypeResolver typeResolver,
+            InjectorConfiguration configuration
+    ) {
         this.typeResolver = typeResolver;
+        this.configuration = configuration;
     }
 
     /**
@@ -94,15 +103,35 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
     @Override
     public Option<ComponentContainer<?>> container(Class<?> type) {
-        return this.withContainerCache(containers -> {
-            List<ComponentContainer<?>> compatibleContainers = containers.stream()
-                    .filter(container -> container.type().is(type))
-                    .toList();
-            if (compatibleContainers.size() > 1) {
-                throw new IllegalStateException("Multiple compatible containers found for " + type);
-            }
-            return Option.of(compatibleContainers.isEmpty() ? null : compatibleContainers.getFirst());
-        });
+        return this.withContainerCache(containers -> containers.stream()
+                .filter(container -> container.type().is(type))
+                .collect(CollectorUtilities.toOption()));
+    }
+
+    @Override
+    public Option<ComponentContainer<?>> container(ComponentKey<?> key) {
+        if (!key.qualifier().isEmpty()) {
+            // Qualifiers are not supported in this registry
+            return Option.empty();
+        }
+        else if (isStrict(key)) {
+            return container(key.type());
+        }
+        else {
+            return this.withContainerCache(containers -> containers.stream()
+                    .filter(container -> SimpleComponentKeyMatcher.INSTANCE.matches(key, ComponentKey.of(container.type())))
+                    .collect(CollectorUtilities.toOption()));
+        }
+    }
+
+    protected boolean isStrict(ComponentKey<?> key) {
+        Tristate strict = key.strict();
+        if (strict == Tristate.UNDEFINED) {
+            return this.configuration.isStrictMode();
+        }
+        else {
+            return strict.booleanValue();
+        }
     }
 
     private <T> T withContainerCache(Function<Set<ComponentContainer<?>>, T> operator) {
