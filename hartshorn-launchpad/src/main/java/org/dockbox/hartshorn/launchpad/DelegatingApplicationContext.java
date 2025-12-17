@@ -35,9 +35,9 @@ import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
 import org.dockbox.hartshorn.launchpad.activation.ContextModuleActivatorHolder;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorContext;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
 import org.dockbox.hartshorn.launchpad.configuration.BindingConfigurerBinderPostProcessorAdapter;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
@@ -51,7 +51,7 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+import java.util.SequencedSet;
 import java.util.function.BiConsumer;
 
 /**
@@ -224,10 +224,10 @@ public abstract class DelegatingApplicationContext
         }
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            Set<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
+            SequencedSet<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
             LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
-                LOG.debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
+                LOG.debug("Notifying {} of shutdown", observer.getClass().getSimpleName());
                 try {
                     observer.onExit(this);
                 }

@@ -16,15 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
-import org.dockbox.hartshorn.launchpad.lifecycle.Observation;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
 
 public class ObserverDiagnosticsReporter implements Reportable {
 
@@ -39,15 +35,8 @@ public class ObserverDiagnosticsReporter implements Reportable {
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         TypeView<Observer> type = this.introspector.introspect(this.observer);
-        collector.property("observerType").writeDelegate(type);
-
-        List<MethodView<Observer, ?>> eventMethods = type.methods().annotatedWith(Observation.class);
-        collector.property("events").writeStrings(eventMethods.stream()
-                .flatMap(method -> method.annotations().all(Observation.class).stream())
-                .map(Observation::value)
-                .distinct()
-                .toArray(String[]::new)
-        );
+        collector.property("type").writeDelegate(type);
+        collector.property("priority").writeInt(this.observer.priority());
 
         if (observer instanceof Reportable reportable) {
             // Delegate further reporting to the observer itself. Allowed to override

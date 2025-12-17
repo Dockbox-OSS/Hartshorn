@@ -16,12 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.annotations.Required;
-import org.dockbox.hartshorn.inject.annotations.Strict;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
@@ -31,15 +29,12 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.ApplicationStarter;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.convert.ValuePropertyToObjectConverterFactory;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -149,27 +144,6 @@ public class LaunchpadSharedComponentConfiguration {
     @Singleton
     @CompositeMember
     public LifecycleObserver applicationStarterLifecycleObserver() {
-        return new LifecycleObserver() {
-            @Override
-            public void onStarted(ApplicationContext applicationContext) {
-                // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
-                // application lifecycle.
-                ComponentKey<ApplicationStarter> componentKey = ComponentKey.builder(ApplicationStarter.class)
-                        .strict(false)
-                        .optional()
-                        .build();
-                ApplicationStarter applicationStarter = applicationContext.get(componentKey);
-                // OK to do nothing if no ApplicationStarter is present, as this is optional. Other observers may still
-                // be present, and will be invoked.
-                if (applicationStarter != null) {
-                    try {
-                        applicationStarter.run(applicationContext);
-                    }
-                    catch (ApplicationException e) {
-                        applicationContext.handle(e);
-                    }
-                }
-            }
-        };
+        return new ApplicationStarterLifecycleObserver();
     }
 }

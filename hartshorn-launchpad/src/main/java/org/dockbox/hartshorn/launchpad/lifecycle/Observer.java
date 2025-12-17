@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.lifecycle;
 
+import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+
 /**
  * A marker interface for observers. Observers are notified of events within their associated
  * {@link LifecycleObservable}.
@@ -24,4 +26,8 @@ package org.dockbox.hartshorn.launchpad.lifecycle;
  * @author Guus Lieben
  */
 public interface Observer {
+
+    default int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
+    }
 }

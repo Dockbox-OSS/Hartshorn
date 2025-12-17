@@ -55,6 +55,8 @@ import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IOUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
@@ -71,9 +73,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Common implementation of {@link ApplicationEnvironment}, supporting the full range of standard functionalities and
@@ -99,7 +105,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ConfigurableApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableApplicationContextCarrier {
 
-    private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
+    private final MultiMap<Integer, Observer> observers = new ConcurrentSetTreeMultiMap<>();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
 
     private final FileSystemProvider fileSystemProvider;
@@ -331,7 +337,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
     @Override
     public void register(Observer observer) {
-        this.observers.add(observer);
+        this.observers.put(observer.priority(), observer);
     }
 
     @Override
@@ -340,29 +346,40 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     }
 
     @Override
-    public <T extends Observer> Set<T> observers(Class<T> type) {
+    public <T extends Observer> SequencedSet<T> observers(Class<T> type) {
         if (type == null) {
             throw new IllegalArgumentException("type cannot be null");
         }
+        this.initializeLazyObservers(type);
 
-        Set<T> allObservers = new HashSet<>();
-        this.observers.stream()
+        Set<T> typedObservers = new HashSet<>();
+        this.observers.allValues().stream()
                 .filter(type::isInstance)
                 .map(type::cast)
-                .forEach(allObservers::add);
+                .forEach(typedObservers::add);
 
-        this.lazyObservers.stream()
-                .filter(type::isAssignableFrom)
-                .map(this.applicationContext::get)
-                .map(type::cast)
-                .forEach(allObservers::add);
+        // In case of observers provided by bindings, we cannot safely cache them inside the
+        // environment (primarily due to prototype components), so we will look them up from the application context.
+        ComponentKey<ComponentCollection<T>> lookupKey = ComponentKey.collect(type)
+                .mutable()
+                .fuzzy()
+                .build();
+        typedObservers.addAll(this.applicationContext.get(lookupKey));
 
-        // In case of observers provided by bindings, we cannot safely cache them inside the environment (primarily due
-        // to prototype components), so we will look them up from the application context.
-        ComponentKey<ComponentCollection<T>> lookupKey = ComponentKey.collect(type).mutable().strict(false).build();
-        allObservers.addAll(this.applicationContext.get(lookupKey));
+        return typedObservers.stream()
+                .sorted(Comparator.comparingInt(Observer::priority))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
 
-        return allObservers;
+    private void initializeLazyObservers(Class<?> type) {
+        Set<Class<? extends Observer>> initialized = new HashSet<>();
+        for (Class<? extends Observer> observerClass : this.lazyObservers) {
+            if (!initialized.contains(observerClass) && type.isAssignableFrom(observerClass)) {
+                Observer observer = this.applicationContext.get(observerClass);
+                this.register(observer);
+                initialized.add(observerClass);
+            }
+        }
     }
 
     private void printBanner(Class<?> mainClass) {
@@ -440,7 +457,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
         private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry = context -> {
             ApplicationEnvironment environment = context.input();
-            return new TypeReferenceLookupComponentRegistry(environment.typeResolver());
+            return new TypeReferenceLookupComponentRegistry(environment.typeResolver(), environment.configuration());
         };
 
 

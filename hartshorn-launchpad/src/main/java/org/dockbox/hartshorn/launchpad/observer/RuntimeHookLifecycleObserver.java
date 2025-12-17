@@ -37,6 +37,6 @@ public class RuntimeHookLifecycleObserver implements LifecycleObserver {
     public void onStarted(ApplicationContext applicationContext) {
         LOG.debug("Registering shutdown hook for application context");
         ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(LOG, applicationContext);
-        Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "hartshorn-shutdown-hook"));
+        Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "shutdown-hook"));
     }
 }

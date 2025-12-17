@@ -33,7 +33,6 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    @Observation("application.started")
     default void onStarted(ApplicationContext applicationContext) {}
 
     /**
@@ -42,6 +41,5 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    @Observation("application.stopping")
     default void onExit(ApplicationContext applicationContext) {}
 }
