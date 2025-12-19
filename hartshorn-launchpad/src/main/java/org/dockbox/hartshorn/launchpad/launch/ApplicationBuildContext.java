@@ -41,11 +41,20 @@ public class ApplicationBuildContext extends DefaultContext {
     private final String applicationName;
     private final Logger logger;
 
-    public ApplicationBuildContext(Class<?> mainClass, List<String> arguments, String applicationName) {
+    public ApplicationBuildContext(
+            Class<?> mainClass,
+            List<String> arguments,
+            String applicationName
+    ) {
         this(mainClass, arguments, applicationName, LoggerFactory.getLogger(mainClass));
     }
 
-    public ApplicationBuildContext(Class<?> mainClass, List<String> arguments, String applicationName, Logger logger) {
+    public ApplicationBuildContext(
+            Class<?> mainClass,
+            List<String> arguments,
+            String applicationName,
+            Logger logger
+    ) {
         this.mainClass = mainClass;
         this.arguments = arguments;
         this.applicationName = applicationName;
@@ -74,8 +83,8 @@ public class ApplicationBuildContext extends DefaultContext {
     }
 
     /**
-     * Returns the name of the application. This name is typically derived from the main class, but can be overridden
-     * by the user.
+     * Returns the name of the application. This name is typically derived from the main class, but
+     * can be overridden by the user.
      *
      * @return The name of the application.
      */

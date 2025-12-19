@@ -423,7 +423,8 @@ public final class ConfigurableApplicationEnvironment
             .forEach(typedObservers::add);
 
         // In case of observers provided by bindings, we cannot safely cache them inside the
-        // environment (primarily due to prototype components), so we will look them up from the application context.
+        // environment (primarily due to prototype components), so we will look them up from the
+        // application context.
         ComponentKey<ComponentCollection<T>> lookupKey = ComponentKey.collect(type)
             .mutable()
             .fuzzy()

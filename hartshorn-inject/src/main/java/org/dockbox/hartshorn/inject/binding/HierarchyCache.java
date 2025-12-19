@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -170,7 +171,7 @@ public class HierarchyCache {
             hierarchy =
                 new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
-        else if (this.isStrict(key)) {
+        else if (InjectorUtilities.isStrict(key, this.configuration)) {
             // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead,
             // callers may opt to use a fallback resolution strategy.
             hierarchy = null;
@@ -183,29 +184,14 @@ public class HierarchyCache {
         return hierarchy;
     }
 
-    /**
-     * Determines whether the given key should be treated in strict mode. If the key has a defined
-     * strictness, that value is used. Otherwise, the global configuration is used.
-     *
-     * @param key the component key
-     *
-     * @return true if the key should be treated in strict mode, false otherwise
-     */
-    protected boolean isStrict(ComponentKey<?> key) {
-        Tristate strict = key.strict();
-        if (strict == Tristate.UNDEFINED) {
-            return this.configuration.isStrictMode();
-        }
-        else {
-            return strict.booleanValue();
-        }
-    }
 
     @Nullable
     private <T> BindingHierarchy<?> fuzzyMatchHierarchy(ComponentKey<T> key) {
         Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
         Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
-                .filter(hierarchyKey -> SimpleComponentKeyMatcher.FuzzyComponentKeyMatcher.INSTANCE.matches(key, hierarchyKey))
+                .filter(hierarchyKey -> SimpleComponentKeyMatcher.FuzzyComponentKeyMatcher.INSTANCE
+                        .matches(key, hierarchyKey)
+                )
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
@@ -257,7 +243,10 @@ public class HierarchyCache {
         return CollectionUtilities.first(highestPriority);
     }
 
-    private <T> BindingHierarchy<?> composeCollectionHierarchy(ComponentKey<ComponentCollection<T>> key, Set<ComponentKeyView<?>> compatibleKeys) {
+    private <T> BindingHierarchy<?> composeCollectionHierarchy(
+            ComponentKey<ComponentCollection<T>> key,
+            Set<ComponentKeyView<?>> compatibleKeys
+    ) {
         Set<CollectionBindingHierarchy<?>> hierarchies = new HashSet<>();
         for (ComponentKeyView<?> compatibleKey : compatibleKeys) {
             BindingHierarchy<?> hierarchy = this.hierarchies.get(compatibleKey);

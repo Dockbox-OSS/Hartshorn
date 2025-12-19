@@ -164,7 +164,10 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
             return true;
         }
 
-        private boolean isCompatible(ParameterizableType requestedType, ParameterizableType actualType) {
+        private boolean isCompatible(
+                ParameterizableType requestedType,
+                ParameterizableType actualType
+        ) {
             if (!requestedType.type().isAssignableFrom(actualType.type())) {
                 return false;
             }

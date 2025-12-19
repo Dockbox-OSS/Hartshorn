@@ -250,7 +250,8 @@ public abstract class DelegatingApplicationContext
         }
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            SequencedSet<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
+            SequencedSet<LifecycleObserver> observers = observable
+                    .observers(LifecycleObserver.class);
             LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
                 LOG.debug("Notifying {} of shutdown", observer.getClass().getSimpleName());

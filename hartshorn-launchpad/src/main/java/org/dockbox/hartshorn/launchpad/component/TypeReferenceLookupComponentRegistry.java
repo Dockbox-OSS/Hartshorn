@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.launchpad.component;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
@@ -25,7 +26,6 @@ import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
-import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
@@ -126,7 +126,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
             // Qualifiers are not supported in this registry
             return Option.empty();
         }
-        else if (isStrict(key)) {
+        else if (InjectorUtilities.isStrict(key, this.configuration)) {
             return container(key.type());
         }
         else {
@@ -134,16 +134,6 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
                 .filter(container -> SimpleComponentKeyMatcher.INSTANCE.matches(key,
                     ComponentKey.of(container.type())))
                 .collect(CollectorUtilities.toOption()));
-        }
-    }
-
-    protected boolean isStrict(ComponentKey<?> key) {
-        Tristate strict = key.strict();
-        if (strict == Tristate.UNDEFINED) {
-            return this.configuration.isStrictMode();
-        }
-        else {
-            return strict.booleanValue();
         }
     }
 

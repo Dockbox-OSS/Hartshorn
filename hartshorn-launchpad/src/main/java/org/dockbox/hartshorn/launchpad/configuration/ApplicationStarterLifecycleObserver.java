@@ -37,13 +37,14 @@ class ApplicationStarterLifecycleObserver implements LifecycleObserver {
     public void onStarted(ApplicationContext applicationContext) {
         // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
         // application lifecycle.
-        ComponentKey<ApplicationStarter> componentKey = ComponentKey.builder(ApplicationStarter.class)
+        ComponentKey<ApplicationStarter> componentKey = ComponentKey
+                .builder(ApplicationStarter.class)
                 .fuzzy()
                 .optional()
                 .build();
         ApplicationStarter applicationStarter = applicationContext.get(componentKey);
-        // OK to do nothing if no ApplicationStarter is present, as this is optional. Other observers may still
-        // be present, and will be invoked.
+        // OK to do nothing if no ApplicationStarter is present, as this is optional. Other
+        // observers may still be present, and will be invoked.
         if (applicationStarter != null) {
             try {
                 applicationStarter.run(applicationContext);

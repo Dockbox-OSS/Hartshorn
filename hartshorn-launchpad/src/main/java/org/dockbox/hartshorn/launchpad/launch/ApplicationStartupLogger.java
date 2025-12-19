@@ -324,78 +324,192 @@ public class ApplicationStartupLogger {
         private ContextualInitializer<ApplicationData, Boolean> includeDirectory =
             ContextualInitializer.of(true);
 
-        public Configurer includeApplicationName(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the application name in the startup and started messages.
+         *
+         * @param include whether to include the application name
+         * @return the configurer instance
+         */
+        public Configurer includeApplicationName(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeApplicationName = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the application name in the startup and started messages.
+         *
+         * @param include whether to include the application name
+         * @return the configurer instance
+         */
         public Configurer includeApplicationName(boolean include) {
             return this.includeApplicationName(ContextualInitializer.of(include));
         }
 
-        public Configurer includeStartupTime(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the startup time in the started message.
+         *
+         * @param include whether to include the startup time
+         * @return the configurer instance
+         */
+        public Configurer includeStartupTime(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeStartupTime = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the startup time in the started message.
+         *
+         * @param include whether to include the startup time
+         * @return the configurer instance
+         */
         public Configurer includeStartupTime(boolean include) {
             return this.includeStartupTime(ContextualInitializer.of(include));
         }
 
-        public Configurer includeJvmUptime(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the JVM uptime in the started message.
+         *
+         * @param include whether to include the JVM uptime
+         * @return the configurer instance
+         */
+        public Configurer includeJvmUptime(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeJvmUptime = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the JVM uptime in the started message.
+         *
+         * @param include whether to include the JVM uptime
+         * @return the configurer instance
+         */
         public Configurer includeJvmUptime(boolean include) {
             return this.includeJvmUptime(ContextualInitializer.of(include));
         }
 
+        /**
+         * Configures whether to include the host in the startup message.
+         *
+         * @param include whether to include the host
+         * @return the configurer instance
+         */
         public Configurer includeHost(ContextualInitializer<ApplicationData, Boolean> include) {
             this.includeHost = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the host in the startup message.
+         *
+         * @param include whether to include the host
+         * @return the configurer instance
+         */
         public Configurer includeHost(boolean include) {
             return this.includeHost(ContextualInitializer.of(include));
         }
 
-        public Configurer includeJavaVersion(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the Java version in the startup message.
+         *
+         * @param include whether to include the Java version
+         * @return the configurer instance
+         */
+        public Configurer includeJavaVersion(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeJavaVersion = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the Java version in the startup message.
+         *
+         * @param include whether to include the Java version
+         * @return the configurer instance
+         */
         public Configurer includeJavaVersion(boolean include) {
             return this.includeJavaVersion(ContextualInitializer.of(include));
         }
 
-        public Configurer includeProcessId(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the process ID in the startup message.
+         *
+         * @param include whether to include the process ID
+         * @return the configurer instance
+         */
+        public Configurer includeProcessId(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeProcessId = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the process ID in the startup message.
+         *
+         * @param include whether to include the process ID
+         * @return the configurer instance
+         */
         public Configurer includeProcessId(boolean include) {
             return this.includeProcessId(ContextualInitializer.of(include));
         }
 
-        public Configurer includeResponsibleUser(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the responsible user in the startup message.
+         *
+         * @param include whether to include the responsible user
+         * @return the configurer instance
+         */
+        public Configurer includeResponsibleUser(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeResponsibleUser = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the responsible user in the startup message.
+         *
+         * @param include whether to include the responsible user
+         * @return the configurer instance
+         */
         public Configurer includeResponsibleUser(boolean include) {
             return this.includeResponsibleUser(ContextualInitializer.of(include));
         }
 
-        public Configurer includeDirectory(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the working directory in the startup message.
+         *
+         * @param include whether to include the working directory
+         * @return the configurer instance
+         */
+        public Configurer includeDirectory(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeDirectory = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the working directory in the startup message.
+         *
+         * @param include whether to include the working directory
+         * @return the configurer instance
+         */
         public Configurer includeDirectory(boolean include) {
             return this.includeDirectory(ContextualInitializer.of(include));
         }
 
+        /**
+         * Disables all optional logging options.
+         * @return the configurer instance
+         */
         public Configurer disableAll() {
             return this.includeApplicationName(false)
                 .includeStartupTime(false)
@@ -407,6 +521,10 @@ public class ApplicationStartupLogger {
                 .includeDirectory(false);
         }
 
+        /**
+         * Enables all optional logging options.
+         * @return the configurer instance
+         */
         public Configurer enableAll() {
             return this.includeApplicationName(true)
                 .includeStartupTime(true)

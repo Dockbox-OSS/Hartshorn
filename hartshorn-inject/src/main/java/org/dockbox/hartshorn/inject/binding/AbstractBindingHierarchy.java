@@ -87,10 +87,12 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public BindingHierarchy<T> add(int priority, InstantiationStrategy<T> strategy) {
         // Default providers may be overwritten without further warnings
-        if (this.priorityProviders().containsKey(priority) && priority != Priority.DEFAULT_PRIORITY) {
+        if (this.priorityProviders().containsKey(priority)
+                && priority != Priority.DEFAULT_PRIORITY) {
             LOG.warn("There is already a provider for {} with priority {}. " +
                             "It will be overwritten! " +
-                            "To avoid unexpected behavior, ensure the priority is not already present. " +
+                            "To avoid unexpected behavior, " +
+                            "ensure the priority is not already present. " +
                             "Current hierarchy: {}",
                     this.key().type().getSimpleName(),
                     priority,

@@ -159,7 +159,9 @@ public class ApplicationDiagnosticsReporter
             collector.property("observers").writeDelegate(observerCollector -> {
                 observers.forEach((type, instances) -> {
                     observerCollector.property(type.getName()).writeDelegates(instances.stream()
-                            .map(observer -> new ObserverDiagnosticsReporter(environment.introspector(), observer))
+                            .map(observer -> new ObserverDiagnosticsReporter(
+                                    environment.introspector(), observer
+                            ))
                             .toArray(Reportable[]::new)
                     );
                 });
