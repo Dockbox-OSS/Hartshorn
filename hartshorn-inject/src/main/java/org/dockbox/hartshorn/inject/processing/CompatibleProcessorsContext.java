@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 
 /**
  * Intermediate context used by {@link CompositeComponentPostProcessor} to store compatible
@@ -29,13 +29,20 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  */
 public class CompatibleProcessorsContext extends DefaultContext {
 
-    private final MultiMap<Integer, ComponentPostProcessor> processors;
+    private final NavigableMultiMap<Integer, ComponentPostProcessor> processors;
 
-    public CompatibleProcessorsContext(MultiMap<Integer, ComponentPostProcessor> processors) {
+    public CompatibleProcessorsContext(
+        NavigableMultiMap<Integer, ComponentPostProcessor> processors
+    ) {
         this.processors = processors;
     }
 
-    public MultiMap<Integer, ComponentPostProcessor> processors() {
+    /**
+     * Get the compatible processors stored in this context.
+     *
+     * @return the compatible processors
+     */
+    public NavigableMultiMap<Integer, ComponentPostProcessor> processors() {
         return this.processors;
     }
 }

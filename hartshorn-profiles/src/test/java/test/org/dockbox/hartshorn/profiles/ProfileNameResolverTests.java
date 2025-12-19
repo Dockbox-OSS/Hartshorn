@@ -37,13 +37,13 @@ public class ProfileNameResolverTests {
         PropertyPathStyle style = StandardPropertyPathStyle.INSTANCE;
 
         ConfiguredProperty profileOne = new SingleConfiguredProperty(
-                FromPropertyProfileNameResolver.PROFILES_PROPERTY
-                        + style.index(0), "development");
+            FromPropertyProfileNameResolver.PROFILES_PROPERTY
+                + style.index(0), "development");
         registry.register(profileOne);
 
         ConfiguredProperty profileTwo = new SingleConfiguredProperty(
-                FromPropertyProfileNameResolver.PROFILES_PROPERTY
-                        + style.index(1), "testing");
+            FromPropertyProfileNameResolver.PROFILES_PROPERTY
+                + style.index(1), "testing");
         registry.register(profileTwo);
 
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
@@ -59,7 +59,7 @@ public class ProfileNameResolverTests {
         PropertyRegistry registry = new MapPropertyRegistry();
 
         ConfiguredProperty profiles = new SingleConfiguredProperty(
-                FromPropertyProfileNameResolver.PROFILES_PROPERTY, "development,testing");
+            FromPropertyProfileNameResolver.PROFILES_PROPERTY, "development,testing");
         registry.register(profiles);
 
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
@@ -74,7 +74,8 @@ public class ProfileNameResolverTests {
     void testFromPropertyProfileNameResolver_SupportsAbsentProperty() {
         PropertyRegistry registry = new MapPropertyRegistry();
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
-        Set<String> profileNames = Assertions.assertDoesNotThrow(() -> resolver.resolveProfileNames(registry));
+        Set<String> profileNames =
+            Assertions.assertDoesNotThrow(() -> resolver.resolveProfileNames(registry));
         Assertions.assertTrue(profileNames.isEmpty());
     }
 }

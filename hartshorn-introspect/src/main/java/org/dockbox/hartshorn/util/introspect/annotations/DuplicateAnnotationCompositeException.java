@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,14 @@ import java.util.stream.Collectors;
  * @author Guus Lieben
  */
 public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
-    public DuplicateAnnotationCompositeException(Object target, List<? extends Annotation> annotations) {
+    public DuplicateAnnotationCompositeException(
+        Object target,
+        List<? extends Annotation> annotations
+    ) {
         super("Found more than one annotation on " + target + ":\n"
-                + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
+            + annotations.stream()
+            .map(Annotation::toString)
+            .collect(Collectors.joining("\n"))
+        );
     }
 }

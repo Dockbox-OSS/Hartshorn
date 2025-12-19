@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
 
 /**
  * A simple implementation of {@link DependencyResolver} that delegates bulk resolution to a single
- * {@link #resolveSingle(DependencyDeclarationContext) resolution method}. This method is called for each
- * {@link DependencyDeclarationContext} that is passed to {@link #resolve(Collection)}.
+ * {@link #resolveSingle(DependencyDeclarationContext) resolution method}. This method is called for
+ * each {@link DependencyDeclarationContext} that is passed to {@link #resolve(Collection)}.
  *
  * @see DependencyResolver
  * @see DependencyDeclarationContext
@@ -40,12 +40,14 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
 public abstract class AbstractContainerDependencyResolver implements DependencyResolver {
 
     @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers)
+        throws DependencyResolutionException {
         Set<ConditionalDependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyDeclarationContext<?> componentContainer : containers) {
             dependencyContexts.addAll(this.resolveSingle(componentContainer));
         }
-        ConditionalDependencyContextsHolder contextsHolder = ConditionalDependencyContextsHolder.create(dependencyContexts);
+        ConditionalDependencyContextsHolder contextsHolder =
+            ConditionalDependencyContextsHolder.create(dependencyContexts);
         return dependencyContexts.stream()
             .filter(context -> context.conditionsMatched().test(contextsHolder))
             .map(ConditionalDependencyContext::dependencyContext)
@@ -53,15 +55,19 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
     }
 
     /**
-     * Resolves a single {@link DependencyDeclarationContext} into a collection of {@link DependencyContext} instances. The result
-     * of this method may contain zero or more {@link DependencyContext} instances, each representing a dependency that was declared
-     * by the {@link DependencyDeclarationContext} that was passed to this method.
+     * Resolves a single {@link DependencyDeclarationContext} into a collection of
+     * {@link DependencyContext} instances. The result of this method may contain zero or more
+     * {@link DependencyContext} instances, each representing a dependency that was declared by the
+     * {@link DependencyDeclarationContext} that was passed to this method.
      *
-     * @param <T>                the type of the component that is declared by the declaration
+     * @param <T> the type of the component that is declared by the declaration
      * @param declarationContext the declaration to resolve
+     *
      * @return a collection of {@link DependencyContext} instances
+     *
      * @throws DependencyResolutionException when the resolution fails
      */
-    protected abstract <T> Set<ConditionalDependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) throws DependencyResolutionException;
-
+    protected abstract <T> Set<ConditionalDependencyContext<?>> resolveSingle(
+        DependencyDeclarationContext<T> declarationContext
+    ) throws DependencyResolutionException;
 }

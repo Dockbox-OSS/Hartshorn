@@ -28,14 +28,14 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link InjectParameterResolver} implementation that resolves {@link ContextView} instances. This resolver
- * will only accept injection points that implement {@link ContextView}. If multiple contexts are available,
- * the first one is returned.
+ * A {@link InjectParameterResolver} implementation that resolves {@link ContextView} instances.
+ * This resolver will only accept injection points that implement {@link ContextView}. If multiple
+ * contexts are available, the first one is returned.
  *
  * @see ContextView
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public class InjectContextParameterResolver implements InjectParameterResolver {
@@ -75,15 +75,18 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
         return this.globalContext.firstContext(key).orNull();
     }
 
-    private static ContextIdentity<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {
+    private static ContextIdentity<? extends ContextView> getContextKey(
+        InjectionPoint injectionPoint
+    ) {
         String name = injectionPoint.injectionPoint().annotations()
-                // Unlike components, contexts only support named qualifiers, so we don't
-                // need to include Qualifier annotated annotations here.
-                .get(Named.class)
-                .map(Named::value)
-                .orNull();
+            // Unlike components, contexts only support named qualifiers, so we don't
+            // need to include Qualifier annotated annotations here.
+            .get(Named.class)
+            .map(Named::value)
+            .orNull();
 
-        TypeView<? extends ContextView> type = TypeUtils.unchecked(injectionPoint.type(), TypeView.class);
+        TypeView<? extends ContextView> type =
+            TypeUtils.unchecked(injectionPoint.type(), TypeView.class);
         ContextKey<? extends ContextView> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();

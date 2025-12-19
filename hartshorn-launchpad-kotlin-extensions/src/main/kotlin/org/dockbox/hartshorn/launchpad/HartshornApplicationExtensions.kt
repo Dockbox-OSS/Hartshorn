@@ -34,7 +34,11 @@ inline fun <reified T : Any> createApplication(vararg arguments: String): Applic
 
 private fun createApplication(bootstrapProvider: () -> ApplicationBootstrap): ApplicationBootstrapKt {
   return ApplicationBootstrapKt { customizer ->
-    bootstrapProvider().initialize { configurer: HartshornApplicationConfigurer -> customizer(configurer) }
+    bootstrapProvider().initialize { configurer: HartshornApplicationConfigurer ->
+      customizer(
+        configurer
+      )
+    }
   }
 }
 

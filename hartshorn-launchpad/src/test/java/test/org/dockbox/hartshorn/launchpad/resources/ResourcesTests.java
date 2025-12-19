@@ -36,25 +36,29 @@ public class ResourcesTests {
 
     @Test
     void testGetResourceURLThrowsExceptionWhenResourceNotExists() {
-        IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceURL("not-exists.txt"));
+        IOException exception = Assertions.assertThrows(IOException.class,
+            () -> Resources.getResourceURL("not-exists.txt"));
         Assertions.assertEquals("Could not find resource not-exists.txt", exception.getMessage());
     }
 
     @Test
     void testGetResourceAsFileReturnsValidStream() {
-        InputStream file = Assertions.assertDoesNotThrow(() -> Resources.getResourceAsInputStream("sample.txt"));
+        InputStream file =
+            Assertions.assertDoesNotThrow(() -> Resources.getResourceAsInputStream("sample.txt"));
         Assertions.assertNotNull(file);
     }
 
     @Test
     void testGetResourceAsFileThrowsExceptionWhenResourceNotExists() {
-        IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceAsInputStream("not-exists.txt"));
+        IOException exception = Assertions.assertThrows(IOException.class,
+            () -> Resources.getResourceAsInputStream("not-exists.txt"));
         Assertions.assertEquals("Could not find resource not-exists.txt", exception.getMessage());
     }
 
     @Test
     void testGetResourceURLsReturnsValidURLs() {
-        Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("sample.txt"));
+        Set<URL> urls =
+            Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("sample.txt"));
         Assertions.assertNotNull(urls);
         Assertions.assertFalse(urls.isEmpty());
         Assertions.assertEquals(1, urls.size());
@@ -65,14 +69,16 @@ public class ResourcesTests {
 
     @Test
     void testGetResourceURLsReturnsEmptyWhenResourceNotExists() {
-        Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("not-exists.txt"));
+        Set<URL> urls =
+            Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("not-exists.txt"));
         Assertions.assertNotNull(urls);
         Assertions.assertTrue(urls.isEmpty());
     }
 
     @Test
     void testGetResourceAsFilesReturnsValidFiles() {
-        Set<InputStream> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsInputStreams("sample.txt"));
+        Set<InputStream> files =
+            Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsInputStreams("sample.txt"));
         Assertions.assertNotNull(files);
         Assertions.assertFalse(files.isEmpty());
         Assertions.assertEquals(1, files.size());
@@ -83,7 +89,9 @@ public class ResourcesTests {
 
     @Test
     void testGetResourceAsFilesReturnsEmptyWhenResourceNotExists() {
-        Set<InputStream> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsInputStreams("not-exists.txt"));
+        Set<InputStream> files =
+            Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsInputStreams(
+                "not-exists.txt"));
         Assertions.assertNotNull(files);
         Assertions.assertTrue(files.isEmpty());
     }

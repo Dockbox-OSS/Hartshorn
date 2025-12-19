@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,25 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 
 /**
- * The type of binding provider. This is used to indicate whether the binding provider is a standalone component,
- * or a part of a collection.
+ * The type of binding provider. This is used to indicate whether the binding provider is a
+ * standalone component, or a part of a collection.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ComponentMemberType {
 
     /**
-     * Represents a standalone component, meaning the component will be part of a direct {@link BindingHierarchy}.
+     * Represents a standalone component, meaning the component will be part of a direct
+     * {@link BindingHierarchy}.
      */
     STANDALONE,
 
     /**
-     * Represents a component that is part of a collection, meaning the component will be part of a {@link ComponentCollection}.
-     * Collection components are typically used to provide multiple implementations of a single interface.
+     * Represents a component that is part of a collection, meaning the component will be part of a
+     * {@link ComponentCollection}. Collection components are typically used to provide multiple
+     * implementations of a single interface.
      */
     COMPOSITE,
 }

@@ -24,17 +24,35 @@ import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
  * A statement representing a member of a class, for example a property field.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface MemberStatement extends NamedNode {
 
+    /**
+     * Returns the modifier token of the member, which indicates its visibility (e.g., public,
+     * private).
+     *
+     * @return the member modifier token, or null if no modifier is present
+     */
     Token modifier();
 
+    /**
+     * Checks if the member is public. A member is considered public if it has no modifier or if
+     * its modifier is of type {@link MemberModifierTokenType#PUBLIC}.
+     *
+     * @return true if the member is public, false otherwise
+     */
     default boolean isPublic() {
         return this.modifier() == null || this.modifier().type() == MemberModifierTokenType.PUBLIC;
     }
 
+    /**
+     * Checks if the member is private. A member is considered private if its modifier is of type
+     * {@link MemberModifierTokenType#PRIVATE}.
+     *
+     * @return true if the member is private, false otherwise
+     */
     default boolean isPrivate() {
         return this.modifier() != null && this.modifier().type() == MemberModifierTokenType.PRIVATE;
     }

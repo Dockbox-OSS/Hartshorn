@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
  * should not be resolved or registered to the dependency graph.
  *
  * @param dependencyContext the dependency context to wrap
- * @param conditionsMatched a predicate that checks if the conditions for the dependency are matched
+ * @param conditionsMatched a predicate that checks if the conditions for the dependency are
+ * matched
  * @param <T> the type of the dependency
  */
 public record ConditionalDependencyContext<T>(

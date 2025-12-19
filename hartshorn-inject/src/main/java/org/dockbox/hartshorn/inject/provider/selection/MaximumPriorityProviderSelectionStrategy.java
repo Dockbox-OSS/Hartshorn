@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A {@link ProviderSelectionStrategy} which selects the provider with the highest priority, as long
- * as that priority is lower than the provided maximum priority. If no provider is found, {@code null}
- * is returned.
+ * as that priority is lower than the provided maximum priority. If no provider is found,
+ * {@code null} is returned.
  *
  * @see ProviderSelectionStrategy
  * @see BindingHierarchy#priorities()
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class MaximumPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
@@ -49,7 +49,9 @@ public class MaximumPriorityProviderSelectionStrategy implements ProviderSelecti
         for (Integer priority : priorities.reversed()) {
             if (priority < this.maximumPriorityExclusive) {
                 return hierarchy.get(priority)
-                        .orElseThrow(() -> new IllegalStateException("No provider found for priority " + priority + ", but priority was reported."));
+                    .orElseThrow(() -> new IllegalStateException("No provider found for priority "
+                        + priority
+                        + ", but priority was reported."));
             }
         }
         return null;

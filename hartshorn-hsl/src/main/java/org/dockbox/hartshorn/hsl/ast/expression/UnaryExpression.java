@@ -21,10 +21,11 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing a unary operation, which is an operation that applies to a single
- * expression. For example, the expression <code>-x</code> would negate the value of <code>x</code>.
+ * expression. For example, the expression <code>-x</code> would negate the value of
+ * <code>x</code>.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class UnaryExpression extends Expression {
@@ -38,10 +39,20 @@ public class UnaryExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the operator token of this unary expression.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the expression to which the unary operator is applied.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

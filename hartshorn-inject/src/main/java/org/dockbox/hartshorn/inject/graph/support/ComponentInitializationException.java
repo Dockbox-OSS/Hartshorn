@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.inject.graph.support;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Thrown when a component cannot be initialized. This is usually caused by a missing dependency,
- * or an exception thrown during the initialization of a component.
+ * Thrown when a component cannot be initialized. This is usually caused by a missing dependency, or
+ * an exception thrown during the initialization of a component.
  *
  * @since 0.4.12
  *

@@ -39,12 +39,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Represents a class definition inside a script. The class is identified by its name, and
- * can carry a variety of additional information such as the super class, methods, and an
- * optional super class.
+ * Represents a class definition inside a script. The class is identified by its name, and can carry
+ * a variety of additional information such as the super class, methods, and an optional super
+ * class.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class VirtualClass extends AbstractFinalizable implements ClassReference {
@@ -57,14 +57,15 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     private final Map<String, VirtualProperty> fields;
     private final boolean isDynamic;
 
-    public VirtualClass(String name,
-                        ClassReference superClass,
-                        VirtualFunction constructor,
-                        VariableScope variableScope,
-                        Map<String, VirtualFunction> methods,
-                        Map<String, VirtualProperty> fields,
-                        boolean finalized,
-                        boolean isDynamic
+    public VirtualClass(
+        String name,
+        ClassReference superClass,
+        VirtualFunction constructor,
+        VariableScope variableScope,
+        Map<String, VirtualFunction> methods,
+        Map<String, VirtualProperty> fields,
+        boolean finalized,
+        boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -119,6 +120,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
      * Looks up a field by name. If no field is found, {@code null} is returned.
      *
      * @param name The name of the field.
+     *
      * @return The field, or {@code null} if no field is found.
      */
     public VirtualProperty property(String name) {
@@ -128,10 +130,8 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     /**
      * Adds a method to the class.
      *
-     * @param name
-     *         The name of the method.
-     * @param function
-     *         The function to add.
+     * @param name The name of the method.
+     * @param function The function to add.
      */
     public void addMethod(String name, VirtualFunction function) {
         this.methods.put(name, function);
@@ -140,8 +140,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     /**
      * Looks up a method by name. If no method is found, {@code null} is returned.
      *
-     * @param name
-     *         The name of the method.
+     * @param name The name of the method.
      *
      * @return The method, or {@code null} if no method is found.
      */
@@ -167,9 +166,8 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     }
 
     /**
-     * Returns whether this class is dynamic. A dynamic class is a class that does not
-     * have strictly defined properties, but rather allows scripts to add properties
-     * at runtime.
+     * Returns whether this class is dynamic. A dynamic class is a class that does not have strictly
+     * defined properties, but rather allows scripts to add properties at runtime.
      *
      * @return {@code true} if this class is dynamic, otherwise {@code false}.
      */
@@ -180,17 +178,22 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name)
-                .describe();
+            .field("name", this.name)
+            .describe();
     }
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) throws ApplicationException {
         if (instance != null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(at)
-                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
-                    .build();
+                .at(at)
+                .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                .build();
         }
         if (this.superClass instanceof ExternalClass) {
             CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
@@ -209,10 +212,10 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
                 FieldStatement fieldStatement = property.fieldStatement();
                 if (fieldStatement.initializer() != null) {
                     virtualInstance.set(
-                            interpreter,
-                            fieldStatement.name(),
-                            interpreter.evaluate(fieldStatement.initializer()),
-                            instanceScope
+                        interpreter,
+                        fieldStatement.name(),
+                        interpreter.evaluate(fieldStatement.initializer()),
+                        instanceScope
                     );
                 }
             });
@@ -242,15 +245,18 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
 
         VirtualClass that = (VirtualClass) obj;
         return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.superClass, that.superClass) &&
-                Objects.equals(this.constructor, that.constructor) &&
-                Objects.equals(this.variableScope, that.variableScope) &&
-                Objects.equals(this.methods, that.methods);
+            Objects.equals(this.superClass, that.superClass) &&
+            Objects.equals(this.constructor, that.constructor) &&
+            Objects.equals(this.variableScope, that.variableScope) &&
+            Objects.equals(this.methods, that.methods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.superClass, this.constructor, this.variableScope, this.methods);
+        return Objects.hash(this.name,
+            this.superClass,
+            this.constructor,
+            this.variableScope,
+            this.methods);
     }
-
 }

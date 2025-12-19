@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.reporting.system;
 
 /**
- * A configuration object for {@link SystemDiagnosticsReporter}s that allows for fine-grained control over the
- * information that is reported.
+ * A configuration object for {@link SystemDiagnosticsReporter}s that allows for fine-grained
+ * control over the information that is reported.
  *
  * @see SystemDiagnosticsReporter
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SystemReportingConfiguration {
@@ -51,7 +51,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the uptime of the system should be reported.
      *
-     * @param includeUptime {@code true} if the uptime of the system should be reported, {@code false} otherwise.
+     * @param includeUptime {@code true} if the uptime of the system should be reported,
+     * {@code false} otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeUptime(boolean includeUptime) {
@@ -62,7 +64,8 @@ public class SystemReportingConfiguration {
     /**
      * Whether information about the Java runtime should be reported.
      *
-     * @return {@code true} if information about the Java runtime should be reported, {@code false} otherwise.
+     * @return {@code true} if information about the Java runtime should be reported, {@code false}
+     * otherwise.
      */
     public boolean includeJavaDiagnostics() {
         return this.includeJavaDiagnostics;
@@ -71,7 +74,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether information about the Java runtime should be reported.
      *
-     * @param includeJavaDiagnostics {@code true} if information about the Java runtime should be reported, {@code false} otherwise.
+     * @param includeJavaDiagnostics {@code true} if information about the Java runtime should be
+     * reported, {@code false} otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeJavaDiagnostics(boolean includeJavaDiagnostics) {
@@ -82,7 +87,8 @@ public class SystemReportingConfiguration {
     /**
      * Whether information about the JVM should be reported.
      *
-     * @return {@code true} if information about the JVM should be reported, {@code false} otherwise.
+     * @return {@code true} if information about the JVM should be reported, {@code false}
+     * otherwise.
      */
     public boolean includeJvmDiagnostics() {
         return this.includeJvmDiagnostics;
@@ -91,7 +97,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether information about the JVM should be reported.
      *
-     * @param includeJvmDiagnostics {@code true} if information about the JVM should be reported, {@code false} otherwise.
+     * @param includeJvmDiagnostics {@code true} if information about the JVM should be reported,
+     * {@code false} otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeJvmDiagnostics(boolean includeJvmDiagnostics) {
@@ -102,7 +110,8 @@ public class SystemReportingConfiguration {
     /**
      * Whether information about the operating system should be reported.
      *
-     * @return {@code true} if information about the operating system should be reported, {@code false} otherwise.
+     * @return {@code true} if information about the operating system should be reported,
+     * {@code false} otherwise.
      */
     public boolean includeOsDiagnostics() {
         return this.includeOsDiagnostics;
@@ -111,7 +120,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether information about the operating system should be reported.
      *
-     * @param includeOsDiagnostics {@code true} if information about the operating system should be reported, {@code false} otherwise.
+     * @param includeOsDiagnostics {@code true} if information about the operating system should be
+     * reported, {@code false} otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeOsDiagnostics(boolean includeOsDiagnostics) {
@@ -131,7 +142,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the JVM flags should be reported.
      *
-     * @param includeJvmFlags {@code true} if the JVM flags should be reported, {@code false} otherwise.
+     * @param includeJvmFlags {@code true} if the JVM flags should be reported, {@code false}
+     * otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeJvmFlags(boolean includeJvmFlags) {
@@ -151,7 +164,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the device name should be reported.
      *
-     * @param includeDeviceName {@code true} if the device name should be reported, {@code false} otherwise.
+     * @param includeDeviceName {@code true} if the device name should be reported, {@code false}
+     * otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeDeviceName(boolean includeDeviceName) {
@@ -171,7 +186,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the process ID should be reported.
      *
-     * @param includeProcessId {@code true} if the process ID should be reported, {@code false} otherwise.
+     * @param includeProcessId {@code true} if the process ID should be reported, {@code false}
+     * otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeProcessId(boolean includeProcessId) {
@@ -182,7 +199,8 @@ public class SystemReportingConfiguration {
     /**
      * Whether the responsible service or user should be reported.
      *
-     * @return {@code true} if the responsible service or user should be reported, {@code false} otherwise.
+     * @return {@code true} if the responsible service or user should be reported, {@code false}
+     * otherwise.
      */
     public boolean includeResponsibleServiceOrUser() {
         return this.includeResponsibleServiceOrUser;
@@ -191,10 +209,14 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the responsible service or user should be reported.
      *
-     * @param includeResponsibleServiceOrUser {@code true} if the responsible service or user should be reported, {@code false} otherwise.
+     * @param includeResponsibleServiceOrUser {@code true} if the responsible service or user should
+     * be reported, {@code false} otherwise.
+     *
      * @return this configuration object
      */
-    public SystemReportingConfiguration includeResponsibleServiceOrUser(boolean includeResponsibleServiceOrUser) {
+    public SystemReportingConfiguration includeResponsibleServiceOrUser(
+        boolean includeResponsibleServiceOrUser
+    ) {
         this.includeResponsibleServiceOrUser = includeResponsibleServiceOrUser;
         return this;
     }
@@ -211,7 +233,9 @@ public class SystemReportingConfiguration {
     /**
      * Sets whether the memory usage should be reported.
      *
-     * @param includeMemoryUsage {@code true} if the memory usage should be reported, {@code false} otherwise.
+     * @param includeMemoryUsage {@code true} if the memory usage should be reported, {@code false}
+     * otherwise.
+     *
      * @return this configuration object
      */
     public SystemReportingConfiguration includeMemoryUsage(boolean includeMemoryUsage) {

@@ -39,7 +39,8 @@ public class DefaultBindingsTests {
     void loggerUsesContainerNameIfEnabled(@Inject Logger loggerParameter) {
         Assertions.assertNotNull(loggerParameter);
         // Name should match the consuming class' name, and not the name of the configuration that uses it
-        ComponentContainer<?> container = this.componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
+        ComponentContainer<?> container =
+            this.componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
         String expectedName = container.name();
         Assertions.assertEquals(expectedName, loggerParameter.getName());
 

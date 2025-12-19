@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,9 @@ public non-sealed interface ValueProperty extends Property {
      * Parses the value of this property using the provided parser.
      *
      * @param parser the parser to use
-     * @return the parsed value
      * @param <T> the type to convert the value to
+     *
+     * @return the parsed value
      */
     <T> Option<T> parse(ValuePropertyParser<T> parser);
 }

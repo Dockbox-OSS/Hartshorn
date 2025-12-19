@@ -31,5 +31,4 @@ public class ComponentProcessorTests {
         Assertions.assertNotNull(nonProcessableType);
         Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
     }
-
 }

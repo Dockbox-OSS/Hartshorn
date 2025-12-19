@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,36 @@
 
 package org.dockbox.hartshorn.inject.annotations.configuration;
 
+import org.dockbox.hartshorn.inject.scope.Scope;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.scope.Scope;
-
 /**
- * Defines in which scope a component should be created. When defined, all scopes that are an instance
- * of the provided type will contain the component declaration. This is useful for components that
- * should be created in a specific scope, such as a request or session scope.
+ * Defines in which scope a component should be created. When defined, all scopes that are an
+ * instance of the provided type will contain the component declaration. This is useful for
+ * components that should be created in a specific scope, such as a request or session scope.
  *
- * <p>Scope implementations remain up to the container to define. The container will typically provide
+ * <p>Scope implementations remain up to the container to define. The container will typically
+ * provide
  * a default application scope, which does not need to be defined explicitly.
  *
- * @since 0.5.0
- *
  * @see Scope
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Scoped {
+
+    /**
+     * The scope in which the component should be created.
+     *
+     * @return the scope class
+     */
     Class<? extends Scope> value();
 }

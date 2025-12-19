@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 
 /**
- * A simple container for an object instance. Used to track whether an object has been processed or not.
+ * A simple container for an object instance. Used to track whether an object has been processed or
+ * not.
  *
  * @param <T> the type of the object instance
  *
@@ -44,27 +45,28 @@ public interface ObjectContainer<T> {
     boolean processed();
 
     /**
-     * Sets whether the object instance has been processed or not. This method is intended to be used by
-     * providers that are responsible for processing the object instance.
+     * Sets whether the object instance has been processed or not. This method is intended to be
+     * used by providers that are responsible for processing the object instance.
      *
      * @param processed whether the object instance has been processed or not
      */
     void processed(boolean processed);
 
     /**
-     * Returns the lifecycle type of the object instance. This is used to determine how the object should be
-     * managed by the container.
+     * Returns the lifecycle type of the object instance. This is used to determine how the object
+     * should be managed by the container.
      *
      * @return the lifecycle type of the object instance
      */
     LifecycleType lifecycleType();
 
     /**
-     * Returns whether the object represented by this container can be cached. This method is used by the
-     * component provider to store objects in case they may be re-used. A common example of this is a singleton
-     * being stored in the scope's {@link SingletonCache}.
+     * Returns whether the object represented by this container can be cached. This method is used
+     * by the component provider to store objects in case they may be re-used. A common example of
+     * this is a singleton being stored in the scope's {@link SingletonCache}.
      *
-     * <p>Defaults to {@code true} if the {@link #lifecycleType()} is {@link LifecycleType#SINGLETON}.
+     * <p>Defaults to {@code true} if the {@link #lifecycleType()} is
+     * {@link LifecycleType#SINGLETON}.
      *
      * @return {@code true} if the object can be cached, {@code false} otherwise
      */
@@ -73,11 +75,12 @@ public interface ObjectContainer<T> {
     }
 
     /**
-     * Creates a copy of the current container for the given instance, carrying over any configured flags from
-     * this container. This is especially useful when a wrapper instance was created for the object, and the
-     * container needs to be updated to reflect this.
+     * Creates a copy of the current container for the given instance, carrying over any configured
+     * flags from this container. This is especially useful when a wrapper instance was created for
+     * the object, and the container needs to be updated to reflect this.
      *
      * @param instance the instance to create a copy for
+     *
      * @return a new container for the given instance
      */
     ObjectContainer<T> copyForObject(T instance);

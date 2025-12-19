@@ -33,27 +33,32 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A parser for the body of a case statement. A case may take two forms: a block of statements, or a single
- * expression statement. A block statement should be indicated by the use of a {@link BaseTokenType#COLON},
- * while a single expression statement should be indicated by the use of a {@link ControlTokenType#ARROW}.
+ * A parser for the body of a case statement. A case may take two forms: a block of statements, or a
+ * single expression statement. A block statement should be indicated by the use of a
+ * {@link BaseTokenType#COLON}, while a single expression statement should be indicated by the use
+ * of a {@link ControlTokenType#ARROW}.
  *
- * <p>As this is a parser for a non-standalone statement, it should not be used for dynamic parsing. As such,
+ * <p>As this is a parser for a non-standalone statement, it should not be used for dynamic parsing.
+ * As such,
  * the {@link #types()} method returns an empty set.
  *
  * @see SwitchStatementParser
- *
+ * 
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class CaseBodyStatementParser implements StatementParser<Statement> {
 
     @Override
-    public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
+    public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator)
+        throws ScriptEvaluationError {
         if (parser.match(BaseTokenType.COLON)) {
             Token colon = parser.previous();
             List<Statement> statements = new ArrayList<>();
-            while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenRegistry().tokenPairs().block().close())) {
+            while (!parser.check(ControlTokenType.CASE,
+                ControlTokenType.DEFAULT,
+                parser.tokenRegistry().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
             return Option.of(new BlockStatement(colon, statements));
@@ -63,13 +68,13 @@ public class CaseBodyStatementParser implements StatementParser<Statement> {
         }
         else {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.EXPECTED_X_OR_Y,
-                            BaseTokenType.COLON.representation(),
-                            ControlTokenType.ARROW.representation(),
-                            parser.peek().lexeme()
-                    )
-                    .at(parser.peek())
-                    .build();
+                .message(DiagnosticMessage.EXPECTED_X_OR_Y,
+                    BaseTokenType.COLON.representation(),
+                    ControlTokenType.ARROW.representation(),
+                    parser.peek().lexeme()
+                )
+                .at(parser.peek())
+                .build();
         }
     }
 

@@ -39,92 +39,97 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically
- * provide the test class with Hartshorn-specific {@link Extension}s that will provide an active {@link
- * InjectionCapableApplication} for the test class. The provided {@link InjectionCapableApplication} is
- * refreshed according to the lifecycle of the test class.
+ * Annotation for test classes that should be run with the Hartshorn test suite. This will
+ * automatically provide the test class with Hartshorn-specific {@link Extension}s that will provide
+ * an active {@link InjectionCapableApplication} for the test class. The provided
+ * {@link InjectionCapableApplication} is refreshed according to the lifecycle of the test class.
  *
- * <p>Additionally, the extensions will inject fields annotated with {@link Inject} within the test class.
- * Like the active {@link ApplicationContext}, this will be refreshed according to the lifecycle of the
- * test class.
+ * <p>Additionally, the extensions will inject fields annotated with {@link Inject} within the test
+ * class.
+ * Like the active {@link ApplicationContext}, this will be refreshed according to the lifecycle of
+ * the test class.
  *
  * @see HartshornInjectParameterResolver
  * @see HartshornJUnitCleanupCallback
  * @see HartshornJUnitIntegrationTestBootstrapCallback
  */
-@Target({ ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith({
-        HartshornInjectParameterResolver.class,
-        HartshornJUnitCleanupCallback.class,
-        HartshornJUnitIntegrationTestBootstrapCallback.class,
+    HartshornInjectParameterResolver.class,
+    HartshornJUnitCleanupCallback.class,
+    HartshornJUnitIntegrationTestBootstrapCallback.class,
 })
 @Extends(Populate.class)
 @Populate(Populate.Type.FIELDS)
 public @interface HartshornIntegrationTest {
 
     /**
-     * Additional {@link ComponentPreProcessor}s to use when creating the {@link ApplicationContext} for
-     * the test class or method. These will be added to the default set of {@link ComponentPreProcessor}s
-     * used by the test suite, even if they are not found through prefix scanning.
-     *
-     * @see StandardApplicationContextFactory.Configurer#componentPreProcessors(Customizer)
+     * Additional {@link ComponentPreProcessor}s to use when creating the {@link ApplicationContext}
+     * for the test class or method. These will be added to the default set of
+     * {@link ComponentPreProcessor}s used by the test suite, even if they are not found through
+     * prefix scanning.
      *
      * @return the additional {@link ComponentPreProcessor}s to use
+     *
+     * @see StandardApplicationContextFactory.Configurer#componentPreProcessors(Customizer)
      */
     Class<? extends ComponentPreProcessor>[] componentPreProcessors() default {};
 
     /**
-     * Additional {@link ComponentPostProcessor}s to use when creating the {@link ApplicationContext} for
-     * the test class or method. These will be added to the default set of {@link ComponentPostProcessor}s
-     * used by the test suite, even if they are not found through prefix scanning.
-     *
-     * @see StandardApplicationContextFactory.Configurer#componentPostProcessors(Customizer)
+     * Additional {@link ComponentPostProcessor}s to use when creating the
+     * {@link ApplicationContext} for the test class or method. These will be added to the default
+     * set of {@link ComponentPostProcessor}s used by the test suite, even if they are not found
+     * through prefix scanning.
      *
      * @return the additional {@link ComponentPostProcessor}s to use
+     *
+     * @see StandardApplicationContextFactory.Configurer#componentPostProcessors(Customizer)
      */
     Class<? extends ComponentPostProcessor>[] componentPostProcessors() default {};
 
     /**
-     * Additional {@link HierarchicalBinderPostProcessor}s to use when creating the {@link ApplicationContext}
-     * for the test class or method. These will be added to the default set of {@link HierarchicalBinderPostProcessor}s
-     * used by the test suite, even if they are not found through prefix scanning.
-     *
-     * @see StandardApplicationContextFactory.Configurer#binderPostProcessors(Customizer)
+     * Additional {@link HierarchicalBinderPostProcessor}s to use when creating the
+     * {@link ApplicationContext} for the test class or method. These will be added to the default
+     * set of {@link HierarchicalBinderPostProcessor}s used by the test suite, even if they are not
+     * found through prefix scanning.
      *
      * @return the additional {@link HierarchicalBinderPostProcessor}s to use
+     *
+     * @see StandardApplicationContextFactory.Configurer#binderPostProcessors(Customizer)
      */
     Class<? extends HierarchicalBinderPostProcessor>[] binderPostProcessors() default {};
 
     /**
-     * Additional packages to scan for {@link ComponentProcessor}s when creating the {@link ApplicationContext}
-     * for the test class or method. These will be added to the default set of packages scanned by the
-     * test suite, even if they are not known to the chosen {@link #mainClass()}.
-     *
-     * @see StandardApplicationContextFactory.Configurer#scanPackages(Customizer)
+     * Additional packages to scan for {@link ComponentProcessor}s when creating the
+     * {@link ApplicationContext} for the test class or method. These will be added to the default
+     * set of packages scanned by the test suite, even if they are not known to the chosen
+     * {@link #mainClass()}.
      *
      * @return the additional packages to scan
+     *
+     * @see StandardApplicationContextFactory.Configurer#scanPackages(Customizer)
      */
     String[] scanPackages() default {};
 
     /**
-     * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
-     * {@link #scanPackages()}. Defaults to {@code true}.
-     *
-     * @see StandardApplicationContextFactory.Configurer#includeBasePackages(boolean)
+     * Whether to include the base package of the main class explicitly, or to only use the prefixes
+     * provided to {@link #scanPackages()}. Defaults to {@code true}.
      *
      * @return whether to include the base package of the main class
+     *
+     * @see StandardApplicationContextFactory.Configurer#includeBasePackages(boolean)
      */
     boolean includeBasePackages() default true;
 
     /**
-     * Sets the main class to use. Depending on the type of application environment, this may require the
-     * class to have relevant {@link ModuleActivator module activators}. Alternative metadata sources may be
-     * used, depending on the application environment.
-     *
-     * @see StandardApplicationBuilder.Configurer#mainClass(Class)
+     * Sets the main class to use. Depending on the type of application environment, this may
+     * require the class to have relevant {@link ModuleActivator module activators}. Alternative
+     * metadata sources may be used, depending on the application environment.
      *
      * @return the main class to use, or {@link Void} if not set
+     *
+     * @see StandardApplicationBuilder.Configurer#mainClass(Class)
      */
     Class<?> mainClass() default Void.class;
 

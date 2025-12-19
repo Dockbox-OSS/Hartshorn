@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * Converts a {@link Option} to an {@link Optional}.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class OptionToOptionalConverter implements Converter<Option<?>, Optional<?>> {

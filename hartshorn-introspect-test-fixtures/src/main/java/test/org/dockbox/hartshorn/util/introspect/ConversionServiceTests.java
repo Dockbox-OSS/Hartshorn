@@ -189,7 +189,7 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    public void testCollectionFromOption() {
+    void testCollectionFromOption() {
         ConversionService conversionService = this.conversionService();
         List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
         Assertions.assertNotNull(listFromOption);
@@ -221,9 +221,9 @@ public abstract class ConversionServiceTests {
     @Test
     void testImplicitlyTypedConverterIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addConverter(new SimpleConverter()),
-                "1", Integer.class,
-                ConverterType.CONVERTER
+            registry -> registry.addConverter(new SimpleConverter()),
+            "1", Integer.class,
+            ConverterType.CONVERTER
         );
     }
 
@@ -231,66 +231,86 @@ public abstract class ConversionServiceTests {
     void testLambdaConverterWithoutExplicitTypesIsRejected() {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
-        ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
-        // Not allowed because the source and target types cannot practically be determined due to type erasure
-        Assertions.assertThrows(IllegalArgumentException.class, () -> registry.addConverter((Converter<String, Integer>) source -> Integer.parseInt(source)));
+        ConverterRegistry registry = new StandardConversionService(this.introspector(),
+            converterCache,
+            defaultValueProviderCache);
+        // Not allowed because the source and target types cannot practically be determined due to
+        // type erasure
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> registry.addConverter((Converter<String, Integer>) source -> {
+                //noinspection Convert2MethodRef
+                return Integer.parseInt(source);
+            }));
     }
 
     @Test
     void testLambdaConverterWithExplicitTypesIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addConverter(String.class, Integer.class, source -> Integer.parseInt(source)),
-                "1", Integer.class,
-                ConverterType.CONVERTER
+            registry -> registry.addConverter(String.class,
+                Integer.class,
+                source -> Integer.parseInt(source)),
+            "1", Integer.class,
+            ConverterType.CONVERTER
         );
     }
 
     @Test
     void testExplicitlyTypedConverterIsAdapterCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
-                "1", Integer.class,
-                ConverterType.CONVERTER
+            registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
+            "1", Integer.class,
+            ConverterType.CONVERTER
         );
     }
 
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
-        // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
-        // #addDefaultValueProvider(Class, DefaultValueProvider) it would be supported in any practical scenario.
+        // Lambdas are not supported in this context due to the absence of sufficient type hints.
+        // Though, using #addDefaultValueProvider(Class, DefaultValueProvider) it would be
+        // supported in any practical scenario.
         //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
-                    @Override
-                    public String defaultValue() {
-                        return "";
-                    }
-                }),
-                NullAccess.getInstance(), String.class,
-                ConverterType.DEFAULT_VALUE_PROVIDER
+            registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
+                @Override
+                public String defaultValue() {
+                    return "";
+                }
+            }),
+            NullAccess.getInstance(), String.class,
+            ConverterType.DEFAULT_VALUE_PROVIDER
         );
     }
 
     @Test
     void testExplicitDefaultValueProviderIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addDefaultValueProvider(String.class, () -> ""),
-                NullAccess.getInstance(), String.class,
-                ConverterType.DEFAULT_VALUE_PROVIDER
+            registry -> registry.addDefaultValueProvider(String.class, () -> ""),
+            NullAccess.getInstance(), String.class,
+            ConverterType.DEFAULT_VALUE_PROVIDER
         );
     }
 
-    private void testConverterTypeIsAdaptedCorrectly(Consumer<ConverterRegistry> registerAction, Object source, Class<?> targetType, ConverterType converterType) {
+    private void testConverterTypeIsAdaptedCorrectly(
+        Consumer<ConverterRegistry> registerAction,
+        Object source,
+        Class<?> targetType,
+        ConverterType converterType
+    ) {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
-        ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+        ConverterRegistry registry = new StandardConversionService(this.introspector(),
+            converterCache,
+            defaultValueProviderCache);
         Assertions.assertTrue(converterCache.converters().isEmpty());
         Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
 
         registerAction.accept(registry);
 
-        ConverterCache shouldBeEmpty = converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
-        ConverterCache shouldBePopulated = converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
+        ConverterCache shouldBeEmpty =
+            converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
+        ConverterCache shouldBePopulated =
+            converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
 
         Assertions.assertTrue(shouldBeEmpty.converters().isEmpty());
         Assertions.assertFalse(shouldBePopulated.converters().isEmpty());

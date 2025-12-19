@@ -41,17 +41,18 @@ public class NativeProxyLookup implements ProxyLookup {
     @Override
     public <T> Option<Class<T>> unproxy(@NonNull T instance) {
         Class<T> unproxied = null;
-        // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
-        if(Proxy.isProxyClass(instance.getClass())) {
+        // Check if the instance is a proxy, as calling getInvocationHandler will otherwise yield
+        // an exception.
+        if (Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-            if(invocationHandler instanceof MapBackedAnnotationInvocationHandler annotationInvocationHandler) {
-                unproxied = TypeUtils.unchecked(annotationInvocationHandler.type(), Class.class);
+            if (invocationHandler instanceof MapBackedAnnotationInvocationHandler handler) {
+                unproxied = TypeUtils.unchecked(handler.type(), Class.class);
             }
-            else if(invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+            else if (invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
                 unproxied = TypeUtils.unchecked(adapterProxy.targetAnnotationClass(), Class.class);
             }
         }
-        if(instance instanceof Annotation annotation) {
+        if (instance instanceof Annotation annotation) {
             unproxied = TypeUtils.unchecked(annotation.annotationType(), Class.class);
         }
         return Option.of(unproxied);
@@ -70,15 +71,16 @@ public class NativeProxyLookup implements ProxyLookup {
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
         ProxyIntrospector<?> introspector = null;
-        if(Proxy.isProxyClass(instance.getClass())) {
+        if (Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-            if(instance instanceof Annotation annotation && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+            if (instance instanceof Annotation annotation
+                && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
                 introspector = new AnnotationAdapterProxyIntrospector<>(
-                        annotation, adapterProxy);
+                    annotation, adapterProxy);
             }
         }
 
-        if(introspector == null && instance instanceof Annotation annotation) {
+        if (introspector == null && instance instanceof Annotation annotation) {
             introspector = new AnnotationProxyIntrospector<>(annotation);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,16 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
 /**
- * Converts an {@link ValueProperty} to an {@link Object}. If the {@link ValueProperty} does not contain a value,
- * {@code null} is returned. Otherwise, the value of the {@link ValueProperty} is converted to the target type.
+ * Converts an {@link ValueProperty} to an {@link Object}. If the {@link ValueProperty} does not
+ * contain a value, {@code null} is returned. Otherwise, the value of the {@link ValueProperty} is
+ * converted to the target type.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class ValuePropertyToObjectConverterFactory implements ConverterFactory<ValueProperty, Object>, ConditionalConverter {
+public class ValuePropertyToObjectConverterFactory
+    implements ConverterFactory<ValueProperty, Object>, ConditionalConverter {
 
     private final ConversionService conversionService;
 
@@ -43,8 +45,8 @@ public class ValuePropertyToObjectConverterFactory implements ConverterFactory<V
         return property -> {
             assert property != null;
             return property.value()
-                    .map(value -> this.conversionService.convert(value, targetType))
-                    .orNull();
+                .map(value -> this.conversionService.convert(value, targetType))
+                .orNull();
         };
     }
 

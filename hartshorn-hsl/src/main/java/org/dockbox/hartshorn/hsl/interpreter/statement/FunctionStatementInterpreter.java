@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
  * Interpreter for {@link FunctionStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class FunctionStatementInterpreter implements StatementInterpreter<FunctionStatement> {

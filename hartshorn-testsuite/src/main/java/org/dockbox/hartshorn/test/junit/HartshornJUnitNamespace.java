@@ -38,7 +38,8 @@ class HartshornJUnitNamespace {
     }
 
     static InjectionCapableApplication application(ExtensionContext context) {
-        InjectionCapableApplication application = store(context).get(APPLICATION, InjectionCapableApplication.class);
+        InjectionCapableApplication application =
+            store(context).get(APPLICATION, InjectionCapableApplication.class);
         if (application == null) {
             throw new IllegalStateException("No application found in the extension context");
         }
@@ -46,7 +47,8 @@ class HartshornJUnitNamespace {
     }
 
     static Option<InjectionCapableApplication> applicationIfPresent(ExtensionContext context) {
-        InjectionCapableApplication application = store(context).get(APPLICATION, InjectionCapableApplication.class);
+        InjectionCapableApplication application =
+            store(context).get(APPLICATION, InjectionCapableApplication.class);
         return Option.of(application);
     }
 
@@ -56,21 +58,24 @@ class HartshornJUnitNamespace {
 
     static List<HartshornCleanupCallback> collectCleanupCallbacks(ExtensionContext context) {
         List<?> callbacks = store(context).getOrComputeIfAbsent(
-                HartshornCleanupCallback.class,
-                key -> new ArrayList<>(),
-                List.class);
+            HartshornCleanupCallback.class,
+            key -> new ArrayList<>(),
+            List.class);
 
         return callbacks.stream()
-                .filter(HartshornCleanupCallback.class::isInstance)
-                .map(HartshornCleanupCallback.class::cast)
-                .toList();
+            .filter(HartshornCleanupCallback.class::isInstance)
+            .map(HartshornCleanupCallback.class::cast)
+            .toList();
     }
 
-    static void registerCleanupCallback(HartshornCleanupCallback callback, ExtensionContext context) {
+    static void registerCleanupCallback(
+        HartshornCleanupCallback callback,
+        ExtensionContext context
+    ) {
         List<HartshornCleanupCallback> callbacks = store(context).getOrComputeIfAbsent(
-                HartshornCleanupCallback.class,
-                key -> new ArrayList<>(),
-                TypeUtils.unchecked(List.class, Class.class));
+            HartshornCleanupCallback.class,
+            key -> new ArrayList<>(),
+            TypeUtils.unchecked(List.class, Class.class));
 
         if (!callbacks.contains(callback)) {
             callbacks.add(callback);

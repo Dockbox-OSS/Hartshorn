@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a range operation, which generates a range of values between
- * two expressions. For example, the expression <code>1..10</code> would create a range of integers
- * from 1 to 10, inclusive.
+ * An expression representing a range operation, which generates a range of values between two
+ * expressions. For example, the expression <code>1..10</code> would create a range of integers from
+ * 1 to 10, inclusive.
  *
  * @since 0.4.12
  *
@@ -41,14 +41,31 @@ public class RangeExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left operand expression of the range operation. This typically represents the
+     * starting value of the range.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the operator token of the range operation.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the right operand expression of the range operation. This typically represents the
+     * ending value of the range.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

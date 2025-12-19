@@ -26,9 +26,9 @@ public class ObjectDescriberTest {
     @Test
     void testStyle() {
         String description = ObjectDescriber.of(new Object(), new TestObjectDescriptionStyle())
-                .field("field1", "value1")
-                .field("field2", "value2")
-                .describe();
+            .field("field1", "value1")
+            .field("field2", "value2")
+            .describe();
 
         String[] descriptionElements = description.split("\\+");
         Assertions.assertEquals(5, descriptionElements.length);
@@ -47,7 +47,11 @@ public class ObjectDescriberTest {
         private static final String FIELD_SEPARATOR = "SEP";
 
         @Override
-        public void describeObjectStart(StringBuilder builder, Object object, boolean includeTypeName) {
+        public void describeObjectStart(
+            StringBuilder builder,
+            Object object,
+            boolean includeTypeName
+        ) {
             builder.append(START).append("+");
         }
 
@@ -57,7 +61,12 @@ public class ObjectDescriberTest {
         }
 
         @Override
-        public void describeField(StringBuilder builder, Object object, String fieldName, Object fieldValue) {
+        public void describeField(
+            StringBuilder builder,
+            Object object,
+            String fieldName,
+            Object fieldValue
+        ) {
             builder.append(FIELD.formatted(fieldName, fieldValue)).append("+");
         }
 
@@ -67,7 +76,12 @@ public class ObjectDescriberTest {
         }
 
         @Override
-        public void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
+        public void describeArrayStart(
+            StringBuilder builder,
+            Object collectionObject,
+            int length,
+            boolean includeTypeName
+        ) {
             builder.append("ARRAY_START").append("+");
         }
 
@@ -77,12 +91,21 @@ public class ObjectDescriberTest {
         }
 
         @Override
-        public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
+        public void describeArrayElement(
+            StringBuilder builder,
+            Object collectionObject,
+            int index,
+            Object element
+        ) {
             builder.append("ELEMENT:").append(index).append(":").append(element).append("+");
         }
 
         @Override
-        public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
+        public void describeArrayElementSeparator(
+            StringBuilder builder,
+            Object collectionObject,
+            int index
+        ) {
             builder.append("ELEMENT_SEP").append("+");
         }
     }

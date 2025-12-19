@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.properties.GroupNode;
  * A diagnostics report which uses a {@link GroupNode} as its root node.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class NodeDiagnosticsReport implements DiagnosticsReport {

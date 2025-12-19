@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents the basic token types that are used in the HSL language. These
- * tokens are often used as building blocks for more complex tokens.
+ * Represents the basic token types that are used in the HSL language. These tokens are often used
+ * as building blocks for more complex tokens.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum BaseTokenType implements EnumTokenType {
@@ -36,8 +36,7 @@ public enum BaseTokenType implements EnumTokenType {
      */
     QUESTION_MARK(DefaultTokenCharacter.QUESTION_MARK),
     /**
-     * ':' character, often used to identify a label or to separate
-     * ternary expressions.
+     * ':' character, often used to identify a label or to separate ternary expressions.
      */
     COLON(DefaultTokenCharacter.COLON),
     /**
@@ -45,8 +44,8 @@ public enum BaseTokenType implements EnumTokenType {
      */
     COMMA(DefaultTokenCharacter.COMMA),
     /**
-     * '.' character, often used to access properties of objects, separate
-     * namespaces, or to indicate a decimal number.
+     * '.' character, often used to access properties of objects, separate namespaces, or to
+     * indicate a decimal number.
      */
     DOT(DefaultTokenCharacter.DOT),
     /**
@@ -67,10 +66,10 @@ public enum BaseTokenType implements EnumTokenType {
 
     BaseTokenType(TokenCharacter character) {
         this.metaData = TokenMetaData.builder(this)
-                .representation(String.valueOf(character.character()))
-                .defaultLexeme(String.valueOf(character.character()))
-                .characters(character)
-                .build();
+            .representation(String.valueOf(character.character()))
+            .defaultLexeme(String.valueOf(character.character()))
+            .characters(character)
+            .build();
     }
 
     @Override

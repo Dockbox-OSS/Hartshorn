@@ -36,8 +36,8 @@ import java.util.List;
 
 /**
  * Represents a function definition inside a script. The function is identified by its name, and
- * parameters. The function can carry a variety of additional information such as the body, and
- * its body.
+ * parameters. The function can carry a variety of additional information such as the body, and its
+ * body.
  *
  * @since 0.4.12
  *
@@ -51,20 +51,39 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     private final ReturnStatement.ReturnType returnType;
     private final boolean isInitializer;
 
-    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, boolean isInitializer) {
+    public VirtualFunction(
+        ParametricExecutableStatement declaration,
+        VariableScope closure,
+        boolean isInitializer
+    ) {
         this(declaration, closure, (InstanceReference) null, isInitializer);
     }
 
-    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, boolean isInitializer) {
+    public VirtualFunction(
+        ParametricExecutableStatement declaration,
+        VariableScope closure,
+        InstanceReference instance,
+        boolean isInitializer
+    ) {
         this(declaration, closure, instance, ReturnStatement.ReturnType.RETURN, isInitializer);
     }
 
-
-    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, ReturnStatement.ReturnType returnType, boolean isInitializer) {
+    public VirtualFunction(
+        ParametricExecutableStatement declaration,
+        VariableScope closure,
+        ReturnStatement.ReturnType returnType,
+        boolean isInitializer
+    ) {
         this(declaration, closure, null, returnType, isInitializer);
     }
 
-    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, ReturnStatement.ReturnType returnType, boolean isInitializer) {
+    public VirtualFunction(
+        ParametricExecutableStatement declaration,
+        VariableScope closure,
+        InstanceReference instance,
+        ReturnStatement.ReturnType returnType,
+        boolean isInitializer
+    ) {
         super(declaration.isFinal());
         this.declaration = declaration;
         this.closure = closure;
@@ -75,6 +94,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
 
     /**
      * Gets the declaration of this function.
+     *
      * @return The declaration of this function.
      */
     public ParametricExecutableStatement declaration() {
@@ -92,6 +112,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
 
     /**
      * Gets the instance this function is bound to, or null if it is not bound.
+     *
      * @return The instance this function is bound to, or null if it is not bound.
      */
     public InstanceReference instance() {
@@ -100,6 +121,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
 
     /**
      * Gets the return type of this function.
+     *
      * @return The return type of this function.
      */
     public ReturnStatement.ReturnType returnType() {
@@ -118,30 +140,41 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     }
 
     /**
-     * Creates a new {@link VirtualFunction} bound to the given instance. This will cause
-     * the function to use the given instance when invoking.
+     * Creates a new {@link VirtualFunction} bound to the given instance. This will cause the
+     * function to use the given instance when invoking.
+     *
      * @param instance The instance to bind to.
+     *
      * @return A new {@link VirtualFunction} bound to the given instance.
      */
     @Override
     public VirtualFunction bind(InstanceReference instance) {
         VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(ObjectTokenType.THIS.representation(), instance);
-        return new VirtualFunction(this.declaration, variableScope, instance, this.returnType, this.isInitializer);
+        return new VirtualFunction(this.declaration,
+            variableScope,
+            instance,
+            this.returnType,
+            this.isInitializer);
     }
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) {
         VariableScope variableScope = new VariableScope(this.closure);
         List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.EXPECTED_X_OF_Y_AT_Z,
-                            parameters.size(),
-                            (parameters.size() == 1 ? "argument" : "arguments"),
-                            arguments.size()
-                    ).at(at)
-                    .build();
+                .message(DiagnosticMessage.EXPECTED_X_OF_Y_AT_Z,
+                    parameters.size(),
+                    (parameters.size() == 1 ? "argument" : "arguments"),
+                    arguments.size()
+                ).at(at)
+                .build();
         }
         for (int i = 0; i < parameters.size(); i++) {
             variableScope.define(parameters.get(i).name().lexeme(), arguments.get(i));
@@ -152,18 +185,18 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         catch (Yield yieldValue) {
             if (this.returnType != ReturnStatement.ReturnType.YIELD) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_YIELD_IN_NON_GENERATOR)
-                        .at(at)
-                        .build();
+                    .message(DiagnosticMessage.ILLEGAL_YIELD_IN_NON_GENERATOR)
+                    .at(at)
+                    .build();
             }
             return yieldValue.value();
         }
         catch (Return returnValue) {
             if (this.returnType != ReturnStatement.ReturnType.RETURN) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_RETURN_IN_GENERATOR)
-                        .at(at)
-                        .build();
+                    .message(DiagnosticMessage.ILLEGAL_RETURN_IN_GENERATOR)
+                    .at(at)
+                    .build();
             }
             if (this.isInitializer) {
                 return this.closure.getAt(at, 0, ObjectTokenType.THIS.representation());

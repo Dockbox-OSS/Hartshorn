@@ -29,12 +29,16 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @author Guus Lieben
  */
-public class MethodAwareBindingStrategyContext<T> extends DefaultContext implements BindingStrategyContext<T> {
+public class MethodAwareBindingStrategyContext<T> extends DefaultContext
+    implements BindingStrategyContext<T> {
 
     private final DependencyDeclarationContext<T> componentContainer;
     private final MethodView<T, ?> method;
 
-    public MethodAwareBindingStrategyContext(DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
+    public MethodAwareBindingStrategyContext(
+        DependencyDeclarationContext<T> componentContainer,
+        MethodView<T, ?> method
+    ) {
         this.componentContainer = componentContainer;
         this.method = method;
     }

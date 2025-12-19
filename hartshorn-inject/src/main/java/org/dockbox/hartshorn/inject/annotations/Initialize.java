@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,16 @@ import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstru
  * if it is not {@code null}.
  *
  * <p>If the annotated element is a method, the behavior is different depending on the
- * responsible {@link ComponentPostProcessor} which handles the method. Typically,
- * this will indicate that the result of the method will be enabled.
+ * responsible {@link ComponentPostProcessor} which handles the method. Typically, this will
+ * indicate that the result of the method will be enabled.
  *
  * <p>If the value of {@link #value()} is {@code true}, the annotated element will be
  * enabled. If the value is {@code false}, the annotated element will be not be enabled
  * automatically.
  *
- * @author Guus Lieben
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

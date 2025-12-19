@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.inject.binding;
 import org.dockbox.hartshorn.inject.ComponentKey;
 
 /**
- * A binder that is capable of binding aliases. This allows for the binding of components to multiple keys, which can
- * be useful when a component is defined in multiple modules, and you want to reference the same component using
- * different keys.
+ * A binder that is capable of binding aliases. This allows for the binding of components to
+ * multiple keys, which can be useful when a component is defined in multiple modules, and you want
+ * to reference the same component using different keys.
  *
  * @since 0.7.0
  *

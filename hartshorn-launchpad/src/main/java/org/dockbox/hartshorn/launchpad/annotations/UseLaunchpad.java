@@ -27,9 +27,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Default module activator for Launchpad-based applications, enabling lifecycle observers and component proxying. When using
- * the built-in {@link ApplicationContextFactory} ({@link StandardApplicationContextFactory}), this activator is automatically
- * registered and used to activate components.
+ * Default module activator for Launchpad-based applications, enabling lifecycle observers and
+ * component proxying. When using the built-in {@link ApplicationContextFactory}
+ * ({@link StandardApplicationContextFactory}), this activator is automatically registered and used
+ * to activate components.
  *
  * @since 0.7.0
  *
@@ -38,7 +39,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ModuleActivator(
-        binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
+    binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
 )
 @UseLifecycleObservers
 @UseProxying

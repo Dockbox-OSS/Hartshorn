@@ -61,7 +61,8 @@ import java.util.function.Function;
  * provides a fluent builder interface for configuring the test environment, including defining
  * variables, customizing parsers and extensions, and intercepting expression evaluation.
  *
- * <p>All tests executed through this helper are run in an isolated runtime, ensuring that each test
+ * <p>All tests executed through this helper are run in an isolated runtime, ensuring that each
+ * test
  * has a clean environment.
  *
  * <p>Tests are always executed through a {@link SimpleScriptRuntime}, ensuring consistent behavior
@@ -84,7 +85,8 @@ import java.util.function.Function;
  * inserted using the {@code checkpoint} keyword followed by a unique descriptor:
  * {@code checkpoint("my-checkpoint")}.
  *
- * <p>After evaluating, checkpoints can be inspected using the {@link #checkpoints()} method. During
+ * <p>After evaluating, checkpoints can be inspected using the {@link #checkpoints()} method.
+ * During
  * interpretation, each time a checkpoint is reached, it is recorded along with the number of times
  * it has been accessed. The expression itself returns the number of times the checkpoint has been
  * reached so far, allowing it to be used safely within e.g. conditional loop structures.
@@ -105,7 +107,7 @@ import java.util.function.Function;
  * instance, the captured value will still be wrapped in a {@link ExternalInstance}.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class HSLTestHelper {
@@ -123,15 +125,17 @@ public class HSLTestHelper {
      * wrapped in a capture statement to allow for easy extraction of the parsed expression.
      *
      * <p>Use this method when testing individual expressions in isolation. If you are testing
-     * multiple expressions or full statements, use {@link #of(ApplicationContext, String)} instead.
+     * multiple expressions or full statements, use {@link #of(ApplicationContext, String)}
+     * instead.
      *
      * @param applicationContext the application context
      * @param source the source code to parse
+     *
      * @return the builder
      */
     public static Builder ofExpression(
-            ApplicationContext applicationContext,
-            String source
+        ApplicationContext applicationContext,
+        String source
     ) {
         String captureSource = "%s(%s)".formatted(CaptureModule.CAPTURE.tokenName(), source);
         return of(applicationContext, captureSource).withCaptureModule();
@@ -142,13 +146,14 @@ public class HSLTestHelper {
      *
      * @param applicationContext the application context
      * @param source the source code to parse
+     *
      * @return the builder
      */
     public static Builder of(ApplicationContext applicationContext, String source) {
         return new Builder(applicationContext, source)
-                .extensions(extensions -> {
-                    extensions.expressionModules(new CheckpointModule());
-                });
+            .extensions(extensions -> {
+                extensions.expressionModules(new CheckpointModule());
+            });
     }
 
     /**
@@ -176,8 +181,8 @@ public class HSLTestHelper {
         }
         Statement statement = statements.getFirst();
         CaptureModule.CaptureStatement captureStatement = Assertions.assertInstanceOf(
-                CaptureModule.CaptureStatement.class,
-                statement
+            CaptureModule.CaptureStatement.class,
+            statement
         );
         return captureStatement.expression();
     }
@@ -188,23 +193,24 @@ public class HSLTestHelper {
      * spy, so be aware of potential side effects.
      *
      * <p>A known side-effect is that if the current interpreter is a
-     * {@link SimpleVisitorInterpreter}, the visitor will not be re-bound to the new spy
-     * interpreter by default. This is worked around in this method, but may need to be
-     * adjusted for other interpreter implementations.
+     * {@link SimpleVisitorInterpreter}, the visitor will not be re-bound to the new spy interpreter
+     * by default. This is worked around in this method, but may need to be adjusted for other
+     * interpreter implementations.
      *
      * @param type the expression type to intercept
      * @param interpreter the interpreter to use for the given expression type
-     * @return this helper
      * @param <T> the expression type
+     *
+     * @return this helper
      */
     public <T extends Expression> HSLTestHelper evaluateWith(
-            Class<T> type,
-            ASTNodeInterpreter<?, T> interpreter
+        Class<T> type,
+        ASTNodeInterpreter<?, T> interpreter
     ) {
         Interpreter defaultInterpreter = this.context.interpreter();
         Interpreter spyInterpreter = MockUtil.isMock(defaultInterpreter)
-                ? defaultInterpreter
-                : Mockito.spy(defaultInterpreter);
+            ? defaultInterpreter
+            : Mockito.spy(defaultInterpreter);
 
         Mockito.doAnswer(invocation -> {
             T expression = invocation.getArgument(0);
@@ -216,8 +222,8 @@ public class HSLTestHelper {
             // record, and thus immutable, so we need to create a new one.
             DelegatingInterpreterVisitor visitor = new DelegatingInterpreterVisitor(spyInterpreter);
             Mockito.doAnswer(invocation -> visitor)
-                    .when(visitorInterpreter)
-                    .visitor();
+                .when(visitorInterpreter)
+                .visitor();
         }
 
         this.context.interpreter(spyInterpreter);
@@ -253,8 +259,8 @@ public class HSLTestHelper {
 
     public Object interpretValue() {
         return this.interpret()
-                .captures()
-                .capturedValue();
+            .captures()
+            .capturedValue();
     }
 
     public CaptureModule captures() {
@@ -289,8 +295,10 @@ public class HSLTestHelper {
         private final Map<String, NativeModule> modules = new HashMap<>();
         private final Set<CodeCustomizer> codeCustomizers = new HashSet<>();
 
-        private Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer = Customizer.useDefaults();
-        private ParserCustomizer parserCustomizer = parser -> {};
+        private Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer =
+            Customizer.useDefaults();
+        private ParserCustomizer parserCustomizer = parser -> {
+        };
 
         private Builder(ApplicationContext applicationContext, String source) {
             this.applicationContext = applicationContext;
@@ -298,7 +306,7 @@ public class HSLTestHelper {
         }
 
         public Builder extensions(
-                Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer
+            Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer
         ) {
             this.extensionCustomizer = extensionCustomizer.compose(this.extensionCustomizer);
             return this;
@@ -332,6 +340,7 @@ public class HSLTestHelper {
          * {@link DefaultScriptStatementsParserCustomizer}.
          *
          * @param parser the expression parser to add
+         *
          * @return this builder
          */
         public Builder expressionParser(ExpressionParser parser) {
@@ -340,10 +349,11 @@ public class HSLTestHelper {
 
         /**
          * Adds a statement parser to the current parser configuration. Unlike expression parsers,
-         * the order of statement parsers does not matter, as they are selected based on the
-         * current token rather than being recursively tried.
+         * the order of statement parsers does not matter, as they are selected based on the current
+         * token rather than being recursively tried.
          *
          * @param parser the statement parser to add
+         *
          * @return this builder
          */
         public Builder statementParser(StatementParser<?> parser) {
@@ -364,9 +374,9 @@ public class HSLTestHelper {
         }
 
         public Builder define(
-                String name,
-                Object value,
-                Function<Interpreter, VariableScope> scopeSelector
+            String name,
+            Object value,
+            Function<Interpreter, VariableScope> scopeSelector
         ) {
             return this.customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
                 Interpreter interpreter = context.interpreter();
@@ -376,9 +386,9 @@ public class HSLTestHelper {
 
         public HSLTestHelper build() {
             SimpleScriptRuntime runtime = new SimpleScriptRuntime(
-                    this.applicationContext,
-                    new StandardScriptComponentFactory(),
-                    this.parserCustomizer
+                this.applicationContext,
+                new StandardScriptComponentFactory(),
+                this.parserCustomizer
             );
             runtime.modules(this.modules);
 

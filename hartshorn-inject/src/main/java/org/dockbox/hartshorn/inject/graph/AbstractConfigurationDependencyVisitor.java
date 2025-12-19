@@ -29,30 +29,38 @@ import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
 /**
- * Simple implementation of {@link ConfigurationDependencyVisitor} that provides a default implementation for
- * walking the graph of dependencies and registering them. Note that the actual registration of dependencies
- * is delegated to the {@link #registerProvider(DependencyContext)} and {@link #doAfterRegister(DependencyContext)}
- * methods, which should be implemented by the extending class.
+ * Simple implementation of {@link ConfigurationDependencyVisitor} that provides a default
+ * implementation for walking the graph of dependencies and registering them. Note that the actual
+ * registration of dependencies is delegated to the {@link #registerProvider(DependencyContext)} and
+ * {@link #doAfterRegister(DependencyContext)} methods, which should be implemented by the extending
+ * class.
  *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public abstract class AbstractConfigurationDependencyVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
+public abstract class AbstractConfigurationDependencyVisitor
+    implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
 
     @Override
-    public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph) throws GraphException {
-        Set<GraphNode<DependencyContext<?>>> iterated = BreadthFirstGraphVisitor.super.iterate(graph);
+    public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph)
+        throws GraphException {
+        Set<GraphNode<DependencyContext<?>>> iterated =
+            BreadthFirstGraphVisitor.super.iterate(graph);
         if (graph instanceof ContentAwareGraph<DependencyContext<?>> contentAwareGraph) {
             Set<GraphNode<DependencyContext<?>>> nodes = contentAwareGraph.nodes();
-            Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(nodes, iterated);
-            Set<GraphNode<DependencyContext<?>>> iteratedDanglingNodes = this.tryIterateDanglingNodes(danglingNodes);
+            Set<GraphNode<DependencyContext<?>>> danglingNodes =
+                CollectionUtilities.difference(nodes, iterated);
+            Set<GraphNode<DependencyContext<?>>> iteratedDanglingNodes =
+                this.tryIterateDanglingNodes(danglingNodes);
             iterated.addAll(iteratedDanglingNodes);
         }
         return iterated;
     }
 
-    private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(Set<GraphNode<DependencyContext<?>>> danglingNodes) throws GraphException {
+    private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(
+        Set<GraphNode<DependencyContext<?>>> danglingNodes
+    ) throws GraphException {
         Set<GraphNode<DependencyContext<?>>> iterated = new HashSet<>();
         for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
             DependencyContext<?> context = danglingNode.value();
@@ -61,11 +69,13 @@ public abstract class AbstractConfigurationDependencyVisitor implements BreadthF
                     iterated.add(danglingNode);
                 }
                 else {
-                    throw new GraphException("Failed to register singleton dependency: " + context.componentKey());
+                    throw new GraphException("Failed to register singleton dependency: "
+                        + context.componentKey());
                 }
             }
             else {
-                throw new GraphException("Dangling prototype node found: " + context.componentKey());
+                throw new GraphException("Dangling prototype node found: "
+                    + context.componentKey());
             }
         }
         return iterated;
@@ -79,7 +89,7 @@ public abstract class AbstractConfigurationDependencyVisitor implements BreadthF
             this.doAfterRegister(dependencyContext);
             return true;
         }
-        catch(ComponentConfigurationException e) {
+        catch (ComponentConfigurationException e) {
             throw new GraphException(e);
         }
     }

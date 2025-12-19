@@ -22,8 +22,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
- * Generic type reference, allowing for generic type reading. This is derived
- * from Jackson's TypeReference.
+ * Generic type reference, allowing for generic type reading. This is derived from Jackson's
+ * TypeReference.
  *
  * @param <T> The generic type
  *
@@ -38,7 +38,9 @@ public abstract class GenericType<T> {
     protected GenericType() {
         Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
-            throw new IllegalArgumentException("GenericType constructed without actual type information");
+            throw new IllegalArgumentException(
+                "GenericType constructed without actual type information"
+            );
         }
         this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }

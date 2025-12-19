@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.Tuple;
  * Interpreter for {@link RangeExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, RangeExpression> {
@@ -38,9 +38,9 @@ public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, Ra
         Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
         Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                node.operator(),
-                start,
-                end
+            node.operator(),
+            start,
+            end
         );
 
         int min = tuple.left().intValue();

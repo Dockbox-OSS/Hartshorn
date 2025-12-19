@@ -29,17 +29,17 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
 
 /**
- * The default runtime implementation, which follows the evaluation phases and order as
- * defined in {@link Phase}. Each phase can be customized using appropriate
- * {@link CodeCustomizer}s, to modify the in- or output of the current or previous phase.
+ * The default runtime implementation, which follows the evaluation phases and order as defined in
+ * {@link Phase}. Each phase can be customized using appropriate {@link CodeCustomizer}s, to modify
+ * the in- or output of the current or previous phase.
  *
  * <p>The executor for each phase is obtained from the given {@link ApplicationContext},
  * to allow each executor to be customized through standard DI principles.
  *
  * @see ExpressionConditionContext
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class StandardRuntime extends SimpleScriptRuntime {
@@ -48,7 +48,8 @@ public class StandardRuntime extends SimpleScriptRuntime {
         ApplicationContext applicationContext,
         ScriptComponentFactory factory
     ) {
-        this(applicationContext, factory, parser -> {});
+        this(applicationContext, factory, parser -> {
+        });
     }
 
     public StandardRuntime(

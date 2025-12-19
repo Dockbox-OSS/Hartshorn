@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
  * Interpreter for {@link ArraySetExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ArraySetExpressionInterpreter extends ArrayInterpreter<Object, ArraySetExpression> {

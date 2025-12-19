@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.proxy;
 
 /**
- * The common parent of all proxies created by the {@link ProxyFactory}. This class
- * is used to provide a common interface for all proxies, as well as provide easy
- * access to the proxy's {@link ProxyManager}.
+ * The common parent of all proxies created by the {@link ProxyFactory}. This class is used to
+ * provide a common interface for all proxies, as well as provide easy access to the proxy's
+ * {@link ProxyManager}.
  *
  * @param <T> the type of the proxied object
  *
@@ -32,6 +32,7 @@ public interface Proxy<T> {
 
     /**
      * Returns the {@link ProxyManager} that is responsible for this proxy.
+     *
      * @return the {@link ProxyManager} that is responsible for this proxy
      */
     ProxyManager<T> manager();

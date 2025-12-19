@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.hsl.ast.expression;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a grouping of another expression. A grouping is used to indicate
- * that the expression should be evaluated as a single unit, allowing for precedence to be
- * applied correctly in complex expressions.
+ * An expression representing a grouping of another expression. A grouping is used to indicate that
+ * the expression should be evaluated as a single unit, allowing for precedence to be applied
+ * correctly in complex expressions.
  *
  * <p>For example, in the expression <code>(a + b) * c</code>, the grouping ensures that
  * <code>a + b</code> is evaluated before multiplying by <code>c</code>. This is particularly
@@ -41,6 +41,11 @@ public class GroupingExpression extends Expression {
         this.expression = expression;
     }
 
+    /**
+     * Returns the expression contained within the grouping.
+     *
+     * @return the grouped expression
+     */
     public Expression expression() {
         return this.expression;
     }

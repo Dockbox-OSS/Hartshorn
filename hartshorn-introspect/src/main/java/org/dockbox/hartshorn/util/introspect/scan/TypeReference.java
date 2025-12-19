@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.util.introspect.scan;
 
 /**
- * A reference to a {@link Class} that can be used to load the class, or to obtain information about the class.
- * Implementations of this interface are expected to be immutable.
+ * A reference to a {@link Class} that can be used to load the class, or to obtain information about
+ * the class. Implementations of this interface are expected to be immutable.
  *
  * @since 0.4.9
  *
@@ -27,12 +27,13 @@ package org.dockbox.hartshorn.util.introspect.scan;
 public interface TypeReference {
 
     /**
-     * Loads the class that is referenced by this instance. Where possible, this should not initialize
-     * the class.
+     * Loads the class that is referenced by this instance. Where possible, this should not
+     * initialize the class.
      *
      * @param classLoader The class loader to use to load the class.
      *
      * @return The class that is referenced by this instance.
+     *
      * @throws ClassReferenceLoadException When the class cannot be loaded.
      */
     Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException;

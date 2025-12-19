@@ -16,15 +16,17 @@
 
 package org.dockbox.hartshorn.inject.graph.support;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
- * Thrown when an alias is ambiguous, meaning that the same alias is defined in multiple locations. This is not allowed
- * as it would make it impossible to determine which binding should be used when resolving the alias.
+ * Thrown when an alias is ambiguous, meaning that the same alias is defined in multiple locations.
+ * This is not allowed as it would make it impossible to determine which binding should be used when
+ * resolving the alias.
  *
  * @since 0.7.0
  *
@@ -35,18 +37,34 @@ public class AmbiguousAliasException extends ApplicationException {
     private final ComponentKey<?> componentKey;
     private final Collection<DependencyContext<?>> contexts;
 
-    public AmbiguousAliasException(ComponentKey<?> componentKey, Collection<DependencyContext<?>> contexts) {
-        super("Ambiguous alias " + componentKey + " found. The alias was defined in the following locations: " + contexts.stream()
+    public AmbiguousAliasException(
+        ComponentKey<?> componentKey,
+        Collection<DependencyContext<?>> contexts
+    ) {
+        super("Ambiguous alias "
+            + componentKey
+            + " found. The alias was defined in the following locations: "
+            + contexts.stream()
             .map(DependencyContext::describe)
             .collect(Collectors.joining(", ")));
         this.componentKey = componentKey;
         this.contexts = contexts;
     }
 
+    /**
+     * The component key that is ambiguous.
+     *
+     * @return the ambiguous component key
+     */
     public ComponentKey<?> componentKey() {
         return this.componentKey;
     }
 
+    /**
+     * All contexts where the ambiguous alias is defined.
+     *
+     * @return the contexts defining the alias
+     */
     public Collection<DependencyContext<?>> contexts() {
         return this.contexts;
     }

@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
- * location and return the path to the temporary location.
+ * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the
+ * resource to a temporary location and return the path to the temporary location.
  *
  * @since 0.4.9
  *

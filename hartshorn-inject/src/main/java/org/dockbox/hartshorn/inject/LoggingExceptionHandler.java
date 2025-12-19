@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used to handle exceptions that occur during the application lifecycle. This default implementation
- * of the {@link ExceptionHandler} interface logs the exception to the {@link Logger} and is able to correctly display
- * stacktraces when {@link #printStackTraces()} is {@code true}.
+ * This class is used to handle exceptions that occur during the application lifecycle. This default
+ * implementation of the {@link ExceptionHandler} interface logs the exception to the {@link Logger}
+ * and is able to correctly display stacktraces when {@link #printStackTraces()} is {@code true}.
  *
  * @since 0.4.9
  *
@@ -72,8 +72,8 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     }
 
     /**
-     * Returns the first message of the given {@link Throwable} or {@code null} if the given {@link Throwable} is
-     * {@code null}.
+     * Returns the first message of the given {@link Throwable} or {@code null} if the given
+     * {@link Throwable} is {@code null}.
      *
      * @param throwable The {@link Throwable} to get the first message from.
      *

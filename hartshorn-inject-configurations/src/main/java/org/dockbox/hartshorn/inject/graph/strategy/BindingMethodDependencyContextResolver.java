@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A {@link DependencyContextResolver} implementation that handles methods annotated with {@link Binds}.
+ * A {@link DependencyContextResolver} implementation that handles methods annotated with
+ * {@link Binds}.
  *
  * @since 0.5.0
  *
@@ -62,58 +63,83 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
     private final InjectionCapableApplication application;
     private final BindingDeclarationDependencyResolver declarationDependencyResolver;
 
-    public BindingMethodDependencyContextResolver(InjectionCapableApplication application, BindingDeclarationDependencyResolver declarationDependencyResolver) {
+    public BindingMethodDependencyContextResolver(
+        InjectionCapableApplication application,
+        BindingDeclarationDependencyResolver declarationDependencyResolver
+    ) {
         this.application = application;
         this.declarationDependencyResolver = declarationDependencyResolver;
     }
 
     @Override
     public <T> boolean isCompatible(BindingStrategyContext<T> context) {
-        return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
-                && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
+        return context instanceof MethodAwareBindingStrategyContext<T>
+            methodAwareBindingStrategyContext && methodAwareBindingStrategyContext.method()
+            .annotations().has(Binds.class);
     }
 
     @Override
     public <T> DependencyContext<?> resolveToDependency(BindingStrategyContext<T> context) {
-        MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
+        MethodAwareBindingStrategyContext<T> strategyContext =
+            (MethodAwareBindingStrategyContext<T>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
-                .get(Binds.class)
-                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
+            .get(Binds.class)
+            .orElseThrow(() -> new IllegalStateException(
+                "Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
-        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, this.application);
+        return this.resolveInstanceBinding(strategyContext,
+            strategyContext.method(),
+            bindingDecorator,
+            this.application);
     }
 
-    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, MethodView<?, T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
-        ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
-        Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        PrototypeInstantiationStrategy<T> supplier = this.getPrototypeInstantiationStrategy(declaration, application);
+    private <T> DependencyContext<T> resolveInstanceBinding(
+        BindingStrategyContext<?> context,
+        MethodView<?, T> declaration,
+        Binds bindingDecorator,
+        InjectionCapableApplication application
+    ) {
+        ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment()
+            .componentKeyResolver()
+            .resolve(declaration), ComponentKey.class);
+        Set<ComponentKey<?>> dependencies =
+            this.declarationDependencyResolver.dependencies(context);
+        PrototypeInstantiationStrategy<T> supplier =
+            this.getPrototypeInstantiationStrategy(declaration, application);
 
         return AliasableConfigurableDependencyContext.builder(componentKey)
-                .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))
-                .dependencies(DependencyMap.create().immediate(dependencies))
-                .scope(this.resolveComponentScope(declaration))
-                .priority(this.resolvePriority(declaration))
-                .memberType(this.resolveMemberType(declaration))
-                .view(declaration)
-                .supplier(supplier)
-                .lazy(bindingDecorator.lazy())
-                .lifecycleType(bindingDecorator.lifecycle())
-                .processAfterInitialization(bindingDecorator.processAfterInitialization())
-                .build();
+            .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))
+            .dependencies(DependencyMap.create().immediate(dependencies))
+            .scope(this.resolveComponentScope(declaration))
+            .priority(this.resolvePriority(declaration))
+            .memberType(this.resolveMemberType(declaration))
+            .view(declaration)
+            .supplier(supplier)
+            .lazy(bindingDecorator.lazy())
+            .lifecycleType(bindingDecorator.lifecycle())
+            .processAfterInitialization(bindingDecorator.processAfterInitialization())
+            .build();
     }
 
-    private <P, T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(MethodView<P, T> declaration, InjectionCapableApplication application) {
+    private <P, T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(
+        MethodView<P, T> declaration,
+        InjectionCapableApplication application
+    ) {
         return (requestContext, scope) -> {
             try {
-                ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
+                ComponentExecutableInvocationAdapter contextAdapter =
+                    new InjectorExecutableInvocationAdapter(application)
                         .scope(scope)
                         .requestContext(requestContext);
-                P instance = this.application.defaultProvider().get(ComponentKey.builder(declaration.declaredBy())
+                P instance = this.application.defaultProvider()
+                    .get(ComponentKey.builder(declaration.declaredBy())
                         .scope(scope)
                         .build(), requestContext);
                 return contextAdapter.invoke(declaration, instance).orNull();
-            } catch (Throwable throwable) {
-                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
+            }
+            catch (Throwable throwable) {
+                throw new ComponentInitializationException("Failed to obtain instance for "
+                    + declaration.qualifiedName(), throwable);
             }
         };
     }
@@ -127,8 +153,8 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
     private ScopeKey resolveComponentScope(AnnotatedElementView view) {
         Option<Scoped> installToCandidate = view.annotations().get(Scoped.class);
         return installToCandidate.present()
-                ? DirectScopeKey.of(installToCandidate.get().value())
-                : this.application.defaultProvider().scope().installableScopeType();
+            ? DirectScopeKey.of(installToCandidate.get().value())
+            : this.application.defaultProvider().scope().installableScopeType();
     }
 
     private ComponentMemberType resolveMemberType(AnnotatedElementView bindsMethod) {
@@ -137,7 +163,10 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
             : ComponentMemberType.STANDALONE;
     }
 
-    private <T> Set<Class<? super T>> resolveAliasTypes(AnnotatedElementView view, Class<T> baseType) {
+    private <T> Set<Class<? super T>> resolveAliasTypes(
+        AnnotatedElementView view,
+        Class<T> baseType
+    ) {
         Set<Class<? super T>> types = new HashSet<>();
         for (BindingAlias alias : view.annotations().all(BindingAlias.class)) {
             Class<?>[] aliasTypes = alias.value();
@@ -146,7 +175,10 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
                     types.add((Class<? super T>) type);
                 }
                 else {
-                    throw new IllegalStateException("Binding alias " + type.getSimpleName() + " is not assignable from binding type " + baseType.getSimpleName());
+                    throw new IllegalStateException("Binding alias "
+                        + type.getSimpleName()
+                        + " is not assignable from binding type "
+                        + baseType.getSimpleName());
                 }
             }
         }
@@ -158,13 +190,25 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
         return BindingStrategyPriority.LOW;
     }
 
-    public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver> create(Customizer<Configurer> customizer) {
+    /**
+     * Creates a new {@link ContextualInitializer} for a
+     * {@link BindingMethodDependencyContextResolver}, which can be customized using the provided
+     * {@link Customizer}.
+     *
+     * @param customizer the customizer for the configurer
+     *
+     * @return the contextual initializer
+     */
+    public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            List<BindingDeclarationDependencyResolver> dependencyResolvers = configurer.declarationDependencyResolvers.initialize(context);
-            BindingDeclarationDependencyResolver resolver = new CompositeBindingDependencyResolver(Set.copyOf(dependencyResolvers));
+            List<BindingDeclarationDependencyResolver> dependencyResolvers =
+                configurer.declarationDependencyResolvers.initialize(context);
+            BindingDeclarationDependencyResolver resolver =
+                new CompositeBindingDependencyResolver(Set.copyOf(dependencyResolvers));
 
             return new BindingMethodDependencyContextResolver(context.input(), resolver);
         };
@@ -179,17 +223,29 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver> declarationDependencyResolvers = LazyStreamableConfigurer.of(resolvers -> {
-            resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver> declarationDependencyResolvers =
+            LazyStreamableConfigurer.of(resolvers -> {
+                resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(
                     context.environment().injectionPointsResolver(),
                     context.environment().componentKeyResolver()
-            )));
-            resolvers.add(new BindingAfterDeclarationDependencyResolver());
-        });
+                )));
+                resolvers.add(new BindingAfterDeclarationDependencyResolver());
+            });
+        // checkstyle:on LineLength
 
+        /**
+         * Customizer for dependency resolvers.
+         *
+         * @param customizer the customizer
+         *
+         * @return this configurer
+         */
+        // checkstyle:off LineLength
         public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver>> customizer) {
             this.declarationDependencyResolvers.customizer(customizer);
             return this;
         }
+        // checkstyle:on LineLength
     }
 }

@@ -37,18 +37,18 @@ public class SwitchStatementInterpreterTests {
     @Test
     void defaultCaseMatchesIfNoCasesPresent(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        switch (value) {
-                            default:
-                                checkpoint("default-case")
-                                break
-                        }
-                        """)
-                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-                .statementParser(new BreakStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("value", "some-value")
-                .build();
+                switch (value) {
+                    default:
+                        checkpoint("default-case")
+                        break
+                }
+                """)
+            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+            .statementParser(new BreakStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("value", "some-value")
+            .build();
 
         helper.interpret();
 
@@ -58,21 +58,21 @@ public class SwitchStatementInterpreterTests {
     @Test
     void matchingCaseExecutesOverDefault(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        switch (value) {
-                            case "match":
-                                checkpoint("matching-case")
-                                break
-                            default:
-                                checkpoint("default-case")
-                                break
-                        }
-                        """)
-                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-                .statementParser(new BreakStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("value", "match")
-                .build();
+                switch (value) {
+                    case "match":
+                        checkpoint("matching-case")
+                        break
+                    default:
+                        checkpoint("default-case")
+                        break
+                }
+                """)
+            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+            .statementParser(new BreakStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("value", "match")
+            .build();
 
         helper.interpret();
 
@@ -83,22 +83,22 @@ public class SwitchStatementInterpreterTests {
     @Test
     void switchWithoutCasesFailsAtParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        switch (value) {
-                        }
-                        """)
-                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("value", "some-value")
-                .build();
+                switch (value) {
+                }
+                """)
+            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("value", "some-value")
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpret
+            ScriptEvaluationError.class,
+            helper::interpret
         );
         ScriptAssertions.assertEvaluationError(
-                error,
-                DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT
+            error,
+            DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT
         );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
- * Represents the environment in which the {@link InjectionCapableApplication} is operating. This environment provides access
- * to the various components that are used by the application to perform its operations.
+ * Represents the environment in which the {@link InjectionCapableApplication} is operating. This
+ * environment provides access to the various components that are used by the application to perform
+ * its operations.
  *
  * @since 0.7.0
  *
@@ -33,44 +34,63 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 public interface InjectorEnvironment {
 
     /**
-     * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is responsible for resolving
-     * {@link ComponentKey}s for a given element. This is typically used for resolving {@link ComponentKey}s for binding
-     * declarations and injection points.
+     * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is
+     * responsible for resolving {@link ComponentKey}s for a given element. This is typically used
+     * for resolving {@link ComponentKey}s for binding declarations and injection points.
      *
      * @return The component key resolver
      */
     ComponentKeyResolver componentKeyResolver();
 
     /**
-     * Gets the {@link ComponentInjectionPointsResolver} for the current environment. The resolver is responsible for
-     * resolving {@link ComponentInjectionPoint}s for a given type.
+     * Gets the {@link ComponentInjectionPointsResolver} for the current environment. The resolver
+     * is responsible for resolving {@link ComponentInjectionPoint}s for a given type.
      *
      * @return The component injection points resolver
      */
     ComponentInjectionPointsResolver injectionPointsResolver();
 
     /**
-     * Gets the primary {@link Introspector} for this {@link InjectorEnvironment}. The introspector is responsible
-     * for all introspection operations within the environment. This may or may not be the same as the binding for
-     * {@link Introspector}, but is typically the same.
+     * Gets the primary {@link Introspector} for this {@link InjectorEnvironment}. The introspector
+     * is responsible for all introspection operations within the environment. This may or may not
+     * be the same as the binding for {@link Introspector}, but is typically the same.
      *
      * @return The primary {@link Introspector}
      */
     Introspector introspector();
 
     /**
-     * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
-     * operations within the environment. Proxies may be created outside of the orchestrator, and depending on the
-     * supported {@link org.dockbox.hartshorn.util.introspect.ProxyLookup proxy lookups} the orchestrator may or may not
-     * support these external proxies.
+     * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is
+     * responsible for all proxy operations within the environment. Proxies may be created outside
+     * of the orchestrator, and depending on the supported
+     * {@link org.dockbox.hartshorn.util.introspect.ProxyLookup proxy lookups} the orchestrator may
+     * or may not support these external proxies.
      *
      * @return The proxy orchestrator
      */
     ProxyOrchestrator proxyOrchestrator();
 
+    /**
+     * Gets the {@link InjectorConfiguration} for the current environment. The configuration
+     * describes how the injector should behave within the environment.
+     *
+     * @return The injector configuration
+     */
     InjectorConfiguration configuration();
 
+    /**
+     * Gets the {@link PropertyRegistry} for the current environment. The property registry is
+     * responsible for managing properties within the environment.
+     *
+     * @return The property registry
+     */
     PropertyRegistry propertyRegistry();
 
+    /**
+     * Gets the {@link ExceptionHandler} for the current environment. The exception handler is
+     * responsible for handling exceptions that occur within the environment.
+     *
+     * @return The exception handler
+     */
     ExceptionHandler exceptionHandler();
 }

@@ -33,11 +33,11 @@ public class BinaryComparisonExpressionParser extends AbstractBitwiseOrLogicalEx
 
     @Override
     protected TokenType[] whileMatching() {
-        return new TokenType[]{
-                ConditionTokenType.GREATER,
-                ConditionTokenType.GREATER_EQUAL,
-                ConditionTokenType.LESS,
-                ConditionTokenType.LESS_EQUAL,
+        return new TokenType[] {
+            ConditionTokenType.GREATER,
+            ConditionTokenType.GREATER_EQUAL,
+            ConditionTokenType.LESS,
+            ConditionTokenType.LESS_EQUAL,
         };
     }
 

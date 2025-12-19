@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,14 +51,16 @@ public abstract class MethodStubTests {
     @Test
     void testDefaultBehaviorIsDefaultOrNull() throws ApplicationException {
         ProxyOrchestrator orchestrator = this.orchestratorLoader().create(this.introspector());
-        ProxyFactory<InterfaceProxyTarget> proxyFactory = orchestrator.factory(InterfaceProxyTarget.class);
+        ProxyFactory<InterfaceProxyTarget> proxyFactory =
+            orchestrator.factory(InterfaceProxyTarget.class);
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
 
         Option<ProxyManager<InterfaceProxyTarget>> manager = orchestrator.manager(proxy);
         Assertions.assertTrue(manager.present());
 
-        MethodStub<InterfaceProxyTarget> methodStub = manager.get().advisor().resolver().defaultStub().get();
-        Assertions.assertTrue(methodStub instanceof DefaultValueResponseMethodStub<InterfaceProxyTarget>);
+        MethodStub<InterfaceProxyTarget> methodStub =
+            manager.get().advisor().resolver().defaultStub().get();
+        Assertions.assertInstanceOf(DefaultValueResponseMethodStub.class, methodStub);
 
         String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
         Assertions.assertNull(stringValue);
@@ -69,8 +71,9 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubBehaviorCanBeChanged() throws ApplicationException {
-        ProxyFactory<InterfaceProxyTarget> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(
-            InterfaceProxyTarget.class);
+        ProxyFactory<InterfaceProxyTarget> proxyFactory =
+            this.orchestratorLoader().create(this.introspector()).factory(
+                InterfaceProxyTarget.class);
 
         // Also verifies that the stub result is not cached
         AtomicInteger integer = new AtomicInteger(0);
@@ -87,8 +90,9 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubsAreObserved() throws ApplicationException, NoSuchMethodException {
-        ProxyFactory<InterfaceProxyTarget> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(
-            InterfaceProxyTarget.class);
+        ProxyFactory<InterfaceProxyTarget> proxyFactory =
+            this.orchestratorLoader().create(this.introspector()).factory(
+                InterfaceProxyTarget.class);
 
         AtomicBoolean beforeObserved = new AtomicBoolean(false);
         AtomicBoolean afterObserved = new AtomicBoolean(false);
@@ -101,14 +105,14 @@ public abstract class MethodStubTests {
                 .before(context -> beforeObserved.set(true))
                 .after(context -> afterObserved.set(true))
                 .onError(context -> errorObserved.set(true))
-                )
-                .defaultStub(context -> {
-                    // RuntimeException, as it is not declared in the interface
-                    if (shouldThrow.get()) {
-                        throw new ApplicationRuntimeException("Test");
-                    }
-                    return "test";
-                });
+            )
+            .defaultStub(context -> {
+                // RuntimeException, as it is not declared in the interface
+                if (shouldThrow.get()) {
+                    throw new ApplicationRuntimeException("Test");
+                }
+                return "test";
+            });
 
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
         Assertions.assertDoesNotThrow(proxy::stringTest);

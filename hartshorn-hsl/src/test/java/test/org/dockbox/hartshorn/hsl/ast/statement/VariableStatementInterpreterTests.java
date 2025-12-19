@@ -31,9 +31,9 @@ public class VariableStatementInterpreterTests {
     @Test
     void variableDeclarationWithInitializer(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "var x = 10")
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Object x = helper.findVariable("x");
@@ -43,9 +43,9 @@ public class VariableStatementInterpreterTests {
     @Test
     void variableDeclarationWithoutInitializer(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "var y")
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Object y = helper.findVariable("y");

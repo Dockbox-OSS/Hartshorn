@@ -22,12 +22,13 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import java.util.Arrays;
 
 /**
- * Utility interface to provide common methods for all proxies. This may be implemented by any proxy, advisor, or
- * handler to provide common methods for proxy objects.
+ * Utility interface to provide common methods for all proxies. This may be implemented by any
+ * proxy, advisor, or handler to provide common methods for proxy objects.
  *
  * @param <T> the type of the proxy object
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -37,44 +38,48 @@ public interface ProxyObject<T> {
      * Returns whether the given {@link Invokable} is the {@link Object#equals(Object)} method.
      *
      * @param invokable the invokable to check
+     *
      * @return whether the given {@link Invokable} is the {@link Object#equals(Object)} method
      */
     default boolean isEqualsMethod(Invokable invokable) {
         return "equals".equals(invokable.name())
-                && invokable.returnType().equals(boolean.class)
-                && invokable.parameterTypes().length == 1
-                && invokable.parameterTypes()[0].equals(Object.class);
+            && invokable.returnType().equals(boolean.class)
+            && invokable.parameterTypes().length == 1
+            && invokable.parameterTypes()[0].equals(Object.class);
     }
 
     /**
      * Returns whether the given {@link Invokable} is the {@link Object#toString()} method.
      *
      * @param invokable the invokable to check
+     *
      * @return whether the given {@link Invokable} is the {@link Object#toString()} method
      */
     default boolean isToStringMethod(Invokable invokable) {
         return "toString".equals(invokable.name())
-                && invokable.parameterTypes().length == 0
-                && invokable.returnType().equals(String.class);
+            && invokable.parameterTypes().length == 0
+            && invokable.returnType().equals(String.class);
     }
 
     /**
      * Returns whether the given {@link Invokable} is the {@link Object#hashCode()} method.
      *
      * @param invokable the invokable to check
+     *
      * @return whether the given {@link Invokable} is the {@link Object#hashCode()} method
      */
     default boolean isHashCodeMethod(Invokable invokable) {
         return "hashCode".equals(invokable.name())
-                && invokable.parameterTypes().length == 0
-                && invokable.returnType().equals(int.class);
+            && invokable.parameterTypes().length == 0
+            && invokable.returnType().equals(int.class);
     }
 
     /**
-     * Returns whether the given object is equal to the proxy managed by the {@link #manager()} of this
-     * proxy object.
+     * Returns whether the given object is equal to the proxy managed by the {@link #manager()} of
+     * this proxy object.
      *
      * @param obj the object to compare
+     *
      * @return whether the given object is equal to the proxy managed by the {@link #manager()}
      */
     default boolean proxyEquals(Object obj) {
@@ -97,10 +102,11 @@ public interface ProxyObject<T> {
     }
 
     /**
-     * Returns a logical string representation of the proxy managed by the {@link #manager()} of this
-     * proxy object.
+     * Returns a logical string representation of the proxy managed by the {@link #manager()} of
+     * this proxy object.
      *
      * @param self the proxy to represent
+     *
      * @return a logical string representation of the proxy managed by the {@link #manager()}
      */
     default String proxyToString(T self) {
@@ -110,19 +116,20 @@ public interface ProxyObject<T> {
         ProxyManager<T> manager = this.manager();
         String canonicalName = manager.targetClass().getCanonicalName();
         String[] interfaces = Arrays.stream(self.getClass().getInterfaces())
-                .map(Class::getCanonicalName)
-                .toArray(String[]::new);
+            .map(Class::getCanonicalName)
+            .toArray(String[]::new);
 
         return ObjectDescriber.of(self)
-                .field("targetClass", canonicalName)
-                .field("interfaces", interfaces)
-                .describe();
+            .field("targetClass", canonicalName)
+            .field("interfaces", interfaces)
+            .describe();
     }
 
     /**
      * Returns a hash code for the proxy managed by the {@link #manager()} of this proxy object.
      *
      * @param self the proxy to hash
+     *
      * @return a hash code for the proxy managed by the {@link #manager()}
      */
     default int proxyHashCode(T self) {

@@ -28,14 +28,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A list of components that were discovered during the validation of potentially cyclic components. This list is
- * used to determine the origin of a cycle dependency, and to provide a list of all components that are involved
- * in the cycle.
+ * A list of components that were discovered during the validation of potentially cyclic components.
+ * This list is used to determine the origin of a cycle dependency, and to provide a list of all
+ * components that are involved in the cycle.
  *
  * @see CyclicDependencyGraphValidator
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
@@ -51,8 +51,8 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Adds a new component to the list. The component is added to the front of the list, as it's the most recent
-     * component that was discovered.
+     * Adds a new component to the list. The component is added to the front of the list, as it's
+     * the most recent component that was discovered.
      *
      * @param node the component to add
      */
@@ -61,8 +61,8 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Adds a new component to the list. The component is added to the front of the list, as it's the most recent
-     * component that was discovered.
+     * Adds a new component to the list. The component is added to the front of the list, as it's
+     * the most recent component that was discovered.
      *
      * @param node the component to add
      * @param actualType the actual type of the component
@@ -72,8 +72,8 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Adds a new component to the list. The component is added to the front of the list, as it's the most recent
-     * component that was discovered.
+     * Adds a new component to the list. The component is added to the front of the list, as it's
+     * the most recent component that was discovered.
      *
      * @param node the component to add
      * @param constructor the constructor that was used to create the component
@@ -83,9 +83,9 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Returns a list of all discovered components. The list is ordered from most recently discovered to least
-     * recently discovered. The list is also de-duplicated, as the first component may also be included at the
-     * end of the list.
+     * Returns a list of all discovered components. The list is ordered from most recently
+     * discovered to least recently discovered. The list is also de-duplicated, as the first
+     * component may also be included at the end of the list.
      *
      * @return a list of all discovered components
      */
@@ -94,9 +94,9 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Returns a list of all discovered components. The list is ordered from most recently discovered to least
-     * recently discovered. This includes all components, where the first component may also be included at the
-     * end of the list.
+     * Returns a list of all discovered components. The list is ordered from most recently
+     * discovered to least recently discovered. This includes all components, where the first
+     * component may also be included at the end of the list.
      *
      * @return a list of all discovered components
      */
@@ -117,10 +117,12 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      * Returns whether the list contains the given component.
      *
      * @param pathNode the component to check for
+     *
      * @return {@code true} if the list contains the component, {@code false} otherwise
      */
     public boolean contains(TypePathNode<?> pathNode) {
-        return this.discoveredComponents.stream().anyMatch(component -> component.node().equals(pathNode));
+        return this.discoveredComponents.stream()
+            .anyMatch(component -> component.node().equals(pathNode));
     }
 
     @NonNull
@@ -142,8 +144,9 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     /**
-     * Represents a discovered component in the {@link ComponentDiscoveryList}. It contains the {@link TypePathNode}
-     * that represents the original binding declaration, and the actual type of the component that was discovered.
+     * Represents a discovered component in the {@link ComponentDiscoveryList}. It contains the
+     * {@link TypePathNode} that represents the original binding declaration, and the actual type of
+     * the component that was discovered.
      *
      * @param node the original binding declaration
      * @param actualType the actual type of the component
@@ -155,11 +158,12 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     public record DiscoveredComponent(TypePathNode<?> node, TypeView<?> actualType) {
 
         /**
-         * Returns whether the component was discovered from a binding declaration, or from a constructor.
-         * If the component was discovered from a binding declaration, the actual type of the component
-         * will be different from the type of the dependency declaration.
+         * Returns whether the component was discovered from a binding declaration, or from a
+         * constructor. If the component was discovered from a binding declaration, the actual type
+         * of the component will be different from the type of the dependency declaration.
          *
-         * @return {@code true} if the component was discovered from a binding declaration, {@code false} otherwise
+         * @return {@code true} if the component was discovered from a binding declaration,
+         * {@code false} otherwise
          */
         public boolean fromBinding() {
             return !this.node.type().is(this.actualType.type());

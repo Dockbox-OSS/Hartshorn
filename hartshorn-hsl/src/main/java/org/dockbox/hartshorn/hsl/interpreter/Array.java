@@ -27,8 +27,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * Simple wrapper around an array of objects, without a specific type requirement. This is used
- * by the {@link SimpleVisitorInterpreter} to represent arrays in the HSL language, and access them natively.
+ * Simple wrapper around an array of objects, without a specific type requirement. This is used by
+ * the {@link SimpleVisitorInterpreter} to represent arrays in the HSL language, and access them
+ * natively.
  *
  * @since 0.4.12
  *
@@ -48,8 +49,10 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     /**
      * Sets the value at the given index.
+     *
      * @param value The value to set.
      * @param index The index to set the value at.
+     *
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
     public void value(Object value, int index) {
@@ -58,8 +61,11 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     /**
      * Gets the value at the given index.
+     *
      * @param index The index to get the value from.
+     *
      * @return The value at the given index.
+     *
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
     public Object value(int index) {
@@ -68,6 +74,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     /**
      * Gets the array represented by this instance.
+     *
      * @return The array represented by this instance.
      */
     public Object[] values() {
@@ -76,6 +83,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     /**
      * Gets the length of the array.
+     *
      * @return The length of the array.
      */
     public int length() {
@@ -85,9 +93,9 @@ public class Array implements Iterable<Object>, PropertyContainer {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("length", this.length())
-                .field("values", this.values)
-                .describe();
+            .field("length", this.length())
+            .field("values", this.values)
+            .describe();
     }
 
     @Override
@@ -96,11 +104,16 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
+    public void set(
+        final Interpreter interpreter,
+        final Token name,
+        final Object value,
+        VariableScope fromScope
+    ) {
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
-                .at(name)
-                .build();
+            .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
+            .at(name)
+            .build();
     }
 
     @Override
@@ -110,14 +123,14 @@ public class Array implements Iterable<Object>, PropertyContainer {
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(
-                            DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y,
-                            "read",
-                            name.lexeme(),
-                            "length"
-                    )
-                    .at(name)
-                    .build();
+                .message(
+                    DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y,
+                    "read",
+                    name.lexeme(),
+                    "length"
+                )
+                .at(name)
+                .build();
         }
     }
 }

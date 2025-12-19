@@ -25,46 +25,50 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * Represents the different types of arithmetic tokens that can be used in the HSL language.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ArithmeticTokenType implements EnumTokenType {
     /**
-     * '+' token, representing addition in a {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression
-     * binary} or {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} expression.
+     * '+' token, representing addition in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression binary} or
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} expression.
      */
     PLUS(DefaultTokenCharacter.PLUS),
     /**
-     * '-' token, representing subtraction in a {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression
-     * binary} or {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} expression.
+     * '-' token, representing subtraction in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression binary} or
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} expression.
      */
     MINUS(DefaultTokenCharacter.MINUS),
     /**
-     * '*' token, representing multiplication in a {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression
-     * binary} expression.
+     * '*' token, representing multiplication in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression binary} expression.
      */
     STAR(DefaultTokenCharacter.STAR),
     /**
-     * '/' token, representing division in a {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression
-     * binary} expression.
+     * '/' token, representing division in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression binary} expression.
      */
     SLASH(DefaultTokenCharacter.SLASH),
     /**
-     * '%' token, representing modulo in a {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression
-     * binary} expression.
+     * '%' token, representing modulo in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression binary} expression.
      */
     MODULO(DefaultTokenCharacter.MODULO),
 
     /**
-     * '++' token, representing increment in a {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression
-     * unary} or {@link org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression postfix} expression.
+     * '++' token, representing increment in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} or
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression postfix} expression.
      */
     PLUS_PLUS(builder -> builder.repeats(PLUS)),
     /**
-     * '--' token, representing decrement in a {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression
-     * unary} or {@link org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression postfix} expression.
+     * '--' token, representing decrement in a
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression unary} or
+     * {@link org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression postfix} expression.
      */
     MINUS_MINUS(builder -> builder.repeats(MINUS)),
     ;
@@ -73,8 +77,8 @@ public enum ArithmeticTokenType implements EnumTokenType {
 
     ArithmeticTokenType(DefaultTokenCharacter character) {
         this(builder -> builder
-                .representation(String.valueOf(character.character()))
-                .characters(character)
+            .representation(String.valueOf(character.character()))
+            .characters(character)
         );
     }
 

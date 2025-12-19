@@ -36,21 +36,23 @@ import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 public class PrefixExpressionTests {
 
     @Test
-    void prefixExpressionWithDefinitionAndImplementationPasses(@Inject ApplicationContext applicationContext) {
+    void prefixExpressionWithDefinitionAndImplementationPasses(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "not true")
-                .expressionParser(new PrefixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    // Prefix function definition
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addPrefixFunction("not");
-                    parser.addContext(functionParserContext);
-                })
-                // Prefix function implementation
-                .defineLocal("not", (CallableNode) (at, interpreter, instance, arguments) -> {
-                    return !((Boolean) arguments.getFirst());
-                })
-                .build();
+            .expressionParser(new PrefixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                // Prefix function definition
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addPrefixFunction("not");
+                parser.addContext(functionParserContext);
+            })
+            // Prefix function implementation
+            .defineLocal("not", (CallableNode) (at, interpreter, instance, arguments) -> {
+                return !((Boolean) arguments.getFirst());
+            })
+            .build();
 
         Object value = helper.interpretValue();
         boolean result = Assertions.assertInstanceOf(Boolean.class, value);
@@ -58,64 +60,70 @@ public class PrefixExpressionTests {
     }
 
     @Test
-    void prefixExpressionWithoutDefinitionFailsAtParser(@Inject ApplicationContext applicationContext) {
+    void prefixExpressionWithoutDefinitionFailsAtParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "not true")
-                .expressionParser(new PrefixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+            .expressionParser(new PrefixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         Assertions.assertEquals(Phase.PARSING, error.phase());
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 
     @Test
-    void prefixExpressionWithDefinitionAndWithoutImplementationFailsAtInterpreter(@Inject ApplicationContext applicationContext) {
+    void prefixExpressionWithDefinitionAndWithoutImplementationFailsAtInterpreter(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "not true")
-                .expressionParser(new PrefixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addPrefixFunction("not");
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+            .expressionParser(new PrefixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addPrefixFunction("not");
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         Assertions.assertDoesNotThrow(helper::parse);
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpretValue
+            ScriptEvaluationError.class,
+            helper::interpretValue
         );
         Assertions.assertEquals(Phase.INTERPRETING, error.phase());
         ScriptAssertions.assertEvaluationError(
-                error,
-                FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "not")
+            error,
+            FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "not")
         );
     }
 
     @Test
-    void prefixExpressionWithoutArgumentFailsAtParser(@Inject ApplicationContext applicationContext) {
+    void prefixExpressionWithoutArgumentFailsAtParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "not")
-                .expressionParser(new PrefixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addPrefixFunction("not");
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+            .expressionParser(new PrefixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addPrefixFunction("not");
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         Assertions.assertEquals(Phase.PARSING, error.phase());
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);

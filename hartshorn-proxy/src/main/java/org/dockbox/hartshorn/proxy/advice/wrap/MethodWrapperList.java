@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * A {@link MethodWrapper} that wraps multiple other {@link MethodWrapper}s. This wrapper will invoke all of the
- * wrapped method wrappers. If the provided collection is ordered, the wrappers are invoked in the order in which they
- * are provided.
+ * A {@link MethodWrapper} that wraps multiple other {@link MethodWrapper}s. This wrapper will
+ * invoke all of the wrapped method wrappers. If the provided collection is ordered, the wrappers
+ * are invoked in the order in which they are provided.
  *
  * @param <T> The type of the proxy instance
  *

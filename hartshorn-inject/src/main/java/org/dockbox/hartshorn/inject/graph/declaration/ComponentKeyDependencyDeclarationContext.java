@@ -24,29 +24,36 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Basic implementation of a {@link DependencyDeclarationContext} that is used to declare dependencies based on their
- * {@link ComponentKey}.
+ * Basic implementation of a {@link DependencyDeclarationContext} that is used to declare
+ * dependencies based on their {@link ComponentKey}.
  *
  * @param <T> the type of the dependency being declared
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
+public class ComponentKeyDependencyDeclarationContext<T>
+    implements DependencyDeclarationContext<T> {
 
     private final ComponentKey<T> key;
     private final InstantiationStrategy<T> strategy;
     private final TypeView<T> type;
 
-    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, InstantiationStrategy<T> strategy) {
+    public ComponentKeyDependencyDeclarationContext(
+        Introspector introspector,
+        ComponentKey<T> key,
+        InstantiationStrategy<T> strategy
+    ) {
         this.key = key;
         this.strategy = strategy;
-        this.type = TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
+        this.type =
+            TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
     /**
-     * Returns the key of the dependency, which is used to identify the dependency in dependency visitors or graphs.
+     * Returns the key of the dependency, which is used to identify the dependency in dependency
+     * visitors or graphs.
      *
      * @return the key of the dependency
      */
@@ -72,5 +79,4 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
     public CompositeQualifier qualifier() {
         return this.key.qualifier();
     }
-
 }

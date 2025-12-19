@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.inject.provider;
 
 /**
- * A {@link InstantiationStrategy} that is not aware of the type it provides. This is useful when the type
- * is not known at compile time, but only at runtime (e.g. in suppliers).
+ * A {@link InstantiationStrategy} that is not aware of the type it provides. This is useful when
+ * the type is not known at compile time, but only at runtime (e.g. in suppliers).
  *
  * @param <T> The type instance to provide.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public non-sealed interface NonTypeAwareInstantiationStrategy<T> extends InstantiationStrategy<T> {

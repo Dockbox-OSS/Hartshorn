@@ -32,8 +32,9 @@ public class ExecutionOptions {
     private boolean failOnAssertionFailure = true;
 
     /**
-     * Whether ambiguous external functions should be permitted. If set to {@code false}, the interpreter
-     * will throw an exception when it encounters functions with the same name in external modules.
+     * Whether ambiguous external functions should be permitted. If set to {@code false}, the
+     * interpreter will throw an exception when it encounters functions with the same name in
+     * external modules.
      *
      * @return {@code true} if ambiguous external functions are permitted, {@code false} otherwise.
      */
@@ -42,21 +43,25 @@ public class ExecutionOptions {
     }
 
     /**
-     * Sets whether ambiguous external functions should be permitted. If set to {@code false}, the interpreter
-     * will throw an exception when it encounters functions with the same name in external modules.
+     * Sets whether ambiguous external functions should be permitted. If set to {@code false}, the
+     * interpreter will throw an exception when it encounters functions with the same name in
+     * external modules.
      *
-     * @param permitAmbiguousModuleFunctions {@code true} if ambiguous external functions are permitted, {@code false} otherwise.
+     * @param permitAmbiguousModuleFunctions {@code true} if ambiguous external functions are
+     * permitted, {@code false} otherwise.
      *
      * @return The current configuration.
      */
-    public ExecutionOptions permitAmbiguousExternalFunctions(boolean permitAmbiguousModuleFunctions) {
+    public ExecutionOptions permitAmbiguousExternalFunctions(
+        boolean permitAmbiguousModuleFunctions
+    ) {
         this.permitAmbiguousExternalFunctions = permitAmbiguousModuleFunctions;
         return this;
     }
 
     /**
-     * Whether assertions are enabled. If set to {@code false}, the interpreter will not execute any assertions
-     * in the script.
+     * Whether assertions are enabled. If set to {@code false}, the interpreter will not execute any
+     * assertions in the script.
      *
      * @return {@code true} if assertions are enabled, {@code false} otherwise.
      */
@@ -65,8 +70,8 @@ public class ExecutionOptions {
     }
 
     /**
-     * Sets whether assertions are enabled. If set to {@code false}, the interpreter will not execute any assertions
-     * in the script.
+     * Sets whether assertions are enabled. If set to {@code false}, the interpreter will not
+     * execute any assertions in the script.
      *
      * @param enableAssertions {@code true} if assertions are enabled, {@code false} otherwise.
      *
@@ -78,22 +83,24 @@ public class ExecutionOptions {
     }
 
     /**
-     * Whether the interpreter should fail when an assertion fails. If set to {@code false}, the interpreter
-     * will not throw an exception when an assertion fails, but will include the result in a {@link
-     * ScriptContext#result(String) result entry}.
+     * Whether the interpreter should fail when an assertion fails. If set to {@code false}, the
+     * interpreter will not throw an exception when an assertion fails, but will include the result
+     * in a {@link ScriptContext#result(String) result entry}.
      *
-     * @return {@code true} if the interpreter should fail on assertion failure, {@code false} otherwise.
+     * @return {@code true} if the interpreter should fail on assertion failure, {@code false}
+     * otherwise.
      */
     public boolean failOnAssertionFailure() {
         return this.failOnAssertionFailure;
     }
 
     /**
-     * Sets whether the interpreter should fail when an assertion fails. If set to {@code false}, the interpreter
-     * will not throw an exception when an assertion fails, but will include the result in a {@link
-     * ScriptContext#result(String) result entry}.
+     * Sets whether the interpreter should fail when an assertion fails. If set to {@code false},
+     * the interpreter will not throw an exception when an assertion fails, but will include the
+     * result in a {@link ScriptContext#result(String) result entry}.
      *
-     * @param failOnAssertionFailure {@code true} if the interpreter should fail on assertion failure, {@code false} otherwise.
+     * @param failOnAssertionFailure {@code true} if the interpreter should fail on assertion
+     * failure, {@code false} otherwise.
      *
      * @return The current configuration.
      */

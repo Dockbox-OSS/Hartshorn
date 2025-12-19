@@ -36,31 +36,46 @@ import java.util.stream.Collectors;
  * interpreter's settings.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class AbstractNativeLibraryStatementInterpreter {
 
+    /**
+     * Registers a native module function in the interpreter's global scope. If multiple functions
+     * with the same name are found, it either throws an error or registers an ambiguous function
+     * handler based on the interpreter's execution options.
+     *
+     * @param moduleName the name of the target module in which the function is defined
+     * @param functionName the name of the function to register
+     * @param interpreter the interpreter instance
+     * @param supportedFunctions the list of native function statements that match the function name
+     * @param module the native module containing the functions
+     */
     protected void registerModuleFunction(
-            String moduleName,
-            String functionName,
-            Interpreter interpreter,
-            List<NativeFunctionStatement> supportedFunctions,
-            NativeModule module
+        String moduleName,
+        String functionName,
+        Interpreter interpreter,
+        List<NativeFunctionStatement> supportedFunctions,
+        NativeModule module
     ) {
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, functionName)
-                        .at(supportedFunctions.getFirst().name())
-                        .build();
+                    .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE,
+                        moduleName,
+                        functionName)
+                    .at(supportedFunctions.getFirst().name())
+                    .build();
             }
             else {
                 Set<NativeLibrary> libraries = supportedFunctions.stream()
-                        .map(function -> new NativeLibrary(function, moduleName, module))
-                        .collect(Collectors.toSet());
-                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousNativeLibraryFunction(libraries));
+                    .map(function -> new NativeLibrary(function, moduleName, module))
+                    .collect(Collectors.toSet());
+                interpreter.global()
+                    .define(supportedFunctions.getFirst().name().lexeme(),
+                        new AmbiguousNativeLibraryFunction(libraries));
             }
         }
         else {

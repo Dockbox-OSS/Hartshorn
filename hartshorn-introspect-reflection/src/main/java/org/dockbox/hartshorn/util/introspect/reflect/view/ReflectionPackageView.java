@@ -99,7 +99,11 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
         writeIfNotEmpty(collector, "SpecificationVersion", this.specificationVersion());
     }
 
-    private void writeIfNotEmpty(DiagnosticsPropertyCollector collector, String propertyName, String value) {
+    private void writeIfNotEmpty(
+        DiagnosticsPropertyCollector collector,
+        String propertyName,
+        String value
+    ) {
         if (value != null && !value.isEmpty()) {
             collector.property(propertyName).writeString(value);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ public class ParameterLoaderContext {
     private final Object instance;
 
     public ParameterLoaderContext(ExecutableElementView<?> executable, Object instance) {
-        assert instance != null || !executable.modifiers().isStatic() : "Instance must not be null for non-static methods";
+        assert instance != null || !executable.modifiers().isStatic() :
+            "Instance must not be null for non-static methods";
 
         this.executable = executable;
         this.instance = instance;

@@ -30,10 +30,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link PrototypeConstructorInstantiationStrategy} is a {@link InstantiationStrategy} that uses a
- * {@link ConstructorView} to create a new instance of a class. The constructor is looked up based on
- * its parameters, where the constructor with the most parameters is chosen in order to satisfy as many
- * dependencies as possible.
+ * A {@link PrototypeConstructorInstantiationStrategy} is a {@link InstantiationStrategy} that uses
+ * a {@link ConstructorView} to create a new instance of a class. The constructor is looked up based
+ * on its parameters, where the constructor with the most parameters is chosen in order to satisfy
+ * as many dependencies as possible.
  *
  * <p>If no injectable constructors can be found, the default constructor is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
@@ -42,12 +42,13 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @see InstantiationStrategy
  * @see SupplierInstantiationStrategy
- *
+ * 
  * @since 0.4.4
- *
+ * 
  * @author Guus Lieben
  */
-public final class PrototypeConstructorInstantiationStrategy<C> implements TypeAwareInstantiationStrategy<C> {
+public final class PrototypeConstructorInstantiationStrategy<C>
+    implements TypeAwareInstantiationStrategy<C> {
 
     private final ComponentKey<? extends C> componentKey;
     private final LifecycleType lifecycleType;
@@ -55,42 +56,52 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
     private ConstructorView<? extends C> optimalConstructor;
     private boolean lazy = true;
 
-    private PrototypeConstructorInstantiationStrategy(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
+    private PrototypeConstructorInstantiationStrategy(
+        ComponentKey<? extends C> type,
+        LifecycleType lifecycleType
+    ) {
         this.componentKey = type;
         this.lifecycleType = lifecycleType;
     }
 
     /**
-     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a prototype lifecycle.
+     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a
+     * prototype lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(ComponentKey<? extends T> type) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(
+        ComponentKey<? extends T> type
+    ) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.PROTOTYPE);
     }
 
     /**
-     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a singleton lifecycle.
+     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a
+     * singleton lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(ComponentKey<? extends T> type) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(
+        ComponentKey<? extends T> type
+    ) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.SINGLETON);
     }
 
     /**
-     * Sets the lazy flag for the provider. If the provider is lazy, the instance will only be created
-     * when it is first requested. If the provider is not lazy, the instance will be created immediately
-     * after the provider is registered. Note that it remains up to the container to respect this flag,
-     * and determine when to create the instance.
+     * Sets the lazy flag for the provider. If the provider is lazy, the instance will only be
+     * created when it is first requested. If the provider is not lazy, the instance will be created
+     * immediately after the provider is registered. Note that it remains up to the container to
+     * respect this flag, and determine when to create the instance.
      *
      * @param lazy whether the provider should be lazy
+     *
      * @return the provider
      */
     public PrototypeConstructorInstantiationStrategy<C> lazy(boolean lazy) {
@@ -99,22 +110,31 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
     }
 
     @Override
-    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
-        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(application);
+    public Option<ObjectContainer<C>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException {
+        Option<? extends ConstructorView<? extends C>> constructor =
+            this.optimalConstructor(application);
         if (constructor.absent()) {
             return Option.empty();
         }
         try {
-            ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
+            ComponentExecutableInvocationAdapter contextAdapter =
+                new InjectorExecutableInvocationAdapter(application)
                     .requestContext(requestContext)
-                    // Prefer component scope, but fall back to the given scope (which may be null, for global)
+                    // Prefer component scope, but fall back to the given scope (which may be null,
+                    // for global)
                     .scope(this.componentKey.scope().orElse(scope));
             return contextAdapter.create(constructor.get())
-                    .cast(this.type())
-                    .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));
+                .cast(this.type())
+                .map(instance -> ComponentObjectContainer.ofLifecycleType(instance,
+                    this.lifecycleType));
         }
         catch (Throwable throwable) {
-            throw new ApplicationException("Failed to create instance of type " + this.type().getName(), throwable);
+            throw new ApplicationException("Failed to create instance of type " + this.type()
+                .getName(), throwable);
         }
     }
 
@@ -128,16 +148,21 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
         return Tristate.valueOf(this.lazy);
     }
 
-    private Option<? extends ConstructorView<? extends C>> optimalConstructor(InjectionCapableApplication application) throws ApplicationException {
-        TypeView<? extends C> typeView = application.environment().introspector().introspect(this.type());
+    private Option<? extends ConstructorView<? extends C>> optimalConstructor(
+        InjectionCapableApplication application
+    ) throws ApplicationException {
+        TypeView<? extends C> typeView =
+            application.environment().introspector().introspect(this.type());
         if (this.optimalConstructor == null) {
             try {
-                this.optimalConstructor = ComponentConstructorResolver.create(application).findConstructor(typeView).orNull();
+                this.optimalConstructor = ComponentConstructorResolver.create(application)
+                    .findConstructor(typeView)
+                    .orNull();
             }
             catch (ApplicationException e) {
                 throw e;
             }
-            catch(Throwable throwable) {
+            catch (Throwable throwable) {
                 throw new ApplicationException(throwable);
             }
         }
@@ -152,9 +177,9 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.componentKey.parameterizedType())
-                .field("lifecycleType", this.lifecycleType)
-                .field("lazy", this.lazy)
-                .describe();
+            .field("type", this.componentKey.parameterizedType())
+            .field("lifecycleType", this.lifecycleType)
+            .field("lazy", this.lazy)
+            .describe();
     }
 }

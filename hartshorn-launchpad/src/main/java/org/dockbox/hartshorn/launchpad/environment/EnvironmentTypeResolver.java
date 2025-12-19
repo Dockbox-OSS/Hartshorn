@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,10 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * Resolver to find annotated types in the environment. Depending on the environment and implementation of
- * this interface, this may also support meta-annotations or annotation hierarchies (typically through the
- * use of {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
+ * Resolver to find annotated types in the environment. Depending on the environment and
+ * implementation of this interface, this may also support meta-annotations or annotation
+ * hierarchies (typically through the use of
+ * {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
  *
  * @since 0.6.0
  *
@@ -37,8 +38,8 @@ public interface EnvironmentTypeResolver {
      *
      * @param <A> The annotation constraint
      * @param annotation The annotation expected to be present on one or more types
+     *
      * @return The annotated types
      */
     <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
-
 }

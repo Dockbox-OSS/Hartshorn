@@ -35,8 +35,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Represents a property that contains a map of properties. This is used to represent nested properties in a
- * configuration.
+ * Represents a property that contains a map of properties. This is used to represent nested
+ * properties in a configuration.
  *
  * @param <T> the type of the key used to access the map
  *
@@ -53,15 +53,19 @@ public abstract class AbstractMapProperty<T> {
     private final PropertyPathStyle pathStyle;
     private final String name;
 
-    protected AbstractMapProperty(String name, Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+    protected AbstractMapProperty(
+        String name,
+        Map<String, ConfiguredProperty> properties,
+        PropertyPathStyle pathStyle
+    ) {
         this.properties = new TreeMap<>(properties);
         this.name = name;
         this.pathStyle = pathStyle;
     }
 
     /**
-     * Returns the style of the property path used by this map property. This is used to determine how the properties
-     * are accessed and represented.
+     * Returns the style of the property path used by this map property. This is used to determine
+     * how the properties are accessed and represented.
      *
      * @return the style of the property path used by this map property
      */
@@ -88,67 +92,76 @@ public abstract class AbstractMapProperty<T> {
     }
 
     /**
-     * Returns the property with the given key. If the property does not exist, or cannot be represented as a
-     * {@link ValueProperty} through the use of a {@link ValueConfiguredPropertyParser}, an empty {@link Option}
-     * is returned.
+     * Returns the property with the given key. If the property does not exist, or cannot be
+     * represented as a {@link ValueProperty} through the use of a
+     * {@link ValueConfiguredPropertyParser}, an empty {@link Option} is returned.
      *
      * @param key the key of the property to retrieve
+     *
      * @return the property with the given key, or an empty {@link Option}
      */
     public Option<ValueProperty> get(T key) {
         return Option.of(this.properties.get(this.valueAccessor(key)))
-                .flatMap(ValueConfiguredPropertyParser.INSTANCE::parse);
+            .flatMap(ValueConfiguredPropertyParser.INSTANCE::parse);
     }
 
     /**
-     * Returns the accessor value for the given key. This is used to access the property in the map. Unlike {@link
-     * #accessor(Object)}, this method should return the qualified key as if it were the start of a property name.
-     * For example, if the key is "test", this method should return "test" instead of ".test".
+     * Returns the accessor value for the given key. This is used to access the property in the map.
+     * Unlike {@link #accessor(Object)}, this method should return the qualified key as if it were
+     * the start of a property name. For example, if the key is "test", this method should return
+     * "test" instead of ".test".
      *
      * @param key the key to get the value for
+     *
      * @return the accessor value for the given key
      */
     protected abstract String valueAccessor(T key);
 
     /**
-     * Returns the accessor value for the given key. This is used to access the property in the map. Unlike {@link
-     * #valueAccessor(Object)}, this method should return the qualified key as if it were the end of a property name.
-     * For example, if the key is "test", this method should return ".test" instead of "test".
+     * Returns the accessor value for the given key. This is used to access the property in the map.
+     * Unlike {@link #valueAccessor(Object)}, this method should return the qualified key as if it
+     * were the end of a property name. For example, if the key is "test", this method should return
+     * ".test" instead of "test".
      *
      * @param key the key to get the value for
+     *
      * @return the accessor value for the given key
      */
     protected abstract String accessor(T key);
 
     /**
-     * Returns the property with the given key. If no properties are found with the given key, an empty {@link
-     * ObjectProperty} is returned. This method will attempt to find all properties that start with the given key,
-     * and create a new {@link ObjectProperty} from them.
+     * Returns the property with the given key. If no properties are found with the given key, an
+     * empty {@link ObjectProperty} is returned. This method will attempt to find all properties
+     * that start with the given key, and create a new {@link ObjectProperty} from them.
      *
      * @param key the key of the property to retrieve
+     *
      * @return the property with the given key
      */
     public Option<ObjectProperty> object(T key) {
         Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
-                name.startsWith(this.valueAccessor(key) + OBJECT_SEPARATOR)
+            name.startsWith(this.valueAccessor(key) + OBJECT_SEPARATOR)
         ).entrySet().stream().collect(Collectors.toMap(
-                // Strip trailing object separators from key
-                entry -> entry.getKey().substring(OBJECT_SEPARATOR.length()),
-                Map.Entry::getValue
+            // Strip trailing object separators from key
+            entry -> entry.getKey().substring(OBJECT_SEPARATOR.length()),
+            Map.Entry::getValue
         ));
-        ObjectProperty property = new MapObjectProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
+        ObjectProperty property =
+            new MapObjectProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
         return Option.of(property);
     }
 
     /**
-     * Returns the property with the given key. If no properties are found with the given key, an empty {@link
-     * ListProperty} is returned. This method will attempt to find all properties that start with the given key,
-     * and create a new {@link ListProperty} from them.
+     * Returns the property with the given key. If no properties are found with the given key, an
+     * empty {@link ListProperty} is returned. This method will attempt to find all properties that
+     * start with the given key, and create a new {@link ListProperty} from them.
      *
-     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the value will be
-     * parsed using {@link StandardValuePropertyParsers#STRING_LIST} to convert it to a list of values.
+     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the
+     * value will be parsed using {@link StandardValuePropertyParsers#STRING_LIST} to convert it to
+     * a list of values.
      *
      * @param key the key of the property to retrieve
+     *
      * @return the property with the given key
      */
     public Option<ListProperty> list(T key) {
@@ -158,8 +171,8 @@ public abstract class AbstractMapProperty<T> {
             List<Property> listProperties = new ArrayList<>();
             for (int i = 0; i < valueList.size(); i++) {
                 listProperties.add(i, new SimpleValueProperty(
-                        this.name() + this.accessor(key) + this.pathStyle().index(i),
-                        valueList.get(i)
+                    this.name() + this.accessor(key) + this.pathStyle().index(i),
+                    valueList.get(i)
                 ));
             }
             return new SimpleListProperty(this.name() + this.accessor(key), listProperties);
@@ -167,84 +180,101 @@ public abstract class AbstractMapProperty<T> {
     }
 
     /**
-     * Returns the property with the given key. If no properties are found with the given key, an empty {@link
-     * ListProperty} is returned. This method will attempt to find all properties that start with the given key,
-     * and create a new {@link ListProperty} from them.
+     * Returns the property with the given key. If no properties are found with the given key, an
+     * empty {@link ListProperty} is returned. This method will attempt to find all properties that
+     * start with the given key, and create a new {@link ListProperty} from them.
      *
-     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the value will be
-     * parsed using the provided {@link Function} to convert it to a list of values.
+     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the
+     * value will be parsed using the provided {@link Function} to convert it to a list of values.
      *
      * @param key the key of the property to retrieve
      * @param singleValueMapper the function to use to map a single value to a list property
+     *
      * @return the property with the given key
      */
-    public Option<ListProperty> list(T key, Function<ValueProperty, ListProperty> singleValueMapper) {
+    public Option<ListProperty> list(
+        T key,
+        Function<ValueProperty, ListProperty> singleValueMapper
+    ) {
         if (this.properties().containsKey(this.valueAccessor(key))) {
             return this.get(key).map(singleValueMapper);
-        } else {
+        }
+        else {
             Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
-                    name.startsWith(this.valueAccessor(key) + LIST_START)
+                name.startsWith(this.valueAccessor(key) + LIST_START)
             );
-            ListProperty property = new MapListProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
+            ListProperty property =
+                new MapListProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
             return Option.of(property);
         }
     }
 
     /**
-     * Returns whether the property with the given key exists in this map property. This method will check if a property
-     * with the given key exists, or if any properties exist that start with the given key.
+     * Returns whether the property with the given key exists in this map property. This method will
+     * check if a property with the given key exists, or if any properties exist that start with the
+     * given key.
      *
      * @param key the key of the property to retrieve
+     *
      * @return the property with the given key, or an empty {@link Option}
      */
     public boolean contains(T key) {
         if (this.properties().containsKey(this.valueAccessor(key))) {
             return true;
-        } else {
+        }
+        else {
             String accessor = this.accessor(key);
             return this.properties().keySet().stream().anyMatch(propertyKey ->
-                    propertyKey.startsWith(accessor + OBJECT_SEPARATOR) || propertyKey.startsWith(accessor + LIST_START)
+                propertyKey.startsWith(accessor + OBJECT_SEPARATOR) || propertyKey.startsWith(
+                    accessor + LIST_START)
             );
         }
     }
 
     /**
-     * Returns all properties that match the given predicate. This will not convert the properties to a specific type,
-     * and will instead return the raw {@link ConfiguredProperty} instances.
+     * Returns all properties that match the given predicate. This will not convert the properties
+     * to a specific type, and will instead return the raw {@link ConfiguredProperty} instances.
      *
      * @param predicate the predicate to match properties against
+     *
      * @return all properties that match the given predicate
      */
     protected List<ConfiguredProperty> find(BiPredicate<String, ConfiguredProperty> predicate) {
         return EntryStream.of(this.properties().entrySet())
-                .filter(predicate)
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
+            .filter(predicate)
+            .map(Map.Entry::getValue)
+            .collect(Collectors.toList());
     }
 
     /**
-     * Collects all properties that match the given predicate to a map. The key of the map is determined by the
-     * implementation of {@link #key(Object, ConfiguredProperty)}.
+     * Collects all properties that match the given predicate to a map. The key of the map is
+     * determined by the implementation of {@link #key(Object, ConfiguredProperty)}.
      *
      * @param key the key to use in the key generation
      * @param predicate the predicate to match properties against
+     *
      * @return all properties that match the given predicate, collected to a map
      */
-    protected Map<String, ConfiguredProperty> collectToMap(T key, BiPredicate<String, ConfiguredProperty> predicate) {
+    protected Map<String, ConfiguredProperty> collectToMap(
+        T key,
+        BiPredicate<String, ConfiguredProperty> predicate
+    ) {
         return this.find(predicate).stream()
-                .collect(Collectors.toMap(
-                        property -> this.key(key, property),
-                        Function.identity()
-                ));
+            .collect(Collectors.toMap(
+                property -> this.key(key, property),
+                Function.identity()
+            ));
     }
 
     /**
-     * Returns the relative key for the given property. The returned key is relative to the current property and
-     * given prefix. For example, if the current property is "test" and the given property is "test.person.name" and
-     * the prefix is "person", the returned key should be "name".
+     * Returns the relative key for the given property. The returned key is relative to the current
+     * property and given prefix. For example, if the current property is "test" and the given
+     * property is "test.person.name" and the prefix is "person", the returned key should be
+     * "name".
      *
      * @param prefix the prefix to use in the key generation
      * @param property the property to use in the key generation
+     *
      * @return the key for the given prefix and property
      */
     protected abstract String key(T prefix, ConfiguredProperty property);
@@ -252,8 +282,8 @@ public abstract class AbstractMapProperty<T> {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name)
-                .field("properties", this.properties)
-                .describe();
+            .field("name", this.name)
+            .field("properties", this.properties)
+            .describe();
     }
 }

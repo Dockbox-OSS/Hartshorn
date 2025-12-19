@@ -45,8 +45,8 @@ public class LanguageExtensionTests {
     @Test
     void testLanguageExtensionCanInject() {
         ExpressionScript script = ExpressionScript.of(
-                this.applicationContext,
-                "(@hello == \"hello\") && (@world == \"world\")"
+            this.applicationContext,
+            "(@hello == \"hello\") && (@world == \"world\")"
         );
 
         AtNameModule module = new AtNameModule();
@@ -61,10 +61,12 @@ public class LanguageExtensionTests {
         Assertions.assertEquals(1, statements.size());
 
         Statement statement = statements.getFirst();
-        ReturnStatement returnStatement = Assertions.assertInstanceOf(ReturnStatement.class, statement);
+        ReturnStatement returnStatement =
+            Assertions.assertInstanceOf(ReturnStatement.class, statement);
         Expression expression = returnStatement.expression();
 
-        LogicalExpression logicalExpression = Assertions.assertInstanceOf(LogicalExpression.class, expression);
+        LogicalExpression logicalExpression =
+            Assertions.assertInstanceOf(LogicalExpression.class, expression);
         Expression helloExpression = logicalExpression.leftExpression();
         Expression worldExpression = logicalExpression.rightExpression();
 
@@ -73,8 +75,10 @@ public class LanguageExtensionTests {
     }
 
     private static void assertExpressionContainsAtName(Expression expression) {
-        GroupingExpression groupingExpression = Assertions.assertInstanceOf(GroupingExpression.class, expression);
-        BinaryExpression binaryExpression = Assertions.assertInstanceOf(BinaryExpression.class, groupingExpression.expression());
+        GroupingExpression groupingExpression =
+            Assertions.assertInstanceOf(GroupingExpression.class, expression);
+        BinaryExpression binaryExpression =
+            Assertions.assertInstanceOf(BinaryExpression.class, groupingExpression.expression());
 
         Expression leftExpression = binaryExpression.leftExpression();
         Expression rightExpression = binaryExpression.rightExpression();
@@ -82,5 +86,4 @@ public class LanguageExtensionTests {
         Assertions.assertInstanceOf(AtNameExpression.class, leftExpression);
         Assertions.assertInstanceOf(LiteralExpression.class, rightExpression);
     }
-
 }

@@ -37,25 +37,27 @@ import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 public class InfixExpressionTests {
 
     @Test
-    void infixExpressionWithDefinitionAndImplementationPasses(@Inject ApplicationContext applicationContext) {
+    void infixExpressionWithDefinitionAndImplementationPasses(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
-                        "pizza" or "pasta"
-                        """)
-                .expressionParser(new InfixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    // Infix function definition
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addInfixFunction("or");
-                    parser.addContext(functionParserContext);
-                })
-                // Infix function implementation
-                .defineLocal("or", (CallableNode) (at, interpreter, instance, arguments) -> {
-                    Object left = arguments.getFirst();
-                    Object right = arguments.getLast();
-                    return InterpreterUtilities.isTruthy(left) ? left : right;
-                })
-                .build();
+                "pizza" or "pasta"
+                """)
+            .expressionParser(new InfixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                // Infix function definition
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addInfixFunction("or");
+                parser.addContext(functionParserContext);
+            })
+            // Infix function implementation
+            .defineLocal("or", (CallableNode) (at, interpreter, instance, arguments) -> {
+                Object left = arguments.getFirst();
+                Object right = arguments.getLast();
+                return InterpreterUtilities.isTruthy(left) ? left : right;
+            })
+            .build();
 
         Object value = helper.interpretValue();
         String result = Assertions.assertInstanceOf(String.class, value);
@@ -63,89 +65,97 @@ public class InfixExpressionTests {
     }
 
     @Test
-    void infixExpressionWithoutDefinitionFailsAtParser(@Inject ApplicationContext applicationContext) {
+    void infixExpressionWithoutDefinitionFailsAtParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                        applicationContext,
-                        "\"pizza\" or \"pasta\""
-                )
-                .expressionParser(new InfixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    // No infix function definition added
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+                applicationContext,
+                "\"pizza\" or \"pasta\""
+            )
+            .expressionParser(new InfixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                // No infix function definition added
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         Assertions.assertEquals(Phase.PARSING, error.phase());
     }
 
     @Test
-    void infixExpressionWithDefinitionAndWithoutImplementationFailsAtInterpreter(@Inject ApplicationContext applicationContext) {
+    void infixExpressionWithDefinitionAndWithoutImplementationFailsAtInterpreter(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
-                        "pizza" or "pasta"
-                        """)
-                .expressionParser(new InfixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addInfixFunction("or");
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+                "pizza" or "pasta"
+                """)
+            .expressionParser(new InfixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addInfixFunction("or");
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         Assertions.assertDoesNotThrow(helper::parse);
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpretValue
+            ScriptEvaluationError.class,
+            helper::interpretValue
         );
         Assertions.assertEquals(Phase.INTERPRETING, error.phase());
         ScriptAssertions.assertEvaluationError(
-                error,
-                FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "or")
+            error,
+            FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "or")
         );
     }
 
     @Test
-    void infixExpressionWithoutLeftArgumentFailsAtParser(@Inject ApplicationContext applicationContext) {
+    void infixExpressionWithoutLeftArgumentFailsAtParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "or true")
-                .expressionParser(new InfixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addInfixFunction("or");
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+            .expressionParser(new InfixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addInfixFunction("or");
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         Assertions.assertEquals(Phase.PARSING, error.phase());
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 
     @Test
-    void infixExpressionWithoutRightArgumentFailsAtParser(@Inject ApplicationContext applicationContext) {
+    void infixExpressionWithoutRightArgumentFailsAtParser(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "true or")
-                .expressionParser(new InfixExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .parser(parser -> {
-                    FunctionParserContext functionParserContext = new FunctionParserContext();
-                    functionParserContext.addInfixFunction("or");
-                    parser.addContext(functionParserContext);
-                })
-                .build();
+            .expressionParser(new InfixExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .parser(parser -> {
+                FunctionParserContext functionParserContext = new FunctionParserContext();
+                functionParserContext.addInfixFunction("or");
+                parser.addContext(functionParserContext);
+            })
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::expression
+            ScriptEvaluationError.class,
+            helper::expression
         );
         Assertions.assertEquals(Phase.PARSING, error.phase());
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);

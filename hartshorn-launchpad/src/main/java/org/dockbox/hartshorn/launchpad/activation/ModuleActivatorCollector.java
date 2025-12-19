@@ -32,6 +32,14 @@ import java.util.stream.Stream;
  */
 public class ModuleActivatorCollector {
 
+    /**
+     * Collects all module activators for the given class, including those found recursively through
+     * other module activators.
+     *
+     * @param forClass the class to collect module activators for
+     *
+     * @return a set of all module activators found
+     */
     public Set<Annotation> moduleActivators(Class<?> forClass) {
         return this.collectModuleActivatorsOnType(forClass)
             .stream()
@@ -39,8 +47,16 @@ public class ModuleActivatorCollector {
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Recursively collects all module activators starting from the given annotation.
+     *
+     * @param annotation the starting annotation
+     *
+     * @return a set of all module activators found recursively
+     */
     public Set<Annotation> collectModuleActivatorsRecursively(Annotation annotation) {
-        Set<Annotation> moduleActivatorsOnAnnotation = this.collectModuleActivatorsOnType(annotation.annotationType());
+        Set<Annotation> moduleActivatorsOnAnnotation =
+            this.collectModuleActivatorsOnType(annotation.annotationType());
         Set<Annotation> activators = new HashSet<>(moduleActivatorsOnAnnotation);
         activators.add(annotation);
 
@@ -50,12 +66,28 @@ public class ModuleActivatorCollector {
         return activators;
     }
 
+    /**
+     * Collects all annotations on the given type that are annotated with {@link ModuleActivator}.
+     *
+     * @param type the type to collect annotations from
+     *
+     * @return a set of annotations that are module activators
+     */
     protected Set<Annotation> collectModuleActivatorsOnType(Class<?> type) {
         return Stream.of(type.getAnnotations())
-                .filter(annotation -> annotation.annotationType().isAnnotationPresent(ModuleActivator.class))
-                .collect(Collectors.toSet());
+            .filter(annotation -> annotation.annotationType()
+                .isAnnotationPresent(ModuleActivator.class))
+            .collect(Collectors.toSet());
     }
 
+    /**
+     * Collects all {@link ModuleActivator} declarations present on the given annotation, typically
+     * other {@link ModuleActivator} annotations.
+     *
+     * @param annotation the annotation to collect declarations from
+     *
+     * @return a set of module activators declared on the annotation
+     */
     public Set<ModuleActivator> collectDeclarationsOnActivator(Annotation annotation) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         Set<ModuleActivator> activators = new HashSet<>();
@@ -63,9 +95,9 @@ public class ModuleActivatorCollector {
             activators.add(annotationType.getAnnotation(ModuleActivator.class));
         }
         Arrays.stream(annotationType.getAnnotations())
-                .filter(ann -> ann.annotationType().isAnnotationPresent(ModuleActivator.class))
-                .map(ann -> ann.annotationType().getAnnotation(ModuleActivator.class))
-                .forEach(activators::add);
+            .filter(ann -> ann.annotationType().isAnnotationPresent(ModuleActivator.class))
+            .map(ann -> ann.annotationType().getAnnotation(ModuleActivator.class))
+            .forEach(activators::add);
         return activators;
     }
 }

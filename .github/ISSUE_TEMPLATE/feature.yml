@@ -1,6 +1,6 @@
 name: 'Feature request'
 description: 'Propose a new feature, that does not directly relate to existing functionality.'
-labels: ['type: feature request']
+labels: [ 'type: feature request' ]
 body:
   - type: textarea
     id: description

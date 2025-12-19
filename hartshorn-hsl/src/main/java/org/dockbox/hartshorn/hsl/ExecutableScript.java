@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
  *
  * <p>It is recommended to use this class to execute HSL scripts, as it provides a simple and
  * consistent API for executing HSL scripts. The exposed {@link #runtime() script runtime} should
- * not be configured through this class, and should instead be configured through a {@link
- * org.dockbox.hartshorn.inject.annotations.configuration.Configuration configuration class}.
+ * not be configured through this class, and should instead be configured through a
+ * {@link org.dockbox.hartshorn.inject.annotations.configuration.Configuration configuration
+ * class}.
  *
  * @see ScriptRuntime
  * @see ScriptContext
@@ -58,11 +59,12 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     }
 
     /**
-     * Creates a new {@link ExecutableScript} from the given source and the given {@link
-     * ApplicationContext}.
+     * Creates a new {@link ExecutableScript} from the given source and the given
+     * {@link ApplicationContext}.
      *
      * @param context The application context to use for execution
      * @param source The source of the script
+     *
      * @return A new {@link ExecutableScript} instance
      */
     public static ExecutableScript of(ApplicationContext context, String source) {
@@ -70,13 +72,15 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     }
 
     /**
-     * Creates a new {@link ExecutableScript} from the given source and the given {@link Path}.
-     * The source is read from the file. This method will throw an {@link IOException} if the file
+     * Creates a new {@link ExecutableScript} from the given source and the given {@link Path}. The
+     * source is read from the file. This method will throw an {@link IOException} if the file
      * cannot be read.
      *
      * @param context The application context to use for execution
      * @param path The path to the file containing the source
+     *
      * @return A new {@link ExecutableScript} instance
+     *
      * @throws IOException If the file cannot be read
      */
     public static ExecutableScript of(ApplicationContext context, Path path) throws IOException {
@@ -84,13 +88,15 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     }
 
     /**
-     * Creates a new {@link ExecutableScript} from the given source and the given {@link File}.
-     * The source is read from the file. This method will throw an {@link IOException} if the file
+     * Creates a new {@link ExecutableScript} from the given source and the given {@link File}. The
+     * source is read from the file. This method will throw an {@link IOException} if the file
      * cannot be read.
      *
      * @param context The application context to use for execution
      * @param file The file containing the source
+     *
      * @return A new {@link ExecutableScript} instance
+     *
      * @throws IOException If the file cannot be read
      */
     public static ExecutableScript of(ApplicationContext context, File file) throws IOException {
@@ -102,7 +108,9 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
      * throw an {@link IOException} if the file cannot be read.
      *
      * @param path The path to the file containing the source
+     *
      * @return The source of the file as a string
+     *
      * @throws IOException If the file cannot be read
      */
     public static String sourceFromPath(Path path) throws IOException {

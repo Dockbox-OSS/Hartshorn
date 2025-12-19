@@ -36,9 +36,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents a Java class that can be called from an HSL runtime. This class can be
- * used to create a new instance of the class. This requires the class to be imported
- * by the responsible {@link ScriptRuntime} through {@link ScriptRuntime#imports(Map)}.
+ * Represents a Java class that can be called from an HSL runtime. This class can be used to create
+ * a new instance of the class. This requires the class to be imported by the responsible
+ * {@link ScriptRuntime} through {@link ScriptRuntime#imports(Map)}.
  *
  * <pre>{@code
  * AbstractHslRuntime runtime = ...;
@@ -55,17 +55,24 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type, String alias) implements ClassReference {
+public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type, String alias)
+    implements ClassReference {
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) throws ApplicationException {
         if (instance != null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
-                    .at(at)
-                    .build();
+                .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                .at(at)
+                .build();
         }
-        ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
+        ConstructorView<T> executable =
+            ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
             try {
                 T objectInstance = executable.create(arguments.toArray());
@@ -76,23 +83,25 @@ public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type,
             }
             catch (Throwable throwable) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
-                        .at(at)
-                        .cause(throwable)
-                        .build();
+                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                    .at(at)
+                    .cause(throwable)
+                    .build();
             }
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.MISSING_CONSTRUCTOR_WITH_PARAMETERS, this.type.name(), arguments)
-                .at(at)
-                .build();
+            .message(DiagnosticMessage.MISSING_CONSTRUCTOR_WITH_PARAMETERS,
+                this.type.name(),
+                arguments)
+            .at(at)
+            .build();
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type.qualifiedName())
-                .describe();
+            .field("type", this.type.qualifiedName())
+            .describe();
     }
 
     @Override

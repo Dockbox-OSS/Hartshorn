@@ -38,20 +38,20 @@ public class LogicalExpressionTests {
     @ParameterizedTest(name = "{0} {1} {2} = {3}")
     @MethodSource("logicalCases")
     void verifyLogicalExpression(
-            Object left,
-            String operator,
-            Object right,
-            Object expected
+        Object left,
+        String operator,
+        Object right,
+        Object expected
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
                 this.applicationContext,
-                        "left %s right".formatted(operator)
-                )
-                .defineLocal("left", left)
-                .defineLocal("right", right)
-                .expressionParser(new LogicalExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                "left %s right".formatted(operator)
+            )
+            .defineLocal("left", left)
+            .defineLocal("right", right)
+            .expressionParser(new LogicalExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(expected, value);
@@ -59,31 +59,31 @@ public class LogicalExpressionTests {
 
     public static Stream<Arguments> logicalCases() {
         return Stream.of(
-                // XOR
-                logical(true, "^", true, false),
-                logical(true, "^", false, true),
-                logical(false, "^", true, true),
-                logical(false, "^", false, false),
+            // XOR
+            logical(true, "^", true, false),
+            logical(true, "^", false, true),
+            logical(false, "^", true, true),
+            logical(false, "^", false, false),
 
-                // OR
-                logical(true, "||", true, true),
-                logical(true, "||", false, true),
-                logical(false, "||", true, true),
-                logical(false, "||", false, false),
+            // OR
+            logical(true, "||", true, true),
+            logical(true, "||", false, true),
+            logical(false, "||", true, true),
+            logical(false, "||", false, false),
 
-                // AND
-                logical(true, "&&", true, true),
-                logical(true, "&&", false, false),
-                logical(false, "&&", true, false),
-                logical(false, "&&", false, false)
+            // AND
+            logical(true, "&&", true, true),
+            logical(true, "&&", false, false),
+            logical(false, "&&", true, false),
+            logical(false, "&&", false, false)
         );
     }
 
     public static Arguments logical(
-            Object left,
-            String operator,
-            Object right,
-            Object expected
+        Object left,
+        String operator,
+        Object right,
+        Object expected
     ) {
         return Arguments.of(left, operator, right, expected);
     }

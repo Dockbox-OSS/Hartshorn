@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ package org.dockbox.hartshorn.hsl.objects;
  * method loaded from a Java class file. Exact semantics are defined by the implementation.
  *
  * <p>Method references are {@link CallableNode}s, and can be called with a bound instance, or by
- * providing an instance as an argument. Both are equivalent to calling the method on the
- * instance. Implementations may choose to provide a default instance, or require an instance to be
- * provided. If an implementation provides a default instance, it may choose to ignore the given
- * instance when calling the method.
+ * providing an instance as an argument. Both are equivalent to calling the method on the instance.
+ * Implementations may choose to provide a default instance, or require an instance to be provided.
+ * If an implementation provides a default instance, it may choose to ignore the given instance when
+ * calling the method.
  *
- * <p>Method references are {@link BindableNode}s, and can be bound to an instance. This allows quick
+ * <p>Method references are {@link BindableNode}s, and can be bound to an instance. This allows
+ * quick
  * access to the method, without having to provide the instance as an argument.
  *
  * @since 0.4.12

@@ -34,7 +34,8 @@ public class ProfileAggregationTests {
 
     @Test
     void testAggregationWithoutProfiles() {
-        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator =
+            new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
         ProfilePropertyRegistry profilePropertyRegistry = Assertions.assertDoesNotThrow(
             () -> aggregator.aggregate(profileRegistry)
@@ -45,9 +46,11 @@ public class ProfileAggregationTests {
 
     @Test
     void testAggregationWithSingleProfile() {
-        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator =
+            new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
-        EnvironmentProfile profile1 = new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
+        EnvironmentProfile profile1 =
+            new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
@@ -58,19 +61,24 @@ public class ProfileAggregationTests {
         Assertions.assertTrue(profilePropertyRegistry.contains("key"));
 
         Assertions.assertEquals(1, profilePropertyRegistry.profileRegistry().profiles().size());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry().profile("profile1").present());
+        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+            .profile("profile1")
+            .present());
     }
 
     @Test
     void testAggregationWithMultipleProfiles_UsesCorrectPriority() {
-        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator =
+            new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
 
-        EnvironmentProfile profile1 = new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
+        EnvironmentProfile profile1 =
+            new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
-        EnvironmentProfile profile2 = new SimpleEnvironmentProfile("profile2", new MapPropertyRegistry());
+        EnvironmentProfile profile2 =
+            new SimpleEnvironmentProfile("profile2", new MapPropertyRegistry());
         profile2.propertyRegistry().register(new SingleConfiguredProperty("key", "value2"));
         profileRegistry.register(1, profile2);
 
@@ -86,7 +94,11 @@ public class ProfileAggregationTests {
         Assertions.assertTrue(valueProperty.get().value().contains("value2"));
 
         Assertions.assertEquals(2, profilePropertyRegistry.profileRegistry().profiles().size());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry().profile("profile1").present());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry().profile("profile2").present());
+        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+            .profile("profile1")
+            .present());
+        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+            .profile("profile2")
+            .present());
     }
 }

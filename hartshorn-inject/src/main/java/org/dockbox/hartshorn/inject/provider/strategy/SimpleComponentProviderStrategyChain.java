@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,21 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Basic implementation of a {@link ComponentProviderStrategyChain} that uses a list of {@link ComponentProviderStrategy
- * strategies} to resolve components.
+ * Basic implementation of a {@link ComponentProviderStrategyChain} that uses a list of
+ * {@link ComponentProviderStrategy strategies} to resolve components.
  *
- * <p>This chain tracks the current index of the strategy being used, and will continue to the next strategy in the
- * list until the end of the list is reached. Each strategy is provided with a new chain, which allows each strategy
- * to delegate to the next strategy in the list. While this means that the chain is effectively immutable, it is not
- * recommended to re-use a chain for multiple requests.
+ * <p>This chain tracks the current index of the strategy being used, and will continue to the next
+ * strategy in the
+ * list until the end of the list is reached. Each strategy is provided with a new chain, which
+ * allows each strategy to delegate to the next strategy in the list. While this means that the
+ * chain is effectively immutable, it is not recommended to re-use a chain for multiple requests.
  *
  * @param <T> the type of the component to resolve
  *
  * @see ComponentProviderStrategy
- *
+ * 
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SimpleComponentProviderStrategyChain<T> implements ComponentProviderStrategyChain<T> {
@@ -52,17 +53,18 @@ public class SimpleComponentProviderStrategyChain<T> implements ComponentProvide
     private final int index;
 
     public SimpleComponentProviderStrategyChain(
-            ComponentProvider componentProvider,
-            InjectionCapableApplication application,
-            List<ComponentProviderStrategy> strategies) {
+        ComponentProvider componentProvider,
+        InjectionCapableApplication application,
+        List<ComponentProviderStrategy> strategies
+    ) {
         this(componentProvider, application, strategies, 0);
     }
 
     public SimpleComponentProviderStrategyChain(
-            ComponentProvider componentProvider,
-            InjectionCapableApplication application,
-            List<ComponentProviderStrategy> strategies,
-            int index
+        ComponentProvider componentProvider,
+        InjectionCapableApplication application,
+        List<ComponentProviderStrategy> strategies,
+        int index
     ) {
         this.componentProvider = componentProvider;
         this.application = application;
@@ -81,15 +83,18 @@ public class SimpleComponentProviderStrategyChain<T> implements ComponentProvide
     }
 
     @Override
-    public ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
-            throws ComponentInitializationException, ApplicationException {
-        if(this.index < this.strategies.size()) {
+    public ObjectContainer<T> get(
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext
+    )
+        throws ComponentInitializationException, ApplicationException {
+        if (this.index < this.strategies.size()) {
             ComponentProviderStrategy strategy = this.strategies.get(this.index);
             ComponentProviderStrategyChain<T> chain = new SimpleComponentProviderStrategyChain<>(
-                    this.componentProvider,
-                    this.application,
-                    this.strategies,
-                    this.index + 1
+                this.componentProvider,
+                this.application,
+                this.strategies,
+                this.index + 1
             );
             return strategy.get(componentKey, requestContext, chain);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 
 /**
- * A {@link ComponentProvider} that uses a {@link SingletonCache} to store singleton components. Typically the
- * provider itself should not determine what is a singleton and what is not, but rather any backing {@link InstantiationStrategy}
- * or similar component should indicate this.
+ * A {@link ComponentProvider} that uses a {@link SingletonCache} to store singleton components.
+ * Typically the provider itself should not determine what is a singleton and what is not, but
+ * rather any backing {@link InstantiationStrategy} or similar component should indicate this.
  *
  * @see SingletonCache
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface SingletonCacheComponentProvider extends ComponentProvider {

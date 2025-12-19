@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,15 @@ import java.util.SequencedSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A proxy implementation of {@link Annotation} which allows for the creation of
- * a composite annotation from multiple annotations of the 'same' type. This
- * correctly looks up the values of the annotation in the order of the annotations
- * provided. If multiple annotations provide the same value, the first one is
- * used.
+ * A proxy implementation of {@link Annotation} which allows for the creation of a composite
+ * annotation from multiple annotations of the 'same' type. This correctly looks up the values of
+ * the annotation in the order of the annotations provided. If multiple annotations provide the same
+ * value, the first one is used.
  *
- * <p>Implementation note: this class is an internal implementation detail of
- * {@link VirtualHierarchyAnnotationLookup}, and is not intended for direct use.
- * It is public so that it can be used for inspection of the composite annotation,
- * but the constructor is only intended to be called by the {@link VirtualHierarchyAnnotationLookup}.
+ * <p>Implementation note: this class is an internal implementation detail of {@link
+ * VirtualHierarchyAnnotationLookup}, and is not intended for direct use. It is public so that it
+ * can be used for inspection of the composite annotation, but the constructor is only intended to
+ * be called by the {@link VirtualHierarchyAnnotationLookup}.
  *
  * @param <A> The type of annotation this proxy represents
  *
@@ -47,7 +46,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class AnnotationAdapterProxy<A extends Annotation> implements InvocationHandler, AnnotationAdapter {
+public class AnnotationAdapterProxy<A extends Annotation> implements
+    InvocationHandler,
+    AnnotationAdapter {
 
     private final Annotation actual;
     private final Class<A> targetAnnotationClass;
@@ -55,7 +56,12 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     private final AnnotationLookup owner;
     private final Map<String, Option<Object>> methodsCache = new ConcurrentHashMap<>();
 
-    AnnotationAdapterProxy(Annotation actual, Class<A> targetAnnotationClass, SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy, AnnotationLookup owner) {
+    AnnotationAdapterProxy(
+        Annotation actual,
+        Class<A> targetAnnotationClass,
+        SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy,
+        AnnotationLookup owner
+    ) {
         this.actual = actual;
         this.targetAnnotationClass = targetAnnotationClass;
         this.actualAnnotationHierarchy = actualAnnotationHierarchy;
@@ -70,14 +76,15 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
         if ("hashCode".equals(method.getName())) {
             return Objects.hash(
-                    this.owner.unproxy(this.actual),
-                    this.targetAnnotationClass
+                this.owner.unproxy(this.actual),
+                this.targetAnnotationClass
             );
         }
 
         if ("equals".equals(method.getName()) && method.getParameters().length == 1) {
             if (args[0] instanceof Annotation annotation) {
-                return this.targetAnnotationClass == annotation.annotationType() && this.actual.equals(this.owner.unproxy(annotation));
+                return this.targetAnnotationClass == annotation.annotationType()
+                    && this.actual.equals(this.owner.unproxy(annotation));
             }
             else {
                 return this.actual.equals(args[0]);
@@ -86,7 +93,12 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
         Option<Object> cachedField = this.methodsCache.get(method.getName());
         if (cachedField == null) {
-            cachedField = this.searchInHierarchy(this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method);
+            cachedField = this.searchInHierarchy(
+                this.actual,
+                this.targetAnnotationClass,
+                this.actualAnnotationHierarchy,
+                method
+            );
             this.methodsCache.put(method.getName(), cachedField);
         }
         return cachedField.orNull();
@@ -94,6 +106,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
     /**
      * Returns the target annotation class for this proxy.
+     *
      * @return The target annotation class
      */
     public Class<A> targetAnnotationClass() {
@@ -102,6 +115,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
     /**
      * Returns the actual annotation hierarchy for this proxy.
+     *
      * @return The actual annotation hierarchy
      */
     public SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy() {
@@ -109,15 +123,21 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     }
 
     /**
-     * Returns the owner of this proxy. The owner is expected to be a {@link VirtualHierarchyAnnotationLookup},
-     * but this is not enforced.
+     * Returns the owner of this proxy. The owner is expected to be a
+     * {@link VirtualHierarchyAnnotationLookup}, but this is not enforced.
+     *
      * @return The owner of this proxy
      */
     public AnnotationLookup owner() {
         return this.owner;
     }
 
-    private Option<Object> searchInHierarchy(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Collection<Class<? extends Annotation>> hierarchy, Method proxyMethod) {
+    private Option<Object> searchInHierarchy(
+        Annotation actual,
+        Class<? extends Annotation> targetAnnotationClass,
+        Collection<Class<? extends Annotation>> hierarchy,
+        Method proxyMethod
+    ) {
         String name = proxyMethod.getName();
         try {
             Method method = actual.annotationType().getMethod(name);
@@ -126,7 +146,12 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         }
         catch (NoSuchMethodException e) {
             // search for AliasFor in same annotation type
-            Option<Object> method = this.searchAlias(actual, targetAnnotationClass, proxyMethod, name);
+            Option<Object> method = this.searchAlias(
+                actual,
+                targetAnnotationClass,
+                proxyMethod,
+                name
+            );
             if (method.present()) {
                 return method;
             }
@@ -149,7 +174,11 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     }
 
     @NonNull
-    private Option<Object> searchSuper(Collection<Class<? extends Annotation>> hierarchy, Method proxyMethod, String name) {
+    private Option<Object> searchSuper(
+        Collection<Class<? extends Annotation>> hierarchy,
+        Method proxyMethod,
+        String name
+    ) {
         for (Class<? extends Annotation> klass : hierarchy) {
             try {
                 Method klassMethod = klass.getMethod(name);
@@ -158,17 +187,18 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
                 if (defaultValue != null) {
                     return Option.of(defaultValue);
                 }
-            } catch (NoSuchMethodException ignored) {
+            }
+            catch (NoSuchMethodException ignored) {
                 // Do not break yet, we might find it in a super class
             }
 
             Annotation[] annotationsOnCurrentAnnotationClass = klass.getAnnotations();
-            for (Annotation annotationOnCurrentAnnotationClass : annotationsOnCurrentAnnotationClass) {
-                if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
+            for (Annotation annotation : annotationsOnCurrentAnnotationClass) {
+                if (hierarchy.contains(annotation.annotationType())) {
                     try {
-                        Method method = annotationOnCurrentAnnotationClass.annotationType().getMethod(name);
+                        Method method = annotation.annotationType().getMethod(name);
                         this.checkAliasType(proxyMethod, method);
-                        return Option.of(this.safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
+                        return Option.of(this.safeInvokeAnnotationMethod(method, annotation));
                     }
                     catch (NoSuchMethodException ignored) {
                         break;
@@ -180,25 +210,43 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     }
 
     @NonNull
-    private Option<Object> searchAlias(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Method proxyMethod, String name) {
+    private Option<Object> searchAlias(
+        Annotation actual,
+        Class<? extends Annotation> targetAnnotationClass,
+        Method proxyMethod,
+        String name
+    ) {
         for (Method method : actual.annotationType().getMethods()) {
-            Option<Object> result = this.searchAttributeAlias(actual, targetAnnotationClass, proxyMethod, name, method);
+            Option<Object> result = this.searchAttributeAlias(
+                actual,
+                targetAnnotationClass,
+                proxyMethod,
+                name,
+                method
+            );
 
-            if(result.present()) {
+            if (result.present()) {
                 return result;
             }
         }
         return Option.empty();
     }
 
-    private Option<Object> searchAttributeAlias(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Method proxyMethod, String name,
-            Method method) {
+    private Option<Object> searchAttributeAlias(
+        Annotation actual,
+        Class<? extends Annotation> targetAnnotationClass,
+        Method proxyMethod,
+        String name,
+        Method method
+    ) {
         AttributeAlias attributeAlias = method.getAnnotation(AttributeAlias.class);
         if (attributeAlias == null) {
             return Option.empty();
         }
 
-        if ((attributeAlias.target() == Void.class || attributeAlias.target() == targetAnnotationClass) && name.equals(attributeAlias.value())) {
+        if ((attributeAlias.target() == Void.class
+            || attributeAlias.target() == targetAnnotationClass
+        ) && name.equals(attributeAlias.value())) {
             this.checkAliasType(proxyMethod, method);
             return Option.of(this.safeInvokeAnnotationMethod(method, actual));
         }
@@ -207,7 +255,13 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
     private void checkAliasType(Method expected, Method actual) {
         if (expected.getReturnType() != actual.getReturnType()) {
-            throw new IllegalArgumentException("Attribute " + actual.getName() + " in " + actual.getDeclaringClass().getSimpleName() + " has different return type than " + expected.getName() + " in " + expected.getDeclaringClass().getSimpleName());
+            throw new IllegalArgumentException(
+                "Attribute %s in %s has different return type than %s in %s".formatted(
+                    actual.getName(),
+                    actual.getDeclaringClass().getSimpleName(),
+                    expected.getName(),
+                    expected.getDeclaringClass().getSimpleName()
+                ));
         }
     }
 

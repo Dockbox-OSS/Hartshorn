@@ -107,13 +107,13 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.VariableStatementInterpre
 import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter;
 
 /**
- * A delegating {@link InterpreterVisitor} that forwards all method calls to the associated {@link ASTNodeInterpreter}
- * for the specific expression or statement type.
+ * A delegating {@link InterpreterVisitor} that forwards all method calls to the associated
+ * {@link ASTNodeInterpreter} for the specific expression or statement type.
  *
  * @param interpreter The owning {@link Interpreter} instance.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public record DelegatingInterpreterVisitor(Interpreter interpreter) implements InterpreterVisitor {
@@ -121,10 +121,10 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     @Override
     public Object visit(BinaryExpression expression) {
         return new BinaryExpressionInterpreter(
-                new CharacterBitwiseAdditionStrategy(),
-                new NumberBitwiseAdditionStrategy(),
-                new NumberCharBitwiseAdditionStrategy(),
-                new StringBitwiseAdditionStrategy()
+            new CharacterBitwiseAdditionStrategy(),
+            new NumberBitwiseAdditionStrategy(),
+            new NumberCharBitwiseAdditionStrategy(),
+            new StringBitwiseAdditionStrategy()
         ).interpret(expression, this.interpreter);
     }
 
@@ -200,7 +200,8 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Object visit(ArrayComprehensionExpression expression) {
-        return new ArrayComprehensionExpressionInterpreter().interpret(expression, this.interpreter);
+        return new ArrayComprehensionExpressionInterpreter().interpret(expression,
+            this.interpreter);
     }
 
     @Override
@@ -251,7 +252,8 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Void visit(BlockStatement statement) {
-        this.interpreter.execute(statement.statements(), new VariableScope(this.interpreter.visitingScope()));
+        this.interpreter.execute(statement.statements(),
+            new VariableScope(this.interpreter.visitingScope()));
         return null;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,17 +31,20 @@ import org.dockbox.hartshorn.util.option.Option;
  * is checked. If {@code null} is not permitted, an {@link IllegalStateException} is thrown.
  *
  * @since 0.4.11
- *
+ * 
  * @author Guus Lieben
  */
-public abstract class DefaultApplicationAwareContext extends DefaultFallbackCompatibleContext implements ApplicationAwareContext {
+public abstract class DefaultApplicationAwareContext extends DefaultFallbackCompatibleContext
+    implements ApplicationAwareContext {
 
     private final ApplicationContext applicationContext;
 
-    @SuppressWarnings({ "OverridableMethodCallDuringObjectConstruction", "InstanceofThis" })
+    @SuppressWarnings({"OverridableMethodCallDuringObjectConstruction", "InstanceofThis"})
     protected DefaultApplicationAwareContext(ApplicationContext applicationContext) {
         if (this instanceof ApplicationContext) {
-            throw new IllegalStateException("The Skynet Funding Bill should not pass! (Application context is not permitted to be self-aware)");
+            throw new IllegalStateException(
+                "The Skynet Funding Bill should not pass! "
+                    + "(Application context is not permitted to be self-aware)");
         }
 
         if (applicationContext != null) {

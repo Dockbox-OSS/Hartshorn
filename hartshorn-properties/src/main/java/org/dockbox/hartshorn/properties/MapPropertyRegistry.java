@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * A simple implementation of a {@link PropertyRegistry} that uses a {@link Map} to store the properties.
+ * A simple implementation of a {@link PropertyRegistry} that uses a {@link Map} to store the
+ * properties.
  *
  * @since 0.7.0
  *
@@ -45,7 +46,10 @@ public class MapPropertyRegistry extends MapObjectProperty implements PropertyRe
         this(Map.of(), pathStyle);
     }
 
-    public MapPropertyRegistry(Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+    public MapPropertyRegistry(
+        Map<String, ConfiguredProperty> properties,
+        PropertyPathStyle pathStyle
+    ) {
         super("", properties, pathStyle);
     }
 

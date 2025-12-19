@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,26 @@ package org.dockbox.hartshorn.proxy.advice;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 
 /**
- * A validator that can be used to validate the result of a method invocation. This validator is invoked by a
- * {@link org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor} after the method invocation has been
- * performed. The validator is expected to return the valid result of the method invocation, or throw an exception.
+ * A validator that can be used to validate the result of a method invocation. This validator is
+ * invoked by a {@link org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor} after
+ * the method invocation has been performed. The validator is expected to return the valid result of
+ * the method invocation, or throw an exception.
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProxyResultValidator {
 
     /**
-     * Validates the result of a method invocation. If the result is valid, or can be transformed into a valid result,
-     * the result is returned. If the result is not valid, an exception is thrown.
+     * Validates the result of a method invocation. If the result is valid, or can be transformed
+     * into a valid result, the result is returned. If the result is not valid, an exception is
+     * thrown.
      *
      * @param source the method that is invoked
      * @param result the result of the method invocation
+     *
      * @return the valid result of the method invocation
      */
     Object validateResult(MethodInvokable source, Object result);

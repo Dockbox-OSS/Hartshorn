@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,32 +21,36 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Set;
 
 /**
- * A proxy validator is used to validate that a proxy can be created for a given type. This can use a set of
- * {@link ProxyConstraint constraints} to validate the type.
+ * A proxy validator is used to validate that a proxy can be created for a given type. This can use
+ * a set of {@link ProxyConstraint constraints} to validate the type.
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public interface ProxyValidator {
 
     /**
      * Adds a constraint to the validator.
+     *
      * @param constraint the constraint to add
      */
     void add(ProxyConstraint constraint);
 
     /**
      * Returns the constraints that are used to validate the type.
+     *
      * @return the constraints that are used to validate the type
      */
     Set<ProxyConstraint> constraints();
 
     /**
-     * Validates the given type against the constraints. If the type is invalid for any reason, one or more
-     * {@link ProxyConstraintViolation violations} should be returned. If the type is valid, an empty set
-     * should be returned.
+     * Validates the given type against the constraints. If the type is invalid for any reason, one
+     * or more {@link ProxyConstraintViolation violations} should be returned. If the type is valid,
+     * an empty set should be returned.
      *
      * @param type the type to validate
+     *
      * @return one or more violations if the type is invalid, an empty set otherwise
      */
     Set<ProxyConstraintViolation> validate(TypeView<?> type);

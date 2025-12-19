@@ -41,10 +41,10 @@ public class FunctionCallExpressionTests {
         };
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "sayHello()")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("sayHello", node)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("sayHello", node)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello world!", value);
@@ -61,13 +61,13 @@ public class FunctionCallExpressionTests {
         };
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
-                        greet("Guus")
-                        """)
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("greet", node)
-                .build();
+                greet("Guus")
+                """)
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("greet", node)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello Guus!", value);
@@ -88,11 +88,11 @@ public class FunctionCallExpressionTests {
         };
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "sayHello(person)")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("person", objectReference)
-                .defineLocal("sayHello", node)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("person", objectReference)
+            .defineLocal("sayHello", node)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello world!", value);

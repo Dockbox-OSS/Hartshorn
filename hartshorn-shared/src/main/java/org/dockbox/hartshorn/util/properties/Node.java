@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.properties;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
 /**
- * A node in a property structure. A node has a name and a value. The name of a node is
- * commonly used to identify the node, but is not required to be unique.
+ * A node in a property structure. A node has a name and a value. The name of a node is commonly
+ * used to identify the node, but is not required to be unique.
  *
  * <p><b>Note</b>: This interface is intended to be used for reporting purposes. It is not
  * intended to be used as a vertex in a graph. For that purpose, use {@link GraphNode}.
@@ -54,8 +54,9 @@ public interface Node<T> {
      * Accepts a {@link NodeVisitor} and returns the result of the visit.
      *
      * @param visitor the visitor to accept
-     * @return the result of the visit
      * @param <R> the type of the result
+     *
+     * @return the result of the visit
      */
     <R> R accept(NodeVisitor<R> visitor);
 }

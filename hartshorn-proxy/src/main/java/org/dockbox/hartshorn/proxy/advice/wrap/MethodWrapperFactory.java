@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.proxy.advice.wrap;
 
 /**
- * A factory that can be used to create {@link MethodWrapper}s. This factory can be used to add individual
- * {@link ProxyCallback}s to a single {@link MethodWrapper}.
+ * A factory that can be used to create {@link MethodWrapper}s. This factory can be used to add
+ * individual {@link ProxyCallback}s to a single {@link MethodWrapper}.
  *
  * @param <T> The type of the proxy instance
  *
@@ -29,30 +29,32 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
 public interface MethodWrapperFactory<T> {
 
     /**
-     * Adds a {@link ProxyCallback} that is invoked before the method invocation. If multiple callbacks are added, they
-     * are invoked in the order in which they were added.
+     * Adds a {@link ProxyCallback} that is invoked before the method invocation. If multiple
+     * callbacks are added, they are invoked in the order in which they were added.
      *
      * @param callback The callback to invoke before the method invocation
+     *
      * @return This factory
      */
     MethodWrapperFactory<T> before(ProxyCallback<T> callback);
 
     /**
-     * Adds a {@link ProxyCallback} that is invoked after a successful method invocation. If multiple callbacks are
-     * added, they are invoked in the order in which they were added.
+     * Adds a {@link ProxyCallback} that is invoked after a successful method invocation. If
+     * multiple callbacks are added, they are invoked in the order in which they were added.
      *
      * @param callback The callback to invoke after the method invocation
+     *
      * @return This factory
      */
     MethodWrapperFactory<T> after(ProxyCallback<T> callback);
 
     /**
-     * Adds a {@link ProxyCallback} that is invoked after a failed method invocation. If multiple callbacks are added,
-     * they are invoked in the order in which they were added.
+     * Adds a {@link ProxyCallback} that is invoked after a failed method invocation. If multiple
+     * callbacks are added, they are invoked in the order in which they were added.
      *
      * @param callback The callback to invoke after the method invocation
+     *
      * @return This factory
      */
     MethodWrapperFactory<T> onError(ProxyCallback<T> callback);
-
 }

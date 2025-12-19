@@ -21,44 +21,44 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * A component provider is a class that is capable of providing components. Components are identified using
- * {@link ComponentKey keys}.
+ * A component provider is a class that is capable of providing components. Components are
+ * identified using {@link ComponentKey keys}.
  *
- * <p>Component providers are typically used to provide components to other components, and are therefore
- * typically injectable. However, they may also be used to provide components to non-injectable classes, such
- * as static classes.
+ * <p>Component providers are typically used to provide components to other components, and are
+ * therefore
+ * typically injectable. However, they may also be used to provide components to non-injectable
+ * classes, such as static classes.
  *
- * <p>Components may be provided from a configured scope, as defined in {@link ComponentKey#scope()}, or from
- * the default scope configured by the provider. The default scope is typically the same as the scope of the provider
- * itself, but this is not required.
+ * <p>Components may be provided from a configured scope, as defined in
+ * {@link ComponentKey#scope()}, or from
+ * the default scope configured by the provider. The default scope is typically the same as the
+ * scope of the provider itself, but this is not required.
  *
  * @see ComponentKey
- *
+ * 
  * @since 0.4.9
- *
+ * 
  * @author Guus Lieben
  */
 public interface ComponentProvider {
 
     /**
-     * Returns the component for the given key, using the request context to determine the
-     * use case for the component. The request context may be used to provide additional
-     * information to the provider, such as the current component that is being resolved.
+     * Returns the component for the given key, using the request context to determine the use case
+     * for the component. The request context may be used to provide additional information to the
+     * provider, such as the current component that is being resolved.
      *
      * <p>Both parameters are used to determine the appropriate state of the returned
      * component. The {@link ComponentKey key} describes the component itself, whereas the
-     * {@link ComponentRequestContext request context} describes the use case for the
-     * component.
+     * {@link ComponentRequestContext request context} describes the use case for the component.
      *
      * <p>Note that singleton components are typically resolved using the default request
      * context, and ignore the given request context.
      *
      * @param key The key of the component to return.
      * @param requestContext The request context to use for resolving the component.
+     * @param <T> The type of the component to return.
      *
      * @return The component for the given key.
-     *
-     * @param <T> The type of the component to return.
      */
     <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext);
 
@@ -88,14 +88,13 @@ public interface ComponentProvider {
     }
 
     /**
-     * Returns the component for the given type, using the request context to determine the
-     * use case for the component. The request context may be used to provide additional
-     * information to the provider, such as the current component that is being resolved.
+     * Returns the component for the given type, using the request context to determine the use case
+     * for the component. The request context may be used to provide additional information to the
+     * provider, such as the current component that is being resolved.
      *
      * <p>Both parameters are used to determine the appropriate state of the returned
      * component. The {@link Class type} describes the component itself, whereas the
-     * {@link ComponentRequestContext request context} describes the use case for the
-     * component.
+     * {@link ComponentRequestContext request context} describes the use case for the component.
      *
      * <p>Note that singleton components are typically resolved using the default request
      * context, and ignore the given request context.
@@ -111,5 +110,10 @@ public interface ComponentProvider {
         return this.get(key, requestContext);
     }
 
+    /**
+     * Returns the scope in which this provider provides components.
+     *
+     * @return The scope of this provider.
+     */
     Scope scope();
 }

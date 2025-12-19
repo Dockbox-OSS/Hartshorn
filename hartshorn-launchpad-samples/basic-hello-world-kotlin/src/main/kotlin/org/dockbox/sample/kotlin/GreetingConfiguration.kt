@@ -9,11 +9,14 @@ import org.slf4j.Logger
 @Configuration
 class GreetingConfiguration {
 
-    @Singleton(lazy = true)
-    fun greetingAction(
-        @PropertyValue(name = "greetings.hello", defaultValue = "Hello there, {}") helloGreetingTemplate: String?,
-        @LoggerMeta(name = "Greeting implementation") logger: Logger
-    ): GreetingAction {
-        return GreetingAction { logger.info(helloGreetingTemplate, "World") }
-    }
+  @Singleton(lazy = true)
+  fun greetingAction(
+    @PropertyValue(
+      name = "greetings.hello",
+      defaultValue = "Hello there, {}"
+    ) helloGreetingTemplate: String?,
+    @LoggerMeta(name = "Greeting implementation") logger: Logger
+  ): GreetingAction {
+    return GreetingAction { logger.info(helloGreetingTemplate, "World") }
+  }
 }

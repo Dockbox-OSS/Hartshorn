@@ -8,10 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @ModuleActivator(
-        componentPostProcessors = {
-                LoggableCallbackPostProcessor.class,
-                LoggableInterceptorPostProcessor.class
-        }
+    componentPostProcessors = {
+        LoggableCallbackPostProcessor.class,
+        LoggableInterceptorPostProcessor.class
+    }
 )
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})

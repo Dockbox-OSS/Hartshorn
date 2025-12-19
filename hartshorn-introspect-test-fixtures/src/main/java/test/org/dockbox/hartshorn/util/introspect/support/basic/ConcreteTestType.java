@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,15 @@ import org.junit.jupiter.api.Assertions;
 import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleElementAnnotation;
 
 /**
- * Complete test type for introspection tests, containing various fields, methods and annotations with different
- * modifiers and annotations.
+ * Complete test type for introspection tests, containing various fields, methods and annotations
+ * with different modifiers and annotations.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
 @MultipleElementAnnotation
-@SuppressWarnings({ "FieldMayBeFinal", "unused" })
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class ConcreteTestType extends ParentTestType {
 
     @MultipleElementAnnotation
@@ -88,8 +88,10 @@ public class ConcreteTestType extends ParentTestType {
     }
 
     @MultipleElementAnnotation
-    public void publicAnnotatedMethod() {}
+    public void publicAnnotatedMethod() {
+    }
 
     @MultipleElementAnnotation
-    private void privateAnnotatedMethod() {}
+    private void privateAnnotatedMethod() {
+    }
 }

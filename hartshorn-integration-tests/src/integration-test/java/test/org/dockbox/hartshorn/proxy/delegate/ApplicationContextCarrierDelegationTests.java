@@ -58,14 +58,17 @@ public class ApplicationContextCarrierDelegationTests {
 
     @Test
     @TestComponents(ContextCarrierComponentInterface.class)
-    void testCarrierDelegation(@Inject ContextCarrierComponentInterface component, @Inject ApplicationContext applicationContext) throws NoSuchMethodException {
+    void testCarrierDelegation(
+        @Inject ContextCarrierComponentInterface component,
+        @Inject ApplicationContext applicationContext
+    ) throws NoSuchMethodException {
         Assertions.assertTrue(component instanceof Proxy<?>);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
         Option<?> methodDelegate = ((Proxy<?>) component).manager()
-                .advisor()
-                .resolver()
-                .method(method)
-                .delegate();
+            .advisor()
+            .resolver()
+            .method(method)
+            .delegate();
         Assertions.assertTrue(methodDelegate.present());
 
         Assertions.assertNotNull(component.applicationContext());
@@ -84,10 +87,11 @@ public class ApplicationContextCarrierDelegationTests {
     private static Option<?> findMethodDelegate(Object object) throws NoSuchMethodException {
         Proxy<?> proxy = Assertions.assertInstanceOf(Proxy.class, object);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
+
         return proxy.manager()
-                .advisor()
-                .resolver()
-                .method(method)
-                .delegate();
+            .advisor()
+            .resolver()
+            .method(method)
+            .delegate();
     }
 }

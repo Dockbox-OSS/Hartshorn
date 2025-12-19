@@ -31,9 +31,9 @@ public class TernaryExpressionTests {
     @Test
     void ternaryWithTruthyValueReturnsLeft(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "true ?  42 : 24")
-                .expressionParser(new TernaryExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new TernaryExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(42d, value);
@@ -42,9 +42,9 @@ public class TernaryExpressionTests {
     @Test
     void ternaryWithFalsyValueReturnsRight(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "false ? 42 : 24")
-                .expressionParser(new TernaryExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+            .expressionParser(new TernaryExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(24d, value);

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.hsl.objects;
 
 /**
- * An abstract implementation of the {@link Finalizable} interface, providing a base
- * implementation for objects that can be finalized.
+ * An abstract implementation of the {@link Finalizable} interface, providing a base implementation
+ * for objects that can be finalized.
  *
  * @since 0.4.12
  *

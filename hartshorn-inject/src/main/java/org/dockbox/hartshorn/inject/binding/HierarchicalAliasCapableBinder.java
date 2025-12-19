@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.inject.binding;
  * @see AliasCapableBinder
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface HierarchicalAliasCapableBinder extends HierarchicalBinder, AliasCapableBinder {

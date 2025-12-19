@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.SequencedCollection;
 
 /**
- * Represents a field that can be injected into inside a component. Additional handling is in place to
- * support merging {@link Collection}s into existing values, if applicable.
+ * Represents a field that can be injected into inside a component. Additional handling is in place
+ * to support merging {@link Collection}s into existing values, if applicable.
  *
  * @param <T> the type of the component that this injection point is for
  *
@@ -47,15 +47,18 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
     }
 
     @Override
-    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) throws ApplicationException {
+    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject)
+        throws ApplicationException {
         if (objectsToInject.size() == 1) {
             Object objectToInject = objectsToInject.getFirst();
             T instance = context.instance();
             try {
                 if (objectToInject instanceof Collection<?> collection) {
                     Option<?> previousValue = this.field.get(instance);
-                    if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
-                        existingCollection.addAll(TypeUtils.unchecked(collection, Collection.class));
+                    if (previousValue.present()
+                        && previousValue.get() instanceof Collection<?> existingCollection) {
+                        existingCollection.addAll(TypeUtils.unchecked(collection,
+                            Collection.class));
                         return;
                     }
                 }
@@ -69,7 +72,8 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
             }
         }
         else {
-            throw new UnsupportedOperationException("Cannot inject multiple objects into a single field");
+            throw new UnsupportedOperationException(
+                "Cannot inject multiple objects into a single field");
         }
     }
 

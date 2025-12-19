@@ -23,16 +23,16 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 /**
  * An expression representing an infix operation, which is an operation that is placed between two
  * expressions. An infix expression differs from a binary expression in that it is not necessarily
- * based on a single operator, but rather a function or method that takes two values and produces
- * a result.
+ * based on a single operator, but rather a function or method that takes two values and produces a
+ * result.
  *
  * <p>For example, in the expression <code>value in list</code>, the <code>in</code> operator is an
  * infix operator that checks whether the <code>value</code> is present in the <code>list</code>.
  *
  * @see FunctionStatement#functionType()
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class InfixExpression extends Expression {
@@ -48,14 +48,32 @@ public class InfixExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left expression of the infix operation, which is typically the first of two
+     * arguments to the infix function.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the infix operator token of the infix operation, which represents the function or
+     * method being invoked between the two expressions.
+     *
+     * @return the infix operator token
+     */
     public Token infixOperatorName() {
         return this.infixOperator;
     }
 
+    /**
+     * Returns the right expression of the infix operation, which is typically the second of two
+     * arguments to the infix function.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

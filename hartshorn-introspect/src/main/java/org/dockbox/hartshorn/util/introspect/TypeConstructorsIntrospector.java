@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * A type introspector that provides access to the constructors of a type. This is typically provided by a
- * {@link org.dockbox.hartshorn.util.introspect.view.TypeView} implementation.
+ * A type introspector that provides access to the constructors of a type. This is typically
+ * provided by a {@link org.dockbox.hartshorn.util.introspect.view.TypeView} implementation.
  *
  * @param <T> the type to introspect
  *
@@ -35,29 +35,31 @@ import java.util.List;
 public interface TypeConstructorsIntrospector<T> {
 
     /**
-     * Returns the default constructor of the type, if available. The default constructor is the constructor
-     * that has no parameters. If no constructors are explicitly defined, the default constructor is the
-     * constructor that is provided by the compiler.
+     * Returns the default constructor of the type, if available. The default constructor is the
+     * constructor that has no parameters. If no constructors are explicitly defined, the default
+     * constructor is the constructor that is provided by the compiler.
      *
      * @return the default constructor, if available
      */
     Option<ConstructorView<T>> defaultConstructor();
 
     /**
-     * Returns all constructors that are annotated with the provided annotation. If no constructors are
-     * annotated with the provided annotation, or if the annotation is not retained at whichever retention
-     * policy is in effect, an empty list is returned.
+     * Returns all constructors that are annotated with the provided annotation. If no constructors
+     * are annotated with the provided annotation, or if the annotation is not retained at whichever
+     * retention policy is in effect, an empty list is returned.
      *
      * @param annotation the annotation to find constructors for
+     *
      * @return all constructors that are annotated with the provided annotation
      */
     List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation);
 
     /**
-     * Returns the constructor that has the provided parameters. If no constructor is found, an empty option
-     * is returned. The parameters are matched by type, in order of declaration.
+     * Returns the constructor that has the provided parameters. If no constructor is found, an
+     * empty option is returned. The parameters are matched by type, in order of declaration.
      *
      * @param parameters the parameters to match
+     *
      * @return the constructor that has the provided parameters
      */
     default Option<ConstructorView<T>> withParameters(Class<?>... parameters) {
@@ -65,10 +67,11 @@ public interface TypeConstructorsIntrospector<T> {
     }
 
     /**
-     * Returns the constructor that has the provided parameters. If no constructor is found, an empty option
-     * is returned. The parameters are matched by type, in order of declaration.
+     * Returns the constructor that has the provided parameters. If no constructor is found, an
+     * empty option is returned. The parameters are matched by type, in order of declaration.
      *
      * @param parameters the parameters to match
+     *
      * @return the constructor that has the provided parameters
      */
     Option<ConstructorView<T>> withParameters(List<Class<?>> parameters);
@@ -86,5 +89,4 @@ public interface TypeConstructorsIntrospector<T> {
      * @return the number of constructors that are available on the type
      */
     int count();
-
 }

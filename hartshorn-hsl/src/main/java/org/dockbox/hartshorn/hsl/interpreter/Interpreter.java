@@ -33,23 +33,24 @@ import java.util.List;
  *
  * <p>Interpreters can be configured with different {@link ExecutionOptions options} to modify
  * their behavior, such as enabling or disabling certain language features. Interpreters also
- * provide mechanisms for error handling and reporting, allowing for graceful recovery from
- * runtime errors.
+ * provide mechanisms for error handling and reporting, allowing for graceful recovery from runtime
+ * errors.
  *
  * <p>Interpreters are stateful and should not be shared between different execution contexts.
  * Each interpreter maintains its own state, including variable scopes and function call stacks.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public interface Interpreter {
 
     /**
-     * Evaluates the given expression and returns the result. The type of the result depends on
-     * the expression being evaluated.
+     * Evaluates the given expression and returns the result. The type of the result depends on the
+     * expression being evaluated.
      *
      * @param expression the expression to evaluate
+     *
      * @return the result of the evaluation
      */
     Object evaluate(Expression expression);
@@ -66,8 +67,8 @@ public interface Interpreter {
 
     /**
      * Executes a block statement within the given local variable scope. This method is used to
-     * execute a series of statements that are grouped together in a block, such as the body
-     * of a function or a conditional statement.
+     * execute a series of statements that are grouped together in a block, such as the body of a
+     * function or a conditional statement.
      *
      * @param blockStatement the block statement to execute
      * @param localVariableScope the local variable scope to use for the execution
@@ -75,8 +76,8 @@ public interface Interpreter {
     void execute(BlockStatement blockStatement, VariableScope localVariableScope);
 
     /**
-     * Executes a list of statements within the given local variable scope. This method is used
-     * to execute multiple statements in sequence, such as the body of a script or a function.
+     * Executes a list of statements within the given local variable scope. This method is used to
+     * execute multiple statements in sequence, such as the body of a script or a function.
      *
      * @param statementList the list of statements to execute
      * @param localVariableScope the local variable scope to use for the execution
@@ -89,6 +90,7 @@ public interface Interpreter {
      *
      * @param name the token representing the variable name
      * @param expression the expression context in which the variable is being looked up
+     *
      * @return the value of the variable, or null if the variable is not defined
      */
     Object lookUpVariable(Token name, Expression expression);
@@ -113,26 +115,27 @@ public interface Interpreter {
     VariableScope visitingScope();
 
     /**
-     * Returns the global variable scope, which is the outermost scope in the variable scope hierarchy.
-     * The global scope contains variables that are accessible from any other scope within the interpreter.
+     * Returns the global variable scope, which is the outermost scope in the variable scope
+     * hierarchy. The global scope contains variables that are accessible from any other scope
+     * within the interpreter.
      *
      * @return the global variable scope
      */
     VariableScope global();
 
     /**
-     * Executes the given runnable within a new variable scope that is a child of the current scope. This
-     * method temporarily creates a new scope for the duration of the runnable's execution, allowing for
-     * isolated variable definitions and access. After the runnable completes, the interpreter returns to
-     * the previous scope.
+     * Executes the given runnable within a new variable scope that is a child of the current scope.
+     * This method temporarily creates a new scope for the duration of the runnable's execution,
+     * allowing for isolated variable definitions and access. After the runnable completes, the
+     * interpreter returns to the previous scope.
      *
      * @param runnable the runnable to execute within the new scope
      */
     void withNextScope(Runnable runnable);
 
     /**
-     * Enters the given variable scope, making it the current scope for subsequent variable definitions and
-     * access.
+     * Enters the given variable scope, making it the current scope for subsequent variable
+     * definitions and access.
      *
      * @param scope the variable scope to enter
      */
@@ -147,6 +150,7 @@ public interface Interpreter {
      * is used to optimize variable lookups during evaluation.
      *
      * @param expression the expression for which to calculate the distance
+     *
      * @return the distance of the expression from the current scope
      */
     Integer distance(Expression expression);
@@ -169,32 +173,34 @@ public interface Interpreter {
      * Sets the execution options for this interpreter.
      *
      * @param options the execution options to set
+     *
      * @return the interpreter instance for method chaining
      */
     Interpreter executionOptions(ExecutionOptions options);
 
     /**
-     * Gets the current state of the interpreter. This state includes information about variable scopes,
-     * external modules, and other runtime data necessary for interpretation. This state is not thread-safe
-     * and should only be accessed by interpreter instances within their own execution context.
+     * Gets the current state of the interpreter. This state includes information about variable
+     * scopes, external modules, and other runtime data necessary for interpretation. This state is
+     * not thread-safe and should only be accessed by interpreter instances within their own
+     * execution context.
      *
      * @return the interpreter state
      */
     InterpreterState state();
 
     /**
-     * Gets the token registry used by this interpreter. Most token information is not required during
-     * interpretation, but some features may require access to token metadata, such as virtual functions
-     * that need to create new (virtual) tokens during execution.
+     * Gets the token registry used by this interpreter. Most token information is not required
+     * during interpretation, but some features may require access to token metadata, such as
+     * virtual functions that need to create new (virtual) tokens during execution.
      *
      * @return the token registry
      */
     TokenRegistry tokenRegistry();
 
     /**
-     * Gets the result collector used by this interpreter to collect results from executed statements
-     * and expressions. The result collector allows for capturing and managing the outcomes of
-     * interpretation.
+     * Gets the result collector used by this interpreter to collect results from executed
+     * statements and expressions. The result collector allows for capturing and managing the
+     * outcomes of interpretation.
      *
      * @return the result collector
      */
@@ -206,18 +212,20 @@ public interface Interpreter {
      *
      * @param statements the list of statements to interpret
      *
-     * @throws ConcurrentInterpreterExecutionException if the interpreter is already executing statements
+     * @throws ConcurrentInterpreterExecutionException if the interpreter is already executing
+     * statements
      */
     void interpret(List<Statement> statements) throws ConcurrentInterpreterExecutionException;
 
     /**
-     * Restores the interpreter to its initial state. This is to prevent scope pollution, and potential
-     * leaking of errors and results. This does not clear the external modules and variables, nor the
-     * dynamic imports, as these can be reused safely.
+     * Restores the interpreter to its initial state. This is to prevent scope pollution, and
+     * potential leaking of errors and results. This does not clear the external modules and
+     * variables, nor the dynamic imports, as these can be reused safely.
      *
-     * <p>This method should be called before starting a new runtime. This should be at least before a
-     * potential {@link Resolver} is called, as the resolver will
-     * typically modify the {@link #state() interpreter state}.
+     * <p>This method should be called before starting a new runtime. This should be at least before
+     * a
+     * potential {@link Resolver} is called, as the resolver will typically modify the
+     * {@link #state() interpreter state}.
      */
     void restore();
 }

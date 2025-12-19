@@ -24,8 +24,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A functional interface for initializing objects. This interface is similar to {@link Initializer} but
- * allows for an input parameter. This is useful for initializers that require context to initialize.
+ * A functional interface for initializing objects. This interface is similar to {@link Initializer}
+ * but allows for an input parameter. This is useful for initializers that require context to
+ * initialize.
  *
  * @param <I> The type of input to initialize with.
  * @param <T> The type of object to initialize.
@@ -38,18 +39,19 @@ import java.util.function.Supplier;
 public interface ContextualInitializer<I, T> {
 
     /**
-     * Initializes the object. Implementations of this method may return the same object instance on each invocation,
-     * or a new instance on each invocation.
+     * Initializes the object. Implementations of this method may return the same object instance on
+     * each invocation, or a new instance on each invocation.
      *
      * @param input The input to initialize with.
+     *
      * @return The initialized object.
      */
     T initialize(SingleElementContext<? extends I> input);
 
     /**
-     * Returns an initializer that invokes the given initializer, ignoring the input value.
-     * This is useful for initializers that do not require context to initialize, but need to be
-     * provided to a configurer that requires a {@link ContextualInitializer}.
+     * Returns an initializer that invokes the given initializer, ignoring the input value. This is
+     * useful for initializers that do not require context to initialize, but need to be provided to
+     * a configurer that requires a {@link ContextualInitializer}.
      *
      * @param initializer The initializer to invoke.
      * @param <I> The type of input to initialize with.
@@ -62,9 +64,9 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
-     * Returns an initializer that invokes the given function using the contextual input, while ignoring
-     * the remaining wrapper context. This is useful for initializers that do require the input, but do
-     * not require the wrapper context to initialize.
+     * Returns an initializer that invokes the given function using the contextual input, while
+     * ignoring the remaining wrapper context. This is useful for initializers that do require the
+     * input, but do not require the wrapper context to initialize.
      *
      * @param function The function to invoke.
      * @param <I> The type of input to initialize with.
@@ -92,8 +94,9 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
-     * Returns an initializer that defers to the given initializer. This is useful for creating initializers
-     * that require context to initialize, but do not require the context to be known at the time of creation.
+     * Returns an initializer that defers to the given initializer. This is useful for creating
+     * initializers that require context to initialize, but do not require the context to be known
+     * at the time of creation.
      *
      * @param initializer The initializer to delegate to.
      * @param <I1> The (weak) input type of the given initializer.
@@ -102,14 +105,17 @@ public interface ContextualInitializer<I, T> {
      *
      * @return An initializer that delegates to the given initializer.
      */
-    static <I1, I2 extends I1, T> ContextualInitializer<I2, T> defer(Supplier<ContextualInitializer<I1, T>> initializer) {
+    static <I1, I2 extends I1, T> ContextualInitializer<I2, T> defer(
+        Supplier<ContextualInitializer<I1, T>> initializer
+    ) {
         return input -> initializer.get().initialize(input);
     }
 
     /**
-     * Returns an initializer that caches the result of this initializer. When the returned initializer is invoked,
-     * the result of this initializer is cached and returned on subsequent invocations with the same input value.
-     * This is useful for expensive initializers, or for easy initialization of singletons.
+     * Returns an initializer that caches the result of this initializer. When the returned
+     * initializer is invoked, the result of this initializer is cached and returned on subsequent
+     * invocations with the same input value. This is useful for expensive initializers, or for easy
+     * initialization of singletons.
      *
      * @return An initializer that caches the result of this initializer.
      */
@@ -118,12 +124,14 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
-     * Returns an initializer that invokes this initializer, and then invokes the given consumer with the result.
-     * This is useful for listening to the result of an initializer, without needing to invoke the initializer
-     * directly.
+     * Returns an initializer that invokes this initializer, and then invokes the given consumer
+     * with the result. This is useful for listening to the result of an initializer, without
+     * needing to invoke the initializer directly.
      *
      * @param consumer The consumer to invoke with the result of this initializer.
-     * @return An initializer that invokes this initializer, and then invokes the given consumer with the result.
+     *
+     * @return An initializer that invokes this initializer, and then invokes the given consumer
+     * with the result.
      */
     default ContextualInitializer<I, T> subscribe(Consumer<T> consumer) {
         return (input) -> {
@@ -134,13 +142,15 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
-     * Returns an initializer that invokes this initializer, and then invokes the given consumer with the original
-     * input and the result. This is useful for listening to the result of an initializer, without needing to invoke
-     * the initializer directly.
+     * Returns an initializer that invokes this initializer, and then invokes the given consumer
+     * with the original input and the result. This is useful for listening to the result of an
+     * initializer, without needing to invoke the initializer directly.
      *
-     * @param consumer The consumer to invoke with the original input and the result of this initializer.
-     * @return An initializer that invokes this initializer, and then invokes the given consumer with the original
-     *         input and the result.
+     * @param consumer The consumer to invoke with the original input and the result of this
+     * initializer.
+     *
+     * @return An initializer that invokes this initializer, and then invokes the given consumer
+     * with the original input and the result.
      */
     default ContextualInitializer<I, T> subscribe(BiConsumer<I, T> consumer) {
         return (input) -> {

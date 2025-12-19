@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * A callback interface for storing and locking components in a component store. Typically, such a store
- * is used to retain component instances during the processing of components.
+ * A callback interface for storing and locking components in a component store. Typically, such a
+ * store is used to retain component instances during the processing of components.
  *
  * @since 0.6.0
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ public interface ExceptionHandler {
     void handle(Throwable throwable);
 
     /**
-     * Handles the given exception using the preferred behavior. The given message may be included to provide more
-     * information about the exception.
+     * Handles the given exception using the preferred behavior. The given message may be included
+     * to provide more information about the exception.
      *
      * @param message The message to include in the exception.
      * @param throwable The exception to handle.
@@ -42,10 +42,11 @@ public interface ExceptionHandler {
     void handle(String message, Throwable throwable);
 
     /**
-     * Whether to use stacktraces in the exception handler. This is useful for debugging purposes, but may be ignored
-     * by the exception handler.
+     * Whether to use stacktraces in the exception handler. This is useful for debugging purposes,
+     * but may be ignored by the exception handler.
      *
      * @param stacktraces Whether to use stacktraces.
+     *
      * @return Itself, for chaining.
      */
     ExceptionHandler printStackTraces(boolean stacktraces);

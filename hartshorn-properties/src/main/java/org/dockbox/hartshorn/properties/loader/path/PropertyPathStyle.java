@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.properties.loader.path;
 
 /**
- * Represents a style for formatting property paths. This can be used to customize the way fields and indices are
- * formatted in a property path.
+ * Represents a style for formatting property paths. This can be used to customize the way fields
+ * and indices are formatted in a property path.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface PropertyPathStyle {
@@ -30,6 +30,7 @@ public interface PropertyPathStyle {
      * Formats a field with the given name.
      *
      * @param name the name of the field
+     *
      * @return the formatted field
      */
     default String field(String name) {
@@ -48,6 +49,7 @@ public interface PropertyPathStyle {
      * {@code [path, sample, test]}.
      *
      * @param path the path to split
+     *
      * @return the fields
      */
     String[] resolveFields(String path);
@@ -56,6 +58,7 @@ public interface PropertyPathStyle {
      * Formats an index with the given value.
      *
      * @param index the index value
+     *
      * @return the formatted index
      */
     String index(int index);
@@ -65,6 +68,7 @@ public interface PropertyPathStyle {
      * {@code [0, 1]}.
      *
      * @param path the path to split
+     *
      * @return the indices
      */
     String[] resolveIndexes(String path);

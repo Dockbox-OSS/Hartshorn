@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  * @author Guus Lieben
  */
 public record SimpleEnvironmentProfile(
-        String name,
-        PropertyRegistry propertyRegistry
-) implements EnvironmentProfile { }
+    String name,
+    PropertyRegistry propertyRegistry
+) implements EnvironmentProfile {
+}

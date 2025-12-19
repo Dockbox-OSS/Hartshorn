@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing an if-else conditional structure, which executes a block of code
- * based on the evaluation of a condition. If the condition evaluates to true, the "then
- * branch" is executed; otherwise, the "else branch" is executed if it is provided.
+ * A statement representing an if-else conditional structure, which executes a block of code based
+ * on the evaluation of a condition. If the condition evaluates to true, the "then branch" is
+ * executed; otherwise, the "else branch" is executed if it is provided.
  *
  * <p>The else branch is optional and may be null, indicating that no action should be taken
  * if the condition is false.
  *
  * <p>For example, the statement below represents an if-else structure that checks if a variable
- * `x` is greater than 10:
+ * {@code x} is greater than 10:
  * <pre>{@code
  * if (x > 10) {
  *    // Then branch
@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class IfStatement extends Statement {
@@ -54,14 +54,31 @@ public class IfStatement extends Statement {
         this.elseBranch = elseBranch;
     }
 
+    /**
+     * Returns the condition expression that is evaluated to determine which branch to execute.
+     *
+     * @return the condition expression
+     */
     public Expression condition() {
         return this.condition;
     }
 
+    /**
+     * Returns the "then branch" block statement that is executed if the condition evaluates to
+     * true.
+     *
+     * @return the then branch block statement
+     */
     public BlockStatement thenBranch() {
         return this.thenBranch;
     }
 
+    /**
+     * Returns the "else branch" block statement that is executed if the condition evaluates to
+     * false. This may be null if no else branch is provided.
+     *
+     * @return the else branch block statement, or null if not provided
+     */
     public BlockStatement elseBranch() {
         return this.elseBranch;
     }

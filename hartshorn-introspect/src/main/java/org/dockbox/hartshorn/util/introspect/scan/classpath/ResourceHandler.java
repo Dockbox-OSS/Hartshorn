@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,22 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
 /**
  * A handler for {@link ClassPathResource}s. Implementations of this interface are provided to
- * {@link ClassPathScanner}s, which will invoke the {@link #handle(ClassPathResource)} method for each resource
- * that is found on the classpath.
+ * {@link ClassPathScanner}s, which will invoke the {@link #handle(ClassPathResource)} method for
+ * each resource that is found on the classpath.
  *
  * @see ClassPathScanner
  * @see ClassPathResource
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ResourceHandler {
 
     /**
-     * Handles the provided {@link ClassPathResource}. Implementations of this method are expected to process the
-     * resource in a way that is appropriate for the implementation.
+     * Handles the provided {@link ClassPathResource}. Implementations of this method are expected
+     * to process the resource in a way that is appropriate for the implementation.
      *
      * @param resource The resource to handle, never {@code null}.
      */

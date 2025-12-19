@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE suppressions PUBLIC
-        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
-        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
 
-    <!-- Not required for test fixtures to provide Javadocs (although this is still encouraged where relevant) -->
-    <suppress checks="MissingJavadocType"
-              files=".+test-fixtures[\\/].*.java"/>
+  <!-- Not required for test fixtures to provide Javadocs (although this is still encouraged where relevant) -->
+  <suppress checks="MissingJavadocType|MissingJavadocMethod"
+      files=".+test-fixtures[\\/].*.java"/>
 </suppressions>

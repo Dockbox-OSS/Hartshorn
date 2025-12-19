@@ -1,55 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-platform-build</artifactId>
-        <version>${revision}</version>
-        <relativePath>hartshorn-assembly/pom.platform.build.xml</relativePath>
-    </parent>
-
-    <artifactId>hartshorn</artifactId>
-    <packaging>pom</packaging>
+  <parent>
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn-platform-build</artifactId>
     <version>${revision}</version>
+    <relativePath>hartshorn-assembly/pom.platform.build.xml</relativePath>
+  </parent>
 
-    <modules>
-        <!-- Platform and base modules -->
-        <module>hartshorn-assembly/pom.platform.build.xml</module>
-        <module>hartshorn-assembly/pom.staging.xml</module>
-        <module>hartshorn-assembly/pom.platform.updates.xml</module>
-        <module>hartshorn-bom</module>
-        <module>hartshorn-assembly/pom.platform.support.xml</module>
+  <artifactId>hartshorn</artifactId>
+  <packaging>pom</packaging>
+  <version>${revision}</version>
 
-        <!-- Individually deployable modules -->
-        <module>hartshorn-shared</module>
-        <module>hartshorn-properties</module>
-        <module>hartshorn-profiles</module>
-        <module>hartshorn-spi</module>
-        <module>hartshorn-proxy</module>
-        <module>hartshorn-proxy-test-fixtures</module>
-        <module>hartshorn-proxy-javassist</module>
-        <module>hartshorn-introspect</module>
-        <module>hartshorn-introspect-test-fixtures</module>
-        <module>hartshorn-introspect-reflection</module>
-        <module>hartshorn-inject</module>
-        <module>hartshorn-integration-tests</module>
-        <module>hartshorn-inject-configurations</module>
-        <module>hartshorn-launchpad</module>
-        <module>hartshorn-reporting</module>
-        <module>hartshorn-hsl</module>
-        <module>hartshorn-testsuite</module>
-        <module>hartshorn-launchpad-kotlin-extensions</module>
-        <module>hartshorn-launchpad-starter</module>
-        <module>hartshorn-launchpad-samples</module>
+  <modules>
+    <!-- Platform and base modules -->
+    <module>hartshorn-assembly/pom.platform.build.xml</module>
+    <module>hartshorn-assembly/pom.staging.xml</module>
+    <module>hartshorn-assembly/pom.platform.updates.xml</module>
+    <module>hartshorn-bom</module>
+    <module>hartshorn-assembly/pom.platform.support.xml</module>
 
-        <!-- Assembly modules -->
-        <module>hartshorn-assembly/pom.assembly.xml</module>
-    </modules>
+    <!-- Individually deployable modules -->
+    <module>hartshorn-shared</module>
+    <module>hartshorn-properties</module>
+    <module>hartshorn-profiles</module>
+    <module>hartshorn-spi</module>
+    <module>hartshorn-proxy</module>
+    <module>hartshorn-proxy-test-fixtures</module>
+    <module>hartshorn-proxy-javassist</module>
+    <module>hartshorn-introspect</module>
+    <module>hartshorn-introspect-test-fixtures</module>
+    <module>hartshorn-introspect-reflection</module>
+    <module>hartshorn-inject</module>
+    <module>hartshorn-integration-tests</module>
+    <module>hartshorn-inject-configurations</module>
+    <module>hartshorn-launchpad</module>
+    <module>hartshorn-reporting</module>
+    <module>hartshorn-hsl</module>
+    <module>hartshorn-testsuite</module>
+    <module>hartshorn-launchpad-kotlin-extensions</module>
+    <module>hartshorn-launchpad-starter</module>
+    <module>hartshorn-launchpad-samples</module>
 
-    <properties>
-        <!-- Project version, keep in sync with build support POM -->
-        <revision>0.7.0</revision>
-    </properties>
+    <!-- Assembly modules -->
+    <module>hartshorn-assembly/pom.assembly.xml</module>
+  </modules>
+
+  <properties>
+    <!-- Project version, keep in sync with build support POM -->
+    <revision>0.7.0</revision>
+  </properties>
 </project>

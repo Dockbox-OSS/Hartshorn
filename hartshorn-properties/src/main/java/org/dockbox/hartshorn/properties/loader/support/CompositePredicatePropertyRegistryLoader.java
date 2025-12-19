@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader will
- * delegate the loading of a registry to all loaders that are compatible with the given path.
+ * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader
+ * will delegate the loading of a registry to all loaders that are compatible with the given path.
  *
  * @since 0.7.0
  *
@@ -70,8 +70,8 @@ public class CompositePredicatePropertyRegistryLoader implements PredicateProper
 
     @Override
     public void loadRegistry(PropertyRegistry registry, URI path) throws IOException {
-        for(PredicatePropertyRegistryLoader loader : this.loaders) {
-            if(loader.isCompatible(path)) {
+        for (PredicatePropertyRegistryLoader loader : this.loaders) {
+            if (loader.isCompatible(path)) {
                 loader.loadRegistry(registry, path);
             }
         }

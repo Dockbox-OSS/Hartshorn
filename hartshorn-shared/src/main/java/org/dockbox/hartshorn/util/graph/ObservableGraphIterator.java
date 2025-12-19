@@ -17,18 +17,18 @@
 package org.dockbox.hartshorn.util.graph;
 
 /**
- * A {@link GraphIterator} that can observe the traversal of a {@link Graph}. This iterator
- * can be used to implement algorithms that require knowledge of the traversal of a graph.
+ * A {@link GraphIterator} that can observe the traversal of a {@link Graph}. This iterator can be
+ * used to implement algorithms that require knowledge of the traversal of a graph.
  *
  * <p>Supported observations relate to the visiting of new paths. A path is a sequence of nodes
- * that are visited in a single traversal. It remains up to the implementation to determine when
- * a new traversal is started. Observations are made before and after a path is visited. Single
- * nodes are not considered paths, as they are already observable through {@link #visit(GraphNode)}.
+ * that are visited in a single traversal. It remains up to the implementation to determine when a
+ * new traversal is started. Observations are made before and after a path is visited. Single nodes
+ * are not considered paths, as they are already observable through {@link #visit(GraphNode)}.
  *
  * @param <T> the type of the value of the node
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface ObservableGraphIterator<T> extends GraphIterator<T> {
@@ -38,22 +38,24 @@ public interface ObservableGraphIterator<T> extends GraphIterator<T> {
      * traversal of the graph.
      *
      * @param node the node that is visited
+     *
      * @return {@code true} if the traversal should continue, {@code false} otherwise
+     *
      * @throws GraphException if an error occurs while visiting the node
      */
     boolean visit(GraphNode<T> node) throws GraphException;
 
     /**
-     * Invoked before a path is visited. A path is a sequence of nodes that are visited in a
-     * single traversal.
+     * Invoked before a path is visited. A path is a sequence of nodes that are visited in a single
+     * traversal.
      */
     default void beforePathVisited() {
         // Do nothing by default, can be overridden
     }
 
     /**
-     * Invoked after a path is visited. A path is a sequence of nodes that are visited in a
-     * single traversal.
+     * Invoked after a path is visited. A path is a sequence of nodes that are visited in a single
+     * traversal.
      */
     default void afterPathVisited() {
         // Do nothing by default, can be overridden

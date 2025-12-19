@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,15 @@ import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 /**
- * A registry that is aware of its state. This means that it can be queried for whether it has been modified since its
- * initial creation. This is used to determine whether the proxy should be created. If the registry was never modified
- * then the proxy is not required, and the original instance can be returned by the caller of the
- * {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
+ * A registry that is aware of its state. This means that it can be queried for whether it has been
+ * modified since its initial creation. This is used to determine whether the proxy should be
+ * created. If the registry was never modified then the proxy is not required, and the original
+ * instance can be returned by the caller of the {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
  *
  * @param <T> the type of the target object
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public interface StateAwareAdvisorRegistry<T> extends AdvisorRegistry<T>, ProxyAdvisorResolver<T> {

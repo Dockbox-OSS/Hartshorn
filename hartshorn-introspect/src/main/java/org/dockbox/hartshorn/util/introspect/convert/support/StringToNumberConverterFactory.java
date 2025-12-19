@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * @see #isHexNumber(String)
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
@@ -55,10 +55,16 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             converter = new StringToNumberConverter<>(Long::parseLong, Long::decode);
         }
         else if (targetType == Float.class) {
-            converter = new StringToNumberConverter<>(Float::parseFloat, input -> Long.decode(input).floatValue());
+            converter = new StringToNumberConverter<>(
+                Float::parseFloat,
+                input -> Long.decode(input).floatValue()
+            );
         }
         else if (targetType == Double.class) {
-            converter = new StringToNumberConverter<>(Double::parseDouble, input -> Long.decode(input).doubleValue());
+            converter = new StringToNumberConverter<>(
+                Double::parseDouble,
+                input -> Long.decode(input).doubleValue()
+            );
         }
         else if (targetType == Short.class) {
             converter = new StringToNumberConverter<>(Short::parseShort, Short::decode);
@@ -74,8 +80,9 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
     }
 
     /**
-     * A {@link Converter} implementation that converts a {@link String} to a {@link Number}. Supports both decimal and
-     * hexadecimal numbers. Uses the provided {@link Function}s to parse and decode the input.
+     * A {@link Converter} implementation that converts a {@link String} to a {@link Number}.
+     * Supports both decimal and hexadecimal numbers. Uses the provided {@link Function}s to parse
+     * and decode the input.
      *
      * @param parseFunction The function to use for parsing decimal numbers
      * @param decodeFunction The function to use for decoding hexadecimal numbers
@@ -86,22 +93,22 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      * @author Guus Lieben
      */
     private record StringToNumberConverter<T extends Number>(
-            Function<String, T> parseFunction,
-            Function<String, T> decodeFunction
+        Function<String, T> parseFunction,
+        Function<String, T> decodeFunction
     ) implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String input) {
             assert input != null;
             try {
-                if(isHexNumber(input)) {
+                if (isHexNumber(input)) {
                     return this.decodeFunction.apply(input);
                 }
                 else {
                     return this.parseFunction.apply(input);
                 }
             }
-            catch(NumberFormatException e) {
+            catch (NumberFormatException e) {
                 // If primitive, the conversion service will default to zero
                 return null;
             }
@@ -109,15 +116,16 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
     }
 
     /**
-     * Returns whether the given {@link String} is a hexadecimal number. A hexadecimal number is prefixed with either
-     * {@code 0x} or {@code #}. The prefix may be preceded by a minus sign.
+     * Returns whether the given {@link String} is a hexadecimal number. A hexadecimal number is
+     * prefixed with either {@code 0x} or {@code #}. The prefix may be preceded by a minus sign.
      *
      * @param value the value to check
+     *
      * @return {@code true} if the given value is a hexadecimal number, {@code false} otherwise
      */
     public static boolean isHexNumber(String value) {
         int index = value.startsWith("-") ? 1 : 0;
         return value.toLowerCase(Locale.ROOT).startsWith("0x", index)
-                || value.startsWith("#", index);
+            || value.startsWith("#", index);
     }
 }

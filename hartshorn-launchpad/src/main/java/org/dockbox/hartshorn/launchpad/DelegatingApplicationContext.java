@@ -55,19 +55,23 @@ import java.util.SequencedSet;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link ApplicationContext} implementation that delegates to a {@link PostProcessingComponentProvider}. This
- * implementation is used to allow for custom implementations of provision and binding, while still allowing for
- * the {@link ApplicationContext} to function in a predictable manner.
+ * A {@link ApplicationContext} implementation that delegates to a
+ * {@link PostProcessingComponentProvider}. This implementation is used to allow for custom
+ * implementations of provision and binding, while still allowing for the {@link ApplicationContext}
+ * to function in a predictable manner.
  *
- * <p>Details like component processors and context initialization are not handled as they are specific to the
- * {@link ApplicationContext} implementation. This implementation is intended to be used as a base class for
- * {@link ApplicationContext} implementations.
+ * <p>Details like component processors and context initialization are not handled as they are
+ * specific to the
+ * {@link ApplicationContext} implementation. This implementation is intended to be used as a base
+ * class for {@link ApplicationContext} implementations.
  *
- * <p>While the lifecycle during startup is not explicitly managed by this implementation, it does provide handling for
- * {@link LifecycleObserver#onExit(ApplicationContext)}. This allows for the {@link ApplicationContext} to be closed
- * in a predictable manner.
+ * <p>While the lifecycle during startup is not explicitly managed by this implementation, it does
+ * provide handling for
+ * {@link LifecycleObserver#onExit(ApplicationContext)}. This allows for the
+ * {@link ApplicationContext} to be closed in a predictable manner.
  *
- * <p>Additional default bindings may be configured using a {@link DefaultBindingConfigurer}. This configuration will
+ * <p>Additional default bindings may be configured using a {@link DefaultBindingConfigurer}. This
+ * configuration will
  * be activated only for the global {@link HierarchicalBinder}, and not for any scoped binders.
  *
  * @see ApplicationContext
@@ -81,8 +85,8 @@ import java.util.function.BiConsumer;
  * @author Guus Lieben
  */
 public abstract class DelegatingApplicationContext
-        extends DefaultFallbackCompatibleContext
-        implements ProcessableApplicationContext {
+    extends DefaultFallbackCompatibleContext
+    implements ProcessableApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
@@ -92,45 +96,61 @@ public abstract class DelegatingApplicationContext
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    protected DelegatingApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
+    protected DelegatingApplicationContext(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext,
+        Configurer configurer
+    ) {
         this.environment = initializerContext.input();
 
-        if (this.environment instanceof ModifiableApplicationContextCarrier modifiableApplicationContextCarrier) {
+        if (this.environment instanceof ModifiableApplicationContextCarrier
+            modifiableApplicationContextCarrier
+        ) {
             modifiableApplicationContextCarrier.applicationContext(this);
         }
 
         this.prepareInitialization(initializerContext);
 
-        SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
-        // Expose current context to allow initializers to resolve the application, even if the content of the element context
-        // is not the application itself
+        SingleElementContext<ApplicationContext> applicationInitializerContext =
+            initializerContext.transform(this);
+        // Expose current context to allow initializers to resolve the application, even if the
+        // content of the element context is not the application itself
         applicationInitializerContext.addContext(this);
 
-        this.componentProvider = configurer.componentProvider.initialize(applicationInitializerContext.transform(this.environment().componentRegistry()));
+        this.componentProvider = configurer.componentProvider
+            .initialize(applicationInitializerContext.transform(
+                this.environment().componentRegistry()
+            ));
 
-        DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings.initialize(applicationInitializerContext);
-        this.componentProvider.binderProcessorRegistry().register(new BindingConfigurerBinderPostProcessorAdapter(bindingConfigurer));
+        DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings
+            .initialize(applicationInitializerContext);
+
+        this.componentProvider.binderProcessorRegistry()
+            .register(new BindingConfigurerBinderPostProcessorAdapter(bindingConfigurer));
     }
 
     /**
-     * Prepares the initialization of the {@link ApplicationContext}. This method is called before any bindings are
-     * configured. This method is intended to be overridden by implementations to perform any initialization that is
-     * required before bindings are configured.
+     * Prepares the initialization of the {@link ApplicationContext}. This method is called before
+     * any bindings are configured. This method is intended to be overridden by implementations to
+     * perform any initialization that is required before bindings are configured.
      *
      * @param initializerContext the context in which the initialization is taking place
      */
-    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    protected void prepareInitialization(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         // Nothing by default
     }
 
     /**
-     * Checks if the {@link ApplicationContext} is running. If it is, an {@link IllegalModificationException} is thrown.
-     * This method is intended to be called by implementations to prevent modifications to the {@link ApplicationContext}
-     * after it has been started.
+     * Checks if the {@link ApplicationContext} is running. If it is, an
+     * {@link IllegalModificationException} is thrown. This method is intended to be called by
+     * implementations to prevent modifications to the {@link ApplicationContext} after it has been
+     * started.
      */
     protected void checkRunning() {
         if (this.isRunning) {
-            throw new IllegalModificationException("Application context cannot be modified after it has been started");
+            throw new IllegalModificationException(
+                "Application context cannot be modified after it has been started");
         }
     }
 
@@ -151,7 +171,9 @@ public abstract class DelegatingApplicationContext
 
     @Override
     public ModuleActivatorHolder activators() {
-        return ContextModuleActivatorHolder.of(() -> this.firstContext(ModuleActivatorContext.class));
+        return ContextModuleActivatorHolder.of(() -> {
+            return this.firstContext(ModuleActivatorContext.class);
+        });
     }
 
     @Override
@@ -182,10 +204,12 @@ public abstract class DelegatingApplicationContext
         }
         else if (this.componentProvider instanceof Binder binder) {
             BindingFunction<C> function = binder.bind(key);
-            BindingFunction<C> delegate = new DelegatingApplicationBindingFunction<>(this, function);
+            BindingFunction<C> delegate =
+                new DelegatingApplicationBindingFunction<>(this, function);
             return new NonAliasBindingFunctionAdapter<>(delegate);
         }
-        throw new UnsupportedOperationException("This application does not support binding hierarchies");
+        throw new UnsupportedOperationException(
+            "This application does not support binding hierarchies");
     }
 
     @Override
@@ -193,7 +217,8 @@ public abstract class DelegatingApplicationContext
         if (this.componentProvider instanceof Binder binder) {
             return binder.bind(hierarchy);
         }
-        throw new UnsupportedOperationException("This application does not support binding hierarchies");
+        throw new UnsupportedOperationException(
+            "This application does not support binding hierarchies");
     }
 
     @Override
@@ -206,7 +231,8 @@ public abstract class DelegatingApplicationContext
         if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
             return provider.hierarchy(key);
         }
-        throw new UnsupportedOperationException("This application does not support binding hierarchies");
+        throw new UnsupportedOperationException(
+            "This application does not support binding hierarchies");
     }
 
     @Override
@@ -224,7 +250,8 @@ public abstract class DelegatingApplicationContext
         }
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            SequencedSet<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
+            SequencedSet<LifecycleObserver> observers = observable
+                    .observers(LifecycleObserver.class);
             LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
                 LOG.debug("Notifying {} of shutdown", observer.getClass().getSimpleName());
@@ -232,7 +259,9 @@ public abstract class DelegatingApplicationContext
                     observer.onExit(this);
                 }
                 catch (Throwable e) {
-                    this.handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
+                    this.handle("Error notifying "
+                        + observer.getClass().getSimpleName()
+                        + " of shutdown", e);
                 }
             }
             this.isClosed = true;
@@ -246,15 +275,17 @@ public abstract class DelegatingApplicationContext
     }
 
     /**
-     * @return the {@link ComponentProvider} that is used by this {@link ApplicationContext} to provide components
+     * @return the {@link ComponentProvider} that is used by this {@link ApplicationContext} to
+     * provide components
      */
     public ComponentProviderOrchestrator componentProvider() {
         return this.componentProvider;
     }
 
     /**
-     * Configuration for the {@link DelegatingApplicationContext}. This configuration is used to configure the
-     * various components required by the {@link DelegatingApplicationContext} to function.
+     * Configuration for the {@link DelegatingApplicationContext}. This configuration is used to
+     * configure the various components required by the {@link DelegatingApplicationContext} to
+     * function.
      *
      * @since 0.5.0
      *
@@ -262,14 +293,18 @@ public abstract class DelegatingApplicationContext
      */
     public static class Configurer {
 
-        private ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator> componentProvider = HierarchicalComponentProviderOrchestrator.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
+        private ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator>
+            componentProvider =
+            HierarchicalComponentProviderOrchestrator.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
+            defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         /**
-         * Configures the {@link PostProcessingComponentProvider} that is used by the {@link DelegatingApplicationContext} to
-         * provide component instances.
+         * Configures the {@link PostProcessingComponentProvider} that is used by the
+         * {@link DelegatingApplicationContext} to provide component instances.
          *
          * @param componentProvider the {@link PostProcessingComponentProvider} to use
+         *
          * @return the current instance
          */
         public Configurer componentProvider(ComponentProviderOrchestrator componentProvider) {
@@ -277,22 +312,28 @@ public abstract class DelegatingApplicationContext
         }
 
         /**
-         * Configures the {@link ComponentProvider} that is used by the {@link DelegatingApplicationContext} to provide
-         * component instances.
+         * Configures the {@link ComponentProvider} that is used by the
+         * {@link DelegatingApplicationContext} to provide component instances.
          *
          * @param componentProvider the {@link PostProcessingComponentProvider} to use
+         *
          * @return the current instance
          */
-        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator> componentProvider) {
+        public Configurer componentProvider(
+            ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator>
+                componentProvider
+        ) {
             this.componentProvider = componentProvider;
             return this;
         }
 
         /**
-         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
-         * configure bindings that should be available by default.
+         * Configures the {@link DefaultBindingConfigurer} that is used by the
+         * {@link DelegatingApplicationContext} to configure bindings that should be available by
+         * default.
          *
          * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         *
          * @return the current instance
          */
         public Configurer defaultBindings(DefaultBindingConfigurer defaultBindings) {
@@ -300,24 +341,32 @@ public abstract class DelegatingApplicationContext
         }
 
         /**
-         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
-         * configure bindings that should be available by default.
+         * Configures the {@link DefaultBindingConfigurer} that is used by the
+         * {@link DelegatingApplicationContext} to configure bindings that should be available by
+         * default.
          *
          * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         *
          * @return the current instance
          */
         public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
-            return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(), binder));
+            return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(),
+                binder));
         }
 
         /**
-         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
-         * configure bindings that should be available by default.
+         * Configures the {@link DefaultBindingConfigurer} that is used by the
+         * {@link DelegatingApplicationContext} to configure bindings that should be available by
+         * default.
          *
          * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         *
          * @return the current instance
          */
-        public Configurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
+        public Configurer defaultBindings(
+            ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
+                defaultBindings
+        ) {
             this.defaultBindings = defaultBindings;
             return this;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,16 +40,18 @@ public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
     }
 
     /**
-     * Create a new null-safe {@link ConvertibleTypePair} from the given source and target type. Null-safe
-     * in this context means that any given {@code null} source type will be replaced with {@link Null#TYPE}.
+     * Create a new null-safe {@link ConvertibleTypePair} from the given source and target type.
+     * Null-safe in this context means that any given {@code null} source type will be replaced with
+     * {@link Null#TYPE}.
      *
      * @param sourceType the source type
      * @param targetType the target type
+     *
      * @return a new {@link ConvertibleTypePair} instance
      */
     public static ConvertibleTypePair of(Class<?> sourceType, Class<?> targetType) {
-        // Default value providers take 'Null' (null) as input, so we need to ensure we consistently use Null.TYPE
-        // in the ConvertibleTypePair to avoid unnecessary conversions.
+        // Default value providers take 'Null' (null) as input, so we need to ensure we consistently
+        // use Null.TYPE in the ConvertibleTypePair to avoid unnecessary conversions.
         if (sourceType == null || sourceType == void.class || sourceType == Void.class) {
             return new ConvertibleTypePair(Null.TYPE, targetType);
         }

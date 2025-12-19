@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.function.Predicate;
 
 /**
- * A function that inverts a {@link Graph} for all nodes matching a given rule. The inverted graph will have a new
- * root node, which is the first node that matches the given rule. The inverted graph will only contain all nodes
- * that are reachable from the new root node.
+ * A function that inverts a {@link Graph} for all nodes matching a given rule. The inverted graph
+ * will have a new root node, which is the first node that matches the given rule. The inverted
+ * graph will only contain all nodes that are reachable from the new root node.
  *
  * @since 0.5.0
  *
@@ -30,9 +30,10 @@ import java.util.function.Predicate;
 public class GraphInverter {
 
     /**
-     * Inverts the given graph using the node with the given value as the new root node. The inverted graph will only
-     * contain all nodes that are reachable from the new root node. If there are multiple nodes with the given value,
-     * the graph will contain the first of these nodes as a root node.
+     * Inverts the given graph using the node with the given value as the new root node. The
+     * inverted graph will only contain all nodes that are reachable from the new root node. If
+     * there are multiple nodes with the given value, the graph will contain the first of these
+     * nodes as a root node.
      *
      * @param graph the graph to invert
      * @param root the value of the node to use as the new root node
@@ -47,9 +48,10 @@ public class GraphInverter {
     }
 
     /**
-     * Inverts the given graph using the node that matches the given rule as the new root node. The inverted graph will
-     * only contain all nodes that are reachable from the new root node. If there are multiple nodes that match the
-     * given rule, the graph will contain the first of these nodes as a root node.
+     * Inverts the given graph using the node that matches the given rule as the new root node. The
+     * inverted graph will only contain all nodes that are reachable from the new root node. If
+     * there are multiple nodes that match the given rule, the graph will contain the first of these
+     * nodes as a root node.
      *
      * @param graph the graph to invert
      * @param rule the rule to match the new root node
@@ -75,12 +77,15 @@ public class GraphInverter {
         return inverted;
     }
 
-    private <T> GraphNode<T> invertNode(GraphNode<T> originalNode, MutableGraphNode<T> invertedNode) {
+    private <T> GraphNode<T> invertNode(
+        GraphNode<T> originalNode,
+        MutableGraphNode<T> invertedNode
+    ) {
         if (originalNode instanceof ContainableGraphNode<T> containable) {
             for (GraphNode<T> parent : containable.parents()) {
                 MutableGraphNode<T> invertedParent = new SimpleGraphNode<>(parent.value());
-                // Only set children, do not set parents, as this would create relations that are not relevant
-                // considering the new graph root.
+                // Only set children, do not set parents, as this would create relations that are
+                // not relevant considering the new graph root.
                 invertedNode.addChild(invertedParent);
                 this.invertNode(parent, invertedParent);
             }

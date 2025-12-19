@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,16 @@ import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 public interface ExecutableElementView<Parent> extends AnnotatedElementView, ModifierCarrierView {
 
     /**
-     * Returns an {@link ExecutableParametersIntrospector} for the element. This introspector
-     * can be used to introspect the element's parameters.
+     * Returns an {@link ExecutableParametersIntrospector} for the element. This introspector can be
+     * used to introspect the element's parameters.
      *
      * @return an introspector for the element's parameters
      */
     ExecutableParametersIntrospector parameters();
 
     /**
-     * Returns an {@link TypeVariablesIntrospector} for the element. This introspector
-     * can be used to introspect the element's type variables.
+     * Returns an {@link TypeVariablesIntrospector} for the element. This introspector can be used
+     * to introspect the element's type variables.
      *
      * @return an introspector for the element's type variables
      */

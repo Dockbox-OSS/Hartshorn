@@ -41,7 +41,8 @@ public class ReportingTests {
     void testSystemReporterCreatesNonNullReport() {
         // Given
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector =
+            this.applicationContext.get(DiagnosticsReportCollector.class);
 
         // When
         DiagnosticsReport report = collector.report(configurable);
@@ -52,10 +53,12 @@ public class ReportingTests {
     }
 
     @Test
-    void testSystemReporterCreatesNonNullReportWithCustomReportable() throws ReportSerializationException {
+    void testSystemReporterCreatesNonNullReportWithCustomReportable()
+        throws ReportSerializationException {
         // Given
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector =
+            this.applicationContext.get(DiagnosticsReportCollector.class);
 
         // When
         DiagnosticsReport report = collector.report(configurable);

@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.context;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A simple implementation of {@link SingleElementContext} which can be used for simple
- * single element contexts.
+ * A simple implementation of {@link SingleElementContext} which can be used for simple single
+ * element contexts.
  *
  * @param <I> the type of the input
  *
@@ -35,12 +35,12 @@ public class SimpleSingleElementContext<I> extends AbstractSingleElementContext<
     }
 
     /**
-     * Creates a new {@link SimpleSingleElementContext} with the given input. This is a
-     * convenience method to better align with the common use of {@link SingleElementContext}.
+     * Creates a new {@link SimpleSingleElementContext} with the given input. This is a convenience
+     * method to better align with the common use of {@link SingleElementContext}.
      *
      * @param input the input value
      * @param <I> the type of the input
-     * 
+     *
      * @return the new context
      */
     public static <I> SimpleSingleElementContext<I> create(@NonNull I input) {

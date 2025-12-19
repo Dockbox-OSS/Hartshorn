@@ -34,13 +34,16 @@ public class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void testFactoryCreatesConverterForConcreteCollectionTarget() {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
+            ArrayList.class,
+            ArrayList::new);
 
-        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
+        ConverterFactory<Object[], Collection<?>> factory =
+            new ArrayToCollectionConverterFactory(introspector);
         Converter<Object[], ArrayList> converter = factory.create(ArrayList.class);
         Assertions.assertNotNull(converter);
 
-        List<?> list = converter.convert(new Object[]{ "test" });
+        List<?> list = converter.convert(new Object[] {"test"});
         Assertions.assertNotNull(list);
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("test", list.get(0));
@@ -51,7 +54,7 @@ public class ArrayToCollectionConverterFactoryTests {
         Converter<Object[], Collection<String>> converter = createConverter();
         Assertions.assertNotNull(converter);
 
-        Collection<String> list = converter.convert(new Object[]{ "test" });
+        Collection<String> list = converter.convert(new Object[] {"test"});
         Assertions.assertNotNull(list);
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("test", CollectionUtilities.first(list));
@@ -67,10 +70,13 @@ public class ArrayToCollectionConverterFactoryTests {
     }
 
     private static Converter<Object[], Collection<String>> createConverter() {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
-        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
+        Introspector introspector =
+            ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
+        ConverterFactory<Object[], Collection<?>> factory =
+            new ArrayToCollectionConverterFactory(introspector);
 
-        Converter<Object[], Collection<String>> converter = TypeUtils.unchecked(factory.create(Collection.class), Converter.class);
+        Converter<Object[], Collection<String>> converter =
+            TypeUtils.unchecked(factory.create(Collection.class), Converter.class);
         Assertions.assertNotNull(converter);
 
         return converter;

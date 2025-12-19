@@ -35,10 +35,10 @@ public class LogicalExpressionParser extends AbstractBitwiseOrLogicalExpressionP
 
     @Override
     protected TokenType[] whileMatching() {
-        return new TokenType[]{
-                BitwiseTokenType.XOR,
-                ConditionTokenType.OR,
-                ConditionTokenType.AND,
+        return new TokenType[] {
+            BitwiseTokenType.XOR,
+            ConditionTokenType.OR,
+            ConditionTokenType.AND,
         };
     }
 

@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * A {@link ComponentStoreCallback} implementation that stores components in a local {@link SingletonCache
- * singleton cache}.
+ * A {@link ComponentStoreCallback} implementation that stores components in a local
+ * {@link SingletonCache singleton cache}.
  *
  * @since 0.6.0
  *
@@ -39,7 +39,8 @@ public class LocalCacheComponentStoreCallback implements ComponentStoreCallback 
 
     @Override
     public <T> void store(ComponentKey<T> key, ObjectContainer<T> container) {
-        this.actOnSingletonOnly(container, () -> this.singletonCache.put(key, container.instance()));
+        this.actOnSingletonOnly(container,
+            () -> this.singletonCache.put(key, container.instance()));
     }
 
     @Override
@@ -65,7 +66,8 @@ public class LocalCacheComponentStoreCallback implements ComponentStoreCallback 
             case PROTOTYPE -> {
                 // Do nothing, as prototypes are not stored in the cache
             }
-            default -> throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
+            default -> throw new IllegalModificationException("Unknown lifecycle type "
+                + container.lifecycleType());
         }
     }
 }

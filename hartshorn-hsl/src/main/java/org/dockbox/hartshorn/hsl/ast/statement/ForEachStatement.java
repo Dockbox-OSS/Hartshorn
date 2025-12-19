@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing a `for-each` loop, which iterates over a collection of elements.
- * The loop executes the body for each element in the collection, assigning the current element
- * to the specified selector variable.
+ * A statement representing a for-each loop, which iterates over a collection of elements. The
+ * loop executes the body for each element in the collection, assigning the current element to the
+ * specified selector variable.
  *
  * <p>For example, the statement below iterates over a list of integers:
  * <pre>{@code
@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ForEachStatement extends BodyStatement {
@@ -41,16 +41,32 @@ public class ForEachStatement extends BodyStatement {
     private final VariableStatement selector;
     private final Expression collection;
 
-    public ForEachStatement(VariableStatement selector, Expression collection, BlockStatement body) {
+    public ForEachStatement(
+        VariableStatement selector,
+        Expression collection,
+        BlockStatement body
+    ) {
         super(selector, body);
         this.selector = selector;
         this.collection = collection;
     }
 
+    /**
+     * Returns the selector variable statement, which represents the variable that will hold the
+     * current element in each iteration of the loop.
+     *
+     * @return the selector variable statement
+     */
     public VariableStatement selector() {
         return this.selector;
     }
 
+    /**
+     * Returns the collection expression, which represents the collection of elements to be
+     * iterated over.
+     *
+     * @return the collection expression
+     */
     public Expression collection() {
         return this.collection;
     }

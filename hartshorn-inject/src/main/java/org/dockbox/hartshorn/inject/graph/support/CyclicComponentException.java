@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,11 @@ import java.util.Iterator;
  */
 public class CyclicComponentException extends ApplicationException {
 
-    private static final String CYCLE_TOP     = " ┌───┐\n";
-    private static final String CYCLE_NODE    = " ↑  %s (in %s)\n";
+    private static final String CYCLE_TOP = " ┌───┐\n";
+    private static final String CYCLE_NODE = " ↑  %s (in %s)\n";
     private static final String CYCLE_BINDING = " |   ↓   ↳ Implemented by %s\n";
-    private static final String CYCLE_PATH    = " |   ↓\n";
-    private static final String CYCLE_BOTTOM  = " └───┘";
+    private static final String CYCLE_PATH = " |   ↓\n";
+    private static final String CYCLE_BOTTOM = " └───┘";
 
     private final ComponentDiscoveryList componentDiscoveryList;
     private final View origin;
@@ -89,7 +89,9 @@ public class CyclicComponentException extends ApplicationException {
      *  |   ↓   ↳ Implemented by com.sample.ConcreteComponentC
      *  └───┘
      *  }</pre>
+     *
      * @param path the path to format
+     *
      * @return the formatted string
      */
     private static String formatMessage(ComponentDiscoveryList path, View view) {
@@ -100,10 +102,11 @@ public class CyclicComponentException extends ApplicationException {
         StringBuilder builder = new StringBuilder();
         builder.append(CYCLE_TOP);
 
-        for(Iterator<DiscoveredComponent> iterator = path.iterator(); iterator.hasNext(); ) {
+        for (Iterator<DiscoveredComponent> iterator = path.iterator(); iterator.hasNext(); ) {
             DiscoveredComponent node = iterator.next();
-            builder.append(CYCLE_NODE.formatted(node.node().qualifiedName(), node.node().origin().qualifiedName()));
-            if(node.fromBinding()) {
+            builder.append(CYCLE_NODE.formatted(node.node().qualifiedName(),
+                node.node().origin().qualifiedName()));
+            if (node.fromBinding()) {
                 builder.append(CYCLE_BINDING.formatted(node.actualType().qualifiedName()));
             }
             else if (iterator.hasNext()) {
@@ -113,8 +116,10 @@ public class CyclicComponentException extends ApplicationException {
         builder.append(CYCLE_BOTTOM);
 
         DiscoveredComponent origin = path.getOrigin();
-        String typeName = origin.fromBinding() ? origin.actualType().name() : origin.node().qualifiedName();
-        return "Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:%n%s".formatted(
+        String typeName =
+            origin.fromBinding() ? origin.actualType().name() : origin.node().qualifiedName();
+        return ("Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:"
+            + "%n%s").formatted(
             typeName,
             view.qualifiedName(),
             builder.toString()

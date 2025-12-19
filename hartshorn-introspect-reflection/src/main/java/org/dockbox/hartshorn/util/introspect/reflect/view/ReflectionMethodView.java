@@ -34,16 +34,18 @@ import java.util.Collection;
 import java.util.StringJoiner;
 
 /**
- * A view that provides access to the methods of a class. This view is backed by a {@link Method} instance.
+ * A view that provides access to the methods of a class. This view is backed by a {@link Method}
+ * instance.
  *
  * @param <Parent> The type of the class that the method belongs to
  * @param <ReturnType> The return type of the method
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
-public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
+public class ReflectionMethodView<Parent, ReturnType>
+    extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
 
     private final Introspector introspector;
     private final Method method;
@@ -87,7 +89,8 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     @Override
     public TypeView<ReturnType> returnType() {
         if (this.returnType == null) {
-            this.returnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+            this.returnType =
+                (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
         }
         return this.returnType;
     }
@@ -95,7 +98,8 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     @Override
     public TypeView<ReturnType> genericReturnType() {
         if (this.genericReturnType == null) {
-            this.genericReturnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+            this.genericReturnType = (TypeView<ReturnType>)
+                this.introspector.introspect(this.method.getGenericReturnType());
         }
         return this.genericReturnType;
     }
@@ -125,11 +129,15 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     public String qualifiedName() {
         if (this.qualifiedName == null) {
             StringJoiner j = new StringJoiner(" ");
-            String shortSig = MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes()).toString();
+            String shortSig =
+                MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes())
+                    .toString();
             int split = shortSig.lastIndexOf(')') + 1;
-            j.add(shortSig.substring(split)).add(this.method.getName() + shortSig.substring(0, split));
+            j.add(shortSig.substring(split))
+                .add(this.method.getName() + shortSig.substring(0, split));
             String k = j.toString();
-            this.qualifiedName = this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
+            this.qualifiedName =
+                this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
     }
@@ -149,7 +157,8 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
         collector.property("name").writeString(this.name());
         collector.property("elementType").writeString("method");
         collector.property("returnType").writeDelegate(this.genericReturnType());
-        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("parameters")
+            .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
         collector.property("declaredBy").writeDelegate(this.declaredBy());
     }
 }

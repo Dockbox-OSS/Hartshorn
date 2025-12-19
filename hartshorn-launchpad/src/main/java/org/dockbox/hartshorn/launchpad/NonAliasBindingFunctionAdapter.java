@@ -31,10 +31,10 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
- * An adapter for {@link BindingFunction} that does not support aliasing. This may be used to adapt a binding function
- * to an environment that requires the usage of {@link AliasBindingFunction}. This adapter will delegate all calls to
- * the original binding function, but will throw an {@link UnsupportedOperationException} when an aliasing method is
- * called.
+ * An adapter for {@link BindingFunction} that does not support aliasing. This may be used to adapt
+ * a binding function to an environment that requires the usage of {@link AliasBindingFunction}.
+ * This adapter will delegate all calls to the original binding function, but will throw an
+ * {@link UnsupportedOperationException} when an aliasing method is called.
  *
  * @param <T> the type of the binding
  *
@@ -81,7 +81,8 @@ public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T
 
     @Override
     public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
-        return this.currentOrNextAdapter(this.delegate.processAfterInitialization(processAfterInitialization));
+        return this.currentOrNextAdapter(this.delegate.processAfterInitialization(
+            processAfterInitialization));
     }
 
     @Override

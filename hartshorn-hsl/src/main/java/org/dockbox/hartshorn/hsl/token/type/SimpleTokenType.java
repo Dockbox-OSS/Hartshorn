@@ -22,11 +22,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Represents a simple token type, which is a basic implementation of the {@link TokenType} interface.
- * This can be used to create custom token types, or to further extend the functionality of existing
- * token types.
+ * Represents a simple token type, which is a basic implementation of the {@link TokenType}
+ * interface. This can be used to create custom token types, or to further extend the functionality
+ * of existing token types.
  *
- * <p>Simple token types are immutable and can be created using the {@link SimpleTokenType#builder()} method.
+ * <p>Simple token types are immutable and can be created using the
+ * {@link SimpleTokenType#builder()} method.
  *
  * @param tokenName the name of the token type
  * @param representation the representation of the token type
@@ -38,20 +39,20 @@ import java.util.Objects;
  * @param characters the characters that the token type can be represented with
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public record SimpleTokenType(
-        String tokenName,
-        String representation,
-        boolean keyword,
-        boolean standaloneStatement,
-        boolean reserved,
-        TokenType assignsWith,
-        String defaultLexeme,
-        TokenCharacter[] characters
+    String tokenName,
+    String representation,
+    boolean keyword,
+    boolean standaloneStatement,
+    boolean reserved,
+    TokenType assignsWith,
+    String defaultLexeme,
+    TokenCharacter[] characters
 ) implements TokenType {
 
     @Override
@@ -124,6 +125,7 @@ public record SimpleTokenType(
          * Sets the name of the token type.
          *
          * @param tokenName the name of the token type
+         *
          * @return the builder
          *
          * @see TokenType#tokenName()
@@ -137,6 +139,7 @@ public record SimpleTokenType(
          * Sets the representation of the token type.
          *
          * @param representation the representation of the token type
+         *
          * @return the builder
          *
          * @see TokenType#representation()
@@ -150,6 +153,7 @@ public record SimpleTokenType(
          * Sets whether the token type is a keyword.
          *
          * @param keyword whether the token type is a keyword
+         *
          * @return the builder
          *
          * @see TokenType#keyword()
@@ -163,6 +167,7 @@ public record SimpleTokenType(
          * Sets whether the token type is a standalone statement.
          *
          * @param standaloneStatement whether the token type is a standalone statement
+         *
          * @return the builder
          *
          * @see TokenType#standaloneStatement()
@@ -176,6 +181,7 @@ public record SimpleTokenType(
          * Sets whether the token type is reserved.
          *
          * @param reserved whether the token type is reserved
+         *
          * @return the builder
          *
          * @see TokenType#reserved()
@@ -189,6 +195,7 @@ public record SimpleTokenType(
          * Sets the token type that this token type assigns with.
          *
          * @param assignsWith the token type that this token type assigns with
+         *
          * @return the builder
          *
          * @see TokenType#assignsWith()
@@ -202,6 +209,7 @@ public record SimpleTokenType(
          * Sets the default lexeme of the token type.
          *
          * @param defaultLexeme the default lexeme of the token type
+         *
          * @return the builder
          *
          * @see TokenType#defaultLexeme()
@@ -215,6 +223,7 @@ public record SimpleTokenType(
          * Sets the characters that the token type can be represented with.
          *
          * @param characters the characters that the token type can be represented with
+         *
          * @return the builder
          *
          * @see TokenType#characters()
@@ -247,14 +256,14 @@ public record SimpleTokenType(
          */
         public TokenType build() {
             return new SimpleTokenType(
-                    this.tokenName,
-                    this.representation,
-                    this.keyword,
-                    this.standaloneStatement,
-                    this.reserved,
-                    this.assignsWith,
-                    this.defaultLexeme,
-                    this.characters
+                this.tokenName,
+                this.representation,
+                this.keyword,
+                this.standaloneStatement,
+                this.reserved,
+                this.assignsWith,
+                this.defaultLexeme,
+                this.characters
             );
         }
     }

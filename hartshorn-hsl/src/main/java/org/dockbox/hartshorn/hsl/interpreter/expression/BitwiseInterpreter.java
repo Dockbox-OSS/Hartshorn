@@ -32,11 +32,20 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
  * @param <T> the type of AST node this interpreter can handle
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
+    /**
+     * Evaluates a bitwise operation between two operands. Both operands must be numbers. Full
+     * support for {@link BitwiseTokenType} is provided, other token types will result in an error.
+     *
+     * @param operator the bitwise operator token
+     * @param left the left operand
+     * @param right the right operand
+     * @return the result of the bitwise operation
+     */
     protected Object getBitwiseResult(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
             int iLeft = ((Number) left).intValue();
@@ -54,18 +63,27 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
                 };
             }
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
-                    .at(operator)
-                    .build();
+                .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
+                .at(operator)
+                .build();
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
-                .at(operator)
-                .build();
+            .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
+            .at(operator)
+            .build();
     }
 
+    /**
+     * Performs a bitwise XOR operation. If both operands are numbers, it performs a numeric XOR.
+     * Otherwise, it treats the operands as boolean values and performs a logical XOR.
+     *
+     * @param left  the left operand
+     * @param right the right operand
+     *
+     * @return the result of the XOR operation
+     */
     protected Object xor(Object left, Object right) {
         if (left instanceof Number nleft && right instanceof Number nright) {
             int iLeft = nleft.intValue();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public class ScopeKeyTests {
     void testScopeKeyTypeKeepsParameters() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
-                .parameters(parameterType)
-                .build();
+            .parameters(parameterType)
+            .build();
 
         ScopeKey scopeKey = DirectScopeKey.of(parameterizedType);
         Assertions.assertEquals(parameterizedType, scopeKey.scopeType());
@@ -49,8 +49,8 @@ public class ScopeKeyTests {
     void testParameterizedScopeKeysEqual() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
-                .parameters(parameterType)
-                .build();
+            .parameters(parameterType)
+            .build();
 
         ScopeKey scopeKey1 = DirectScopeKey.of(parameterizedType);
         ScopeKey scopeKey2 = DirectScopeKey.of(parameterizedType);
@@ -61,22 +61,25 @@ public class ScopeKeyTests {
     void testCreateFromParameterizedTypeRequiresScopeType() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
-                .parameters(parameterType)
-                .build();
+            .parameters(parameterType)
+            .build();
 
         Assertions.assertDoesNotThrow(() -> DirectScopeKey.of(parameterizedType));
         // String not a scope type
-        Assertions.assertThrows(IllegalArgumentException.class, () -> DirectScopeKey.of(parameterType));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> DirectScopeKey.of(parameterType));
     }
 
     @Test
     void testScopeAdapterKeyParameterizableTypeRequiresScopeAdapter() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ScopeAdapterKey.of(ParameterizableType.create(String.class)));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ScopeAdapterKey.of(ParameterizableType.create(Scope.class)));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> ScopeAdapterKey.of(ParameterizableType.create(String.class)));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> ScopeAdapterKey.of(ParameterizableType.create(Scope.class)));
         Assertions.assertDoesNotThrow(() -> {
             ParameterizableType type = ParameterizableType.builder(ScopeAdapter.class)
-                    .parameters(ParameterizableType.create(String.class))
-                    .build();
+                .parameters(ParameterizableType.create(String.class))
+                .build();
             ScopeAdapterKey scopeAdapterKey = ScopeAdapterKey.of(type);
             Assertions.assertNotNull(scopeAdapterKey);
         });

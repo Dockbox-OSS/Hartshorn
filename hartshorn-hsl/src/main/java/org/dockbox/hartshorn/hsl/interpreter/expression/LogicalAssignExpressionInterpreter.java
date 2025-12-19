@@ -25,10 +25,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * Interpreter for {@link LogicalAssignExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
+public class LogicalAssignExpressionInterpreter
+    extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
     public Object interpret(LogicalAssignExpression node, Interpreter interpreter) {
@@ -42,9 +43,9 @@ public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Objec
 
         // Virtual token to indicate the position of the operator
         Token token = Token.of(bitwiseOperator)
-                .lexeme(op.lexeme())
-                .position(op)
-                .build();
+            .lexeme(op.lexeme())
+            .position(op)
+            .build();
         Object result = this.getBitwiseResult(token, left, right);
 
         Integer distance = interpreter.distance(node);

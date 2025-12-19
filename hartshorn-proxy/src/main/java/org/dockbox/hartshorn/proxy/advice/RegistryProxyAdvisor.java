@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to resolve advisors.
+ * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to
+ * resolve advisors.
  *
  * @param <T> the type of the proxy instance
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
@@ -46,11 +48,14 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
     }
 
     @Override
-    public <U> U safeWrapIntercept(ProxyCallbackContext<T> context, ProxyInterceptFunction<U> interceptFunction) throws Throwable {
+    public <U> U safeWrapIntercept(
+        ProxyCallbackContext<T> context,
+        ProxyInterceptFunction<U> interceptFunction
+    ) throws Throwable {
         Method method = context.method().method().orElseThrow(() -> null);
         Collection<MethodWrapper<T>> wrappers = this.resolver()
-                .method(method)
-                .wrappers();
+            .method(method)
+            .wrappers();
         MethodWrapper<T> methodWrapper = new MethodWrapperList<>(wrappers);
 
         methodWrapper.acceptBefore(context);

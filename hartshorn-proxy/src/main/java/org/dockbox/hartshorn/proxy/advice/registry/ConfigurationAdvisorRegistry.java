@@ -33,19 +33,23 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A registry that allows for the configuration of all aspects of an advised type. This includes the configuration of
- * method stubs, method interceptors and type interceptors. The registry is aware of its state, and can be used as both
- * a mutable {@link AdvisorRegistry} and an immutable {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisorResolver}.
+ * A registry that allows for the configuration of all aspects of an advised type. This includes the
+ * configuration of method stubs, method interceptors and type interceptors. The registry is aware
+ * of its state, and can be used as both a mutable {@link AdvisorRegistry} and an immutable
+ * {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisorResolver}.
  *
  * @param <T> the type of the advised object
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistry<T> {
 
-    private final Map<Method, StateAwareMethodAdvisorRegistryStep<T, ?>> methodAdvisors = new ConcurrentHashMap<>();
-    private final Map<Class<?>, StateAwareTypeAdvisorRegistryStep<?, T>> typeAdvisors = new ConcurrentHashMap<>();
+    private final Map<Method, StateAwareMethodAdvisorRegistryStep<T, ?>> methodAdvisors =
+        new ConcurrentHashMap<>();
+    private final Map<Class<?>, StateAwareTypeAdvisorRegistryStep<?, T>> typeAdvisors =
+        new ConcurrentHashMap<>();
 
     private final AdvisorRegistryState state = new SimpleAdvisorRegistryState();
     private final ProxyOrchestrator proxyOrchestrator;
@@ -53,7 +57,10 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
 
     private Supplier<MethodStub<T>> defaultStub = DefaultValueResponseMethodStub::new;
 
-    public ConfigurationAdvisorRegistry(ProxyOrchestrator proxyOrchestrator, ProxyFactory<T> proxyFactory) {
+    public ConfigurationAdvisorRegistry(
+        ProxyOrchestrator proxyOrchestrator,
+        ProxyFactory<T> proxyFactory
+    ) {
         this.proxyOrchestrator = proxyOrchestrator;
         this.proxyFactory = proxyFactory;
     }
@@ -66,15 +73,18 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
     @Override
     public <R> StateAwareMethodAdvisorRegistryStep<T, R> method(MethodView<T, R> method) {
         StateAwareMethodAdvisorRegistryStep<T, ?> advisorStep = method.method()
-                .map(this::method)
-                .orElseThrow(() -> new IllegalArgumentException("Method view does not contain a method"));
+            .map(this::method)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Method view does not contain a method"
+            ));
 
         return TypeUtils.unchecked(advisorStep, StateAwareMethodAdvisorRegistryStep.class);
     }
 
     @Override
     public StateAwareMethodAdvisorRegistryStep<T, Object> method(Method method) {
-        StateAwareMethodAdvisorRegistryStep<T, ?> registryStep = this.methodAdvisors.computeIfAbsent(method,
+        StateAwareMethodAdvisorRegistryStep<T, ?> registryStep =
+            this.methodAdvisors.computeIfAbsent(method,
                 method0 -> new ConfigurationStateAwareMethodAdvisorRegistryStep<>(this, method));
 
         return TypeUtils.unchecked(registryStep, StateAwareMethodAdvisorRegistryStep.class);
@@ -89,13 +99,15 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
     public <S> StateAwareTypeAdvisorRegistryStep<S, T> type(Class<S> type) {
         Introspector introspector = this.proxyOrchestrator.introspector();
         if (introspector.introspect(type).isParentOf(this.advisedType())) {
-            StateAwareTypeAdvisorRegistryStep<?, T> advisorStep = this.typeAdvisors.computeIfAbsent(type,
+            StateAwareTypeAdvisorRegistryStep<?, T> advisorStep =
+                this.typeAdvisors.computeIfAbsent(type,
                     type0 -> new ConfigurationStateAwareTypeAdvisorRegistryStep<>(this, type));
 
             return TypeUtils.unchecked(advisorStep, StateAwareTypeAdvisorRegistryStep.class);
         }
         else {
-            throw new IllegalArgumentException(this.advisedType().getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);
+            throw new IllegalArgumentException(this.advisedType().getName() + " does not " + (
+                type.isInterface() ? "implement " : "extend ") + type);
         }
     }
 

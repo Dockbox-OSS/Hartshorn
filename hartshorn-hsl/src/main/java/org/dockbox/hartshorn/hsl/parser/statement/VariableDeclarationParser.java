@@ -38,7 +38,10 @@ import java.util.Set;
 public class VariableDeclarationParser implements StatementParser<VariableStatement> {
 
     @Override
-    public Option<? extends VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends VariableStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(VariableTokenType.VAR)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token name = validator.expect(identifier, "variable name");

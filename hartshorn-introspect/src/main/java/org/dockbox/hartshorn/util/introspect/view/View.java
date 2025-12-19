@@ -20,10 +20,10 @@ import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.reporting.Reportable;
 
 /**
- * A view is a representation of an element in the Java language. Exact details of the element
- * are implementation specific, but all views provide access to the element's name, and can
- * be reported to extract information about the element. Views are also {@link Context}s, which
- * allows for the element to be enhanced with custom data if required.
+ * A view is a representation of an element in the Java language. Exact details of the element are
+ * implementation specific, but all views provide access to the element's name, and can be reported
+ * to extract information about the element. Views are also {@link Context}s, which allows for the
+ * element to be enhanced with custom data if required.
  *
  * @since 0.4.8
  *
@@ -32,19 +32,18 @@ import org.dockbox.hartshorn.reporting.Reportable;
 public interface View extends Reportable, Context {
 
     /**
-     * Returns the simple name of the element. This can represent the actual {@code name}
-     * property, or a derived value, such as the name of a field or method.
+     * Returns the simple name of the element. This can represent the actual {@code name} property,
+     * or a derived value, such as the name of a field or method.
      *
      * @return the simple name of the element
      */
     String name();
 
     /**
-     * Returns the qualified name of the element. For example, if the element is a field,
-     * this method will return the field's name, qualified by the declaring class.
+     * Returns the qualified name of the element. For example, if the element is a field, this
+     * method will return the field's name, qualified by the declaring class.
      *
      * @return the qualified name of the element
      */
     String qualifiedName();
-
 }

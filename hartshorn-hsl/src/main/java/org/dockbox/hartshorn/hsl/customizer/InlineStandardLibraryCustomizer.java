@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Customizer that inlines the standard library modules into the script context, without the need
- * to explicitly import them. Standard library modules are resolved from the {@link
- * InterpreterState#externalModules() interpreter's state}.
+ * Customizer that inlines the standard library modules into the script context, without the need to
+ * explicitly import them. Standard library modules are resolved from the
+ * {@link InterpreterState#externalModules() interpreter's state}.
  *
  * @since 0.4.12
  *
@@ -54,8 +54,8 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
         TokenType identifier = context.tokenRegistry().literals().identifier();
         for (String module : modules.keySet()) {
             Token moduleToken = Token.of(identifier, module)
-                    .virtual()
-                    .build();
+                .virtual()
+                .build();
             ModuleStatement moduleStatement = new ModuleStatement(moduleToken);
             statements.addFirst(moduleStatement);
         }

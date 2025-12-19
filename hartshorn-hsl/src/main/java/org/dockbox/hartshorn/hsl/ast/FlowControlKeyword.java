@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.ast;
 
 /**
  * Represents a keyword that causes a flow control change in the interpreter. This is used to signal
- * to the interpreter that a loop or switch statement should be exited, or that the current iteration
- * should be skipped.
+ * to the interpreter that a loop or switch statement should be exited, or that the current
+ * iteration should be skipped.
  *
  * @since 0.4.12
  *
@@ -61,10 +61,20 @@ public class FlowControlKeyword extends RuntimeException {
         this.origin = origin;
     }
 
+    /**
+     * Returns the AST node that defined the flow control keyword.
+     *
+     * @return the origin AST node
+     */
     public ASTNode origin() {
-        return origin;
+        return this.origin;
     }
 
+    /**
+     * Returns the type of move that the flow control keyword is making.
+     *
+     * @return the move type
+     */
     public MoveType moveType() {
         return this.moveType;
     }

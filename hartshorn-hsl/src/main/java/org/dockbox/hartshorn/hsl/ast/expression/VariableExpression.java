@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a variable, which is a named reference to a value in the
- * current scope.
+ * An expression representing a variable, which is a named reference to a value in the current
+ * scope.
  *
  * @since 0.4.12
  *

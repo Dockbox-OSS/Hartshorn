@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific type using a
- * {@link Converter}.
+ * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific
+ * type using a {@link Converter}.
  *
  * @param <T> the type to convert the value to
  *

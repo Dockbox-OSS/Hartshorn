@@ -35,7 +35,8 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
+public interface MethodView<Parent, ReturnType>
+    extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
 
     /**
      * Returns the {@link Method} instance represented by this view, if it exists.
@@ -45,12 +46,13 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
     Option<Method> method();
 
     /**
-     * Invokes the method represented by this view on the given instance with the given arguments. If
-     * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be re-thrown.
+     * Invokes the method represented by this view on the given instance with the given arguments.
+     * If the method is static, the instance may be {@code null}. Any exceptions thrown by the
+     * method will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
+     *
      * @return the result of the method invocation
      */
     default Option<ReturnType> invoke(Object instance, Object... arguments) throws Throwable {
@@ -58,12 +60,13 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
     }
 
     /**
-     * Invokes the method represented by this view on the given instance with the given arguments. If
-     * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be re-thrown.
+     * Invokes the method represented by this view on the given instance with the given arguments.
+     * If the method is static, the instance may be {@code null}. Any exceptions thrown by the
+     * method will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
+     *
      * @return the result of the method invocation
      */
     Option<ReturnType> invoke(Object instance, Collection<?> arguments) throws Throwable;
@@ -100,6 +103,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * Returns a {@link TypeView} representing the non-generic return type of the method.
      *
      * @return a view of the method's return type
+     *
      * @see #type()
      */
     TypeView<ReturnType> returnType();
@@ -109,6 +113,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * is not generic, this will return the same value as {@link #returnType()}.
      *
      * @return a view of the method's generic return type
+     *
      * @see #genericType()
      */
     TypeView<ReturnType> genericReturnType();

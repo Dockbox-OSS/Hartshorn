@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain operation
- * should be executed. Conditions are expected to be stateless, and may be reused for multiple matches.
+ * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain
+ * operation should be executed. Conditions are expected to be stateless, and may be reused for
+ * multiple matches.
  *
  * @see ConditionMatcher
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface

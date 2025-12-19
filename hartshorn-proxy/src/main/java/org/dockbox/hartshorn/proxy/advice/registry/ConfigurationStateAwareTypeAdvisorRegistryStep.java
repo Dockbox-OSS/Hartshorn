@@ -23,24 +23,29 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
- * Basic implementation of {@link StateAwareTypeAdvisorRegistryStep}. This implementation is used to configure the
- * {@link StateAwareAdvisorRegistry} by adding class and instance delegates. As both the registry and this registry
- * step are stateful, the registry is marked as modified when this step is configured.
+ * Basic implementation of {@link StateAwareTypeAdvisorRegistryStep}. This implementation is used to
+ * configure the {@link StateAwareAdvisorRegistry} by adding class and instance delegates. As both
+ * the registry and this registry step are stateful, the registry is marked as modified when this
+ * step is configured.
  *
  * @param <S> the advised type, which is assignable to the registry's advised type
  * @param <T> the type of the proxy object
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements StateAwareTypeAdvisorRegistryStep<S, T> {
+public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T>
+    implements StateAwareTypeAdvisorRegistryStep<S, T> {
 
     private final StateAwareAdvisorRegistry<T> registry;
     private final Class<S> type;
     private S delegate;
 
-    public ConfigurationStateAwareTypeAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Class<S> type) {
+    public ConfigurationStateAwareTypeAdvisorRegistryStep(
+        StateAwareAdvisorRegistry<T> registry,
+        Class<S> type
+    ) {
         this.registry = registry;
         this.type = type;
     }
@@ -85,8 +90,11 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
 
     private void delegateAbstractOverrideCandidate(S delegateInstance, Method declaredMethod) {
         try {
-            Method override = this.registry.advisedType().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-            if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
+            Method override = this.registry.advisedType()
+                .getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            if (!Modifier.isAbstract(override.getModifiers())
+                || override.isDefault()
+                || declaredMethod.isDefault()) {
                 return;
             }
         }

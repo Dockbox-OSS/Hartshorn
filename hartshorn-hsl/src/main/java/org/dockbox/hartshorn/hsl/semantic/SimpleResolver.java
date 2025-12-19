@@ -38,18 +38,18 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * Standard resolver to perform semantic analysis and type checking before a collection of statements
- * is interpreted. This allows illegal references to identifiers to be found and reported early on,
- * preventing potential runtime errors.
+ * Standard resolver to perform semantic analysis and type checking before a collection of
+ * statements is interpreted. This allows illegal references to identifiers to be found and reported
+ * early on, preventing potential runtime errors.
  *
  * <p>This resolver delegates most of its work to a {@link ResolverVisitor}, which is a visitor
  * that resolves the appropriate nodes in the AST. The resolver itself is responsible for managing
  * the tracking of resolved items.
  *
  * @see ResolverVisitor
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class SimpleResolver implements Resolver {
@@ -197,9 +197,9 @@ public class SimpleResolver implements Resolver {
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                    .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
-                    .at(name)
-                    .build();
+                .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
+                .at(name)
+                .build();
         }
         scope.put(name.lexeme(), false);
     }
@@ -218,9 +218,11 @@ public class SimpleResolver implements Resolver {
         if (this.finals.peek().containsKey(name.lexeme())) {
             String existingWhat = this.finals.peek().get(name.lexeme());
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                    .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, existingWhat, name.lexeme())
-                    .at(name)
-                    .build();
+                .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT,
+                    existingWhat,
+                    name.lexeme())
+                .at(name)
+                .build();
         }
     }
 

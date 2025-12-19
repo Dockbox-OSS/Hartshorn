@@ -30,13 +30,16 @@ import java.util.Set;
  * A parser for {@link ModuleStatement} nodes.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class ModuleStatementParser implements StatementParser<ModuleStatement> {
 
     @Override
-    public Option<? extends ModuleStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends ModuleStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(ImportTokenType.IMPORT)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token name = validator.expect(identifier, "module name");

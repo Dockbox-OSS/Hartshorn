@@ -25,12 +25,17 @@ import java.util.List;
  * Field member statement representing a getter method for a field.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class FieldGetStatement extends FieldMemberStatement {
 
-    public FieldGetStatement(Token modifier, Token get, FieldStatement fieldStatement, BlockStatement body) {
+    public FieldGetStatement(
+        Token modifier,
+        Token get,
+        FieldStatement fieldStatement,
+        BlockStatement body
+    ) {
         super(modifier, get, fieldStatement, List.of(), body);
     }
 

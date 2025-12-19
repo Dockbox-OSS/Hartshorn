@@ -38,20 +38,20 @@ public class UnaryExpressionTests {
     @ParameterizedTest(name = "{0} {1} = {2}")
     @MethodSource("logicalCases")
     void verifyUnaryExpression(
-            String operator,
-            Object right,
-            Object expected
+        String operator,
+        Object right,
+        Object expected
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
                 this.applicationContext,
-                        "%sright".formatted(operator)
-                )
-                .parser(parsers -> parsers
-                        .expressionParser(new UnaryExpressionParser())
-                        .expressionParser(new IdentifierExpressionParser())
-                )
-                .defineLocal("right", right)
-                .build();
+                "%sright".formatted(operator)
+            )
+            .parser(parsers -> parsers
+                .expressionParser(new UnaryExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+            )
+            .defineLocal("right", right)
+            .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(expected, value);
@@ -59,36 +59,36 @@ public class UnaryExpressionTests {
 
     public static Stream<Arguments> logicalCases() {
         return Stream.of(
-                // BANG
-                unary("!", true, false),
-                unary("!", false, true),
+            // BANG
+            unary("!", true, false),
+            unary("!", false, true),
 
-                // MINUS
-                unary("-", 5, -5d),
-                unary("-", -10, 10d),
-                unary("-", 0, -0d),
+            // MINUS
+            unary("-", 5, -5d),
+            unary("-", -10, 10d),
+            unary("-", 0, -0d),
 
-                // PLUS_PLUS
-                unary("++", 5, 6d),
-                unary("++", -1, 0d),
-                unary("++", 0, 1d)
+            // PLUS_PLUS
+            unary("++", 5, 6d),
+            unary("++", -1, 0d),
+            unary("++", 0, 1d)
 
-                // MINUS_MINUS
-                ,unary("--", 5, 4d),
-                unary("--", -1, -2d),
-                unary("--", 0, -1d),
+            // MINUS_MINUS
+            , unary("--", 5, 4d),
+            unary("--", -1, -2d),
+            unary("--", 0, -1d),
 
-                // COMPLEMENT
-                unary("~", 5, -6d),
-                unary("~", -1, 0d),
-                unary("~", 0, -1d)
+            // COMPLEMENT
+            unary("~", 5, -6d),
+            unary("~", -1, 0d),
+            unary("~", 0, -1d)
         );
     }
 
     public static Arguments unary(
-            String operator,
-            Object right,
-            Object expected
+        String operator,
+        Object right,
+        Object expected
     ) {
         return Arguments.of(operator, right, expected);
     }

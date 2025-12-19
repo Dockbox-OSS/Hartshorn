@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * that defines the operation to be performed on those expressions.
  *
  * @see org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class BitwiseExpression extends Expression {
@@ -42,14 +42,29 @@ public class BitwiseExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left operand expression of this bitwise expression.
+     *
+     * @return the left operand expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the operator token of this bitwise expression.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the right operand expression of this bitwise expression.
+     *
+     * @return the right operand expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

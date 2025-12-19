@@ -34,13 +34,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A {@link ComponentPopulator} that populates components using a set of {@link ComponentPopulationStrategy}s. The
- * strategies are executed in the order they are provided to the constructor. If a strategy is applicable to a given
- * injection point, the strategy is executed. If the strategy is not applicable, the next strategy is executed.
+ * A {@link ComponentPopulator} that populates components using a set of
+ * {@link ComponentPopulationStrategy}s. The strategies are executed in the order they are provided
+ * to the constructor. If a strategy is applicable to a given injection point, the strategy is
+ * executed. If the strategy is not applicable, the next strategy is executed.
  *
- * <p>Injection points are resolved using a {@link ComponentInjectionPointsResolver}. The resolver is expected to
- * return all injection points of a given type, without prior filtering. Filtering is expected to be done by the
- * {@link ComponentPopulationStrategy strategies}.
+ * <p>Injection points are resolved using a {@link ComponentInjectionPointsResolver}. The resolver
+ * is expected to
+ * return all injection points of a given type, without prior filtering. Filtering is expected to be
+ * done by the {@link ComponentPopulationStrategy strategies}.
  *
  * @see ComponentPopulationStrategy
  *
@@ -56,9 +58,9 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     private final ComponentInjectionPointsResolver injectionPointsResolver;
 
     public StrategyComponentPopulator(
-            InjectionCapableApplication application, ProxyOrchestrator proxyOrchestrator,
-            ComponentInjectionPointsResolver injectionPointsResolver,
-            List<ComponentPopulationStrategy> strategies
+        InjectionCapableApplication application, ProxyOrchestrator proxyOrchestrator,
+        ComponentInjectionPointsResolver injectionPointsResolver,
+        List<ComponentPopulationStrategy> strategies
     ) {
         this.application = application;
         this.proxyOrchestrator = proxyOrchestrator;
@@ -70,19 +72,20 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     public <T> T populate(T instance, Scope scope) {
         if (null != instance) {
             T modifiableInstance = instance;
-            if(this.proxyOrchestrator.isProxy(instance)) {
+            if (this.proxyOrchestrator.isProxy(instance)) {
                 modifiableInstance = this.proxyOrchestrator
-                        .manager(instance)
-                        .flatMap(ProxyManager::delegate)
-                        .orElse(modifiableInstance);
+                    .manager(instance)
+                    .flatMap(ProxyManager::delegate)
+                    .orElse(modifiableInstance);
             }
-            TypeView<T> typeView = this.proxyOrchestrator.introspector().introspect(modifiableInstance);
+            TypeView<T> typeView =
+                this.proxyOrchestrator.introspector().introspect(modifiableInstance);
             PopulateComponentContext<T> context = new PopulateComponentContext<>(
-                    modifiableInstance,
-                    instance,
-                    typeView,
-                    scope,
-                    this.application
+                modifiableInstance,
+                instance,
+                typeView,
+                scope,
+                this.application
             );
             this.populate(context);
             return instance;
@@ -92,41 +95,65 @@ public class StrategyComponentPopulator implements ComponentPopulator {
         }
     }
 
+    /**
+     * Populates the given component context using the configured population strategies. It remains
+     * up to the strategies to determine whether they are applicable to a given injection point. If
+     * multiple strategies are applicable to a given injection point, all applicable strategies will
+     * be executed in the order they were provided.
+     *
+     * @param context the component context to populate
+     * @param <T> the type of the component
+     */
     protected <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
-        Set<ComponentInjectionPoint<T>> injectionPoints = this.injectionPointsResolver.resolve(type);
+        Set<ComponentInjectionPoint<T>> injectionPoints =
+            this.injectionPointsResolver.resolve(type);
 
-        for(ComponentPopulationStrategy strategy : this.strategies) {
-            for(ComponentInjectionPoint<T> injectionPoint : injectionPoints) {
+        for (ComponentPopulationStrategy strategy : this.strategies) {
+            for (ComponentInjectionPoint<T> injectionPoint : injectionPoints) {
                 try {
                     strategy.populate(context, injectionPoint);
                 }
-                catch(ApplicationException e) {
-                    throw new ComponentPopulateException("Could not populate injection point " + injectionPoint.qualifiedName() + " in type " + type.qualifiedName(), e);
+                catch (ApplicationException e) {
+                    throw new ComponentPopulateException("Could not populate injection point "
+                        + injectionPoint.qualifiedName()
+                        + " in type "
+                        + type.qualifiedName(), e);
                 }
             }
         }
     }
 
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulator> create(Customizer<Configurer> customizer) {
+    /**
+     * Creates a new {@link ContextualInitializer} for a {@link StrategyComponentPopulator}, using
+     * the given customizer to configure the populator.
+     *
+     * @param customizer the customizer to configure the populator
+     *
+     * @return a new contextual initializer for a strategy component populator
+     */
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulator> create(
+        Customizer<Configurer> customizer
+    ) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            List<ComponentPopulationStrategy> populationStrategies = configurer.strategies.initialize(context);
+            List<ComponentPopulationStrategy> populationStrategies =
+                configurer.strategies.initialize(context);
             InjectionCapableApplication application = context.input();
             InjectorEnvironment environment = application.environment();
             return new StrategyComponentPopulator(
-                    application,
-                    environment.proxyOrchestrator(),
-                    environment.injectionPointsResolver(),
-                    List.copyOf(populationStrategies)
+                application,
+                environment.proxyOrchestrator(),
+                environment.injectionPointsResolver(),
+                List.copyOf(populationStrategies)
             );
         };
     }
 
     /**
-     * A configurer for the {@link StrategyComponentPopulator}, that allows for the configuration of supported
-     * population strategies.
+     * A configurer for the {@link StrategyComponentPopulator}, that allows for the configuration of
+     * supported population strategies.
      *
      * @since 0.6.0
      *
@@ -134,28 +161,61 @@ public class StrategyComponentPopulator implements ComponentPopulator {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>
+            strategies = LazyStreamableConfigurer.of(collection -> {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
         });
+        // checkstyle:on LineLength
 
+        /**
+         * Adds a population strategy to the populator.
+         *
+         * @param strategy the strategy to add
+         *
+         * @return this configurer
+         */
         public Configurer strategy(ComponentPopulationStrategy strategy) {
             this.strategies.customizer(collection -> collection.add(strategy));
             return this;
         }
 
+        /**
+         * Adds multiple population strategies to the populator.
+         *
+         * @param strategies the strategies to add
+         *
+         * @return this configurer
+         */
         public Configurer strategies(Iterable<ComponentPopulationStrategy> strategies) {
             this.strategies.customizer(collection -> collection.addAll(strategies));
             return this;
         }
 
+        /**
+         * Adds multiple population strategies to the populator.
+         *
+         * @param strategies the strategies to add
+         *
+         * @return this configurer
+         */
         public Configurer strategies(ComponentPopulationStrategy... strategies) {
             this.strategies.customizer(collection -> collection.addAll(strategies));
             return this;
         }
 
+        /**
+         * Configures the population strategies using the given customizer.
+         *
+         * @param customizer the customizer to use
+         *
+         * @return this configurer
+         */
+        // checkstyle:off LineLength
         public Configurer strategies(Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
         }
+        // checkstyle:on LineLength
     }
 }

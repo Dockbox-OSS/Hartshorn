@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 /**
- * An application component that is directly bound to an active {@link ApplicationEnvironment}. This is respected
- * by the {@link ApplicationEnvironment}, which will set itself as the component's environment when the component
- * is used by the environment.
+ * An application component that is directly bound to an active {@link ApplicationEnvironment}. This
+ * is respected by the {@link ApplicationEnvironment}, which will set itself as the component's
+ * environment when the component is used by the environment.
  *
  * @see ApplicationEnvironment
- *
+ * 
  * @since 0.4.8
- *
+ * 
  * @author Guus Lieben
  */
 public interface ApplicationManaged {
@@ -36,6 +36,7 @@ public interface ApplicationManaged {
 
     /**
      * Sets the {@link ApplicationEnvironment} that is managing this component.
+     *
      * @param environment the {@link ApplicationEnvironment} that is managing this component.
      */
     void environment(ApplicationEnvironment environment);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ import org.dockbox.hartshorn.inject.annotations.Inject
 @Component
 open class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {
 
-    @Inject
-    private lateinit var applicationContext: ApplicationContext
+  @Inject
+  private lateinit var applicationContext: ApplicationContext
 
-    fun applicationContext(): ApplicationContext {
-        return this.applicationContext
-    }
+  fun applicationContext(): ApplicationContext {
+    return this.applicationContext
+  }
 
-    fun environment(): ApplicationEnvironment {
-        return this.environment
-    }
+  fun environment(): ApplicationEnvironment {
+    return this.environment
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 public interface ProfileRegistryFactory {
 
     /**
-     * Creates a new {@link ProfileRegistry} instance. The given {@link PropertyRegistry} is used as the root
-     * source of properties for the registry. If additional profiles are initialized, they will take precedence
-     * over the root registry.
+     * Creates a new {@link ProfileRegistry} instance. The given {@link PropertyRegistry} is used as
+     * the root source of properties for the registry. If additional profiles are initialized, they
+     * will take precedence over the root registry.
      *
      * @param rootRegistry the root registry to use
+     *
      * @return the created registry
      */
     ProfileRegistry create(PropertyRegistry rootRegistry);
-
 }

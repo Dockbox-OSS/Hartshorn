@@ -23,14 +23,14 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
- * A holder for {@link ModuleActivator} meta-{@link Annotation}s
- * that may be used to activate components or configurations.
+ * A holder for {@link ModuleActivator} meta-{@link Annotation}s that may be used to activate
+ * components or configurations.
  *
  * @see ModuleActivator
  * @see RequiresActivator
- *
+ * 
  * @since 0.4.9
- *
+ * 
  * @author Guus Lieben
  */
 public interface ModuleActivatorHolder {
@@ -46,7 +46,9 @@ public interface ModuleActivatorHolder {
      * Returns whether this holder has an {@link Annotation} of the provided type.
      *
      * @param activator the type of annotation to check for
-     * @return {@code true} if the holder has an annotation of the provided type, {@code false} otherwise
+     *
+     * @return {@code true} if the holder has an annotation of the provided type, {@code false}
+     * otherwise
      */
     boolean hasActivator(Class<? extends Annotation> activator);
 
@@ -54,8 +56,9 @@ public interface ModuleActivatorHolder {
      * Returns the {@link Annotation} of the provided type, if present.
      *
      * @param activator the type of annotation to return
-     * @return the annotation of the provided type, if present
      * @param <A> the type of annotation to return
+     *
+     * @return the annotation of the provided type, if present
      */
     <A> Option<A> activator(Class<A> activator);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,16 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 
 /**
- * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and {@link
- * ComponentPostProcessor post-processors} that are registered in the application context.
+ * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and
+ * {@link ComponentPostProcessor post-processors} that are registered in the application context.
  *
- * <p>Pre-processors are only reported if the application context is a {@link ProcessableApplicationContext}, and
- * post-processors are only reported if the application context has a {@link PostProcessingComponentProvider}.
+ * <p>Pre-processors are only reported if the application context is a
+ * {@link ProcessableApplicationContext}, and
+ * post-processors are only reported if the application context has a
+ * {@link PostProcessingComponentProvider}.
  *
  * @since 0.5.0
  *
@@ -50,22 +52,31 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
-            ComponentProcessorRegistry registry = processableApplicationContext.defaultProvider().processorRegistry();
+        if (this.applicationContext instanceof ProcessableApplicationContext
+            processableApplicationContext
+        ) {
+            ComponentProcessorRegistry registry =
+                processableApplicationContext.defaultProvider().processorRegistry();
             this.reportPreProcessors(collector, registry);
             this.reportPostProcessors(collector, registry);
         }
     }
 
-    private void reportPreProcessors(DiagnosticsPropertyCollector collector,
-            ComponentProcessorRegistry registry) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
+    private void reportPreProcessors(
+        DiagnosticsPropertyCollector collector,
+        ComponentProcessorRegistry registry
+    ) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
+            registry.preProcessors();
         collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
-    private void reportPostProcessors(DiagnosticsPropertyCollector collector,
-            ComponentProcessorRegistry registry) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
+    private void reportPostProcessors(
+        DiagnosticsPropertyCollector collector,
+        ComponentProcessorRegistry registry
+    ) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
+            registry.postProcessors();
         collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 

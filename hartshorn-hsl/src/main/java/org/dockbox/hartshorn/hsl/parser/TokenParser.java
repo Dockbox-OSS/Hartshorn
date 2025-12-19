@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
-import org.dockbox.hartshorn.hsl.parser.expression.MutableExpressionParserChain;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -36,7 +35,7 @@ import java.util.Set;
  * abstract syntax tree (AST).
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public interface TokenParser extends Context {
@@ -49,8 +48,7 @@ public interface TokenParser extends Context {
     TokenRegistry tokenRegistry();
 
     /**
-     * Adds a statement parser to the runtime, which can be used to parse statements in the
-     * script.
+     * Adds a statement parser to the runtime, which can be used to parse statements in the script.
      *
      * @param parser the parser to add
      *
@@ -72,8 +70,6 @@ public interface TokenParser extends Context {
      */
     TokenParser expressionParser(ExpressionParser parser);
 
-    MutableExpressionParserChain expressionParserChain();
-
     /**
      * Parses the tokens of a script into an abstract syntax tree (AST).
      *
@@ -86,26 +82,30 @@ public interface TokenParser extends Context {
      * and {@code true} is returned. If the token is not found, {@code false} is returned.
      *
      * @param types the types of tokens to find
+     *
      * @return {@code true} if the token is found and consumed, {@code false} otherwise
      */
     boolean match(TokenType... types);
 
     /**
-     * Attempts to find a token of the given type. If the token is found, it is returned. If the token
-     * is not found, {@code null} is returned.
+     * Attempts to find a token of the given type. If the token is found, it is returned. If the
+     * token is not found, {@code null} is returned.
      *
      * @param types the types of tokens to find
+     *
      * @return the token that was found, or {@code null} if no token was found
      */
     Token find(TokenType... types);
 
     /**
      * Checks if the current token's type is one of the given types. If the current token's type is
-     * one of the given types, {@code true} is returned. If the current token's type is not one of the
-     * given types, {@code false} is returned. The token is not consumed.
+     * one of the given types, {@code true} is returned. If the current token's type is not one of
+     * the given types, {@code false} is returned. The token is not consumed.
      *
      * @param types the types of tokens to check
-     * @return {@code true} if the current token's type is one of the given types, {@code false} otherwise
+     *
+     * @return {@code true} if the current token's type is one of the given types, {@code false}
+     * otherwise
      */
     boolean check(TokenType... types);
 
@@ -141,11 +141,12 @@ public interface TokenParser extends Context {
      * Attempts to find and consume a token of the given type. If the token is found, it is consumed
      * and returned. If the token is not found and the given type is not the ending of a statement,
      * an exception is thrown. Statement terminators are allowed to be absent, as they are optional
-     * in the HSL syntax. The type of the terminating token is determined by the active {@link
-     * TokenRegistry token registry's} {@link TokenRegistry#statementEnd()} method.
+     * in the HSL syntax. The type of the terminating token is determined by the active
+     * {@link TokenRegistry token registry's} {@link TokenRegistry#statementEnd()} method.
      *
      * @param type the type of token to consume
      * @param message the message to include in the exception if the token is not found
+     *
      * @return the token that was consumed
      */
     Token consume(TokenType type, String message);
@@ -161,8 +162,8 @@ public interface TokenParser extends Context {
 
     /**
      * Attempts to parse an expression statement from the current and following tokens. If an
-     * expression statement is found, it is parsed and returned. If no compatible expression statement
-     * is found, an exception is thrown.
+     * expression statement is found, it is parsed and returned. If no compatible expression
+     * statement is found, an exception is thrown.
      *
      * @return the expression statement that was parsed
      */
@@ -170,15 +171,16 @@ public interface TokenParser extends Context {
 
     /**
      * Attempts to parse an expression from the current and following tokens. If an expression is
-     * found, it is parsed and returned. If no compatible expression is found, an exception is thrown.
+     * found, it is parsed and returned. If no compatible expression is found, an exception is
+     * thrown.
      *
      * @return the expression that was parsed
      */
     Expression expression();
 
     /**
-     * Looks up all parsers that are compatible with the given type. A parser is compatible with a type
-     * if the {@link StatementParser#types() parser's types} contains the given type.
+     * Looks up all parsers that are compatible with the given type. A parser is compatible with a
+     * type if the {@link StatementParser#types() parser's types} contains the given type.
      *
      * @param <T> the type of statement to find compatible parsers for
      * @param type the type of statement to find compatible parsers for
@@ -188,14 +190,14 @@ public interface TokenParser extends Context {
     <T extends Statement> Set<StatementParser<T>> compatibleParsers(Class<T> type);
 
     /**
-     * Looks up the first parser that is compatible with the given type. A parser is compatible with a
-     * type if the {@link StatementParser#types() parser's types} contains the given type.
+     * Looks up the first parser that is compatible with the given type. A parser is compatible with
+     * a type if the {@link StatementParser#types() parser's types} contains the given type.
      *
      * @param <T> the type of statement to find a compatible parser for
      * @param type the type of statement to find a compatible parser for
      *
-     * @return the first parser that is compatible with the given type, or {@link Option#empty()} if no
-     * compatible parser is found
+     * @return the first parser that is compatible with the given type, or {@link Option#empty()} if
+     * no compatible parser is found
      */
     <T extends Statement> Option<StatementParser<T>> firstCompatibleParser(Class<T> type);
 }

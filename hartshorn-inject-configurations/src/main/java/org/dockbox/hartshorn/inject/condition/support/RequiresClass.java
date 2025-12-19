@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * A condition that requires classes to be present in the classpath.
  *
  * @see ClassCondition
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = ClassCondition.class)
@@ -49,8 +49,9 @@ public @interface RequiresClass {
     String[] value();
 
     /**
-     * @see RequiresCondition#failOnNoMatch()
      * @return whether to fail on no match
+     *
+     * @see RequiresCondition#failOnNoMatch()
      */
     @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;

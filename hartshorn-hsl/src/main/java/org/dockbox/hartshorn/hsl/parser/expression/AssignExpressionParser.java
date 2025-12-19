@@ -33,15 +33,18 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 
 /**
  * Assign expression parser, responsible for parsing various assignment expressions. This includes
- * {@link AssignExpression standard assignments}, {@link ArraySetExpression array element assignments}, and
+ * {@link AssignExpression standard assignments},
+ * {@link ArraySetExpression array element assignments}, and
  * {@link SetExpression object property assignments}.
  *
- * <p>The parser first attempts to parse an expression using the next parser in the chain. If an assignment
- * operator ({@code =}) is encountered, it checks the type of the parsed expression to determine the appropriate
- * assignment type. If the expression is a {@link VariableExpression}, it creates an {@link AssignExpression}.
- * If it's an {@link ArrayGetExpression}, it creates an {@link ArraySetExpression}. And if it's a {@link GetExpression},
- * it creates a {@link SetExpression}. In all other cases the expression is not considered a valid assignment target,
- * and a {@link ScriptEvaluationError} is thrown.
+ * <p>The parser first attempts to parse an expression using the next parser in the chain. If an
+ * assignment
+ * operator ({@code =}) is encountered, it checks the type of the parsed expression to determine the
+ * appropriate assignment type. If the expression is a {@link VariableExpression}, it creates an
+ * {@link AssignExpression}. If it's an {@link ArrayGetExpression}, it creates an
+ * {@link ArraySetExpression}. And if it's a {@link GetExpression}, it creates a
+ * {@link SetExpression}. In all other cases the expression is not considered a valid assignment
+ * target, and a {@link ScriptEvaluationError} is thrown.
  *
  * @since 0.7.0
  *
@@ -50,7 +53,11 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 public class AssignExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         Expression expression = chain.next(parser, validator);
 
         if (parser.match(BaseTokenType.EQUAL)) {
@@ -69,11 +76,10 @@ public class AssignExpressionParser implements ExpressionParser {
                 return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
-                    .at(equals)
-                    .build();
+                .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
+                .at(equals)
+                .build();
         }
         return expression;
     }
-
 }

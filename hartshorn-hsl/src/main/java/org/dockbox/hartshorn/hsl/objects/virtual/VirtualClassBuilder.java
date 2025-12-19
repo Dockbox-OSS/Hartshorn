@@ -57,6 +57,7 @@ public class VirtualClassBuilder {
      * Sets the superclass of the virtual class.
      *
      * @param superClass the superclass
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#superClass()
@@ -70,6 +71,7 @@ public class VirtualClassBuilder {
      * Sets the constructor of the virtual class.
      *
      * @param constructor the constructor
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#constructor()
@@ -83,6 +85,7 @@ public class VirtualClassBuilder {
      * Sets whether the virtual class is dynamic.
      *
      * @param dynamic whether the class is dynamic
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#isDynamic()
@@ -96,6 +99,7 @@ public class VirtualClassBuilder {
      * Sets whether the virtual class is final.
      *
      * @param finalized whether the class is final
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#isFinal()
@@ -110,6 +114,7 @@ public class VirtualClassBuilder {
      *
      * @param name the name of the method
      * @param function the method function
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#method(String)
@@ -117,9 +122,12 @@ public class VirtualClassBuilder {
     public VirtualClassBuilder method(String name, VirtualFunction function) {
         if (this.methods.containsKey(name)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.DUPLICATE_X_DEFINITION, "method", this.name.lexeme(), name)
-                    .at(function.declaration())
-                    .build();
+                .message(DiagnosticMessage.DUPLICATE_X_DEFINITION,
+                    "method",
+                    this.name.lexeme(),
+                    name)
+                .at(function.declaration())
+                .build();
         }
         this.methods.put(name, function);
         return this;
@@ -129,6 +137,7 @@ public class VirtualClassBuilder {
      * Adds multiple methods to the virtual class.
      *
      * @param methods a map of method names to method functions
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#methods()
@@ -143,6 +152,7 @@ public class VirtualClassBuilder {
      *
      * @param name the name of the field
      * @param property the field property
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#fields()
@@ -150,9 +160,12 @@ public class VirtualClassBuilder {
     public VirtualClassBuilder field(String name, VirtualProperty property) {
         if (this.fields.containsKey(name)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.DUPLICATE_X_DEFINITION, "field", this.name.lexeme(), name)
-                    .at(property.fieldStatement().name())
-                    .build();
+                .message(DiagnosticMessage.DUPLICATE_X_DEFINITION,
+                    "field",
+                    this.name.lexeme(),
+                    name)
+                .at(property.fieldStatement().name())
+                .build();
         }
         this.fields.put(name, property);
         VirtualFieldMemberFunction getter = property.getter();
@@ -170,6 +183,7 @@ public class VirtualClassBuilder {
      * Adds multiple fields to the virtual class.
      *
      * @param fields a map of field names to field properties
+     *
      * @return this builder, for chaining
      *
      * @see VirtualClass#fields()
@@ -182,37 +196,41 @@ public class VirtualClassBuilder {
     private void getter(VirtualFieldMemberFunction getter) {
         if (!getter.declaration().parameters().isEmpty()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme())
-                    .at(getter.name())
-                    .build();
+                .message(DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme())
+                .at(getter.name())
+                .build();
         }
         if (this.fields.containsKey(getter.name().lexeme())) {
             this.fields.get(getter.name().lexeme()).getter(getter);
             return;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "getter", getter.name().lexeme())
-                .at(getter.name())
-                .build();
+            .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR,
+                "getter",
+                getter.name().lexeme())
+            .at(getter.name())
+            .build();
     }
 
     private void setter(VirtualFieldMemberFunction setter) {
         if (setter.hasBody() && setter.declaration().parameters().size() != 1) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH,
-                            setter.name().lexeme(),
-                            setter.declaration().parameters().size()
-                    ).at(setter.name())
-                    .build();
+                .message(DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH,
+                    setter.name().lexeme(),
+                    setter.declaration().parameters().size()
+                ).at(setter.name())
+                .build();
         }
         if (this.fields.containsKey(setter.name().lexeme())) {
             this.fields.get(setter.name().lexeme()).setter(setter);
             return;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "setter", setter.name().lexeme())
-                .at(setter.name())
-                .build();
+            .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR,
+                "setter",
+                setter.name().lexeme())
+            .at(setter.name())
+            .build();
     }
 
     /**
@@ -222,14 +240,14 @@ public class VirtualClassBuilder {
      */
     public VirtualClass build() {
         return new VirtualClass(
-                this.name.lexeme(),
-                this.superClass,
-                this.constructor,
-                this.variableScope,
-                this.methods,
-                this.fields,
-                this.isFinal,
-                this.isDynamic
+            this.name.lexeme(),
+            this.superClass,
+            this.constructor,
+            this.variableScope,
+            this.methods,
+            this.fields,
+            this.isFinal,
+            this.isDynamic
         );
     }
 }

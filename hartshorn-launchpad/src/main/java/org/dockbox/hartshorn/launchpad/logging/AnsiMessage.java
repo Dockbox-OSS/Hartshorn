@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.launchpad.logging;
 
 /**
- * Represents a message that can be printed to the console with ANSI color and style. This class is immutable and
- * can only be chained together with other messages. Chaining messages allows you to mix colors and styles in a single
- * message.
+ * Represents a message that can be printed to the console with ANSI color and style. This class is
+ * immutable and can only be chained together with other messages. Chaining messages allows you to
+ * mix colors and styles in a single message.
  *
  * <p>Example usage:
  * <pre>{@code
@@ -44,6 +44,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * Creates a new message with the given color, using the message and style of this message.
      *
      * @param color the color to use
+     *
      * @return a new message with the given color
      */
     public AnsiMessage color(AnsiColor color) {
@@ -54,6 +55,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * Creates a new message with the given style, using the message and color of this message.
      *
      * @param style the style to use
+     *
      * @return a new message with the given style
      */
     public AnsiMessage style(AnsiStyle style) {
@@ -64,6 +66,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * Appends the given message to this message, using the same color and style as this message.
      *
      * @param message the message to append
+     *
      * @return a new message with the appended message
      */
     public AnsiMessage append(String message) {
@@ -74,6 +77,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * Appends the given object to this message, retaining the color and style of each message.
      *
      * @param message the message to append
+     *
      * @return a new message with the appended message
      */
     public AnsiMessage append(AnsiMessage message) {
@@ -84,6 +88,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * Creates a new message with the given message, without any color or style.
      *
      * @param message the message to use
+     *
      * @return a new message with the given message
      */
     public static AnsiMessage of(String message) {
@@ -95,6 +100,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      *
      * @param message the message to use
      * @param color the color to use
+     *
      * @return a new message with the given message and color
      */
     public static AnsiMessage of(String message, AnsiColor color) {
@@ -106,6 +112,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      *
      * @param message the message to use
      * @param style the style to use
+     *
      * @return a new message with the given message and style
      */
     public static AnsiMessage of(String message, AnsiStyle style) {
@@ -118,6 +125,7 @@ public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
      * @param message the message to use
      * @param color the color to use
      * @param style the style to use
+     *
      * @return a new message with the given message, color, and style
      */
     public static AnsiMessage of(String message, AnsiColor color, AnsiStyle style) {

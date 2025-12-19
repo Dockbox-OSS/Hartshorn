@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * A lazy {@link ModuleActivatorHolder} that provides activators from a {@link ModuleActivatorContext} when needed.
+ * A lazy {@link ModuleActivatorHolder} that provides activators from a
+ * {@link ModuleActivatorContext} when needed.
  *
  * @since 0.7.0
  *
@@ -33,14 +34,32 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
     private final Supplier<Option<ModuleActivatorContext>> contextProvider;
 
-    protected ContextModuleActivatorHolder(Supplier<Option<ModuleActivatorContext>> contextProvider) {
+    protected ContextModuleActivatorHolder(
+        Supplier<Option<ModuleActivatorContext>> contextProvider
+    ) {
         this.contextProvider = contextProvider;
     }
 
-    public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
+    /**
+     * Create a new {@link ContextModuleActivatorHolder} with the given context provider.
+     *
+     * @param contextProvider the provider of the module activator context
+     *
+     * @return the created module activator holder
+     */
+    public static ContextModuleActivatorHolder of(
+        Supplier<Option<ModuleActivatorContext>> contextProvider
+    ) {
         return new ContextModuleActivatorHolder(contextProvider);
     }
 
+    /**
+     * Create a new {@link ContextModuleActivatorHolder} with the given context.
+     *
+     * @param context the module activator context
+     *
+     * @return the created module activator holder
+     */
     public static ContextModuleActivatorHolder of(ModuleActivatorContext context) {
         return new ContextModuleActivatorHolder(() -> Option.of(context));
     }
@@ -48,20 +67,18 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
     @Override
     public Set<Annotation> activators() {
         return this.contextProvider.get()
-                .map(ModuleActivatorContext::activators)
-                .orElseGet(Set::of);
+            .map(ModuleActivatorContext::activators)
+            .orElseGet(Set::of);
     }
 
     @Override
     public <A> Option<A> activator(Class<A> activator) {
         return this.contextProvider.get()
-                .map(context -> context.activator(activator));
+            .map(context -> context.activator(activator));
     }
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        return this.contextProvider.get()
-                .map(context -> context.hasActivator(activator))
-                .orElseGet(() -> false);
+        return this.contextProvider.get().test(context -> context.hasActivator(activator));
     }
 }

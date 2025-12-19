@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.util.introspect.util;
 import java.util.List;
 
 /**
- * A {@link ParameterLoader} is responsible for loading arguments for a specific context, often based on
- * a method or constructor. This serves as a standardized way to load arguments for various use-cases, such
- * as component injection, or event handling.
+ * A {@link ParameterLoader} is responsible for loading arguments for a specific context, often
+ * based on a method or constructor. This serves as a standardized way to load arguments for various
+ * use-cases, such as component injection, or event handling.
  *
  * @since 0.4.8
  *
@@ -31,22 +31,25 @@ public interface ParameterLoader {
 
     /**
      * Returns whether this loader is compatible with the provided context. If this method returns
-     * {@code true}, you can safely proceed to invoke {@link #loadArgument(ParameterLoaderContext, int, Object...)}
-     * or {@link #loadArguments(ParameterLoaderContext, Object...)} to load the parameter value(s).
+     * {@code true}, you can safely proceed to invoke
+     * {@link #loadArgument(ParameterLoaderContext, int, Object...)} or
+     * {@link #loadArguments(ParameterLoaderContext, Object...)} to load the parameter value(s).
      *
      * @param context the context to check
+     *
      * @return whether this loader is compatible with the provided context
      */
     boolean isCompatible(ParameterLoaderContext context);
 
     /**
      * Loads a specific argument for the provided context. This method should only be invoked after
-     * {@link #isCompatible(ParameterLoaderContext)} has returned {@code true}. If the provided index
-     * is out of bounds, {@code null} is returned.
+     * {@link #isCompatible(ParameterLoaderContext)} has returned {@code true}. If the provided
+     * index is out of bounds, {@code null} is returned.
      *
      * @param context the context to use when looking up the argument value
      * @param index the index of the argument to load
      * @param args the arguments that are passed to the method that is being invoked
+     *
      * @return the argument value, or {@code null} if the argument could not be loaded
      */
     Object loadArgument(ParameterLoaderContext context, int index, Object... args);
@@ -61,6 +64,7 @@ public interface ParameterLoader {
      *
      * @param context the context to use when looking up the argument value
      * @param args the arguments that are passed to the method that is being invoked
+     *
      * @return the argument values, or {@code null} if an argument could not be loaded
      */
     List<Object> loadArguments(ParameterLoaderContext context, Object... args);

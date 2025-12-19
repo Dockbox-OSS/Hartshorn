@@ -58,9 +58,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ApplicationConfigurerTests {
 
     private static ApplicationContext createApplication(Customizer<HartshornApplicationConfigurer> customizer) {
-        return HartshornApplication.createApplication(ApplicationConfigurerTests.class).initialize(customizer.compose(config -> {
-            config.includeBasePackages(false);
-        }));
+        return HartshornApplication.createApplication(ApplicationConfigurerTests.class)
+            .initialize(customizer.compose(config -> {
+                config.includeBasePackages(false);
+            }));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class ApplicationConfigurerTests {
         PropertyRegistry propertyRegistry = applicationContext.environment().propertyRegistry();
         assertTrue(propertyRegistry.contains("sample.x.y"));
         String value = propertyRegistry.value("sample.x.y")
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .orElseThrow(() -> new AssertionError("Property not found"));
         assertEquals("z", value);
     }
 
@@ -100,7 +101,8 @@ public class ApplicationConfigurerTests {
         });
         ProcessableApplicationContext processableApplicationContext =
             assertInstanceOf(ProcessableApplicationContext.class, applicationContext);
-        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.defaultProvider()
+        MultiMap<Integer, ComponentPreProcessor> processors =
+            processableApplicationContext.defaultProvider()
                 .processorRegistry().preProcessors();
         assertTrue(processors.containsValue(processor));
     }
@@ -119,7 +121,8 @@ public class ApplicationConfigurerTests {
         ComponentProvider componentProvider = processableApplicationContext.componentProvider();
         PostProcessingComponentProvider postProcessingComponentProvider =
             assertInstanceOf(PostProcessingComponentProvider.class, componentProvider);
-        MultiMap<Integer, ComponentPostProcessor> processors = postProcessingComponentProvider.processorRegistry().postProcessors();
+        MultiMap<Integer, ComponentPostProcessor> processors =
+            postProcessingComponentProvider.processorRegistry().postProcessors();
         assertTrue(processors.containsValue(processor));
     }
 
@@ -199,50 +202,60 @@ public class ApplicationConfigurerTests {
     @Test
     @DisplayName("Customizer should be able to enable batch mode")
     void testBatchModeCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::enableBatchMode);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::enableBatchMode);
         assertTrue(applicationContext.environment().isBatchMode());
     }
 
     @Test
     @DisplayName("Customizer should be able to disable batch mode")
     void testBatchModeDisabledCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::disableBatchMode);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::disableBatchMode);
         assertFalse(applicationContext.environment().isBatchMode());
     }
 
     @Test
     @DisplayName("Customizer should be able to enable strict mode")
     void testStrictModeCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::enableStrictMode);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::enableStrictMode);
         assertTrue(applicationContext.environment().isStrictMode());
     }
 
     @Test
     @DisplayName("Customizer should be able to disable strict mode")
     void testStrictModeDisabledCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::disableStrictMode);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::disableStrictMode);
         assertFalse(applicationContext.environment().isStrictMode());
     }
 
     @Test
     @DisplayName("Customizer should be able to enable stacktraces")
     void testShowStacktracesCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::showStacktraces);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::showStacktraces);
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertInstanceOf(ConfigurableApplicationEnvironment.class, applicationContext.environment());
+            assertInstanceOf(ConfigurableApplicationEnvironment.class,
+                applicationContext.environment());
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class, configurableApplicationEnvironment.exceptionHandler());
+            assertInstanceOf(LoggingExceptionHandler.class,
+                configurableApplicationEnvironment.exceptionHandler());
         assertTrue(exceptionHandler.printStackTraces());
     }
 
     @Test
     @DisplayName("Customizer should be able to disable stacktraces")
     void testHideStacktracesCustomizer() {
-        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::hideStacktraces);
+        ApplicationContext applicationContext =
+            createApplication(HartshornApplicationConfigurer::hideStacktraces);
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertInstanceOf(ConfigurableApplicationEnvironment.class, applicationContext.environment());
+            assertInstanceOf(ConfigurableApplicationEnvironment.class,
+                applicationContext.environment());
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class, configurableApplicationEnvironment.exceptionHandler());
+            assertInstanceOf(LoggingExceptionHandler.class,
+                configurableApplicationEnvironment.exceptionHandler());
         assertFalse(exceptionHandler.printStackTraces());
     }
 
@@ -283,7 +296,10 @@ public class ApplicationConfigurerTests {
     private static class SamplePreProcessor extends ComponentPreProcessor {
 
         @Override
-        public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
+        public <T> void process(
+            InjectionCapableApplication application,
+            ComponentProcessingContext<T> processingContext
+        ) {
             // Do nothing
         }
     }

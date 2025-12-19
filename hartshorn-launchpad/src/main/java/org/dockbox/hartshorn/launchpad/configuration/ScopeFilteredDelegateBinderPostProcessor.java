@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,35 +26,69 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * An adapter {@link HierarchicalBinderPostProcessor} that delegates to another {@link HierarchicalBinderPostProcessor} if
- * the {@link Scope} of the binder matches the provided {@link Predicate}. This is useful when adapting non-filtered
- * processors to be filtered by scope, and is effectively equal to extending {@link AbstractScopeFilteredBinderPostProcessor}
- * in the delegate processor.
+ * An adapter {@link HierarchicalBinderPostProcessor} that delegates to another
+ * {@link HierarchicalBinderPostProcessor} if the {@link Scope} of the binder matches the provided
+ * {@link Predicate}. This is useful when adapting non-filtered processors to be filtered by scope,
+ * and is effectively equal to extending {@link AbstractScopeFilteredBinderPostProcessor} in the
+ * delegate processor.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ScopeFilteredDelegateBinderPostProcessor extends AbstractScopeFilteredBinderPostProcessor {
+public class ScopeFilteredDelegateBinderPostProcessor
+    extends AbstractScopeFilteredBinderPostProcessor {
 
     private final HierarchicalBinderPostProcessor processor;
     private final Predicate<ScopeKey> scopeFilter;
 
-    public ScopeFilteredDelegateBinderPostProcessor(HierarchicalBinderPostProcessor processor, Predicate<ScopeKey> scopeFilter) {
+    public ScopeFilteredDelegateBinderPostProcessor(
+        HierarchicalBinderPostProcessor processor,
+        Predicate<ScopeKey> scopeFilter
+    ) {
         this.processor = processor;
         this.scopeFilter = scopeFilter;
     }
 
-    public static ScopeFilteredDelegateBinderPostProcessor create(HierarchicalBinderPostProcessor processor, Predicate<ScopeKey> scopeFilter) {
+    /**
+     * Creates a new {@link ScopeFilteredDelegateBinderPostProcessor} with the provided delegate
+     * processor and scope filter.
+     *
+     * @param processor the delegate processor
+     * @param scopeFilter the scope filter
+     *
+     * @return the scope-filtered delegate processor
+     */
+    public static ScopeFilteredDelegateBinderPostProcessor create(
+        HierarchicalBinderPostProcessor processor,
+        Predicate<ScopeKey> scopeFilter
+    ) {
         return new ScopeFilteredDelegateBinderPostProcessor(processor, scopeFilter);
     }
 
-    public static ScopeFilteredDelegateBinderPostProcessor create(HierarchicalBinderPostProcessor processor, ScopeKey... permittedScopes) {
-        return new ScopeFilteredDelegateBinderPostProcessor(processor, Set.of(permittedScopes)::contains);
+    /**
+     * Creates a new {@link ScopeFilteredDelegateBinderPostProcessor} that only permits the provided
+     * scopes.
+     *
+     * @param processor the delegate processor
+     * @param permittedScopes the permitted scopes
+     *
+     * @return the scope-filtered delegate processor
+     */
+    public static ScopeFilteredDelegateBinderPostProcessor create(
+        HierarchicalBinderPostProcessor processor,
+        ScopeKey... permittedScopes
+    ) {
+        return new ScopeFilteredDelegateBinderPostProcessor(processor,
+            Set.of(permittedScopes)::contains);
     }
 
     @Override
-    protected void processBinder(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    protected void processBinder(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         this.processor.process(application, scope, binder);
     }
 

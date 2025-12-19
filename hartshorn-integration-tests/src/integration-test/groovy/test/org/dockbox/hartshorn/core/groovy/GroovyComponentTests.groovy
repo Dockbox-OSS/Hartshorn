@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,44 +32,47 @@ import java.util.stream.Stream
  * Instead of using a common test class for all three languages, each language has its own test class.
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 @HartshornIntegrationTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.groovy"])
 class GroovyComponentTests {
 
-    @Inject
-    private ApplicationContext applicationContext
+  @Inject
+  private ApplicationContext applicationContext
 
-    @Inject
-    private ComponentRegistry componentRegistry
+  @Inject
+  private ComponentRegistry componentRegistry
 
-    @ParameterizedTest
-    @MethodSource("components")
-    <T> void testComponent(Class<T> componentType, applicationContextFunction, applicationManagerFunction) {
-        def component = this.applicationContext.get(componentType)
-        Assertions.assertNotNull(component)
+  @ParameterizedTest
+  @MethodSource("components")
+  <T> void testComponent(Class<T> componentType, applicationContextFunction,
+          applicationManagerFunction) {
+    def component = this.applicationContext.get(componentType)
+    Assertions.assertNotNull(component)
 
-        def container = this.componentRegistry.container(componentType)
-        Assertions.assertNotNull(container)
-        Assertions.assertTrue(container.present())
+    def container = this.componentRegistry.container(componentType)
+    Assertions.assertNotNull(container)
+    Assertions.assertTrue(container.present())
 
-        if (applicationContextFunction != null) {
-            Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
-        }
-
-        if (applicationManagerFunction != null) {
-            Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
-        }
+    if (applicationContextFunction != null) {
+      Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
     }
 
-    static Stream<Arguments> components() {
-        return Stream.of(
-                Arguments.of(GroovyInterfaceComponent.class, null, null),
-                Arguments.of(GroovyClassComponent.class,
-                        { final GroovyClassComponent component -> component.applicationContext() },
-                        { final GroovyClassComponent component -> component.applicationManager() },
-                ),
-        )
+    if (applicationManagerFunction != null) {
+      Assertions.assertSame(this.applicationContext.environment(),
+              applicationManagerFunction(component))
     }
+  }
+
+  static Stream<Arguments> components() {
+    return Stream.of(
+            Arguments.of(GroovyInterfaceComponent.class, null, null),
+            Arguments.of(GroovyClassComponent.class,
+                    { final GroovyClassComponent component -> component.applicationContext() },
+                    { final GroovyClassComponent component -> component.applicationManager() },
+            ),
+    )
+  }
 }

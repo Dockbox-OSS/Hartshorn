@@ -1,6 +1,6 @@
 name: 'Maintenance chore'
 description: 'Any issues related to maintenance tasks, such as refactoring or updating dependencies.'
-labels: ['type: chore']
+labels: [ 'type: chore' ]
 body:
   - type: textarea
     id: description

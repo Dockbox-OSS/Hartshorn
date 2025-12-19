@@ -50,28 +50,28 @@ public class AssignExpressionTests {
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
-                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
-                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
+            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
+            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
         );
     }
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
     void testAssignmentToDefinedVariable(
-            Function<Interpreter, VariableScope> variableScopeFunction
+        Function<Interpreter, VariableScope> variableScopeFunction
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        variable = "newValue"
-                        """)
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .define("variable", "originalValue", variableScopeFunction)
-                .build();
+                variable = "newValue"
+                """)
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .define("variable", "originalValue", variableScopeFunction)
+            .build();
 
         Object interpreted = helper
-                .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
-                .interpretValue();
+            .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+            .interpretValue();
         Assertions.assertEquals("newValue", interpreted);
 
         VariableScope scope = variableScopeFunction.apply(helper.interpreter());
@@ -87,13 +87,14 @@ public class AssignExpressionTests {
             Assertions.assertEquals(42d, value);
             return null;
         }).when(container).set(
-                Mockito.any(Interpreter.class),
-                Mockito.any(Token.class),
-                Mockito.any(Object.class),
-                Mockito.any(VariableScope.class)
+            Mockito.any(Interpreter.class),
+            Mockito.any(Token.class),
+            Mockito.any(Object.class),
+            Mockito.any(VariableScope.class)
         );
 
-        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, "object.property = 42")
+        HSLTestHelper helper =
+            HSLTestHelper.ofExpression(this.applicationContext, "object.property = 42")
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new CallExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
@@ -105,25 +106,25 @@ public class AssignExpressionTests {
         Assertions.assertEquals(42d, value);
 
         Mockito.verify(container).set(
-                Mockito.eq(helper.interpreter()),
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any()
+            Mockito.eq(helper.interpreter()),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any()
         );
     }
 
     @Test
     void testAssignmentToUndefinedVariable() {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        variable = "newValue"
-                        """)
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                variable = "newValue"
+                """)
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         Assertions.assertThrows(ScriptEvaluationError.class, () -> helper
-                .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
-                .interpretValue());
+            .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+            .interpretValue());
     }
 }

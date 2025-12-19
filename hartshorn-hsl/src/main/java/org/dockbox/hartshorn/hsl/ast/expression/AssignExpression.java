@@ -21,8 +21,10 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing the assignment of a value to a variable or property. For example, the expression
- * <code>variable = value</code> assigns the value specified by the <code>value</code> expression to the variable
+ * An expression representing the assignment of a value to a variable or property. For example, the
+ * expression
+ * <code>variable = value</code> assigns the value specified by the <code>value</code> expression to
+ * the variable
  * named <code>variable</code>.
  *
  * @since 0.4.12
@@ -45,6 +47,11 @@ public class AssignExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the value being assigned.
+     *
+     * @return the expression representing the value being assigned
+     */
     public Expression value() {
         return this.value;
     }

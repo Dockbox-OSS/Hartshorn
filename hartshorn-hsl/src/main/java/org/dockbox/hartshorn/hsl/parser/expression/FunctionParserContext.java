@@ -26,7 +26,7 @@ import java.util.Set;
  * Context for function parsers, holding the names of registered prefix and infix functions.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class FunctionParserContext extends DefaultFallbackCompatibleContext {
@@ -36,6 +36,7 @@ public class FunctionParserContext extends DefaultFallbackCompatibleContext {
 
     /**
      * Registers a new prefix function by its name.
+     *
      * @param name the name of the prefix function
      */
     public void addPrefixFunction(String name) {
@@ -44,6 +45,7 @@ public class FunctionParserContext extends DefaultFallbackCompatibleContext {
 
     /**
      * Registers a new infix function by its name.
+     *
      * @param name the name of the infix function
      */
     public void addInfixFunction(String name) {
@@ -52,6 +54,7 @@ public class FunctionParserContext extends DefaultFallbackCompatibleContext {
 
     /**
      * Retrieves an unmodifiable set of registered prefix function names.
+     *
      * @return the set of prefix function names
      */
     public Set<String> prefixFunctions() {
@@ -60,6 +63,7 @@ public class FunctionParserContext extends DefaultFallbackCompatibleContext {
 
     /**
      * Retrieves an unmodifiable set of registered infix function names.
+     *
      * @return the set of infix function names
      */
     public Set<String> infixFunctions() {

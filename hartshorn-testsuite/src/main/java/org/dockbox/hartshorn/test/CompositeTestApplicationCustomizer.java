@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import java.util.List;
 
 /**
- * Composite implementation of {@link TestApplicationCustomizer}, executing the given customizers
- * in the order they were provided.
+ * Composite implementation of {@link TestApplicationCustomizer}, executing the given customizers in
+ * the order they were provided.
  *
  * @since 0.7.0
  *

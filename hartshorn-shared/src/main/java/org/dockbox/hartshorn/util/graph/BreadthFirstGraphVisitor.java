@@ -56,6 +56,7 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
      *
      * @param visited the set of visited nodes
      * @param node the node to visit
+     *
      * @throws GraphException when an error occurs while visiting the node
      */
     default void visitSingle(Set<GraphNode<T>> visited, GraphNode<T> node) throws GraphException {
@@ -64,7 +65,10 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         }
     }
 
-    private Set<GraphNode<T>> visitRow(Set<GraphNode<T>> visited, Set<GraphNode<T>> currentRow) throws GraphException {
+    private Set<GraphNode<T>> visitRow(
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> currentRow
+    ) throws GraphException {
         Set<GraphNode<T>> nextRow = new HashSet<>();
         for (GraphNode<T> node : currentRow) {
             if (visited.add(node) && this.visit(node)) {
@@ -74,10 +78,13 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return nextRow;
     }
 
-    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes) throws GraphException {
+    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> nodes
+    ) throws GraphException {
         Set<GraphNode<T>> currentRow = new HashSet<>(nodes);
-        // Filter out nodes that have parents that haven't been visited yet, as they can't be visited yet
-        // until their parents have been visited first.
+        // Filter out nodes that have parents that haven't been visited yet, as they can't be
+        // visited yet until their parents have been visited first.
         for (GraphNode<T> node : nodes) {
             if (!this.hasVisitedParents(visited, nodes, node)) {
                 currentRow.remove(node);
@@ -87,15 +94,21 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
     }
 
     /**
-     * Indicates whether all parent nodes of the given node have been visited or can reasonably be expected to be visited. This
-     * method is used to determine whether a node can be visited or not.
+     * Indicates whether all parent nodes of the given node have been visited or can reasonably be
+     * expected to be visited. This method is used to determine whether a node can be visited or
+     * not.
      *
      * @param visited the set of visited nodes
      * @param allNodes the set of all nodes
      * @param node the node to check
+     *
      * @return {@code true} if all parent nodes have been visited, {@code false} otherwise
      */
-    default boolean hasVisitedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> allNodes, GraphNode<T> node) throws GraphException {
+    default boolean hasVisitedParents(
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> allNodes,
+        GraphNode<T> node
+    ) throws GraphException {
         if (node instanceof ContainableGraphNode<T> containable) {
             return visited.containsAll(containable.parents());
         }

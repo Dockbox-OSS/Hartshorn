@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for binary bitwise expressions. Handles the parsing of expressions involving
- * bitwise operators such as bitwise AND, bitwise OR, and bitwise shifts.
+ * Parser for binary bitwise expressions. Handles the parsing of expressions involving bitwise
+ * operators such as bitwise AND, bitwise OR, and bitwise shifts.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class BitwiseExpressionParser extends AbstractBitwiseOrLogicalExpressionParser {
@@ -35,11 +35,11 @@ public class BitwiseExpressionParser extends AbstractBitwiseOrLogicalExpressionP
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-                BitwiseTokenType.SHIFT_LEFT,
-                BitwiseTokenType.SHIFT_RIGHT,
-                BitwiseTokenType.LOGICAL_SHIFT_RIGHT,
-                BitwiseTokenType.BITWISE_OR,
-                BitwiseTokenType.BITWISE_AND,
+            BitwiseTokenType.SHIFT_LEFT,
+            BitwiseTokenType.SHIFT_RIGHT,
+            BitwiseTokenType.LOGICAL_SHIFT_RIGHT,
+            BitwiseTokenType.BITWISE_OR,
+            BitwiseTokenType.BITWISE_AND,
         };
     }
 

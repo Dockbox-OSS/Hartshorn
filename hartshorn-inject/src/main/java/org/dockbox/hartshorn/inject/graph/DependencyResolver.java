@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,31 +22,36 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 
 /**
- * A dependency resolver is responsible for resolving a collection of {@link DependencyDeclarationContext} instances
- * into a collection of {@link DependencyContext} instances. This is done by visiting the declarations, and resolving
- * any dependencies that are declared by the declarations.
+ * A dependency resolver is responsible for resolving a collection of
+ * {@link DependencyDeclarationContext} instances into a collection of {@link DependencyContext}
+ * instances. This is done by visiting the declarations, and resolving any dependencies that are
+ * declared by the declarations.
  *
- * <p>Note that the resulting collection of {@link DependencyContext} instances will typically not only contain
- * dependencies of the declarations that were passed to the resolver, but also dependencies of those dependencies.
+ * <p>Note that the resulting collection of {@link DependencyContext} instances will typically not
+ * only contain
+ * dependencies of the declarations that were passed to the resolver, but also dependencies of those
+ * dependencies.
  *
  * @see DependencyDeclarationContext
  * @see DependencyContext
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DependencyResolver {
 
     /**
-     * Resolves a collection of {@link DependencyDeclarationContext} instances into a collection of {@link
-     * DependencyContext} instances.
+     * Resolves a collection of {@link DependencyDeclarationContext} instances into a collection of
+     * {@link DependencyContext} instances.
      *
      * @param containers The collection of declarations to resolve.
+     *
      * @return The collection of resolved dependencies.
+     *
      * @throws DependencyResolutionException When a dependency cannot be resolved.
      */
-    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException;
-
+    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers)
+        throws DependencyResolutionException;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * A callback that cleans up resources after a test lifecycle has been completed.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface HartshornCleanupCallback {
@@ -31,6 +31,7 @@ public interface HartshornCleanupCallback {
      * Close resources after the test lifecycle has been completed.
      *
      * @param context the extension context of the test
+     *
      * @throws Exception if an error occurs while closing resources
      */
     void closeAfterLifecycle(ExtensionContext context) throws Exception;

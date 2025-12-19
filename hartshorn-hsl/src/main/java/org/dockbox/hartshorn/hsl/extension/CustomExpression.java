@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * Base class for custom expressions. This class is non-sealed to allow for custom implementations
- * for various use cases. The {@link ExpressionModule} is used to provide the custom expression
- * with the appropriate token type, parser, interpreter, and resolver.
+ * for various use cases. The {@link ExpressionModule} is used to provide the custom expression with
+ * the appropriate token type, parser, interpreter, and resolver.
  *
  * @param <T> The type of the custom expression.
  *
@@ -31,7 +31,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  *
  * @author Guus Lieben
  */
-public abstract non-sealed class CustomExpression<T extends CustomExpression<T>> extends Expression implements CustomASTNode<T, Object> {
+public abstract non-sealed class CustomExpression<T extends CustomExpression<T>> extends Expression
+    implements CustomASTNode<T, Object> {
 
     private final ExpressionModule<T> module;
 

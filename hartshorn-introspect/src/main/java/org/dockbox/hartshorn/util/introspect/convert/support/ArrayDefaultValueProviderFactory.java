@@ -31,7 +31,9 @@ import java.lang.reflect.Array;
  *
  * @author Guus Lieben
  */
-public class ArrayDefaultValueProviderFactory implements DefaultValueProviderFactory<Object>, ConditionalConverter {
+public class ArrayDefaultValueProviderFactory implements
+    DefaultValueProviderFactory<Object>,
+    ConditionalConverter {
 
     @Override
     public <O> DefaultValueProvider<O> create(Class<O> targetType) {

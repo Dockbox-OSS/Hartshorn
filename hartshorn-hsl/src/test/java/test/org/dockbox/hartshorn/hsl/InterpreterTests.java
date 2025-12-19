@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,18 @@ public class InterpreterTests {
     @Test
     void testAmbiguousExternalFunctionsAreAllowedByDefault() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         Assertions.assertDoesNotThrow(script::evaluate);
     }
 
     @Test
     void testAmbiguousExternalFunctionsAreAllowedWhenEnabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
         Assertions.assertDoesNotThrow(script::evaluate);
     }
@@ -52,7 +56,9 @@ public class InterpreterTests {
     @Test
     void testAmbiguousExternalFunctionsAreNotAllowedWhenDisabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
-        script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+        script.runtime()
+            .module("ambiguous",
+                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
         Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
     }

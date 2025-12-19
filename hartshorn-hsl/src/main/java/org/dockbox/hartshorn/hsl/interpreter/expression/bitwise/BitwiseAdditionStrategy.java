@@ -32,6 +32,7 @@ public interface BitwiseAdditionStrategy {
      *
      * @param left the left operand
      * @param right the right operand
+     *
      * @return true if this strategy supports the operand types, false otherwise
      */
     boolean supports(Object left, Object right);
@@ -41,6 +42,7 @@ public interface BitwiseAdditionStrategy {
      *
      * @param left the left operand
      * @param right the right operand
+     *
      * @return the result of the addition
      */
     Object add(Object left, Object right);

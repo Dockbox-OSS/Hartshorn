@@ -30,5 +30,10 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  */
 public interface BindingStrategyContext<T> extends Context {
 
+    /**
+     * The declaration context for the dependency being processed.
+     *
+     * @return the declaration context
+     */
     DependencyDeclarationContext<T> declarationContext();
 }

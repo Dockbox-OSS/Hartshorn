@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * A {@link ConcurrentMultiMap} implementation that uses {@link CopyOnWriteArrayList} as its backing collection.
+ * A {@link ConcurrentMultiMap} implementation that uses {@link CopyOnWriteArrayList} as its backing
+ * collection.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

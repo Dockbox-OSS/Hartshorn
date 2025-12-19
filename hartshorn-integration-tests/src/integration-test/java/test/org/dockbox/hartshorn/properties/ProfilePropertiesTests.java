@@ -37,11 +37,13 @@ public class ProfilePropertiesTests {
 
     @Test
     void testPropertyRegistryHasProfilesInIntegrationTest() {
-        ProfilePropertyRegistry registry = Assertions.assertInstanceOf(ProfilePropertyRegistry.class, propertyRegistry);
+        ProfilePropertyRegistry registry =
+            Assertions.assertInstanceOf(ProfilePropertyRegistry.class, propertyRegistry);
         ProfileRegistry profileRegistry = registry.profileRegistry();
         Assertions.assertEquals(2, profileRegistry.profiles().size());
 
-        Assertions.assertTrue(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME).present());
+        Assertions.assertTrue(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME)
+            .present());
         Assertions.assertTrue(profileRegistry.profile("ProfilePropertiesTests").present());
     }
 
@@ -52,6 +54,7 @@ public class ProfilePropertiesTests {
         Assertions.assertTrue(propertyOption.flatMap(ValueProperty::value).present());
 
         ValueProperty property = propertyOption.get();
-        Assertions.assertEquals("This is a profile-specific property value.", property.value().get());
+        Assertions.assertEquals("This is a profile-specific property value.",
+            property.value().get());
     }
 }

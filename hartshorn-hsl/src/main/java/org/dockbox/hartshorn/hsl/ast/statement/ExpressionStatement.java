@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement that consists only of an expression, which is typically used for side effects
- * such as function calls or assignments.
+ * A statement that consists only of an expression, which is typically used for side effects such as
+ * function calls or assignments.
  *
  * @since 0.4.12
  *
@@ -36,6 +36,11 @@ public class ExpressionStatement extends Statement {
         this.expression = expression;
     }
 
+    /**
+     * Returns the expression contained within this statement.
+     *
+     * @return the expression
+     */
     public Expression expression() {
         return this.expression;
     }

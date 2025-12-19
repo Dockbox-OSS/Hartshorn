@@ -35,12 +35,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
- * implementation of {@link StateAwareProxyFactory}. This means the factory can stop and start tracking state,
- * which is useful for testing. This implementation keeps track of known delegates and interceptors, allowing them
- * to be passed to the {@link ProxyManager} to manage proxies.
+ * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is
+ * suggested by its implementation of {@link StateAwareProxyFactory}. This means the factory can
+ * stop and start tracking state, which is useful for testing. This implementation keeps track of
+ * known delegates and interceptors, allowing them to be passed to the {@link ProxyManager} to
+ * manage proxies.
  *
- * <p>This implementation is unaware of any specific {@link ProxyManager} implementation, and therefore does not
+ * <p>This implementation is unaware of any specific {@link ProxyManager} implementation, and
+ * therefore does not
  * know how to create proxies. This is the responsibility of the implementing class.
  *
  * @param <T> The parent type of the proxy.
@@ -49,12 +51,13 @@ import java.util.function.Consumer;
  *
  * @author Guus Lieben
  */
-public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
+public abstract class DefaultProxyFactory<T>
+    implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
 
     /**
-     * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
-     * generated proxy classes are unique. This field may be replaced at any time, and the factory will not be
-     * affected.
+     * The {@link NameGenerator} used to generate names for the proxy classes. This is used to
+     * ensure that the generated proxy classes are unique. This field may be replaced at any time,
+     * and the factory will not be affected.
      */
     protected static NameGenerator nameGenerator = new NameGenerator() {
         private final String sep = "_$$_hh" + Integer.toHexString(this.hashCode() & 0xfff) + "_";
@@ -82,7 +85,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         this.type = type;
         this.proxyOrchestrator = proxyOrchestrator;
         this.advisorRegistry = new ConfigurationAdvisorRegistry<>(proxyOrchestrator, this);
-        this.contextContainer = new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
+        this.contextContainer =
+            new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
         this.validator = new CollectorProxyValidator().withDefaults();
     }
 
@@ -92,7 +96,9 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer) {
+    public StateAwareProxyFactory<T> advisors(
+        Consumer<? super AdvisorRegistry<T>> registryConsumer
+    ) {
         registryConsumer.accept(this.advisorRegistry);
         return this;
     }
@@ -144,7 +150,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args)
+        throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
@@ -152,34 +159,47 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     /**
      * Creates a new proxy instance of the type this factory is responsible for.
      *
-     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not be created
-     * @throws ApplicationException If the proxy could not be created due to a constraint violation or other application error
+     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not
+     * be created
+     *
+     * @throws ApplicationException If the proxy could not be created due to a constraint violation
+     * or other application error
      */
     protected abstract Option<T> createNewProxy() throws ApplicationException;
 
     /**
-     * Creates a new proxy instance of the type this factory is responsible for, using the given constructor and arguments.
+     * Creates a new proxy instance of the type this factory is responsible for, using the given
+     * constructor and arguments.
      *
      * @param constructor The constructor to use for creating the proxy instance
      * @param args The arguments to pass to the constructor
-     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not be created
-     * @throws ApplicationException If the proxy could not be created due to a constraint violation or other application error
+     *
+     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not
+     * be created
+     *
+     * @throws ApplicationException If the proxy could not be created due to a constraint violation
+     * or other application error
      */
-    protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
+    protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args)
+        throws ApplicationException;
 
     @Override
-    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args)
+        throws ApplicationException {
         if (constructor.constructor().present()) {
             return this.proxy(constructor.constructor().get(), args);
         }
         else {
-            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
+            throw new ApplicationException("Constructor "
+                + constructor
+                + " is not present on type "
+                + this.type());
         }
     }
 
     /**
-     * Validates the constraints of the type this factory is responsible for. This method will throw a
-     * {@link ProxyConstraintViolationException} if any constraints are violated.
+     * Validates the constraints of the type this factory is responsible for. This method will throw
+     * a {@link ProxyConstraintViolationException} if any constraints are violated.
      *
      * @throws ProxyConstraintViolationException if any constraints are violated
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,21 @@ package org.dockbox.hartshorn.proxy.advice;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A resolver to look up advisors for a given type. This resolver can be used by {@link ProxyMethodInterceptHandler}s
- * to determine which advisors should be applied to a given type. This resolver is inherently immutable, and can not
- * be used to add or remove advisors.
+ * A resolver to look up advisors for a given type. This resolver can be used by
+ * {@link ProxyMethodInterceptHandler}s to determine which advisors should be applied to a given
+ * type. This resolver is inherently immutable, and can not be used to add or remove advisors.
  *
  * @param <T> The type of the proxy instance
  *
  * @since 0.4.9
+ *
  * @author Guus Lieben
  */
 public interface TypeAdvisorResolver<T> {
 
     /**
-     * Returns the delegate instance to which method calls of the advised type should be delegated. If no delegate
-     * is available, an empty {@link Option} is returned.
+     * Returns the delegate instance to which method calls of the advised type should be delegated.
+     * If no delegate is available, an empty {@link Option} is returned.
      *
      * @return The delegate instance, if available
      */

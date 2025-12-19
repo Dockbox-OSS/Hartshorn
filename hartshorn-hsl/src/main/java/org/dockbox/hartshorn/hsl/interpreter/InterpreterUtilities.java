@@ -32,16 +32,17 @@ import java.util.Arrays;
  * different implementations of the interpreter.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public final class InterpreterUtilities {
 
     /**
-     * Determines the "truthiness" of an object according to HSL's rules. If a value is null or false,
-     * it is considered "falsy". All other values are considered "truthy".
+     * Determines the "truthiness" of an object according to HSL's rules. If a value is null or
+     * false, it is considered "falsy". All other values are considered "truthy".
      *
      * @param object the object to evaluate
+     *
      * @return true if the object is "truthy", false if it is "falsy"
      */
     public static boolean isTruthy(Object object) {
@@ -56,12 +57,13 @@ public final class InterpreterUtilities {
     }
 
     /**
-     * Compares two objects for equality according to HSL's rules. If both objects are null, or {@link
-     * Object#equals(Object)} returns true, they are considered equal. If both objects are instances of
-     * {@link Number}, they are compared numerically using {@link BigDecimal}.
+     * Compares two objects for equality according to HSL's rules. If both objects are null, or
+     * {@link Object#equals(Object)} returns true, they are considered equal. If both objects are
+     * instances of {@link Number}, they are compared numerically using {@link BigDecimal}.
      *
      * @param a the first object
      * @param b the second object
+     *
      * @return true if the objects are considered equal, false otherwise
      */
     public static boolean isEqual(Object a, Object b) {
@@ -80,10 +82,11 @@ public final class InterpreterUtilities {
     }
 
     /**
-     * Unwraps an object if it is an {@link ExternalInstance}, returning the underlying instance.
-     * If the object is not an {@link ExternalInstance}, it is returned as-is.
+     * Unwraps an object if it is an {@link ExternalInstance}, returning the underlying instance. If
+     * the object is not an {@link ExternalInstance}, it is returned as-is.
      *
      * @param object the object to unwrap
+     *
      * @return the unwrapped object
      */
     public static Object unwrap(Object object) {
@@ -94,8 +97,8 @@ public final class InterpreterUtilities {
     }
 
     /**
-     * Checks if the given operand is a number. If it is not, a {@link ScriptEvaluationError} is thrown
-     * with a message indicating that a non-number operand was provided.
+     * Checks if the given operand is a number. If it is not, a {@link ScriptEvaluationError} is
+     * thrown with a message indicating that a non-number operand was provided.
      *
      * @param operator the operator token
      * @param operand the operand to check
@@ -109,14 +112,14 @@ public final class InterpreterUtilities {
             return number;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
-                .at(operator)
-                .build();
+            .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
+            .at(operator)
+            .build();
     }
 
     /**
-     * Checks if both given operands are numbers. If either is not, a {@link ScriptEvaluationError} is
-     * thrown with a message indicating that non-number operands were provided.
+     * Checks if both given operands are numbers. If either is not, a {@link ScriptEvaluationError}
+     * is thrown with a message indicating that non-number operands were provided.
      *
      * @param operator the operator token
      * @param left the left operand
@@ -126,16 +129,28 @@ public final class InterpreterUtilities {
      *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */
-    public static Tuple<Number, Number> checkNumberOperands(Token operator, Object left, Object right) {
+    public static Tuple<Number, Number> checkNumberOperands(
+        Token operator,
+        Object left,
+        Object right
+    ) {
         if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
             return new Tuple<>(leftNumber, rightNumber);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
-                .at(operator)
-                .build();
+            .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
+            .at(operator)
+            .build();
     }
 
+    /**
+     * Checks if the given collection is iterable. If it is not, a {@link ScriptEvaluationError} is
+     * thrown with a message indicating that a non-iterable collection was provided.
+     *
+     * @param at the AST node to report the error at
+     * @param collection the collection to check
+     * @return the collection cast to an {@link Iterable} if it is valid
+     */
     public static Iterable<?> checkIterable(ASTNode at, Object collection) {
         collection = InterpreterUtilities.unwrap(collection);
 
@@ -147,9 +162,9 @@ public final class InterpreterUtilities {
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
-                    .at(at)
-                    .build();
+                .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                .at(at)
+                .build();
         }
     }
 }

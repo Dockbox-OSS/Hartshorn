@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,17 +27,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A condition that requires a property to be present in the application's {@link PropertyRegistry}. The property
- * is resolved by name, and optionally by value. If the value is not specified, the property is required to be
- * present and have any value.
+ * A condition that requires a property to be present in the application's {@link PropertyRegistry}.
+ * The property is resolved by name, and optionally by value. If the value is not specified, the
+ * property is required to be present and have any value.
  *
  * @see PropertyCondition
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = PropertyCondition.class)
@@ -69,8 +69,9 @@ public @interface RequiresProperty {
     boolean matchIfMissing() default false;
 
     /**
-     * @see RequiresCondition#failOnNoMatch()
      * @return whether to fail on no match
+     *
+     * @see RequiresCondition#failOnNoMatch()
      */
     @AttributeAlias(value = "failOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;

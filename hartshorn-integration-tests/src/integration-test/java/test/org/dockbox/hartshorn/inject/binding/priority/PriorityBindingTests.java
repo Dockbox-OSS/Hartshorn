@@ -37,14 +37,16 @@ public class PriorityBindingTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
+    @TestComponents({ZeroAndDefaultPriorityConfiguration.class,
+        ImplicitPriorityConfiguration.class})
     void testProvisionWithImplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         Assertions.assertEquals(PRIORITY_ZERO + PRIORITY_ONE, component.name());
     }
 
     @Test
-    @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
+    @TestComponents({ZeroAndDefaultPriorityConfiguration.class,
+        ExplicitPriorityConfiguration.class})
     void testProvisionWithExplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         Assertions.assertEquals(PRIORITY_DEFAULT + PRIORITY_ONE, component.name());
@@ -58,7 +60,9 @@ public class PriorityBindingTests {
         String binding = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding);
 
-        this.applicationContext.bind(String.class).priority(-2).singleton("Hello low priority world!");
+        this.applicationContext.bind(String.class)
+            .priority(-2)
+            .singleton("Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding2);
     }
@@ -71,7 +75,9 @@ public class PriorityBindingTests {
         String binding = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding);
 
-        this.applicationContext.bind(String.class).priority(-2).to(() -> "Hello low priority world!");
+        this.applicationContext.bind(String.class)
+            .priority(-2)
+            .to(() -> "Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding2);
     }
@@ -106,7 +112,9 @@ public class PriorityBindingTests {
 
         @Prototype
         @Priority(1)
-        public TestPriorityComponent sampleInterfacePriorityOne(@Priority(Priority.DEFAULT_PRIORITY) TestPriorityComponent lowerPriority) {
+        public TestPriorityComponent sampleInterfacePriorityOne(
+            @Priority(Priority.DEFAULT_PRIORITY) TestPriorityComponent lowerPriority
+        ) {
             return () -> lowerPriority.name() + PRIORITY_ONE;
         }
     }

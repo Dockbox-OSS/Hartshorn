@@ -36,7 +36,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
- * A diagnostics reporter that reports information about the application. This includes the following information:
+ * A diagnostics reporter that reports information about the application. This includes the
+ * following information:
  * <ul>
  *     <li>Version of Hartshorn</li>
  *     <li>Location of the application JAR file</li>
@@ -46,21 +47,24 @@ import java.util.stream.Collectors;
  *     <li>Application-level contexts</li>
  * </ul>
  *
- * <p>Each of these can be enabled or disabled individually, using the {@link ApplicationReportingConfiguration} that
- * is provided by this reporter.
+ * <p>Each of these can be enabled or disabled individually, using the
+ * {@link ApplicationReportingConfiguration} that is provided by this reporter.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
+public class ApplicationDiagnosticsReporter
+    implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>,
+    CategorizedDiagnosticsReporter {
 
     /**
      * The category of this reporter.
      */
     public static final String APPLICATION_CATEGORY = "application";
 
-    private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
+    private final ApplicationReportingConfiguration configuration =
+        new ApplicationReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ApplicationDiagnosticsReporter(ApplicationContext applicationContext) {
@@ -70,8 +74,10 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
-            String implementationVersion = ApplicationContext.class.getPackage().getImplementationVersion();
-            collector.property("version").writeString(implementationVersion != null ? implementationVersion : "unknown");
+            String implementationVersion =
+                ApplicationContext.class.getPackage().getImplementationVersion();
+            collector.property("version")
+                .writeString(implementationVersion != null ? implementationVersion : "unknown");
         }
         if (this.configuration.includeJarLocation()) {
             reportJarLocation(collector);
@@ -98,15 +104,21 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     protected static void reportJarLocation(DiagnosticsPropertyCollector collector) {
         String codeSource;
         try {
-            codeSource = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
-        } catch (Exception e) {
+            codeSource = ApplicationContext.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .toURI()
+                .toString();
+        }
+        catch (Exception e) {
             codeSource = "Unknown";
         }
         collector.property("source").writeString(codeSource);
     }
 
     /**
-     * Reports the application properties. This includes all properties that are available in the application context.
+     * Reports the application properties. This includes all properties that are available in the
+     * application context.
      *
      * @param collector the collector to write to
      */
@@ -117,34 +129,39 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     /**
-     * Reports the canonical names of all module activators that are registered with the application context.
+     * Reports the canonical names of all module activators that are registered with the application
+     * context.
      *
      * @param collector the collector to write to
      */
     protected void reportModuleActivators(DiagnosticsPropertyCollector collector) {
         String[] activators = this.applicationContext.activators().activators().stream()
-                .map(activator -> activator.annotationType().getCanonicalName())
-                .toArray(String[]::new);
+            .map(activator -> activator.annotationType().getCanonicalName())
+            .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);
     }
 
     /**
-     * Reports the number of observers that are registered with the application context. Observers are reported by
-     * their class name, and the number of instances that are registered. If the application environment is not an
-     * instance of {@link ObservableApplicationEnvironment}, no observers are reported.
+     * Reports the number of observers that are registered with the application context. Observers
+     * are reported by their class name, and the number of instances that are registered. If the
+     * application environment is not an instance of {@link ObservableApplicationEnvironment}, no
+     * observers are reported.
      *
      * @param collector the collector to write to
      */
     protected void reportObservers(DiagnosticsPropertyCollector collector) {
         ApplicationEnvironment environment = this.applicationContext.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
-                            .collect(Collectors.groupingBy(Observer::getClass));
+            Map<Class<? extends Observer>, List<Observer>> observers =
+                observable.observers(Observer.class).stream()
+                    .collect(Collectors.groupingBy(Observer::getClass));
 
             collector.property("observers").writeDelegate(observerCollector -> {
                 observers.forEach((type, instances) -> {
                     observerCollector.property(type.getName()).writeDelegates(instances.stream()
-                            .map(observer -> new ObserverDiagnosticsReporter(environment.introspector(), observer))
+                            .map(observer -> new ObserverDiagnosticsReporter(
+                                    environment.introspector(), observer
+                            ))
                             .toArray(Reportable[]::new)
                     );
                 });
@@ -153,29 +170,32 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     /**
-     * Reports all application-level contexts that are registered with the application context. Contexts are reported
-     * by their class name. If a context is an instance of {@link Reportable}, its data is also reported. If a context
-     * is an instance of {@link NamedContext}, its name is also reported. If a context has child contexts, these are
-     * reported recursively.
+     * Reports all application-level contexts that are registered with the application context.
+     * Contexts are reported by their class name. If a context is an instance of {@link Reportable},
+     * its data is also reported. If a context is an instance of {@link NamedContext}, its name is
+     * also reported. If a context has child contexts, these are reported recursively.
      *
      * @param collector the collector to write to
      */
     protected void reportContexts(DiagnosticsPropertyCollector collector) {
-        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference = new AtomicReference<>();
+        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference =
+            new AtomicReference<>();
 
-        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter = (contextsCollector, context) -> {
-            contextsCollector.property("type").writeString(context.getClass().getCanonicalName());
-            if (context instanceof Reportable reportable) {
-                contextsCollector.property("data").writeDelegate(reportable);
-            }
-            if (context instanceof NamedContext namedContext) {
-                contextsCollector.property("name").writeString(namedContext.name());
-            }
-            if (!context.contexts().isEmpty()) {
-                Reportable[] childReporters = childReporters(reporterReference, context);
-                contextsCollector.property("children").writeDelegates(childReporters);
-            }
-        };
+        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter =
+            (contextsCollector, context) -> {
+                contextsCollector.property("type")
+                    .writeString(context.getClass().getCanonicalName());
+                if (context instanceof Reportable reportable) {
+                    contextsCollector.property("data").writeDelegate(reportable);
+                }
+                if (context instanceof NamedContext namedContext) {
+                    contextsCollector.property("name").writeString(namedContext.name());
+                }
+                if (!context.contexts().isEmpty()) {
+                    Reportable[] childReporters = childReporters(reporterReference, context);
+                    contextsCollector.property("children").writeDelegates(childReporters);
+                }
+            };
         reporterReference.set(reporter);
 
         Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
@@ -183,10 +203,14 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     @NonNull
-    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference, ContextView context) {
+    private static Reportable[] childReporters(
+        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference,
+        ContextView context
+    ) {
         return context.contexts().stream()
-                .map(childContext -> (Reportable) contextsController -> reporterReference.get().accept(contextsController, childContext))
-                .toArray(Reportable[]::new);
+            .map(childContext -> (Reportable) contextsController -> reporterReference.get()
+                .accept(contextsController, childContext))
+            .toArray(Reportable[]::new);
     }
 
     @Override

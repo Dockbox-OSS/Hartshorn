@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.hsl.token.type;
  * @param close the token type that denotes the end of a block
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public record TokenTypePair(TokenType open, TokenType close) {

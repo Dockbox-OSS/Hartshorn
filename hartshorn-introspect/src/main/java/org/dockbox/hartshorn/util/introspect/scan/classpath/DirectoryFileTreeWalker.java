@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * A {@link FileVisitor} that walks the contents of a directory. This delegates all file processing to a {@link
- * ClassPathScanner}, which will process the file if it is a compatible file.
+ * A {@link FileVisitor} that walks the contents of a directory. This delegates all file processing
+ * to a {@link ClassPathScanner}, which will process the file if it is a compatible file.
  *
  * @see ClassPathScanner
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public class DirectoryFileTreeWalker implements FileVisitor<Path> {
@@ -40,8 +40,10 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public DirectoryFileTreeWalker(ClassPathScanner classPathScanner, int rootDirNameLength,
-                                   ResourceHandler handler, URLClassLoader classLoader) {
+    public DirectoryFileTreeWalker(
+        ClassPathScanner classPathScanner, int rootDirNameLength,
+        ResourceHandler handler, URLClassLoader classLoader
+    ) {
         this.classPathScanner = classPathScanner;
         this.rootDirNameLength = rootDirNameLength;
         this.handler = handler;
@@ -49,21 +51,25 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        String canonicalPath = dir.toFile().getCanonicalPath();
+    public FileVisitResult preVisitDirectory(
+        Path directory,
+        BasicFileAttributes attributes
+    ) throws IOException {
+        String canonicalPath = directory.toFile().getCanonicalPath();
         if (canonicalPath.length() == this.rootDirNameLength) {
             return FileVisitResult.CONTINUE;
         }
 
         String resourceName = canonicalPath.substring(this.rootDirNameLength + 1);
         String canonicalName = resourceName
-                .replace('/', '.')
-                .replace('\\', '.');
+            .replace('/', '.')
+            .replace('\\', '.');
 
         for (String beginFilterName : this.classPathScanner.filteredPrefixes()) {
             // If path starts with a filtered prefix, continue
             // If the path is part of a filtered package, continue, may match later
-            if (canonicalName.startsWith(beginFilterName) || beginFilterName.startsWith(canonicalName)) {
+            if (canonicalName.startsWith(beginFilterName)
+                || beginFilterName.startsWith(canonicalName)) {
                 return FileVisitResult.CONTINUE;
             }
         }
@@ -71,9 +77,16 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        String resourceName = file.toFile().getAbsolutePath().substring(this.rootDirNameLength + 1);
-        this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+        String resourceName = file.toFile()
+            .getAbsolutePath()
+            .substring(this.rootDirNameLength + 1);
+
+        this.classPathScanner.processPathResource(
+            this.handler,
+            this.classLoader,
+            resourceName,
+            file);
         return FileVisitResult.CONTINUE;
     }
 

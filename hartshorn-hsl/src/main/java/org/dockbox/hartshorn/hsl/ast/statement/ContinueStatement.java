@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement representing a continue operation, which is used to skip the current iteration
- * of a loop and continue with the next iteration.
+ * A statement representing a continue operation, which is used to skip the current iteration of a
+ * loop and continue with the next iteration.
  *
  * @since 0.4.12
  *
@@ -36,6 +36,11 @@ public class ContinueStatement extends Statement {
         this.keyword = keyword;
     }
 
+    /**
+     * Returns the token representing the 'continue' keyword.
+     *
+     * @return the 'continue' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }

@@ -38,11 +38,14 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class FunctionStatementParser extends AbstractBodyStatementParser<Function> implements ParametricStatementParser {
+public class FunctionStatementParser extends AbstractBodyStatementParser<Function>
+    implements ParametricStatementParser {
 
     @Override
     public Option<? extends Function> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
+        if (parser.check(FunctionTokenType.PREFIX,
+            FunctionTokenType.INFIX,
+            FunctionTokenType.FUNCTION)) {
             Token functionType = parser.advance();
             FunctionTokenType functionTokenType = (FunctionTokenType) functionType.type();
             if (functionType.type() != FunctionTokenType.FUNCTION) {
@@ -63,11 +66,11 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
             }
 
             List<Parameter> parameters = this.parameters(
-                    parser,
-                    validator,
-                    "function name",
-                    expectedNumberOfArguments,
-                    functionTokenType
+                parser,
+                validator,
+                "function name",
+                expectedNumberOfArguments,
+                functionTokenType
             );
             BlockStatement body = this.blockStatement("function", name, parser, validator);
 

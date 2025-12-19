@@ -21,10 +21,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a logical assignment operation, which combines a logical operator
- * with an assignment.
+ * An expression representing a logical assignment operation, which combines a logical operator with
+ * an assignment.
  *
- * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a logical
+ * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a
+ * logical
  * assignment operator that assigns the result of the logical operation <code>a && b</code> back to
  * <code>a</code>.
  *
@@ -41,10 +42,23 @@ public class LogicalAssignExpression extends AssignExpression {
         this.operator = operator;
     }
 
+    /**
+     * Returns the assignment operator token used in this logical assignment expression.
+     *
+     * @return the assignment operator token
+     */
     public Token assignmentOperator() {
         return this.operator;
     }
 
+    /**
+     * Returns the logical operator type associated with this logical assignment expression. This is
+     * the logical operator without the assignment component. For example, if the assignment
+     * operator is <code>&&=</code>, this method would return the logical operator type for
+     * <code>&&</code>.
+     *
+     * @return the logical operator type
+     */
     public TokenType logicalOperator() {
         return this.operator.type().assignsWith();
     }

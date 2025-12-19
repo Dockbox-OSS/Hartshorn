@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents the different types of instance tokens that give context to the current object instance in
- * the HSL language. These tokens are used to refer to the current object instance or the super class
- * of the current object instance.
+ * Represents the different types of instance tokens that give context to the current object
+ * instance in the HSL language. These tokens are used to refer to the current object instance or
+ * the super class of the current object instance.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ObjectTokenType implements EnumTokenType {
@@ -44,8 +44,8 @@ public enum ObjectTokenType implements EnumTokenType {
 
     ObjectTokenType() {
         this.metaData = TokenMetaData.builder(this)
-                .keyword(true)
-                .build();
+            .keyword(true)
+            .build();
     }
 
     @Override

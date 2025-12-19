@@ -43,28 +43,40 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
+public class ComposedCollectionInstantiationStrategy<T>
+        implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
     private final Set<CollectionInstantiationStrategy<T>> strategies;
 
-    public ComposedCollectionInstantiationStrategy(Set<CollectionInstantiationStrategy<T>> strategies) {
+    public ComposedCollectionInstantiationStrategy(
+        Set<CollectionInstantiationStrategy<T>> strategies
+    ) {
         this.strategies = strategies;
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(
+            InjectionCapableApplication application,
+            ComponentRequestContext requestContext,
+            Scope scope
+    ) throws ApplicationException {
         Set<ObjectContainer<T>> components = new HashSet<>();
         for (CollectionInstantiationStrategy<T> provider : this.strategies) {
-            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext, scope);
+            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(
+                    application, requestContext, scope
+            );
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();
-                if (componentCollection instanceof ContainerAwareComponentCollection<T> containerAwareCollection) {
+                if (componentCollection instanceof ContainerAwareComponentCollection<T>
+                    containerAwareCollection) {
                     components.addAll(containerAwareCollection.containers());
                 }
             }
         }
-        ContainerAwareComponentCollection<T> componentCollection = new ContainerAwareComponentCollection<>(components);
-        ObjectContainer<ComponentCollection<T>> container = new CollectionObjectContainer<>(componentCollection);
+        ContainerAwareComponentCollection<T> componentCollection =
+                new ContainerAwareComponentCollection<>(components);
+        ObjectContainer<ComponentCollection<T>> container =
+                new CollectionObjectContainer<>(componentCollection);
         return Option.of(container);
     }
 
@@ -82,6 +94,6 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
     public String toString() {
         return ObjectDescriber.of(this)
                 .field("strategies", this.strategies)
-                .toString();
+                .describe();
     }
 }

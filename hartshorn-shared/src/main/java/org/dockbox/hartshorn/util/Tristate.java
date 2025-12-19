@@ -46,7 +46,8 @@ public enum Tristate {
     }
 
     /**
-     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED}, {@code false} is returned.
+     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED},
+     * {@code false} is returned.
      *
      * @return the boolean value of this tristate
      */
@@ -58,6 +59,7 @@ public enum Tristate {
      * Returns the tristate value of the provided boolean value.
      *
      * @param booleanValue the boolean value to convert
+     *
      * @return the tristate value of the provided boolean value
      */
     public static Tristate valueOf(boolean booleanValue) {

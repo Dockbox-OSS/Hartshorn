@@ -49,7 +49,7 @@ public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("instance", this.instance)
-                .describe();
+            .field("instance", this.instance)
+            .describe();
     }
 }

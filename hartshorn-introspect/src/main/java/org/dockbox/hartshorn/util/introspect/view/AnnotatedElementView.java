@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.introspect.view;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
 /**
- * Represents a view of an annotated element, such as a field or method. This view can be
- * used to introspect the element's annotations, as well as its name and qualified name.
+ * Represents a view of an annotated element, such as a field or method. This view can be used to
+ * introspect the element's annotations, as well as its name and qualified name.
  *
  * @since 0.4.8
  *
@@ -29,11 +29,10 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 public interface AnnotatedElementView extends EnclosableView {
 
     /**
-     * Returns an {@link ElementAnnotationsIntrospector} for the element. This introspector
-     * can be used to introspect the element's annotations.
+     * Returns an {@link ElementAnnotationsIntrospector} for the element. This introspector can be
+     * used to introspect the element's annotations.
      *
      * @return an introspector for the element's annotations
      */
     ElementAnnotationsIntrospector annotations();
-
 }

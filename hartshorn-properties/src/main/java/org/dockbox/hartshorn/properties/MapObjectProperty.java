@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Basic implementation of {@link ObjectProperty} that uses a map to store {@link ConfiguredProperty properties}.
- * When values are requested in a specific form (e.g. as a list or object), the implementation will attempt to
- * parse the value into the requested type.
+ * Basic implementation of {@link ObjectProperty} that uses a map to store
+ * {@link ConfiguredProperty properties}. When values are requested in a specific form (e.g. as a
+ * list or object), the implementation will attempt to parse the value into the requested type.
  *
  * @since 0.7.0
  *
@@ -34,7 +34,11 @@ import java.util.Set;
  */
 public class MapObjectProperty extends AbstractMapProperty<String> implements ObjectProperty {
 
-    public MapObjectProperty(String name, Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+    public MapObjectProperty(
+        String name,
+        Map<String, ConfiguredProperty> properties,
+        PropertyPathStyle pathStyle
+    ) {
         super(name, properties, pathStyle);
     }
 

@@ -40,7 +40,9 @@ public interface CheckedBiFunction<T, U, R> {
      *
      * @param t the first function argument
      * @param u the second function argument
+     *
      * @return the function result
+     *
      * @throws ApplicationException if an error occurs during the application of the function
      */
     R apply(T t, U u) throws ApplicationException;

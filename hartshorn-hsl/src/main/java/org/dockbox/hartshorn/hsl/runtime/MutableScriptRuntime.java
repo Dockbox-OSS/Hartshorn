@@ -26,17 +26,17 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A mutable version of {@link ScriptRuntime} that allows for additional customization of the
- * runtime. This interface is often a requirement for {@link CodeCustomizer}s that need to
- * customize the runtime.
+ * runtime. This interface is often a requirement for {@link CodeCustomizer}s that need to customize
+ * the runtime.
  *
  * <p>Note that {@link ScriptRuntime} itself is already partially customizable through the
  * implementation of {@link ScriptConditionContext}, which allows for the customization of the
  * runtime context.
  *
  * @see ScriptRuntime
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface MutableScriptRuntime extends ScriptRuntime {
@@ -52,8 +52,7 @@ public interface MutableScriptRuntime extends ScriptRuntime {
     void expressionParser(ExpressionParser parser);
 
     /**
-     * Adds a statement parser to the runtime, which can be used to parse statements in the
-     * script.
+     * Adds a statement parser to the runtime, which can be used to parse statements in the script.
      *
      * @param parser the parser to add
      *
@@ -62,8 +61,8 @@ public interface MutableScriptRuntime extends ScriptRuntime {
     void statementParser(StatementParser<? extends Statement> parser);
 
     /**
-     * Adds a customizer to the runtime, which can be used to customize the script runtime
-     * context before phase execution.
+     * Adds a customizer to the runtime, which can be used to customize the script runtime context
+     * before phase execution.
      *
      * @param customizer the customizer to add
      */

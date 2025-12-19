@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Collection;
 
 /**
- * Registry for components. This registry is used to store and retrieve components that are registered with the IoC
- * container.
+ * Registry for components. This registry is used to store and retrieve components that are
+ * registered with the IoC container.
  *
  * @since 0.4.1
  *
@@ -32,22 +32,43 @@ import java.util.Collection;
 public interface ComponentRegistry {
 
     /**
-     * Obtains all registered component containers. If no components are registered, an empty collection is returned.
+     * Obtains all registered component containers. If no components are registered, an empty
+     * collection is returned.
      *
      * @return all registered component containers
      */
     Collection<ComponentContainer<?>> containers();
 
     /**
-     * Obtains a component container for the provided type. If no component is registered for the provided type, an
-     * empty option is returned.
+     * Obtains a component container for the provided type. If no component is registered for the
+     * provided type, an empty option is returned.
      *
      * @param type the type of the component
+     *
      * @return a component container for the provided type
      */
     Option<ComponentContainer<?>> container(Class<?> type);
 
+    /**
+     * Obtains a component container which matches the provided component key. The exact matching
+     * semantics are defined by the given {@link ComponentKey}. If no component is registered for
+     * the provided key, an empty option is returned.
+     *
+     * @param key the component key
+     *
+     * @return a component container which matches the provided component key
+     */
     Option<ComponentContainer<?>> container(ComponentKey<?> key);
 
+    /**
+     * Adds a custom component container to the registry. If a container for the same
+     * {@link ComponentContainer#id() id} already exists, the existing container is replaced if the
+     * provided container has the same {@link ComponentContainer#type() type}. If the types differ,
+     * the container is not added and a {@link IllegalStateException} is thrown.
+     *
+     * @param container the container to add
+     *
+     * @return true if the container was added, false if it could not be added
+     */
     boolean addCustomContainer(ComponentContainer<?> container);
 }

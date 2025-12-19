@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A simple implementation of {@link ExternalClassRegistry} that uses an internal bi-directional multi-map to track
- * imported external classes and their names/aliases.
+ * A simple implementation of {@link ExternalClassRegistry} that uses an internal bi-directional
+ * multi-map to track imported external classes and their names/aliases.
  *
  * @since 0.7.0
  *
@@ -61,15 +61,16 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
     public <T> ExternalClass<T> defineClass(TypeView<T> typeView, String as) {
         ExternalClass<T> externalClass = new ExternalClass<>(this, typeView, as);
         if (this.imports.containsValue(as)) {
-            ExternalClass<?> existingClass = CollectionUtilities.first(this.imports.inverse().get(as));
+            ExternalClass<?> existingClass =
+                CollectionUtilities.first(this.imports.inverse().get(as));
             if (existingClass.type().equals(typeView)) {
                 return TypeUtils.unchecked(existingClass, ExternalClass.class);
             }
             else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
-                        .virtualPosition()
-                        .build();
+                    .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
+                    .virtualPosition()
+                    .build();
             }
         }
         this.imports.put(externalClass, as);
@@ -96,7 +97,8 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
 
     @Override
     public Option<ExternalClass<?>> getByClassNameOrAlias(String name) {
-        ExternalClass<?> externalClass = CollectionUtilities.first(this.imports.inverse().get(name));
+        ExternalClass<?> externalClass =
+            CollectionUtilities.first(this.imports.inverse().get(name));
         return Option.of(externalClass);
     }
 

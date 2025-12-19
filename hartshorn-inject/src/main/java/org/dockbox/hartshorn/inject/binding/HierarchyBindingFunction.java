@@ -44,14 +44,14 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import java.util.function.Function;
 
 /**
- * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The hierarchy is
- * provided by the owning {@link Binder}.
+ * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The
+ * hierarchy is provided by the owning {@link Binder}.
  *
  * @param <T> The type of the component that is bound.
  *
  * @see Binder
  * @see BindingHierarchy
- *
+ * 
  * @since 0.4.11
  *
  * @author Guus Lieben
@@ -87,6 +87,12 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         this.bindingAliasNormalizer = bindingAliasNormalizer;
     }
 
+    /**
+     * Returns the binding hierarchy that is being configured by this binding function. If the
+     * binding has been installed to a specific scope, the hierarchy for that scope is returned.
+     *
+     * @return the binding hierarchy
+     */
     protected BindingHierarchy<T> hierarchy() {
         if (this.scopeKey != null && !this.moduleContext.isApplicationScope(this.scopeKey)) {
             return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
@@ -96,10 +102,20 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         }
     }
 
+    /**
+     * Returns the binder that owns this binding function.
+     *
+     * @return the owning binder
+     */
     protected Binder binder() {
         return this.binder;
     }
 
+    /**
+     * Returns the singleton cache used by this binding function.
+     *
+     * @return the singleton cache
+     */
     protected SingletonCache singletonCache() {
         return this.singletonCache;
     }
@@ -111,7 +127,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
-        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasQualifier));
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(),
+            aliasQualifier));
     }
 
     @Override
@@ -129,12 +146,16 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public AliasBindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
         boolean expandingApplicationScope = this.moduleContext.isApplicationScope(this.scopeKey)
-                || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
+            || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
 
         if (!expandingApplicationScope) {
-            throw new IllegalScopeException("Cannot install binding to child scope " + scopeKey.name() + " as the binding is already installed to child scope " + this.scope.installableScopeType().name());
+            throw new IllegalScopeException("Cannot install binding to child scope "
+                + scopeKey.name()
+                + " as the binding is already installed to child scope "
+                + this.scope.installableScopeType().name());
         }
-        // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
+        // Permitted, as default application scope may be expanded. Defined child scopes can not be
+        // expanded, so this is a safe check
         if (!this.moduleContext.isApplicationScope(scopeKey)) {
             this.scope = null;
         }
@@ -157,7 +178,10 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder to(Class<? extends T> type) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+            throw new IllegalModificationException(
+                ("Cannot overwrite singleton binding for %s in a hierarchy, "
+                    + "ensure the new binding is a singleton").formatted(
+                    this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
         return this.add(PrototypeConstructorInstantiationStrategy.forPrototype(key));
@@ -171,7 +195,10 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder to(CheckedSupplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+            throw new IllegalModificationException(
+                ("Cannot overwrite singleton binding for %s in a hierarchy, "
+                    + "ensure the new binding is a singleton").formatted(
+                    this.hierarchy().key()));
         }
         return this.add(new SupplierInstantiationStrategy<>(supplier));
     }
@@ -213,10 +240,13 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
         BindingHierarchy<T> existingHierarchy = this.hierarchy();
-        ComponentKey<ComponentCollection<T>> collectionComponentKey = this.createCollectionComponentKey();
+        ComponentKey<ComponentCollection<T>> collectionComponentKey =
+            this.createCollectionComponentKey();
 
-        BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy = this.binder.hierarchy(collectionComponentKey);
-        if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T> collectionBindingHierarchy) {
+        BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy =
+            this.binder.hierarchy(collectionComponentKey);
+        if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T>
+            collectionBindingHierarchy) {
             Binder updatedBinder = this.binder.bind(collectionBindingHierarchy);
             CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
                     updatedBinder,
@@ -227,7 +257,10 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
             return updatedBinder;
         }
         else {
-            throw new IllegalStateException("Cannot create collector binding function for hierarchy " + existingHierarchy.key() + " as it is not a collection binding hierarchy");
+            throw new IllegalStateException(
+                "Cannot create collector binding function for hierarchy "
+                    + existingHierarchy.key()
+                    + " as it is not a collection binding hierarchy");
         }
     }
 
@@ -235,20 +268,31 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         return this.hierarchy().key().mutable().collector().build();
     }
 
+    /**
+     * Adds the provided {@link InstantiationStrategy} to the hierarchy, preserving the configured
+     * {@link #processAfterInitialization} setting.
+     *
+     * @param strategy the instantiation strategy to add
+     *
+     * @return the binder
+     */
     protected Binder add(InstantiationStrategy<T> strategy) {
-        strategy = strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
+        strategy =
+            strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
         this.hierarchy().add(this.priority, strategy);
         return this.binder();
     }
 
     /**
-     * A function that indicates whether the provided {@link ObjectContainer} should be processed after initialization.
-     * If {@code true}, the container will be marked as non-processed, meaning it will be processed once the container
-     * initializes the instance.
+     * A function that indicates whether the provided {@link ObjectContainer} should be processed
+     * after initialization. If {@code true}, the container will be marked as non-processed, meaning
+     * it will be processed once the container initializes the instance.
      *
-     * <p>Practically this function is a lambda, but for the sake of reportability, it is defined as a dedicated record.
+     * <p>Practically this function is a lambda, but for the sake of reportability, it is defined
+     * as a dedicated record.
      *
-     * @param processAfterInitialization whether the container should be processed after initialization
+     * @param processAfterInitialization whether the container should be processed after
+     * initialization
      * @param <T> the type of the component in the container
      *
      * @since 0.7.0
@@ -256,7 +300,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
      * @author Guus Lieben
      */
     private record ProcessAfterInitializationFunction<T>(boolean processAfterInitialization)
-            implements Function<ObjectContainer<T>, ObjectContainer<T>> {
+        implements Function<ObjectContainer<T>, ObjectContainer<T>> {
 
         @Override
         public ObjectContainer<T> apply(ObjectContainer<T> container) {
@@ -267,8 +311,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         @Override
         public String toString() {
             return ObjectDescriber.of(this)
-                    .field("processAfterInitialization", this.processAfterInitialization)
-                    .describe();
+                .field("processAfterInitialization", this.processAfterInitialization)
+                .describe();
         }
     }
 }

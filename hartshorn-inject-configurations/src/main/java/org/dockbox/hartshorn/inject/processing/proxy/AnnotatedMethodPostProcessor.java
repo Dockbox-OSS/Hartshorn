@@ -28,9 +28,9 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * An abstract {@link ComponentPostProcessor} that allows implementations to process methods annotated with a specific
- * annotation, during the pre-configuration phase. This can be particularly useful for proxy generation or method
- * interception based on annotations.
+ * An abstract {@link ComponentPostProcessor} that allows implementations to process methods
+ * annotated with a specific annotation, during the pre-configuration phase. This can be
+ * particularly useful for proxy generation or method interception based on annotations.
  *
  * @param <M> the type of the annotation that this post processor processes
  *
@@ -40,8 +40,15 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends ComponentPostProcessor {
+public abstract class AnnotatedMethodPostProcessor<M extends Annotation>
+    extends ComponentPostProcessor {
 
+    /**
+     * Returns the annotation that should be present on methods to be processed by this post
+     * processor.
+     *
+     * @return the annotation class
+     */
     public abstract Class<M> annotation();
 
     @Override
@@ -50,7 +57,11 @@ public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
         for (MethodView<T, ?> method : methods) {
@@ -58,8 +69,30 @@ public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends
         }
     }
 
-    protected abstract <T> void process(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method);
+    /**
+     * Processes a method annotated with the specified annotation.
+     *
+     * @param application the injection-capable application
+     * @param key the component key
+     * @param instance the component instance, if available
+     * @param method the method to process
+     * @param <T> the type of the component
+     */
+    protected abstract <T> void process(
+        InjectionCapableApplication application,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        MethodView<T, ?> method
+    );
 
+    /**
+     * Returns the methods that may be modified by this post processor.
+     *
+     * @param type the type to retrieve methods from
+     * @param <T> the type of the component
+     *
+     * @return the modifiable methods
+     */
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(TypeView<T> type) {
         return type.methods().annotatedWith(this.annotation());
     }

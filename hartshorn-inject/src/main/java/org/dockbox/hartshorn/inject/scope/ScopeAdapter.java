@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import java.util.Objects;
 
 /**
- * A {@link ScopeAdapter} is a wrapper around a non-{@link Scope} object that allows for the object to be used as a
- * {@link Scope}. This is useful when a scope is based on certain properties of an object, but the object itself is not
- * a {@link Scope}. For example, a {@link Scope} can be based on an active HTTP request.
+ * A {@link ScopeAdapter} is a wrapper around a non-{@link Scope} object that allows for the object
+ * to be used as a {@link Scope}. This is useful when a scope is based on certain properties of an
+ * object, but the object itself is not a {@link Scope}. For example, a {@link Scope} can be based
+ * on an active HTTP request.
  *
  * @param <T> the type of the adaptee
  *

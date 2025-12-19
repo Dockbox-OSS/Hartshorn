@@ -61,7 +61,7 @@ public interface Introspector extends ReferenceIntrospector {
      * output type parameters will be included if applicable.
      *
      * @param type the type to introspect
-     * @param <T>  the type of the provided type
+     * @param <T> the type of the provided type
      *
      * @return a view of the provided type
      *

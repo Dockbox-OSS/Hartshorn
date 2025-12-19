@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.resolve.ManagedConfigurationDependencyResolver;
 
 /**
- * A resolver for dependency contexts, typically for use within a {@link ManagedConfigurationDependencyResolver}.
+ * A resolver for dependency contexts, typically for use within a
+ * {@link ManagedConfigurationDependencyResolver}.
  *
  * @since 0.5.0
  *
@@ -33,6 +34,7 @@ public interface DependencyContextResolver {
      *
      * @param context The binding strategy context to check
      * @param <T> The type of the component being resolved
+     *
      * @return {@code true} if the context is compatible, {@code false} otherwise
      */
     <T> boolean isCompatible(BindingStrategyContext<T> context);
@@ -42,12 +44,14 @@ public interface DependencyContextResolver {
      *
      * @param context The binding strategy context to resolve
      * @param <T> The type of the component being resolved
+     *
      * @return The resolved dependency context
      */
     <T> DependencyContext<?> resolveToDependency(BindingStrategyContext<T> context);
 
     /**
-     * Returns the priority of this binding strategy resolver. Lower values indicate higher priority.
+     * Returns the priority of this binding strategy resolver. Lower values indicate higher
+     * priority.
      *
      * @return The priority of this resolver
      */

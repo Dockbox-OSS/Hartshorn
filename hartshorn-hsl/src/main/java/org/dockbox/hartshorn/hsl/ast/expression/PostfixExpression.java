@@ -20,12 +20,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a postfix operation, which is an operation that applies an operator
- * to an expression after the expression has been evaluated.
+ * An expression representing a postfix operation, which is an operation that applies an operator to
+ * an expression after the expression has been evaluated.
  *
  * <p>For example, in the expression <code>a++</code>, the <code>++</code> operator is a postfix
- * operator that increments the value of <code>a</code> by 1 after the expression has been evaluated.
- * Thus, the result of this expression is the original value of <code>a</code>, while the value of
+ * operator that increments the value of <code>a</code> by 1 after the expression has been
+ * evaluated. Thus, the result of this expression is the original value of <code>a</code>, while the
+ * value of
  * <code>a</code> itself is incremented by 1.
  *
  * @see PrefixExpression the counterpart to this expression, which applies an operator before the
@@ -46,10 +47,20 @@ public class PostfixExpression extends Expression {
         this.leftExpression = leftExpression;
     }
 
+    /**
+     * Returns the operator token of this postfix expression.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the expression to which the postfix operator is applied.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExpression;
     }

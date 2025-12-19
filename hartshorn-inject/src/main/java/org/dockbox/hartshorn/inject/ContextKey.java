@@ -27,13 +27,13 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link ContextView
- * context} instance. The key is used to identify the value, and can be used to create a new value if none
- * exists.
+ * A {@link ContextKey} is a key which can be used to retrieve a context value from a
+ * {@link ContextView context} instance. The key is used to identify the value, and can be used to
+ * create a new value if none exists.
  *
  * <p>Context keys do not have to be unique, but it is recommended to re-use the same unique key to
- * retrieve the same value. This is not enforced, but can be useful to avoid unexpected behavior when
- * using default values.
+ * retrieve the same value. This is not enforced, but can be useful to avoid unexpected behavior
+ * when using default values.
  *
  * @param <T> The type of the value.
  *
@@ -70,17 +70,19 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
             contextInstance = this.fallback.get();
         }
         else {
-            throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
+            throw new IllegalStateException("No fallback defined for context "
+                + this.type.getSimpleName());
         }
 
         return contextInstance;
     }
 
     /**
-     * Creates a new {@link ComponentKey} for the context type of this key. The component key
-     * will be scoped to the given {@link Scope scope}.
+     * Creates a new {@link ComponentKey} for the context type of this key. The component key will
+     * be scoped to the given {@link Scope scope}.
      *
      * @param scope The scope to use for the {@link ComponentKey}.
+     *
      * @return The newly created {@link ComponentKey}.
      */
     public ComponentKey<T> componentKey(Scope scope) {
@@ -92,12 +94,13 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
     }
 
     /**
-     * Creates a new (mutable) {@link Builder key builder} which is populated with the values
-     * of this key. This will allow for the creation of a new key based on the values of this key.
-     * The builder can be used to modify the values of the new key, but will never modify the values
-     * of this key.
+     * Creates a new (mutable) {@link Builder key builder} which is populated with the values of
+     * this key. This will allow for the creation of a new key based on the values of this key. The
+     * builder can be used to modify the values of the new key, but will never modify the values of
+     * this key.
      *
-     * @return A new (mutable) {@link Builder key builder} which is populated with the values of this key.
+     * @return A new (mutable) {@link Builder key builder} which is populated with the values of
+     * this key.
      */
     public Builder<T> mutable() {
         return new Builder<>(this);
@@ -154,10 +157,10 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type.getSimpleName())
-                .field("name", this.name)
-                .field("supportsFallback", this.fallback != null)
-                .describe();
+            .field("type", this.type.getSimpleName())
+            .field("name", this.name)
+            .field("supportsFallback", this.fallback != null)
+            .describe();
     }
 
     @Override
@@ -170,7 +173,7 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
         }
         ContextKey<?> contextKey = (ContextKey<?>) other;
         return this.type.equals(contextKey.type)
-                && Objects.equals(this.name, contextKey.name);
+            && Objects.equals(this.name, contextKey.name);
     }
 
     @Override
@@ -198,10 +201,10 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
         private Supplier<T> fallback;
 
         /**
-         * Creates a new (mutable) {@link Builder key builder} which is populated with the values
-         * of the given key. This will allow for the creation of a new key based on the values of
-         * the given key. The builder can be used to modify the values of the new key, but will
-         * never modify the values of the given key.
+         * Creates a new (mutable) {@link Builder key builder} which is populated with the values of
+         * the given key. This will allow for the creation of a new key based on the values of the
+         * given key. The builder can be used to modify the values of the new key, but will never
+         * modify the values of the given key.
          *
          * @param key The key to copy the values from.
          */
@@ -221,8 +224,8 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
         }
 
         /**
-         * Sets the name of the context represented by the key. This may be empty or {@code null}
-         * if the context is not named.
+         * Sets the name of the context represented by the key. This may be empty or {@code null} if
+         * the context is not named.
          *
          * @param name The name of the context represented by the key.
          *
@@ -234,11 +237,11 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
         }
 
         /**
-         * Sets the fallback function to use to create the context value. This function can be
-         * used to create the context value if it did not exist in a context on which the key
-         * is used.
+         * Sets the fallback function to use to create the context value. This function can be used
+         * to create the context value if it did not exist in a context on which the key is used.
          *
          * @param fallback The fallback function to use to create the context value.
+         *
          * @return This builder.
          *
          * @see ContextKey#create()

@@ -26,29 +26,34 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ComponentProviderStrategy} that attempts to provide a component using a {@link InstantiationStrategy prototype instantiation
- * strategy}. If the strategy is unable to provide an instance, the chain is continued.
+ * A {@link ComponentProviderStrategy} that attempts to provide a component using a
+ * {@link InstantiationStrategy prototype instantiation strategy}. If the strategy is unable to
+ * provide an instance, the chain is continued.
  *
  * @see PrototypeConstructorInstantiationStrategy#forPrototype(ComponentKey)
- *
+ * 
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class UnboundPrototypeComponentProviderStrategy implements ComponentProviderStrategy {
 
     @Override
-    public <T> ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain) throws ComponentResolutionException, ApplicationException {
-        InstantiationStrategy<T> strategy = PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
+    public <T> ObjectContainer<T> get(
+        ComponentKey<T> componentKey, ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain
+    ) throws ComponentResolutionException, ApplicationException {
+        InstantiationStrategy<T> strategy =
+            PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
         Option<ObjectContainer<T>> container = strategy.provide(
-                chain.application(),
-                requestContext,
-                componentKey.scope().orElse(chain.componentProvider().scope())
+            chain.application(),
+            requestContext,
+            componentKey.scope().orElse(chain.componentProvider().scope())
         );
         if (container.present()) {
             return container.get();
-        } else {
+        }
+        else {
             return chain.get(componentKey, requestContext);
         }
     }

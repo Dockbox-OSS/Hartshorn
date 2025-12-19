@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util;
 import java.util.Map.Entry;
 
 /**
- * Represents a simple tuple holding a single key of type {@code K} and value
- * of type {@code V}. This can be used to populate {@link java.util.Map maps}.
+ * Represents a simple tuple holding a single key of type {@code K} and value of type {@code V}.
+ * This can be used to populate {@link java.util.Map maps}.
  *
  * @param key the key
  * @param value the value
@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  * @param <V> The type of the value represented by this tuple
  *
  * @since 0.4.1
- *
+ * 
  * @author Guus Lieben
  */
 public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
@@ -36,20 +36,35 @@ public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
     /**
      * Creates a new {@link Tuple} instance with the given key and value.
      *
-     * @param key   the key
+     * @param key the key
      * @param value the value
-     * @param <K>   the type of the key
-     * @param <V>   the type of the value
+     * @param <K> the type of the key
+     * @param <V> the type of the value
+     *
      * @return a new {@link Tuple} instance
      */
     public static <K, V> Tuple<K, V> of(K key, V value) {
         return new Tuple<>(key, value);
     }
 
+    /**
+     * Alias for {@link #key()}
+     *
+     * @return the key
+     *
+     * @see #key()
+     */
     public K left() {
         return this.key();
     }
 
+    /**
+     * Alias for {@link #value()}
+     *
+     * @return the value
+     *
+     * @see #value()
+     */
     public V right() {
         return this.value();
     }

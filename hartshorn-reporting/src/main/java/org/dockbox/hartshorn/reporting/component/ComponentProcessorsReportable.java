@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import java.util.Collection;
-
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+
+import java.util.Collection;
 
 /**
  * A {@link Reportable} that reports all provided {@link ComponentProcessor}s.
@@ -32,20 +32,23 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  */
 public class ComponentProcessorsReportable implements Reportable {
 
-    private final MultiMap<Integer, ? extends ComponentProcessor> processors;
+    private final NavigableMultiMap<Integer, ? extends ComponentProcessor> processors;
 
-    public ComponentProcessorsReportable(MultiMap<Integer, ? extends ComponentProcessor> processors) {
+    public ComponentProcessorsReportable(
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors
+    ) {
         this.processors = processors;
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector propertyCollector) {
         Reportable[] reportables = this.processors.values().stream()
-                .flatMap(Collection::stream)
-                .map(processor -> (Reportable) processorCollector -> {
-                    processorCollector.property("name").writeString(processor.getClass().getCanonicalName());
-                    processorCollector.property("priority").writeInt(processor.priority());
-                }).toArray(Reportable[]::new);
+            .flatMap(Collection::stream)
+            .map(processor -> (Reportable) processorCollector -> {
+                processorCollector.property("name")
+                    .writeString(processor.getClass().getCanonicalName());
+                processorCollector.property("priority").writeInt(processor.priority());
+            }).toArray(Reportable[]::new);
 
         propertyCollector.property("processors").writeDelegates(reportables);
     }

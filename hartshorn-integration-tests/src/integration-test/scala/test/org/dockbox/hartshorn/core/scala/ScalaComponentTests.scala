@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,9 @@ import java.util.stream.Stream
  * Instead of using a common test class for all three languages, each language has its own test class.
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 @HartshornIntegrationTest(includeBasePackages = false, scanPackages = Array("test.org.dockbox.hartshorn.core.scala"))
 class ScalaComponentTests {

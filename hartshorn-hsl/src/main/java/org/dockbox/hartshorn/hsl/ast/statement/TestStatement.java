@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A statement that defines a test case, comparable to Java's {@code assert} statement. Unlike
- * an assert, a test statement can have a body of multiple statements, which should return a
- * truthy value if the test passes.
+ * A statement that defines a test case, comparable to Java's {@code assert} statement. Unlike an
+ * assert, a test statement can have a body of multiple statements, which should return a truthy
+ * value if the test passes.
  *
  * <p>For example, the statement below defines a test named <code>isPositive</code>:
  * <pre>{@code
@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class TestStatement extends BodyStatement implements NamedNode {
@@ -47,9 +47,9 @@ public class TestStatement extends BodyStatement implements NamedNode {
         super(name, body);
         if (name.literal() == null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.EMPTY_TEST_NAME)
-                    .at(name)
-                    .build();
+                .message(DiagnosticMessage.EMPTY_TEST_NAME)
+                .at(name)
+                .build();
         }
         this.name = name;
     }

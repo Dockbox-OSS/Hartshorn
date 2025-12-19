@@ -37,6 +37,7 @@ public interface CheckedConsumer<T> {
      * Performs this operation on the given argument.
      *
      * @param t the input argument
+     *
      * @throws ApplicationException if an error occurs during the execution of the consumer
      */
     void accept(T t) throws ApplicationException;

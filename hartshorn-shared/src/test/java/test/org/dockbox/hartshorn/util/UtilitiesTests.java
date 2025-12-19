@@ -46,54 +46,54 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> capitalizeValues() {
         return Stream.of(
-                Arguments.of("value", "Value"),
-                Arguments.of("Value", "Value"),
-                Arguments.of("VALUE", "VALUE"),
-                Arguments.of(" value", " value")
+            Arguments.of("value", "Value"),
+            Arguments.of("Value", "Value"),
+            Arguments.of("VALUE", "VALUE"),
+            Arguments.of(" value", " value")
         );
     }
 
     private static Stream<Arguments> durations() {
         return Stream.of(
-                Arguments.of("1", 1),
-                Arguments.of("1s", 1),
-                Arguments.of("1m", minute),
-                Arguments.of("1h", hour),
-                Arguments.of("1d", day),
-                Arguments.of("1w", week),
-                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
-                Arguments.of("2w3d", (2 * week) + (3 * day)),
-                Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
-                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13),
-                Arguments.of("123456", 123456)
+            Arguments.of("1", 1),
+            Arguments.of("1s", 1),
+            Arguments.of("1m", minute),
+            Arguments.of("1h", hour),
+            Arguments.of("1d", day),
+            Arguments.of("1w", week),
+            Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
+            Arguments.of("2w3d", (2 * week) + (3 * day)),
+            Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
+            Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13),
+            Arguments.of("123456", 123456)
         );
     }
 
     public static Stream<Arguments> differences() {
         return Stream.of(
-                Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
-                Arguments.of(List.of("a"), List.of("a", "b"), List.of("b"))
+            Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
+            Arguments.of(List.of("a"), List.of("a", "b"), List.of("b"))
         );
     }
 
     public static Stream<Arguments> stringFormats() {
         return Stream.of(
-                Arguments.of("Hello world!", "Hello world!", new Object[0]),
-                Arguments.of("Hello %s!", "Hello %s!", new Object[]{ "world" }),
-                Arguments.of("Hello {0}!", "Hello world!", new Object[]{ "world" }),
-                Arguments.of("{0} {1}!", "Hello world!", new Object[]{ "Hello", "world" }),
-                Arguments.of("{0} {0}!", "Hello Hello!", new Object[]{ "Hello", "world" })
+            Arguments.of("Hello world!", "Hello world!", new Object[0]),
+            Arguments.of("Hello %s!", "Hello %s!", new Object[] {"world"}),
+            Arguments.of("Hello {0}!", "Hello world!", new Object[] {"world"}),
+            Arguments.of("{0} {1}!", "Hello world!", new Object[] {"Hello", "world"}),
+            Arguments.of("{0} {0}!", "Hello Hello!", new Object[] {"Hello", "world"})
         );
     }
 
     public static Stream<Arguments> stringMapFormats() {
         return Stream.of(
-                Arguments.of("Hello world!", "Hello world!", Map.of()),
-                Arguments.of("Hello %s!", "Hello %s!", Map.of("{0}", "world")),
-                Arguments.of("Hello {0}!", "Hello world!", Map.of("{0}", "world")),
-                Arguments.of("{0} {1}!", "Hello world!", Map.of("{0}", "Hello", "{1}", "world")),
-                Arguments.of("{0} {0}!", "Hello Hello!", Map.of("{0}", "Hello", "{1}", "world")),
-                Arguments.of("Hello world!", "Hello user!", Map.of("world", "user"))
+            Arguments.of("Hello world!", "Hello world!", Map.of()),
+            Arguments.of("Hello %s!", "Hello %s!", Map.of("{0}", "world")),
+            Arguments.of("Hello {0}!", "Hello world!", Map.of("{0}", "world")),
+            Arguments.of("{0} {1}!", "Hello world!", Map.of("{0}", "Hello", "{1}", "world")),
+            Arguments.of("{0} {0}!", "Hello Hello!", Map.of("{0}", "Hello", "{1}", "world")),
+            Arguments.of("Hello world!", "Hello user!", Map.of("world", "user"))
         );
     }
 
@@ -103,9 +103,15 @@ public class UtilitiesTests {
 
     public static Stream<Arguments> stringJoinValues() {
         return Stream.of(
-                Arguments.of(", ", List.of(1, 2, 3), UtilitiesTests.asFunction(String::valueOf), "1, 2, 3"),
-                Arguments.of("|", List.of("A", "b", "c"), UtilitiesTests.<String, String>asFunction(String::toUpperCase), "A|B|C"),
-                Arguments.of("", List.of(""), UtilitiesTests.asFunction(String::valueOf), "")
+            Arguments.of(", ",
+                List.of(1, 2, 3),
+                UtilitiesTests.asFunction(String::valueOf),
+                "1, 2, 3"),
+            Arguments.of("|",
+                List.of("A", "b", "c"),
+                UtilitiesTests.<String, String>asFunction(String::toUpperCase),
+                "A|B|C"),
+            Arguments.of("", List.of(""), UtilitiesTests.asFunction(String::valueOf), "")
         );
     }
 
@@ -222,7 +228,11 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("differences")
-    void testDifferenceInCollections(Collection<String> collectionOne, Collection<String> collectionTwo, Collection<String> expected) {
+    void testDifferenceInCollections(
+        Collection<String> collectionOne,
+        Collection<String> collectionTwo,
+        Collection<String> expected
+    ) {
         Set<String> difference = CollectionUtilities.difference(collectionOne, collectionTwo);
         Assertions.assertEquals(difference.size(), expected.size());
         Assertions.assertTrue(difference.containsAll(expected));
@@ -232,7 +242,7 @@ public class UtilitiesTests {
     @Test
     void testSplitCapitals() {
         String input = "ThisIsAString";
-        String[] expected = { "This", "Is", "A", "String" };
+        String[] expected = {"This", "Is", "A", "String"};
         String[] actual = StringUtilities.splitCapitals(input);
         Assertions.assertArrayEquals(expected, actual);
     }
@@ -253,38 +263,43 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("stringJoinValues")
-    <T> void testJoin(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction, String expected) {
+    <T> void testJoin(
+        String delimiter,
+        Iterable<T> elements,
+        Function<T, String> toStringFunction,
+        String expected
+    ) {
         String joined = StringUtilities.join(delimiter, elements, toStringFunction);
         Assertions.assertEquals(expected, joined);
     }
 
     public static Stream<Arguments> stringsToPrimitives() {
         return Stream.of(
-                Arguments.of("1", int.class, 1),
-                Arguments.of("1", long.class, 1L),
-                Arguments.of("1", short.class, (short) 1),
-                Arguments.of("1", byte.class, (byte) 1),
-                Arguments.of("1", float.class, 1.0f),
-                Arguments.of("1", double.class, 1.0d),
-                Arguments.of("true", boolean.class, true),
-                Arguments.of("1", char.class, '1'),
-                Arguments.of("ONE", TestEnum.class, TestEnum.ONE),
-                Arguments.of("TWO", TestEnum.class, TestEnum.TWO),
-                Arguments.of("THREE", TestEnum.class, TestEnum.THREE)
+            Arguments.of("1", int.class, 1),
+            Arguments.of("1", long.class, 1L),
+            Arguments.of("1", short.class, (short) 1),
+            Arguments.of("1", byte.class, (byte) 1),
+            Arguments.of("1", float.class, 1.0f),
+            Arguments.of("1", double.class, 1.0d),
+            Arguments.of("true", boolean.class, true),
+            Arguments.of("1", char.class, '1'),
+            Arguments.of("ONE", TestEnum.class, TestEnum.ONE),
+            Arguments.of("TWO", TestEnum.class, TestEnum.TWO),
+            Arguments.of("THREE", TestEnum.class, TestEnum.THREE)
         );
     }
 
     public static Stream<Arguments> invalidStringsToPrimitives() {
         return Stream.of(
-                Arguments.of("one", int.class),
-                Arguments.of("one", long.class),
-                Arguments.of("one", short.class),
-                Arguments.of("one", byte.class),
-                Arguments.of("one", float.class),
-                Arguments.of("one", double.class),
-                Arguments.of("yes", boolean.class),
-                Arguments.of("too long", char.class),
-                Arguments.of("FOUR", TestEnum.class)
+            Arguments.of("one", int.class),
+            Arguments.of("one", long.class),
+            Arguments.of("one", short.class),
+            Arguments.of("one", byte.class),
+            Arguments.of("one", float.class),
+            Arguments.of("one", double.class),
+            Arguments.of("yes", boolean.class),
+            Arguments.of("too long", char.class),
+            Arguments.of("FOUR", TestEnum.class)
         );
     }
 
@@ -297,21 +312,26 @@ public class UtilitiesTests {
 
     @Test
     void testToPrimitiveDoesNotAcceptObjects() {
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(Object.class, "value"));
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(String.class, "value"));
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(List.class, "value"));
+        Assertions.assertThrows(NotPrimitiveException.class,
+            () -> TypeUtils.toPrimitive(Object.class, "value"));
+        Assertions.assertThrows(NotPrimitiveException.class,
+            () -> TypeUtils.toPrimitive(String.class, "value"));
+        Assertions.assertThrows(NotPrimitiveException.class,
+            () -> TypeUtils.toPrimitive(List.class, "value"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidStringsToPrimitives")
     <T> void testToPrimitiveThrowsOnInvalidInput(String input, Class<T> type) {
-        Assertions.assertThrows(TypeConversionException.class, () -> TypeUtils.toPrimitive(type, input));
+        Assertions.assertThrows(TypeConversionException.class,
+            () -> TypeUtils.toPrimitive(type, input));
     }
 
     @Test
     void testValidWildcardAdjustment() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, List.class));
+        List<String> adjusted =
+            Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, List.class));
         Assertions.assertNotNull(adjusted);
         Assertions.assertSame(list, adjusted);
     }
@@ -319,7 +339,8 @@ public class UtilitiesTests {
     @Test
     void testWildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, Collection.class));
+        List<String> adjusted =
+            Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, Collection.class));
         Assertions.assertNotNull(adjusted);
         Assertions.assertSame(list, adjusted);
     }
@@ -332,14 +353,16 @@ public class UtilitiesTests {
 
     @Test
     void testAnnotationCreatesAnnotationWithValues() {
-        TestAnnotationWithValue annotation = TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
+        TestAnnotationWithValue annotation =
+            TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
         Assertions.assertNotNull(annotation);
         Assertions.assertEquals("test", annotation.value());
     }
 
     @Test
     void testAnnotationValidatesValues() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
+        Assertions.assertThrows(IllegalStateException.class,
+            () -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
     }
 
     private @interface TestAnnotation {

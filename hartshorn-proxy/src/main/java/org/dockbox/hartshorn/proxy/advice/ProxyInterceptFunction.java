@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 package org.dockbox.hartshorn.proxy.advice;
 
 /**
- * A function that is invoked by a {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisor} to handle the interception of
- * a method invocation. The function is expected to return the result of the method invocation, or throw an exception.
+ * A function that is invoked by a {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisor} to handle
+ * the interception of a method invocation. The function is expected to return the result of the
+ * method invocation, or throw an exception.
  *
  * @param <T> The type of the proxy instance on which the method is invoked.
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -32,6 +34,7 @@ public interface ProxyInterceptFunction<T> {
      * Handles the interception of a method invocation.
      *
      * @return The result of the method invocation.
+     *
      * @throws Throwable If an error occurs during the method invocation.
      */
     T handleInterception() throws Throwable;

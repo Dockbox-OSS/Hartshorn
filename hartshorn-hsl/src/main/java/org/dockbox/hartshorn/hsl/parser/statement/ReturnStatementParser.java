@@ -37,7 +37,10 @@ import java.util.Set;
 public class ReturnStatementParser implements StatementParser<ReturnStatement> {
 
     @Override
-    public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<? extends ReturnStatement> parse(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) {
         if (parser.match(ControlTokenType.RETURN, ControlTokenType.YIELD)) {
             Token keyword = parser.previous();
             Expression value = null;
@@ -49,7 +52,8 @@ public class ReturnStatementParser implements StatementParser<ReturnStatement> {
             ReturnStatement.ReturnType returnType = switch (keyword.type()) {
                 case ControlTokenType.RETURN -> ReturnStatement.ReturnType.RETURN;
                 case ControlTokenType.YIELD -> ReturnStatement.ReturnType.YIELD;
-                default -> throw new IllegalStateException("Unexpected return token type: " + keyword.type());
+                default -> throw new IllegalStateException("Unexpected return token type: "
+                    + keyword.type());
             };
             return Option.of(new ReturnStatement(keyword, value, returnType));
         }

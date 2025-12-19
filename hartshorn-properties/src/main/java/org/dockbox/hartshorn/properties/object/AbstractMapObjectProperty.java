@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Abstract implementation of {@link ObjectProperty} that uses a map to store generic properties. It remains up to the
- * implementation to determine the type of the properties.
+ * Abstract implementation of {@link ObjectProperty} that uses a map to store generic properties. It
+ * remains up to the implementation to determine the type of the properties.
  *
  * @param <T> the type of the properties
  *
@@ -59,9 +59,11 @@ public abstract class AbstractMapObjectProperty<T> implements ObjectProperty {
     }
 
     /**
-     * Returns the property with the given name. If the property does not exist, an empty {@link Option} is returned.
+     * Returns the property with the given name. If the property does not exist, an empty
+     * {@link Option} is returned.
      *
      * @param name the name of the property to retrieve
+     *
      * @return the property with the given name, or an empty {@link Option}
      */
     protected Option<T> property(String name) {

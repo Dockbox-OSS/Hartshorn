@@ -30,16 +30,17 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * A simple implementation of {@link DependencyContext} that is used for components that are not managed by the container,
- * and rely on metadata that is provided by the declaration of the dependency. This context is typically used for
- * components that are created by the container, but are not automatically registered as a component.
+ * A simple implementation of {@link DependencyContext} that is used for components that are not
+ * managed by the container, and rely on metadata that is provided by the declaration of the
+ * dependency. This context is typically used for components that are created by the container, but
+ * are not automatically registered as a component.
  *
  * @param <T> the type of the component
  *
  * @see DependencyContext
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
@@ -78,8 +79,10 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         this.processAfterInitialization = dependencyContext.processAfterInitialization();
     }
 
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                        ScopeKey scope, int priority, ComponentMemberType memberType) {
+    protected AbstractDependencyContext(
+        ComponentKey<T> componentKey, DependencyMap dependencies,
+        ScopeKey scope, int priority, ComponentMemberType memberType
+    ) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
@@ -88,12 +91,15 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     /**
-     * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
-     * requested for the first time. If {@code false}, the component will be created when the container is initialized.
+     * Whether the component should be created lazily. If {@code true}, the component will only be
+     * created when it is requested for the first time. If {@code false}, the component will be
+     * created when the container is initialized.
      *
-     * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
+     * <p>Only effective when the component's {@link #lifecycleType()} is
+     * {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @param lazy whether the component should be created lazily
+     *
      * @return this context
      */
     public AbstractDependencyContext<T> lazy(boolean lazy) {
@@ -106,6 +112,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      * managed by the container.
      *
      * @param lifecycleType the lifecycle type
+     *
      * @return this context
      */
     public AbstractDependencyContext<T> lifecycleType(LifecycleType lifecycleType) {
@@ -114,14 +121,18 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     /**
-     * Whether the component should be processed using {@link ComponentPostProcessor}s after it has been initialized. If
-     * {@code true}, the component will be processed after it has been initialized. If {@code false}, the component will
-     * not be processed automatically.
+     * Whether the component should be processed using {@link ComponentPostProcessor}s after it has
+     * been initialized. If {@code true}, the component will be processed after it has been
+     * initialized. If {@code false}, the component will not be processed automatically.
      *
-     * @param processAfterInitialization whether the component should be processed after it has been initialized
+     * @param processAfterInitialization whether the component should be processed after it has been
+     * initialized
+     *
      * @return this context
      */
-    public AbstractDependencyContext<T> processAfterInitialization(boolean processAfterInitialization) {
+    public AbstractDependencyContext<T> processAfterInitialization(
+        boolean processAfterInitialization
+    ) {
         this.processAfterInitialization = processAfterInitialization;
         return this;
     }
@@ -162,10 +173,12 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     /**
-     * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
-     * requested for the first time. If {@code false}, the component will be created when the container is initialized.
+     * Whether the component should be created lazily. If {@code true}, the component will only be
+     * created when it is requested for the first time. If {@code false}, the component will be
+     * created when the container is initialized.
      *
-     * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
+     * <p>Only effective when the component's {@link #lifecycleType()} is
+     * {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @return whether the component should be created lazily
      */
@@ -186,9 +199,9 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     /**
-     * Whether the component should be processed using {@link ComponentPostProcessor}s after it has been initialized. If
-     * {@code true}, the component will be processed after it has been initialized. If {@code false}, the component will
-     * not be processed automatically.
+     * Whether the component should be processed using {@link ComponentPostProcessor}s after it has
+     * been initialized. If {@code true}, the component will be processed after it has been
+     * initialized. If {@code false}, the component will not be processed automatically.
      *
      * @return whether the component should be processed after it has been initialized
      */
@@ -204,6 +217,12 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return describer.describe();
     }
 
+    /**
+     * Customizes the describer used in the {@link #toString()} method, allowing subclasses to add
+     * additional fields.
+     *
+     * @param describer the describer to customize
+     */
     protected void customizeDescriber(ObjectDescriber<?> describer) {
         describer.field("key", this.componentKey)
             .field("priority", this.priority)
@@ -226,7 +245,10 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      *
      * @author Guus Lieben
      */
-    public abstract static class AbstractDependencyContextBuilder<T, B extends AbstractDependencyContextBuilder<T, B>> {
+    public abstract static class AbstractDependencyContextBuilder<
+        T,
+        B extends AbstractDependencyContextBuilder<T, B>
+        > {
 
         private final ComponentKey<T> componentKey;
 
@@ -247,6 +269,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
          * this component can be created.
          *
          * @param dependencies the dependencies of the component
+         *
          * @return this builder
          */
         public B dependencies(DependencyMap dependencies) {
@@ -258,6 +281,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
          * Sets the scope of the component. The scope determines the lifecycle of the component.
          *
          * @param scope the scope of the component
+         *
          * @return this builder
          */
         public B scope(ScopeKey scope) {
@@ -267,9 +291,11 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
 
         /**
          * Sets the priority of the component. The priority is used to determine which components
-         * are actually created when there are multiple components that satisfy the same dependency.
+         * are actually created when there are multiple components that satisfy the same
+         * dependency.
          *
          * @param priority the priority of the component
+         *
          * @return this builder
          */
         public B priority(int priority) {
@@ -278,10 +304,12 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         }
 
         /**
-         * Sets the member type of the component. The member type determines whether the component is
-         * capable of existing on its own, or whether it is a member of a composite {@link ComponentCollection}.
+         * Sets the member type of the component. The member type determines whether the component
+         * is capable of existing on its own, or whether it is a member of a composite
+         * {@link ComponentCollection}.
          *
          * @param memberType the member type of the component
+         *
          * @return this builder
          */
         public B memberType(ComponentMemberType memberType) {
@@ -290,12 +318,15 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         }
 
         /**
-         * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
-         * requested for the first time. If {@code false}, the component will be created when the container is initialized.
+         * Whether the component should be created lazily. If {@code true}, the component will only
+         * be created when it is requested for the first time. If {@code false}, the component will
+         * be created when the container is initialized.
          *
-         * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
+         * <p>Only effective when the component's {@link #lifecycleType()} is
+         * {@link LifecycleType#SINGLETON 'Singleton'}.
          *
          * @param lazy whether the component should be created lazily
+         *
          * @return this builder
          */
         public B lazy(boolean lazy) {
@@ -308,6 +339,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
          * managed by the container.
          *
          * @param lifecycleType the lifecycle type
+         *
          * @return this builder
          */
         public B lifecycleType(LifecycleType lifecycleType) {
@@ -316,11 +348,13 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         }
 
         /**
-         * Whether the component should be processed using {@link ComponentPostProcessor}s after it has been initialized. If
-         * {@code true}, the component will be processed after it has been initialized. If {@code false}, the component will
-         * not be processed automatically.
+         * Whether the component should be processed using {@link ComponentPostProcessor}s after it
+         * has been initialized. If {@code true}, the component will be processed after it has been
+         * initialized. If {@code false}, the component will not be processed automatically.
          *
-         * @param processAfterInitialization whether the component should be processed after it has been initialized
+         * @param processAfterInitialization whether the component should be processed after it has
+         * been initialized
+         *
          * @return this builder
          */
         public B processAfterInitialization(boolean processAfterInitialization) {
@@ -328,8 +362,18 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             return this.self();
         }
 
+        /**
+         * Returns the builder instance, for use in fluent APIs.
+         *
+         * @return the builder instance
+         */
         protected abstract B self();
 
+        /**
+         * Builds the {@link DependencyContext} instance.
+         *
+         * @return the built {@link DependencyContext} instance
+         */
         public abstract DependencyContext<T> build();
     }
 }

@@ -39,15 +39,15 @@ public class RepeatStatementInterpreter implements StatementInterpreter<RepeatSt
 
             if (!(value instanceof Number number)) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
-                        .at(node.value())
-                        .build();
+                    .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
+                    .at(node.value())
+                    .build();
             }
             if (number.doubleValue() < 0) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
-                        .at(node.value())
-                        .build();
+                    .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
+                    .at(node.value())
+                    .build();
             }
 
             int counter = number.intValue();

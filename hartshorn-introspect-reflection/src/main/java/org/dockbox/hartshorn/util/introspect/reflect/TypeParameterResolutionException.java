@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Exception to indicate that a type parameter could not be resolved. This can occur when the type parameter is
- * not available at runtime, such as when using raw types or when the type parameter is erased due to type erasure in
- * Java generics.
+ * Exception to indicate that a type parameter could not be resolved. This can occur when the type
+ * parameter is not available at runtime, such as when using raw types or when the type parameter is
+ * erased due to type erasure in Java generics.
  *
  * @since 0.5.0
  *

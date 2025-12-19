@@ -37,9 +37,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Set;
 
 /**
- * A dependency resolver that defines dependency contexts for managed components, which are allowed to have
- * dependencies on other components. Managed components are allowed to be conditional through the use of
- * {@link org.dockbox.hartshorn.inject.condition.Condition conditions}.
+ * A dependency resolver that defines dependency contexts for managed components, which are allowed
+ * to have dependencies on other components. Managed components are allowed to be conditional
+ * through the use of {@link org.dockbox.hartshorn.inject.condition.Condition conditions}.
  *
  * @since 0.5.0
  *
@@ -51,11 +51,14 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     private final IntrospectionDependencyResolver resolver;
     private final HierarchyLookup hierarchyLookup;
 
-    protected ComponentDependencyResolver(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
+    protected ComponentDependencyResolver(
+        InjectorEnvironment environment,
+        HierarchyLookup hierarchyLookup
+    ) {
         this.environment = environment;
         this.resolver = new IntrospectionDependencyResolver(
-                environment.injectionPointsResolver(),
-                environment.componentKeyResolver()
+            environment.injectionPointsResolver(),
+            environment.componentKeyResolver()
         );
         this.hierarchyLookup = hierarchyLookup;
     }
@@ -67,7 +70,8 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
-            constructorView = ComponentConstructorResolver.create(this.environment, this.hierarchyLookup)
+            constructorView =
+                ComponentConstructorResolver.create(this.environment, this.hierarchyLookup)
                     .findConstructor(type)
                     .orNull();
         }
@@ -78,28 +82,35 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         if (constructorView == null) {
             return Set.of();
         }
-        Set<ComponentKey<?>> constructorDependencies = this.resolver.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> constructorDependencies =
+            this.resolver.resolveDependencies(constructorView);
         Set<ComponentKey<?>> typeDependencies = this.resolver.resolveDependencies(type);
 
         DependencyMap dependencies = DependencyMap.create()
-                .immediate(constructorDependencies)
-                .delayed(typeDependencies);
+            .immediate(constructorDependencies)
+            .delayed(typeDependencies);
 
         if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T>(
-                ComponentContainer<T> container
+            ComponentContainer<T> container
         )) {
             ComponentKey<T> componentKey = ComponentKey.of(type);
-            ComponentContainerDependencyContext<T> dependencyContext = new ComponentContainerDependencyContext<>(container, componentKey, dependencies, constructorView);
+            ComponentContainerDependencyContext<T> dependencyContext =
+                new ComponentContainerDependencyContext<>(container,
+                    componentKey,
+                    dependencies,
+                    constructorView);
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
-        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
+        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T>
+            keyContext) {
             InstantiationStrategy<T> strategy = keyContext.provider();
-            ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
-                .dependencies(dependencies)
-                .constructorView(constructorView)
-                .lazy(strategy.defaultLazy().booleanValue())
-                .lifecycleType(strategy.defaultLifecycle())
-                .build();
+            ManagedComponentKeyDependencyContext<T> dependencyContext =
+                ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
+                    .dependencies(dependencies)
+                    .constructorView(constructorView)
+                    .lazy(strategy.defaultLazy().booleanValue())
+                    .lifecycleType(strategy.defaultLifecycle())
+                    .build();
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
         else {

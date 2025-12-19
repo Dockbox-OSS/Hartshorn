@@ -29,25 +29,31 @@ import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
  *
  * @see RequiresActivator
  * @see ModuleActivatorHolder#hasActivator(Class)
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ActivatorCondition implements Condition {
 
     @Override
     public ConditionResult matches(ConditionContext context) {
-        if (!(context.application() instanceof ConfigurableActivationInjectionCapableApplication configurableInjectionCapableApplication)) {
+        if (!(context.application() instanceof ConfigurableActivationInjectionCapableApplication
+            configurableInjectionCapableApplication)) {
             return ConditionResult.notMatched("Application is not compatible with activators");
         }
-        return context.annotatedElement().annotations().get(RequiresActivator.class).map(condition -> {
-            for (Class<? extends Annotation> activator : condition.value()) {
-                if (!configurableInjectionCapableApplication.activators().hasActivator(activator)) {
-                    return ConditionResult.notFound("Activator", activator.getName());
+        return context.annotatedElement()
+            .annotations()
+            .get(RequiresActivator.class)
+            .map(condition -> {
+                for (Class<? extends Annotation> activator : condition.value()) {
+                    if (!configurableInjectionCapableApplication.activators()
+                        .hasActivator(activator)) {
+                        return ConditionResult.notFound("Activator", activator.getName());
+                    }
                 }
-            }
-            return ConditionResult.matched();
-        }).orElse(ConditionResult.invalidCondition("activator"));
+                return ConditionResult.matched();
+            })
+            .orElse(ConditionResult.invalidCondition("activator"));
     }
 }

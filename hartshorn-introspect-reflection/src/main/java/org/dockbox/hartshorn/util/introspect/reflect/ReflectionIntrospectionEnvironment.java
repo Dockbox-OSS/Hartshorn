@@ -23,7 +23,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
- * An introspection environment that uses reflection to determine whether parameter names are available.
+ * An introspection environment that uses reflection to determine whether parameter names are
+ * available.
  *
  * @since 0.5.0
  *
@@ -37,13 +38,15 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
     public boolean parameterNamesAvailable() {
         if (this.parameterNamesAvailable == Tristate.UNDEFINED) {
             try {
-                Method method = ReflectionIntrospectionEnvironment.class.getDeclaredMethod("$__hartshorn$__ignore",
-                        Object.class);
+                Method method = ReflectionIntrospectionEnvironment.class.getDeclaredMethod(
+                    "$__hartshorn$__ignore",
+                    Object.class
+                );
                 Parameter[] parameters = method.getParameters();
                 String name = parameters[0].getName();
                 this.parameterNamesAvailable = "parameterCheck".equals(name)
-                        ? Tristate.TRUE
-                        : Tristate.FALSE;
+                    ? Tristate.TRUE
+                    : Tristate.FALSE;
             }
             catch (NoSuchMethodException e) {
                 this.parameterNamesAvailable = Tristate.FALSE;
@@ -52,8 +55,11 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
         return this.parameterNamesAvailable.booleanValue();
     }
 
-    @SuppressWarnings({ "unused", "DollarSignInName" })
+    @SuppressWarnings({"unused", "DollarSignInName"})
     private void $__hartshorn$__ignore(Object parameterCheck) {
-        throw new UnsupportedOperationException("This method is a placeholder used to discover whether parameter names are available. It should never be called.");
+        throw new UnsupportedOperationException(
+            "This method is a placeholder used to discover whether parameter names are available. "
+                + "It should never be called."
+        );
     }
 }

@@ -16,29 +16,34 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.util.collections.AbstractNavigableMultiMap;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+import org.dockbox.hartshorn.util.collections.UnmodifiableNavigableMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.UnmodifiableMultiMap;
-import org.dockbox.hartshorn.util.option.Option;
-
 /**
- * Default implementation of the {@link ComponentProcessorRegistry} interface. This implementation uses {@link MultiMap}s
- * to store the registered processors.
+ * Default implementation of the {@link ComponentProcessorRegistry} interface. This implementation
+ * uses {@link MultiMap}s to store the registered processors.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class MultiMapComponentProcessorRegistry implements ComponentProcessorRegistry {
 
-    private final MultiMap<Integer, ComponentPostProcessor> postProcessors = new ConcurrentSetTreeMultiMap<>();
-    private final MultiMap<Integer, ComponentPreProcessor> preProcessors = new ConcurrentSetTreeMultiMap<>();
-    private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
+    private final AbstractNavigableMultiMap<Integer, ComponentPostProcessor> postProcessors =
+        new ConcurrentSetTreeMultiMap<>();
+    private final AbstractNavigableMultiMap<Integer, ComponentPreProcessor> preProcessors =
+        new ConcurrentSetTreeMultiMap<>();
+    private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors =
+        ConcurrentHashMap.newKeySet();
 
     @Override
     public void register(ComponentProcessor processor) {
@@ -51,29 +56,41 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
         this.modifyProcessorRegistration(processor, MultiMap::remove);
     }
 
-    private <T extends ComponentProcessor> void modifyProcessorRegistration(T processor, RegistrationCallback callback) {
+    private <T extends ComponentProcessor> void modifyProcessorRegistration(
+        T processor,
+        RegistrationCallback callback
+    ) {
         int order = processor.priority();
-        switch(processor) {
-        case ComponentPostProcessor postProcessor:
-            callback.process(TypeUtils.unchecked(this.postProcessors, MultiMap.class), order, postProcessor);
-            break;
-        case ComponentPreProcessor preProcessor:
-            callback.process(TypeUtils.unchecked(this.preProcessors, MultiMap.class), order, preProcessor);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown processor type: " + processor.getClass().getName());
+        switch (processor) {
+            case ComponentPostProcessor postProcessor:
+                callback.process(TypeUtils.unchecked(this.postProcessors, MultiMap.class),
+                    order,
+                    postProcessor);
+                break;
+            case ComponentPreProcessor preProcessor:
+                callback.process(TypeUtils.unchecked(this.preProcessors, MultiMap.class),
+                    order,
+                    preProcessor);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown processor type: " + processor.getClass()
+                    .getName());
         }
     }
 
     @FunctionalInterface
     private interface RegistrationCallback {
-        void process(MultiMap<Integer, ? super ComponentProcessor> map, int priority, ComponentProcessor processor);
+        void process(
+            MultiMap<Integer, ? super ComponentProcessor> map,
+            int priority,
+            ComponentProcessor processor
+        );
     }
 
     @Override
     public void registerLazy(Class<? extends ComponentPostProcessor> componentProcessor) {
         boolean alreadyInitialized = this.postProcessors.allValues().stream()
-                .anyMatch(processor -> processor.getClass().equals(componentProcessor));
+            .anyMatch(processor -> processor.getClass().equals(componentProcessor));
         if (!alreadyInitialized) {
             this.uninitializedPostProcessors.add(componentProcessor);
         }
@@ -83,31 +100,32 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
     public boolean isRegistered(Class<? extends ComponentProcessor> componentProcessor) {
         if (this.uninitializedPostProcessors.contains(componentProcessor)) {
             return true;
-        } else {
+        }
+        else {
             return this.processors().stream()
-                    .anyMatch(processor -> processor.getClass().equals(componentProcessor));
+                .anyMatch(processor -> processor.getClass().equals(componentProcessor));
         }
     }
 
     @Override
     public <T extends ComponentProcessor> Option<T> lookup(Class<T> componentProcessor) {
         return Option.of(this.processors().stream()
-                .filter(processor -> processor.getClass().equals(componentProcessor))
-                .map(componentProcessor::cast)
-                .findFirst());
+            .filter(processor -> processor.getClass().equals(componentProcessor))
+            .map(componentProcessor::cast)
+            .findFirst());
     }
 
     @Override
     public Set<ComponentProcessor> processors() {
         return CollectionUtilities.merge(
-                this.preProcessors.allValues(),
-                this.postProcessors.allValues()
+            this.preProcessors.allValues(),
+            this.postProcessors.allValues()
         );
     }
 
     @Override
-    public MultiMap<Integer, ComponentPostProcessor> postProcessors() {
-        return new UnmodifiableMultiMap<>(this.postProcessors);
+    public NavigableMultiMap<Integer, ComponentPostProcessor> postProcessors() {
+        return new UnmodifiableNavigableMultiMap<>(this.postProcessors);
     }
 
     @Override
@@ -116,7 +134,7 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
     }
 
     @Override
-    public MultiMap<Integer, ComponentPreProcessor> preProcessors() {
-        return new UnmodifiableMultiMap<>(this.preProcessors);
+    public NavigableMultiMap<Integer, ComponentPreProcessor> preProcessors() {
+        return new UnmodifiableNavigableMultiMap<>(this.preProcessors);
     }
 }

@@ -25,7 +25,7 @@ import java.util.Locale;
  * Utility to generate a name or ID for a component based on its type.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public final class ComponentDescriber {

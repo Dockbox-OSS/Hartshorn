@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,19 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents the different types of literal tokens that can be used in the HSL language. A literal token is a
- * token that represents a value, such as a number, string, or boolean.
+ * Represents the different types of literal tokens that can be used in the HSL language. A literal
+ * token is a token that represents a value, such as a number, string, or boolean.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum LiteralTokenType implements EnumTokenType {
     /**
-     * Identifier token, representing a name of a variable, function or other declared member
-     * in the HSL language.
+     * Identifier token, representing a name of a variable, function or other declared member in the
+     * HSL language.
      */
     IDENTIFIER,
     /**
@@ -39,7 +39,8 @@ public enum LiteralTokenType implements EnumTokenType {
      */
     STRING,
     /**
-     * Number token, representing a numeric value. This can be an integer or a floating point number.
+     * Number token, representing a numeric value. This can be an integer or a floating point
+     * number.
      */
     NUMBER,
     /**

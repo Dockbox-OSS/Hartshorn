@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
- * Represents a node in a type path, typically a {@link ComponentDiscoveryList}. This node contains a {@link TypeView}
- * and a {@link ComponentKey} that represents the type and its key in the current container. The origin of the node
- * represents the view that this node was discovered from.
+ * Represents a node in a type path, typically a {@link ComponentDiscoveryList}. This node contains
+ * a {@link TypeView} and a {@link ComponentKey} that represents the type and its key in the current
+ * container. The origin of the node represents the view that this node was discovered from.
  *
  * @param type the introspectable type view
  * @param componentKey the component key of this node within the current container
@@ -32,16 +32,16 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  * @param <T> the type of the introspectable type view
  *
  * @see ComponentDiscoveryList
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, View origin) {
 
     /**
-     * Returns the qualified name of the type view. This is typically the fully qualified name of the type,
-     * combined with any qualifiers that are defined on the component key.
+     * Returns the qualified name of the type view. This is typically the fully qualified name of
+     * the type, combined with any qualifiers that are defined on the component key.
      *
      * @return the qualified name of the type view
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,25 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 /**
- * A wrapper for {@link ParameterizableType} to be used as a {@link ParameterizedType}, that allows for easy introspection.
+ * A wrapper for {@link ParameterizableType} to be used as a {@link ParameterizedType}, that allows
+ * for easy introspection.
  *
  * @param type the parameterized type to wrap
  *
  * @see ParameterizableType
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-record ParameterizableParameterizedTypeWrapper(ParameterizableType type) implements ParameterizedType {
+record ParameterizableParameterizedTypeWrapper(ParameterizableType type)
+    implements ParameterizedType {
 
     @Override
     public java.lang.reflect.Type[] getActualTypeArguments() {
         return this.type.parameters().stream()
-                .map(ParameterizableType::asParameterizedType)
-                .toArray(java.lang.reflect.Type[]::new);
+            .map(ParameterizableType::asParameterizedType)
+            .toArray(java.lang.reflect.Type[]::new);
     }
 
     @Override
@@ -51,10 +53,10 @@ record ParameterizableParameterizedTypeWrapper(ParameterizableType type) impleme
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if(!(object instanceof ParameterizableParameterizedTypeWrapper that)) {
+        if (!(object instanceof ParameterizableParameterizedTypeWrapper that)) {
             return false;
         }
         return Objects.equals(this.type, that.type);

@@ -11,7 +11,11 @@ import org.dockbox.sample.processing.SimpleHelloWorldSupplier;
 public class CustomBindingPostProcessor implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         binder.bind(HelloWorldSupplier.class).to(SimpleHelloWorldSupplier.class);
     }
 

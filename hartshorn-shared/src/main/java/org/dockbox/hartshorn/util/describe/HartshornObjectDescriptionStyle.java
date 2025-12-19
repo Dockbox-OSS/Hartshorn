@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.util.describe;
 
 /**
- * Standard implementation of {@link ObjectDescriptionStyle} that describes objects in a style similar
- * to standard Java object descriptions.
+ * Standard implementation of {@link ObjectDescriptionStyle} that describes objects in a style
+ * similar to standard Java object descriptions.
  *
  * @since 0.6.0
  *
@@ -50,7 +50,12 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeField(StringBuilder builder, Object object, String fieldName, Object fieldValue) {
+    public void describeField(
+        StringBuilder builder,
+        Object object,
+        String fieldName,
+        Object fieldValue
+    ) {
         builder.append(fieldName).append(": ").append(fieldValue);
     }
 
@@ -60,7 +65,12 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
+    public void describeArrayStart(
+        StringBuilder builder,
+        Object collectionObject,
+        int length,
+        boolean includeTypeName
+    ) {
         if (includeTypeName) {
             builder.append(collectionObject.getClass().getSimpleName());
         }
@@ -73,12 +83,21 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
+    public void describeArrayElement(
+        StringBuilder builder,
+        Object collectionObject,
+        int index,
+        Object element
+    ) {
         builder.append(element);
     }
 
     @Override
-    public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
+    public void describeArrayElementSeparator(
+        StringBuilder builder,
+        Object collectionObject,
+        int index
+    ) {
         builder.append(", ");
     }
 }

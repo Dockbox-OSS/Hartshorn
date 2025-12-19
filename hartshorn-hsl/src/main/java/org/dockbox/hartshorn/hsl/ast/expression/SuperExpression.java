@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing access to a method or property on the superclass of the current class.
+ * An expression representing access to a method or property on the superclass of the current
+ * class.
  *
  * @since 0.4.12
  *
@@ -37,10 +38,20 @@ public class SuperExpression extends Expression {
         this.method = method;
     }
 
+    /**
+     * Returns the token representing the 'super' keyword.
+     *
+     * @return the 'super' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }
 
+    /**
+     * Returns the token representing the method or property being accessed on the superclass.
+     *
+     * @return the method or property token
+     */
     public Token method() {
         return this.method;
     }

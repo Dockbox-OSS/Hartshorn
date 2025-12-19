@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,24 +35,27 @@ public interface PrunableBindingHierarchy<T> extends BindingHierarchy<T> {
      * given priority exists, nothing happens.
      *
      * @param priority The priority of the provider to remove.
+     *
      * @return {@code true} if a provider was removed, {@code false} otherwise.
      */
     boolean prune(int priority);
 
     /**
-     * Removes all providers with a priority higher than the given priority. If no providers with
-     * a higher priority exist, nothing happens.
+     * Removes all providers with a priority higher than the given priority. If no providers with a
+     * higher priority exist, nothing happens.
      *
      * @param priority The priority to prune above.
+     *
      * @return The amount of providers that were removed.
      */
     int pruneAbove(int priority);
 
     /**
-     * Removes all providers with a priority lower than the given priority. If no providers with
-     * a lower priority exist, nothing happens.
+     * Removes all providers with a priority lower than the given priority. If no providers with a
+     * lower priority exist, nothing happens.
      *
      * @param priority The priority to prune below.
+     *
      * @return The amount of providers that were removed.
      */
     int pruneBelow(int priority);

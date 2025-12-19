@@ -35,14 +35,25 @@ import java.util.function.BiFunction;
  * @param <T> the specific AST node type this interpreter handles
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
+    /**
+     * Accesses an array element at the specified index, applying the provided converter
+     * to transform the retrieved element before returning it. Concurrent modification is
+     * technically allowed, though not recommended.
+     *
+     * @param interpreter the interpreter instance
+     * @param name the name of the array variable
+     * @param indexExpression the expression representing the index
+     * @param converter a function to convert the retrieved array element
+     * @return the converted array element
+     */
     protected Object accessArray(
-            Interpreter interpreter, Token name, Expression indexExpression,
-            BiFunction<Array, Integer, Object> converter
+        Interpreter interpreter, Token name, Expression indexExpression,
+        BiFunction<Array, Integer, Object> converter
     ) {
         Array array = (Array) interpreter.visitingScope().get(name);
         Number indexValue = (Number) interpreter.evaluate(indexExpression);
@@ -50,9 +61,9 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
 
         if (index < 0 || array.length() < index) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
-                    .at(indexExpression)
-                    .build();
+                .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
+                .at(indexExpression)
+                .build();
         }
 
         return converter.apply(array, index);

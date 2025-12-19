@@ -41,5 +41,4 @@ public class StaticNonRegisteredObserver implements LifecycleObserver {
     public static boolean stopped() {
         return stopped;
     }
-
 }

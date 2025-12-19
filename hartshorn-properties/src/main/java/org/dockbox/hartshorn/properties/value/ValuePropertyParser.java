@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parser to convert single-value {@link ValueProperty} instances to instances of a specific type.
+ * A parser to convert single-value {@link ValueProperty} instances to instances of a specific
+ * type.
  *
  * @param <T> the type to convert the value to
  *
@@ -35,6 +36,7 @@ public interface ValuePropertyParser<T> {
      * Parses the given {@link ValueProperty} to an instance of the type {@link T}.
      *
      * @param property the property to parse
+     *
      * @return an {@link Option} containing the parsed value, or an empty {@link Option}
      */
     Option<T> parse(ValueProperty property);

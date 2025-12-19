@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Converts an {@link Optional} to a {@link Collection}. If the {@link Optional} is empty, the
@@ -32,30 +32,31 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>This converter is implemented as a composition of {@link OptionalToOptionConverter} and
  * {@link OptionToCollectionConverterFactory}.
  *
+ * @param helperOptionalToOptionConverter The helper {@link Converter} to convert from
+ * {@link Optional} to {@link Option}
+ * @param helperOptionToCollectionConverterFactory The helper {@link ConverterFactory} to convert
+ * from {@link Option} to {@link Collection}
+ *
  * @see OptionalToOptionConverter
  * @see OptionToCollectionConverterFactory
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class OptionalToCollectionConverterFactory implements ConverterFactory<Optional<?>, Collection<?>> {
-
-    private final Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter;
-    private final ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory;
+public record OptionalToCollectionConverterFactory(
+    Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,
+    ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory
+) implements ConverterFactory<Optional<?>, Collection<?>> {
 
     public OptionalToCollectionConverterFactory(Introspector introspector) {
         this(new OptionalToOptionConverter(), new OptionToCollectionConverterFactory(introspector));
     }
 
-    public OptionalToCollectionConverterFactory(Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter, ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory) {
-        this.helperOptionalToOptionConverter = helperOptionalToOptionConverter;
-        this.helperOptionToCollectionConverterFactory = helperOptionToCollectionConverterFactory;
-    }
-
     @Override
     public <O extends Collection<?>> Converter<Optional<?>, O> create(Class<O> targetType) {
-        Converter<Option<?>, O> optionToCollectionConverter = this.helperOptionToCollectionConverterFactory.create(targetType);
+        Converter<Option<?>, O> optionToCollectionConverter = this
+            .helperOptionToCollectionConverterFactory.create(targetType);
         return input -> {
             Option<?> option = this.helperOptionalToOptionConverter.convert(input);
             return optionToCollectionConverter.convert(option);

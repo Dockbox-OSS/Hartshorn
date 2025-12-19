@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Represents a dependency context for a {@link ComponentContainer}. This context is used to determine the lifecycle and
- * other properties of a component that is managed by a container.
+ * Represents a dependency context for a {@link ComponentContainer}. This context is used to
+ * determine the lifecycle and other properties of a component that is managed by a container.
  *
  * @param <T> the type of the component
  *
@@ -36,9 +36,11 @@ public class ComponentContainerDependencyContext<T> extends ManagedComponentDepe
 
     private final ComponentContainer<T> container;
 
-    public ComponentContainerDependencyContext(ComponentContainer<T> container,
+    public ComponentContainerDependencyContext(
+        ComponentContainer<T> container,
         ComponentKey<T> componentKey, DependencyMap dependencies,
-        ConstructorView<? extends T> constructorView) {
+        ConstructorView<? extends T> constructorView
+    ) {
         super(componentKey, dependencies, constructorView);
         this.container = container;
     }

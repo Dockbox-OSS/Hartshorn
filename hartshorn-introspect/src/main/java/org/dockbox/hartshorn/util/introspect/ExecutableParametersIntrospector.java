@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,45 +33,50 @@ import java.util.List;
 public interface ExecutableParametersIntrospector {
 
     /**
-     * Returns the types of all parameters of the executable element. If the executable element does not declare any
-     * parameters, an empty list is returned. The items in the list are ordered by their index in the executable
-     * element.
+     * Returns the types of all parameters of the executable element. If the executable element does
+     * not declare any parameters, an empty list is returned. The items in the list are ordered by
+     * their index in the executable element.
      *
      * @return the types of all parameters of the executable element
      */
     List<TypeView<?>> types();
 
     /**
-     * Returns the generic types of all parameters of the executable element. If the executable element does not
-     * declare any parameters, an empty list is returned. The items in the list are ordered by their index in the
-     * executable element.
+     * Returns the generic types of all parameters of the executable element. If the executable
+     * element does not declare any parameters, an empty list is returned. The items in the list are
+     * ordered by their index in the executable element.
      *
      * @return the generic types of all parameters of the executable element
      */
     List<TypeView<?>> genericTypes();
 
     /**
-     * Returns the parameters of the executable element. If the executable element does not declare any parameters, an
-     * empty list is returned. The items in the list are ordered by their index in the executable element.
+     * Returns the parameters of the executable element. If the executable element does not declare
+     * any parameters, an empty list is returned. The items in the list are ordered by their index
+     * in the executable element.
      *
      * @return the parameters of the executable element
      */
     List<ParameterView<?>> all();
 
     /**
-     * Returns the parameters of the executable element that are annotated with the provided annotation. If the
-     * executable element does not declare any parameters, an empty list is returned.
+     * Returns the parameters of the executable element that are annotated with the provided
+     * annotation. If the executable element does not declare any parameters, an empty list is
+     * returned.
      *
      * @param annotation the annotation to match
-     * @return the parameters of the executable element that are annotated with the provided annotation
+     *
+     * @return the parameters of the executable element that are annotated with the provided
+     * annotation
      */
     List<ParameterView<?>> annotatedWith(Class<? extends Annotation> annotation);
 
     /**
-     * Returns the parameter at the provided index. If the index is out of bounds, an empty {@link Option} is
-     * returned.
+     * Returns the parameter at the provided index. If the index is out of bounds, an empty
+     * {@link Option} is returned.
      *
      * @param index the index of the parameter
+     *
      * @return the parameter at the provided index
      */
     Option<ParameterView<?>> at(int index);
@@ -84,43 +89,50 @@ public interface ExecutableParametersIntrospector {
     int count();
 
     /**
-     * Returns whether the parameters of the executable element match the provided types. A match is defined as the
-     * amount of parameters being equal to the amount of provided types, and each parameter being equal to- or a child
-     * of the provided type.
+     * Returns whether the parameters of the executable element match the provided types. A match is
+     * defined as the amount of parameters being equal to the amount of provided types, and each
+     * parameter being equal to- or a child of the provided type.
      *
      * @param parameterTypes the types to match
-     * @return {@code true} if the parameters of the executable element match the provided types, else {@code false}
+     *
+     * @return {@code true} if the parameters of the executable element match the provided types,
+     * else {@code false}
      */
     boolean matches(Class<?>... parameterTypes);
 
     /**
-     * Returns whether the parameters of the executable element match the provided types exactly. A match is defined as
-     * the amount of parameters being equal to the amount of provided types, and each parameter being equal to the
-     * provided type.
+     * Returns whether the parameters of the executable element match the provided types exactly. A
+     * match is defined as the amount of parameters being equal to the amount of provided types, and
+     * each parameter being equal to the provided type.
      *
      * @param parameterTypes the types to match
-     * @return {@code true} if the parameters of the executable element match the provided types exactly, else {@code false}
+     *
+     * @return {@code true} if the parameters of the executable element match the provided types
+     * exactly, else {@code false}
      */
     boolean matchesExact(Class<?>... parameterTypes);
 
     /**
-     * Returns whether the parameters of the executable element match the provided types. A match is defined as the
-     * amount of parameters being equal to the amount of provided types, and each parameter being equal to- or a child
-     * of the provided type.
+     * Returns whether the parameters of the executable element match the provided types. A match is
+     * defined as the amount of parameters being equal to the amount of provided types, and each
+     * parameter being equal to- or a child of the provided type.
      *
      * @param parameterTypes the types to match
-     * @return {@code true} if the parameters of the executable element match the provided types, else {@code false}
+     *
+     * @return {@code true} if the parameters of the executable element match the provided types,
+     * else {@code false}
      */
     boolean matches(List<Class<?>> parameterTypes);
 
     /**
-     * Returns whether the parameters of the executable element match the provided types exactly. A match is defined as
-     * the amount of parameters being equal to the amount of provided types, and each parameter being equal to the
-     * provided type.
+     * Returns whether the parameters of the executable element match the provided types exactly. A
+     * match is defined as the amount of parameters being equal to the amount of provided types, and
+     * each parameter being equal to the provided type.
      *
      * @param parameterTypes the types to match
-     * @return {@code true} if the parameters of the executable element match the provided types exactly, else {@code false}
+     *
+     * @return {@code true} if the parameters of the executable element match the provided types
+     * exactly, else {@code false}
      */
     boolean matchesExact(List<Class<?>> parameterTypes);
-
 }

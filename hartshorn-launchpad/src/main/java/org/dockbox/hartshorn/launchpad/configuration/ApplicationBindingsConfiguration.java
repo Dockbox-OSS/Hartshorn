@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,23 @@ import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.binding.Binder;
 
 /**
- * A functional interface used to configure the default bindings of the {@link ApplicationEnvironment}. This interface
- * should be used to configure the default bindings of the application. This interface is typically provided by the
- * {@link Binder} attached to the {@link ApplicationEnvironment}, which is often the {@link ApplicationContext}.
+ * A functional interface used to configure the default bindings of the
+ * {@link ApplicationEnvironment}. This interface should be used to configure the default bindings
+ * of the application. This interface is typically provided by the {@link Binder} attached to the
+ * {@link ApplicationEnvironment}, which is often the {@link ApplicationContext}.
  *
  * <p>Implementations of this interface are expected to be stateless, and thread-safe.
  *
- * <p>Additional bindings can be added by providing a {@link DefaultBindingConfigurer}, which is processed after the
- * default bindings. This is useful when the default bindings are not sufficient, or when the default bindings are not
- * desired.
+ * <p>Additional bindings can be added by providing a {@link DefaultBindingConfigurer}, which is
+ * processed after the
+ * default bindings. This is useful when the default bindings are not sufficient, or when the
+ * default bindings are not desired.
  *
  * @see Binder
  * @see ApplicationEnvironment
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -50,5 +52,9 @@ public interface ApplicationBindingsConfiguration {
      * @param configurer The configurer to use for additional bindings.
      * @param binder The binder to use for additional bindings.
      */
-    void configureBindings(InjectionCapableApplication application, DefaultBindingConfigurer configurer, Binder binder);
+    void configureBindings(
+        InjectionCapableApplication application,
+        DefaultBindingConfigurer configurer,
+        Binder binder
+    );
 }

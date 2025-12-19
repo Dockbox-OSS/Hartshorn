@@ -29,8 +29,8 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for literal expressions, such as boolean values, null, numbers, strings, characters,
- * the <code>this</code> keyword, and the <code>super</code> keyword.
+ * Parser for literal expressions, such as boolean values, null, numbers, strings, characters, the
+ * <code>this</code> keyword, and the <code>super</code> keyword.
  *
  * @since 0.7.0
  *
@@ -38,7 +38,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  */
 public class LiteralExpressionParser implements ExpressionParser {
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         if (parser.match(LiteralTokenType.FALSE)) {
             return new LiteralExpression(parser.peek(), false);
         }

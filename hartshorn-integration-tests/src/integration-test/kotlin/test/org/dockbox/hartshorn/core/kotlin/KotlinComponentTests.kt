@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,45 +32,63 @@ import java.util.stream.Stream
  * Instead of using a common test class for all three languages, each language has its own test class.
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
-@HartshornIntegrationTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.kotlin"])
+@HartshornIntegrationTest(
+  includeBasePackages = false,
+  scanPackages = ["test.org.dockbox.hartshorn.core.kotlin"]
+)
 class KotlinComponentTests {
 
-    @Inject
-    private lateinit var applicationContext: ApplicationContext
+  @Inject
+  private lateinit var applicationContext: ApplicationContext
 
-    @Inject
-    private lateinit var componentRegistry: ComponentRegistry
+  @Inject
+  private lateinit var componentRegistry: ComponentRegistry
 
-    @ParameterizedTest
-    @MethodSource("components")
-    fun <T> testComponent(componentType: Class<T>, applicationContextFunction: ((T) -> ApplicationContext)?, applicationManagerFunction: ((T) -> ApplicationEnvironment)?) {
-        val component: T = this.applicationContext.get(componentType)
-        Assertions.assertNotNull(component)
+  @ParameterizedTest
+  @MethodSource("components")
+  fun <T> testComponent(
+    componentType: Class<T>,
+    applicationContextFunction: ((T) -> ApplicationContext)?,
+    applicationManagerFunction: ((T) -> ApplicationEnvironment)?
+  ) {
+    val component: T = this.applicationContext.get(componentType)
+    Assertions.assertNotNull(component)
 
-        val container = this.componentRegistry.container(componentType)
-        Assertions.assertNotNull(container)
-        Assertions.assertTrue(container.present())
+    val container = this.componentRegistry.container(componentType)
+    Assertions.assertNotNull(container)
+    Assertions.assertTrue(container.present())
 
-        if (applicationContextFunction != null) {
-            Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
-        }
-
-        if (applicationManagerFunction != null) {
-            Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
-        }
-
+    if (applicationContextFunction != null) {
+      Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
     }
 
-    companion object {
-        @JvmStatic
-        fun components(): Stream<Arguments> = Stream.of(
-                Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::environment),
-                Arguments.of(KotlinInterfaceComponent::class.java, null, null),
-                Arguments.of(KotlinObjectComponent::class.java, { _: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() }, null),
-                Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
-        )
+    if (applicationManagerFunction != null) {
+      Assertions.assertSame(
+        this.applicationContext.environment(),
+        applicationManagerFunction(component)
+      )
     }
+  }
+
+  companion object {
+    @JvmStatic
+    fun components(): Stream<Arguments> = Stream.of(
+      Arguments.of(
+        KotlinClassComponent::class.java,
+        KotlinClassComponent::applicationContext,
+        KotlinClassComponent::environment
+      ),
+      Arguments.of(KotlinInterfaceComponent::class.java, null, null),
+      Arguments.of(
+        KotlinObjectComponent::class.java,
+        { _: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() },
+        null
+      ),
+      Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
+    )
+  }
 }

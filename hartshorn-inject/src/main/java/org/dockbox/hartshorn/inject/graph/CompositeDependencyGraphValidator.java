@@ -30,9 +30,9 @@ import java.util.Set;
  * A composite validator that can be used to combine multiple validators into a single validator.
  *
  * @see DependencyGraphValidator
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class CompositeDependencyGraphValidator implements DependencyGraphValidator {
@@ -44,7 +44,8 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
     }
 
     /**
-     * Adds a validator to the composite. If the validator is already present, it will not be added again.
+     * Adds a validator to the composite. If the validator is already present, it will not be added
+     * again.
      *
      * @param validator the validator to add
      */
@@ -53,18 +54,27 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
     }
 
     @Override
-    public void validateBeforeConfiguration(DependencyGraph dependencyGraph, Introspector introspector,
-        ComponentProviderOrchestrator orchestrator) throws ApplicationException {
+    public void validateBeforeConfiguration(
+        DependencyGraph dependencyGraph, Introspector introspector,
+        ComponentProviderOrchestrator orchestrator
+    ) throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
             validator.validateBeforeConfiguration(dependencyGraph, introspector, orchestrator);
         }
     }
 
     @Override
-    public void validateAfterConfiguration(DependencyGraph dependencyGraph, Introspector introspector, Set<GraphNode<DependencyContext<?>>> visited,
-        ComponentProviderOrchestrator orchestrator) throws ApplicationException {
+    public void validateAfterConfiguration(
+        DependencyGraph dependencyGraph,
+        Introspector introspector,
+        Set<GraphNode<DependencyContext<?>>> visited,
+        ComponentProviderOrchestrator orchestrator
+    ) throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
-            validator.validateAfterConfiguration(dependencyGraph, introspector, visited, orchestrator);
+            validator.validateAfterConfiguration(dependencyGraph,
+                introspector,
+                visited,
+                orchestrator);
         }
     }
 }

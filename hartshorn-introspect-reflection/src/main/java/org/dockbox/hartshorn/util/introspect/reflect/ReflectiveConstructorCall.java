@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
 
 /**
- * Represents a constructor call that can be invoked reflectively. This is internally used by {@link
- * ReflectionConstructorView}s to invoke the constructor.
+ * Represents a constructor call that can be invoked reflectively. This is internally used by
+ * {@link ReflectionConstructorView}s to invoke the constructor.
  *
  * @param <T> the type of the constructor
  *
@@ -35,7 +35,9 @@ public interface ReflectiveConstructorCall<T> {
      * Invokes the constructor with the given arguments.
      *
      * @param args the arguments to pass to the constructor
+     *
      * @return the result of the constructor invocation
+     *
      * @throws Throwable if the constructor invocation fails
      */
     T invoke(Object[] args) throws Throwable;

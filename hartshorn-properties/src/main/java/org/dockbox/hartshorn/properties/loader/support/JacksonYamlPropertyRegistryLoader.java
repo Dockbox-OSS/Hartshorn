@@ -45,7 +45,10 @@ public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLo
         this(formatter, Customizer.useDefaults());
     }
 
-    public JacksonYamlPropertyRegistryLoader(PropertyPathFormatter formatter, Customizer<YAMLMapper.Builder> customizer) {
+    public JacksonYamlPropertyRegistryLoader(
+        PropertyPathFormatter formatter,
+        Customizer<YAMLMapper.Builder> customizer
+    ) {
         super(formatter);
         this.customizer = customizer;
     }

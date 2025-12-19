@@ -30,9 +30,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation for components. Components are the building blocks of the framework. If a type is annotated with this
- * annotation, it is considered a component, allowing it to be processed using {@link ComponentProcessor}s and to be
- * adopted by the container.
+ * An annotation for components. Components are the building blocks of the framework. If a type is
+ * annotated with this annotation, it is considered a component, allowing it to be processed using
+ * {@link ComponentProcessor}s and to be adopted by the container.
  *
  * <p>The following example shows how to annotate a class as a component:
  * <pre>{@code
@@ -42,12 +42,11 @@ import java.lang.annotation.Target;
  *      }
  * }</pre>
  *
+ * @author Guus Lieben
  * @see Configuration
  * @see ComponentRegistry
  * @see ComponentContainer
  * @see ComponentProcessor
- *
- * @author Guus Lieben
  * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -55,11 +54,12 @@ import java.lang.annotation.Target;
 public @interface Component {
 
     /**
-     * The unique identifier of the component. This is used to identify the component in the framework.
-     * If not specified, the type of the component is used to generate a valid ID through
+     * The unique identifier of the component. This is used to identify the component in the
+     * framework. If not specified, the type of the component is used to generate a valid ID through
      * {@link ComponentDescriber#id(TypeView)}.
      *
      * @return The unique identifier of the component
+     *
      * @see ComponentContainer#id()
      */
     String id() default "";
@@ -69,43 +69,48 @@ public @interface Component {
      * specified, the name of the class is used.
      *
      * @return The name of the component
+     *
      * @see ComponentContainer#name()
      */
     String name() default "";
 
     /**
-     * Indicates the lifecycle of the component. This is used to determine when the component should be created and destroyed.
-     * The default value is {@link LifecycleType#SINGLETON 'Singleton'}.
+     * Indicates the lifecycle of the component. This is used to determine when the component should
+     * be created and destroyed. The default value is {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @return The lifecycle of the component
      */
     LifecycleType lifecycle() default LifecycleType.SINGLETON;
 
     /**
-     * Indicates whether a component should be created after the application context has been initialized.
-     * When this is {@code true} the component will be created after the application context has been
-     * initialized, as long as the active {@link #lifecycle()} is {@link LifecycleType#SINGLETON 'Singleton'}.
+     * Indicates whether a component should be created after the application context has been
+     * initialized. When this is {@code true} the component will be created after the application
+     * context has been initialized, as long as the active {@link #lifecycle()} is
+     * {@link LifecycleType#SINGLETON 'Singleton'}.
      *
-     * @return {@code true} if the component should be created after the application context has been initialized
+     * @return {@code true} if the component should be created after the application context has
+     * been initialized
+     *
      * @see ComponentContainer#lazy()
      */
     boolean lazy() default false;
 
     /**
-     * Indicates whether the component should be allowed to be proxied. Proxied components may be modified by changing
-     * the behavior of the proxy.
+     * Indicates whether the component should be allowed to be proxied. Proxied components may be
+     * modified by changing the behavior of the proxy.
      *
      * @return {@code true} if the component should be proxied
+     *
      * @see ComponentContainer#permitsProxying()
      */
     boolean permitProxying() default true;
 
     /**
-     * Indicates whether the component should be allowed to be processed by {@link ComponentProcessor}s.
-     * Processed components may be modified by changing the behavior or content of the component.
+     * Indicates whether the component should be allowed to be processed by
+     * {@link ComponentProcessor}s. Processed components may be modified by changing the behavior or
+     * content of the component.
      *
      * @return {@code true} if the component should be processed
      */
     boolean permitProcessing() default true;
-
 }

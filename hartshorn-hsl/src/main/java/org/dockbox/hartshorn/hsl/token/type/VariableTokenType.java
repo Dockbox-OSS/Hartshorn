@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
 /**
- * Represents the different types of variable definition tokens that can be used
- * in the HSL language.
+ * Represents the different types of variable definition tokens that can be used in the HSL
+ * language.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum VariableTokenType implements EnumTokenType {
@@ -39,9 +39,9 @@ public enum VariableTokenType implements EnumTokenType {
 
     VariableTokenType() {
         this.metaData = TokenMetaData.builder(this)
-                .keyword(true)
-                .standaloneStatement(true)
-                .build();
+            .keyword(true)
+            .standaloneStatement(true)
+            .build();
     }
 
     @Override

@@ -36,6 +36,7 @@ public interface PropertyRegistryPathLoader {
      *
      * @param registry the registry to load properties into
      * @param path the path to load properties from
+     *
      * @throws IOException if an I/O error occurs while loading properties
      */
     void loadRegistry(PropertyRegistry registry, URI path) throws IOException;

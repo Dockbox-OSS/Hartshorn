@@ -58,8 +58,8 @@ public interface MutableExpressionParserChain extends ExpressionParserChain {
     void insertAll(int index, List<ExpressionParser> parsers);
 
     /**
-     * Adds an expression parser before the specified parser class in the chain. If the specified class
-     * is not found, the parser is added to the end of the chain.
+     * Adds an expression parser before the specified parser class in the chain. If the specified
+     * class is not found, the parser is added to the end of the chain.
      *
      * @param parser the expression parser to add
      * @param before the class of the expression parser before which to add the new parser
@@ -67,8 +67,8 @@ public interface MutableExpressionParserChain extends ExpressionParserChain {
     void addBefore(ExpressionParser parser, Class<? extends ExpressionParser> before);
 
     /**
-     * Adds an expression parser after the specified parser class in the chain. If the specified class
-     * is not found, the parser is added to the end of the chain.
+     * Adds an expression parser after the specified parser class in the chain. If the specified
+     * class is not found, the parser is added to the end of the chain.
      *
      * @param parser the expression parser to add
      * @param after the class of the expression parser after which to add the new parser

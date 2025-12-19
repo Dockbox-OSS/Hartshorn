@@ -38,14 +38,18 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
-        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createMockCharSequenceDependencyContext(StringBuilder.class);
+        AliasableDependencyContext<String> declarationString =
+            createMockCharSequenceDependencyContext(String.class);
+        AliasableDependencyContext<StringBuilder> declarationStringBuilder =
+            createMockCharSequenceDependencyContext(StringBuilder.class);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
         graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
 
-        AliasCapableComponentProviderOrchestrator orchestrator = Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
-        Mockito.when(orchestrator.aliasNormalizer()).thenReturn(new DefaultBindingAliasNormalizer());
+        AliasCapableComponentProviderOrchestrator orchestrator =
+            Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
+        Mockito.when(orchestrator.aliasNormalizer())
+            .thenReturn(new DefaultBindingAliasNormalizer());
         AmbiguousAliasException exception = Assertions.assertThrows(
             AmbiguousAliasException.class,
             () -> validator.validateBeforeConfiguration(graph, null, orchestrator)
@@ -60,22 +64,31 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
+        AliasableDependencyContext<String> declarationString =
+            createMockCharSequenceDependencyContext(String.class);
         Mockito.when(declarationString.priority()).thenReturn(1);
 
-        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createMockCharSequenceDependencyContext(StringBuilder.class);
+        AliasableDependencyContext<StringBuilder> declarationStringBuilder =
+            createMockCharSequenceDependencyContext(StringBuilder.class);
         Mockito.when(declarationStringBuilder.priority()).thenReturn(2);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
         graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
 
-        AliasCapableComponentProviderOrchestrator orchestrator = Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
-        Mockito.when(orchestrator.aliasNormalizer()).thenReturn(new DefaultBindingAliasNormalizer());
-        Assertions.assertDoesNotThrow(() -> validator.validateBeforeConfiguration(graph, null, orchestrator));
+        AliasCapableComponentProviderOrchestrator orchestrator =
+            Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
+        Mockito.when(orchestrator.aliasNormalizer())
+            .thenReturn(new DefaultBindingAliasNormalizer());
+        Assertions.assertDoesNotThrow(() -> validator.validateBeforeConfiguration(graph,
+            null,
+            orchestrator));
     }
 
-    private static <T extends CharSequence> AliasableDependencyContext<T> createMockCharSequenceDependencyContext(Class<T> keyType) {
-        AliasableDependencyContext<T> declarationString = Mockito.mock(AliasableDependencyContext.class);
+    private static <T extends CharSequence> AliasableDependencyContext<T> createMockCharSequenceDependencyContext(
+        Class<T> keyType
+    ) {
+        AliasableDependencyContext<T> declarationString =
+            Mockito.mock(AliasableDependencyContext.class);
         Mockito.when(declarationString.componentKey()).thenReturn(ComponentKey.of(keyType));
         Mockito.when(declarationString.describe()).thenReturn("mockLocation");
         Mockito.when(declarationString.aliasTypes()).thenReturn(Set.of(CharSequence.class));

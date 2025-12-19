@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
  * @see LogbackEncoder
- *
+ * 
  * @since 0.4.8
- *
+ * 
  * @author Guus Lieben
  */
 public class LogbackPIDConverter extends ClassicConverter {

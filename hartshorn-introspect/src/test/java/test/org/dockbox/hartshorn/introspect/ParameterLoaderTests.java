@@ -50,22 +50,27 @@ public class ParameterLoaderTests {
         TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(stringTypeView).is(String.class);
         Mockito.doReturn(null).when(stringTypeView).defaultOrNull();
-        Mockito.when(stringTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(stringTypeView.cast(Mockito.any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
         TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(intTypeView).is(int.class);
         Mockito.doReturn(0).when(intTypeView).defaultOrNull();
-        Mockito.when(intTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(intTypeView.cast(Mockito.any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
         MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
 
-        ParameterView<String> stringParameter = TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<String> stringParameter =
+            TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(stringParameter.type()).thenReturn(stringTypeView);
 
-        ParameterView<Integer> intParameter = TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<Integer> intParameter =
+            TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(intParameter.type()).thenReturn(intTypeView);
 
-        ExecutableParametersIntrospector parametersIntrospector = Mockito.mock(ExecutableParametersIntrospector.class);
+        ExecutableParametersIntrospector parametersIntrospector =
+            Mockito.mock(ExecutableParametersIntrospector.class);
 
         LinkedList<ParameterView<?>> parameters = new LinkedList<>();
         parameters.add(stringParameter);
@@ -76,12 +81,14 @@ public class ParameterLoaderTests {
 
         // Object to serve as mock instance, to prevent static method rules from rejecting the context. Alternative would be
         // to mock MethodView#modifiers#isStatic, but this is more straightforward.
-        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, new Object());
+        ParameterLoaderContext loaderContext =
+            new ParameterLoaderContext(methodContext, new Object());
         List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
         Assertions.assertNotNull(objects);
         Assertions.assertEquals(2, objects.size());
         Assertions.assertEquals("JUnit", objects.get(0));
-        Assertions.assertEquals(0, objects.get(1)); // Default value for 'int', instead of the value being null
+        Assertions.assertEquals(0,
+            objects.get(1)); // Default value for 'int', instead of the value being null
     }
 }

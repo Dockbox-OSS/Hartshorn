@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,37 +28,42 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see RuleBasedParameterLoader
  *
  * @since 0.4.8
- *
+ * 
  * @author Guus Lieben
  */
 public interface ParameterLoaderRule<C extends ParameterLoaderContext> {
 
     /**
-     * Returns whether this rule accepts the provided parameter. If this method returns {@code true}, you
-     * can safely proceed to invoke {@link #load(ParameterView, int, ParameterLoaderContext, Object...)} to
-     * load the parameter value.
+     * Returns whether this rule accepts the provided parameter. If this method returns
+     * {@code true}, you can safely proceed to invoke
+     * {@link #load(ParameterView, int, ParameterLoaderContext, Object...)} to load the parameter
+     * value.
      *
      * @param parameter the parameter to check
      * @param index the index of the parameter in the parameter list
      * @param context the context to use when looking up the parameter value
      * @param args the arguments that are passed to the method that is being invoked
+     *
      * @return whether this rule accepts the provided parameter
      */
     boolean accepts(ParameterView<?> parameter, int index, C context, Object... args);
 
     /**
      * Loads the parameter value from the provided context. This method should only be invoked after
-     * {@link #accepts(ParameterView, int, ParameterLoaderContext, Object...)} has returned {@code true}.
+     * {@link #accepts(ParameterView, int, ParameterLoaderContext, Object...)} has returned
+     * {@code true}.
      *
-     * <p>Implementations are expected to return an {@link Option} that contains the parameter value, or
+     * <p>Implementations are expected to return an {@link Option} that contains the parameter
+     * value, or
      * {@link Option#empty()} if the parameter could not be loaded.
      *
      * @param parameter the parameter to load
      * @param index the index of the parameter in the parameter list
      * @param context the context to use when looking up the parameter value
      * @param args the arguments that are passed to the method that is being invoked
-     * @return the parameter value, or {@link Option#empty()} if the parameter could not be loaded
      * @param <T> the type of the parameter
+     *
+     * @return the parameter value, or {@link Option#empty()} if the parameter could not be loaded
      */
     <T> Option<T> load(ParameterView<T> parameter, int index, C context, Object... args);
 }

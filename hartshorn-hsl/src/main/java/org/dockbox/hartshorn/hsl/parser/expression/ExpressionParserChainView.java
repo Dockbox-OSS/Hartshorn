@@ -24,12 +24,12 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
- * An immutable view of a mutable expression parser chain. This class is used to provide
- * a view of the current state of the parser chain to the expression parsers, without
- * allowing them to modify the underlying chain.
+ * An immutable view of a mutable expression parser chain. This class is used to provide a view of
+ * the current state of the parser chain to the expression parsers, without allowing them to modify
+ * the underlying chain.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ExpressionParserChainView implements ExpressionParserChain {
@@ -50,8 +50,8 @@ public class ExpressionParserChainView implements ExpressionParserChain {
             return current.parse(parser, validator, view);
         }
         throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.EXPECTED_EXPRESSION, parser.peek())
-                .at(parser.peek())
-                .build();
+            .message(DiagnosticMessage.EXPECTED_EXPRESSION, parser.peek())
+            .at(parser.peek())
+            .build();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Strategy for providing components. This is a chain of responsibility pattern, where each strategy can delegate to the
- * next strategy in the {@link ComponentProviderStrategyChain} if it cannot provide the requested component.
+ * Strategy for providing components. This is a chain of responsibility pattern, where each strategy
+ * can delegate to the next strategy in the {@link ComponentProviderStrategyChain} if it cannot
+ * provide the requested component.
  *
  * @since 0.7.0
  *
@@ -32,10 +33,24 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 public interface ComponentProviderStrategy {
 
+    /**
+     * Attempts to provide a component for the given {@code componentKey} and
+     * {@code requestContext}. If this strategy cannot provide the component, it should delegate to
+     * the next strategy in the {@code chain}.
+     *
+     * @param componentKey the component key to resolve
+     * @param requestContext the request context for the component resolution
+     * @param chain the strategy chain to delegate to
+     * @param <T> the type of the component to resolve
+     *
+     * @return the resolved object container
+     *
+     * @throws ComponentResolutionException if the component could not be resolved
+     * @throws ApplicationException if the component could not be initialized or processed
+     */
     <T> ObjectContainer<T> get(
-            ComponentKey<T> componentKey,
-            ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException;
-
 }

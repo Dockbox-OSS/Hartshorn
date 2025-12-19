@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Collection;
 
 /**
- * A parser to convert all single values in a {@link ListProperty} to instances of a specific type. This
- * requires all elements in the list to be compatible single-value {@link ValueProperty} instances.
+ * A parser to convert all single values in a {@link ListProperty} to instances of a specific type.
+ * This requires all elements in the list to be compatible single-value {@link ValueProperty}
+ * instances.
  *
  * @param <T> the type to convert the value to
  *
@@ -44,8 +45,8 @@ public class ValueListPropertyParser<T> implements ListPropertyParser<T> {
     @Override
     public Collection<T> parse(ListProperty property) {
         return property.values().stream()
-                .map(this.delegate::parse)
-                .flatMap(Option::stream)
-                .toList();
+            .map(this.delegate::parse)
+            .flatMap(Option::stream)
+            .toList();
     }
 }

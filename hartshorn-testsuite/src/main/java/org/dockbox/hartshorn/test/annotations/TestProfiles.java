@@ -26,7 +26,8 @@ import java.lang.annotation.Target;
  * Marks a test method or class as requiring specific profiles to be active in the test context.
  * These profiles will be activated when the test method or class is run.
  *
- * <p>Test profiles can be activated at both the method and class level. If a test class is annotated with
+ * <p>Test profiles can be activated at both the method and class level. If a test class is
+ * annotated with
  * {@code @TestProfiles}, all test methods in that class will have the specified profiles active
  * during their execution.
  *

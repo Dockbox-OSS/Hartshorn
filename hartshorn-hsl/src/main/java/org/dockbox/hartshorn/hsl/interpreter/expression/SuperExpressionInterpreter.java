@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  * Interpreter for {@link SuperExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, SuperExpression> {
@@ -39,15 +39,17 @@ public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, Su
     @Override
     public Object interpret(SuperExpression node, Interpreter interpreter) {
         int distance = interpreter.distance(node);
-        ClassReference superClass = (ClassReference) interpreter.visitingScope().getAt(node.method(), distance, ObjectTokenType.SUPER.representation());
-        InstanceReference object = (InstanceReference) interpreter.visitingScope().getAt(node.method(), distance - 1, ObjectTokenType.THIS.representation());
+        ClassReference superClass = (ClassReference) interpreter.visitingScope()
+            .getAt(node.method(), distance, ObjectTokenType.SUPER.representation());
+        InstanceReference object = (InstanceReference) interpreter.visitingScope()
+            .getAt(node.method(), distance - 1, ObjectTokenType.THIS.representation());
         MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNDEFINED_PROPERTY, node.method().lexeme())
-                    .at(node)
-                    .build();
+                .message(DiagnosticMessage.UNDEFINED_PROPERTY, node.method().lexeme())
+                .at(node)
+                .build();
         }
         return method.bind(object);
     }

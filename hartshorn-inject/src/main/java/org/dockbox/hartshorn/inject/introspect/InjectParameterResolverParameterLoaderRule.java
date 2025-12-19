@@ -29,15 +29,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parameter loader rule that loads parameters based on the {@link InjectParameterResolver} provided. By default,
- * this rule also keeps track of whether the parameter is required or not, and throws a {@link ComponentRequiredException}
- * if the parameter is required but could not be resolved.
+ * A parameter loader rule that loads parameters based on the {@link InjectParameterResolver}
+ * provided. By default, this rule also keeps track of whether the parameter is required or not, and
+ * throws a {@link ComponentRequiredException} if the parameter is required but could not be
+ * resolved.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class InjectParameterResolverParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
+public class InjectParameterResolverParameterLoaderRule
+    implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
     private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
     private final InjectParameterResolver parameterResolver;
@@ -47,27 +49,45 @@ public class InjectParameterResolverParameterLoaderRule implements ParameterLoad
     }
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return this.parameterResolver.accepts(new InjectionPoint(parameter), this.createContext(context));
+    public boolean accepts(
+        ParameterView<?> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
+        return this.parameterResolver.accepts(new InjectionPoint(parameter),
+            this.createContext(context));
     }
 
-    private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
+    private PopulateComponentContext<?> createContext(
+        ApplicationBoundParameterLoaderContext context
+    ) {
         Object instance = context.instance();
         TypeView<?> type = context.executable().declaredBy();
         return new PopulateComponentContext<>(
-                instance, instance,
-                TypeUtils.unchecked(type, TypeView.class),
-                context.scope(),
-                context.application()
+            instance, instance,
+            TypeUtils.unchecked(type, TypeView.class),
+            context.scope(),
+            context.application()
         );
     }
 
     @Override
-    public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+    public <T> Option<T> load(
+        ParameterView<T> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
         InjectionPoint injectionPoint = new InjectionPoint(parameter);
-        Object resolved = this.parameterResolver.resolve(injectionPoint, this.createContext(context));
+        Object resolved =
+            this.parameterResolver.resolve(injectionPoint, this.createContext(context));
         if (resolved == null && this.requireRule.isRequired(injectionPoint)) {
-            throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
+            throw new ComponentRequiredException("Parameter "
+                + parameter.name()
+                + " on "
+                + parameter.declaredBy().qualifiedName()
+                + " is required");
         }
         return Option.of(parameter.type().cast(resolved));
     }

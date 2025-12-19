@@ -38,7 +38,9 @@ public interface CheckedFunction<T, R> {
      * Applies this function to the given argument.
      *
      * @param t the function argument
+     *
      * @return the function result
+     *
      * @throws ApplicationException if an error occurs during the application of the function
      */
     R apply(T t) throws ApplicationException;

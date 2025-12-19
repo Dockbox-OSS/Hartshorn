@@ -27,10 +27,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A {@link TypeReferenceCollector} that collects {@link TypeReference}s from a classpath. This class is abstract, as
- * it does not provide a mechanism for collecting {@link TypeReference}s. Instead, it provides a caching mechanism that
- * is shared between all instances of this class. This caching mechanism is used to prevent the same classpath from
- * being scanned multiple times.
+ * A {@link TypeReferenceCollector} that collects {@link TypeReference}s from a classpath. This
+ * class is abstract, as it does not provide a mechanism for collecting {@link TypeReference}s.
+ * Instead, it provides a caching mechanism that is shared between all instances of this class. This
+ * caching mechanism is used to prevent the same classpath from being scanned multiple times.
  *
  * @since 0.4.13
  *
@@ -38,7 +38,10 @@ import java.util.Set;
  */
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 
-    private static final MultiMap<String, TypeReference> BATCH_CACHE = new ConcurrentSetMultiMap<>();
+    // checkstyle:off LineLength
+    private static final MultiMap<String, TypeReference> BATCH_CACHE =
+        new ConcurrentSetMultiMap<>();
+    // checkstyle:on LineLength
     private final String packageName;
 
     protected ClasspathTypeReferenceCollector(String packageName) {
@@ -65,11 +68,13 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     }
 
     /**
-     * Collects {@link TypeReference}s from the classpath. Implementations of this method are expected to return a
-     * {@link Set} of {@link TypeReference}s that are found on the classpath. Implementations are not expected to
-     * cache the result of this method, as the result is cached internally by this class.
+     * Collects {@link TypeReference}s from the classpath. Implementations of this method are
+     * expected to return a {@link Set} of {@link TypeReference}s that are found on the classpath.
+     * Implementations are not expected to cache the result of this method, as the result is cached
+     * internally by this class.
      *
      * @return A {@link Set} of {@link TypeReference}s that are found on the classpath.
+     *
      * @throws TypeCollectionException If the collection of {@link TypeReference}s fails.
      */
     protected abstract Set<TypeReference> createCache() throws TypeCollectionException;
@@ -93,7 +98,7 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("packageName", this.packageName)
-                .describe();
+            .field("packageName", this.packageName)
+            .describe();
     }
 }

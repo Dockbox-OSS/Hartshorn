@@ -43,11 +43,11 @@ public class ArrayComprehensionExpressionTests {
 
     public static Stream<Arguments> arrayInputs() {
         return Stream.of(
-                Arguments.of(new Array(new Object[]{"test"})),
-                Arguments.of(List.of("test")),
-                // Note: first array is captured as varargs. Inner array
-                // is the actual input array.
-                Arguments.of(new Object[]{new Object[]{"test"}})
+            Arguments.of(new Array(new Object[] {"test"})),
+            Arguments.of(List.of("test")),
+            // Note: first array is captured as varargs. Inner array
+            // is the actual input array.
+            Arguments.of(new Object[] {new Object[] {"test"}})
         );
     }
 
@@ -55,16 +55,16 @@ public class ArrayComprehensionExpressionTests {
     @MethodSource("arrayInputs")
     void arrayComprehensionWithoutTransformation(Object inputArray) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        [x for x in list]
-                        """)
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser())
-                .defineLocal("list", inputArray)
-                .build();
+                [x for x in list]
+                """)
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new ComplexArrayExpressionParser())
+            .defineLocal("list", inputArray)
+            .build();
 
         Object interpreted = helper.evaluateWith(
-                ArrayComprehensionExpression.class,
-                new ArrayComprehensionExpressionInterpreter()
+            ArrayComprehensionExpression.class,
+            new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());
@@ -75,18 +75,18 @@ public class ArrayComprehensionExpressionTests {
     @MethodSource("arrayInputs")
     void arrayComprehensionWithBasicTransformation(Object inputArray) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        [x + "2" for x in list]
-                        """)
-                .expressionParser(new BinaryAdditionExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser())
-                .defineLocal("list", inputArray)
-                .build();
+                [x + "2" for x in list]
+                """)
+            .expressionParser(new BinaryAdditionExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new ComplexArrayExpressionParser())
+            .defineLocal("list", inputArray)
+            .build();
 
         Object interpreted = helper.evaluateWith(
-                ArrayComprehensionExpression.class,
-                new ArrayComprehensionExpressionInterpreter()
+            ArrayComprehensionExpression.class,
+            new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());
@@ -97,17 +97,17 @@ public class ArrayComprehensionExpressionTests {
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditional(Object inputArray) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        [x for x in list if false]
-                        """)
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser())
-                .defineLocal("list", inputArray)
-                .build();
+                [x for x in list if false]
+                """)
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new ComplexArrayExpressionParser())
+            .defineLocal("list", inputArray)
+            .build();
 
         Object interpreted = helper.evaluateWith(
-                ArrayComprehensionExpression.class,
-                new ArrayComprehensionExpressionInterpreter()
+            ArrayComprehensionExpression.class,
+            new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(0, array.length());
@@ -117,17 +117,17 @@ public class ArrayComprehensionExpressionTests {
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditionalAlternative(Object inputArray) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
-                        [x for x in list if false else "other"]
-                        """)
-                .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser())
-                .defineLocal("list", inputArray)
-                .build();
+                [x for x in list if false else "other"]
+                """)
+            .expressionParser(new IdentifierExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new ComplexArrayExpressionParser())
+            .defineLocal("list", inputArray)
+            .build();
 
         Object interpreted = helper.evaluateWith(
-                ArrayComprehensionExpression.class,
-                new ArrayComprehensionExpressionInterpreter()
+            ArrayComprehensionExpression.class,
+            new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());

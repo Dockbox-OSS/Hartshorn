@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,17 @@ package org.dockbox.hartshorn.launchpad.context;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * A concrete implementation of {@link ApplicationContextCarrier}, typically only used
- * to back proxy implementations of {@link ApplicationContextCarrier}.
+ * A concrete implementation of {@link ApplicationContextCarrier}, typically only used to back proxy
+ * implementations of {@link ApplicationContextCarrier}.
  *
  * @param applicationContext the application context to carry
  *
  * @see org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor
- *
+ * 
  * @since 0.4.8
- *
+ * 
  * @author Guus Lieben
  */
-public record ConcreteApplicationContextCarrier(ApplicationContext applicationContext) implements ApplicationContextCarrier {
+public record ConcreteApplicationContextCarrier(ApplicationContext applicationContext)
+    implements ApplicationContextCarrier {
 }

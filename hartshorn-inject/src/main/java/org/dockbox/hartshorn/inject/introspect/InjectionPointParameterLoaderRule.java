@@ -23,15 +23,16 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ParameterLoaderRule} that loads the {@link InjectionPoint} of a parameter if it is of type
- * {@link InjectionPoint}. If the current request context is not for an injection point, it will return an empty
- * value.
+ * A {@link ParameterLoaderRule} that loads the {@link InjectionPoint} of a parameter if it is of
+ * type {@link InjectionPoint}. If the current request context is not for an injection point, it
+ * will return an empty value.
  *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
+public class InjectionPointParameterLoaderRule
+    implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
     private final ComponentRequestContext requestContext;
 
@@ -40,12 +41,22 @@ public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<Ap
     }
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+    public boolean accepts(
+        ParameterView<?> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
         return parameter.type().isChildOf(InjectionPoint.class);
     }
 
     @Override
-    public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+    public <T> Option<T> load(
+        ParameterView<T> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
         if (!this.requestContext.isForInjectionPoint()) {
             return Option.empty();
         }

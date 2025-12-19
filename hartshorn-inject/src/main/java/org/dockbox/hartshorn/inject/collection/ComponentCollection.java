@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,25 +21,27 @@ import java.util.Set;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 
 /**
- * A collection of components. This is used to collect multiple bindings for the same type. The collection is
- * immutable, and does not allow duplicate entries.
+ * A collection of components. This is used to collect multiple bindings for the same type. The
+ * collection is immutable, and does not allow duplicate entries.
  *
- * <p>The collection is automatically populated from a {@link CollectionBindingHierarchy}, and can be collected
+ * <p>The collection is automatically populated from a {@link CollectionBindingHierarchy}, and can
+ * be collected
  * using {@link org.dockbox.hartshorn.inject.ComponentKey#collect(Class)}.
  *
  * @param <T> the type of the components
  *
  * @see CollectionBindingHierarchy
  * @see org.dockbox.hartshorn.inject.ComponentKey#collect(Class)
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface ComponentCollection<T> extends Collection<T> {
 
     /**
-     * Returns all containers in the collection. Each container represents a single binding for the type.
+     * Returns all containers in the collection. Each container represents a single binding for the
+     * type.
      *
      * @return all containers in the collection
      */

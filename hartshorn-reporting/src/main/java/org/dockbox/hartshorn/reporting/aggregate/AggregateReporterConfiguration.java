@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import java.util.Set;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 
 /**
- * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to register the reporters
- * that are aggregated by the {@link AggregateDiagnosticsReporter}. No ordering is guaranteed.
+ * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to
+ * register the reporters that are aggregated by the {@link AggregateDiagnosticsReporter}. No
+ * ordering is guaranteed.
  *
  * @see AggregateDiagnosticsReporter
  *
@@ -43,11 +44,14 @@ public class AggregateReporterConfiguration {
      *
      * @param reporter the reporter to register
      *
-     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     * @throws IllegalArgumentException when a reporter with the same category is already
+     * registered
      */
     public void add(CategorizedDiagnosticsReporter reporter) {
         if (this.reporters.containsKey(reporter.category())) {
-            throw new IllegalArgumentException("Reporter with category '" + reporter.category() + "' already registered");
+            throw new IllegalArgumentException("Reporter with category '"
+                + reporter.category()
+                + "' already registered");
         }
         this.reporters.put(reporter.category(), reporter);
     }
@@ -58,7 +62,8 @@ public class AggregateReporterConfiguration {
      *
      * @param reporters the reporters to register
      *
-     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     * @throws IllegalArgumentException when a reporter with the same category is already
+     * registered
      */
     public void addAll(Collection<CategorizedDiagnosticsReporter> reporters) {
         reporters.forEach(this::add);

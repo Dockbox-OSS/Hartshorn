@@ -27,15 +27,15 @@ import java.util.function.Consumer;
  * operations.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ControlTokenType implements EnumTokenType {
     /**
-     * Represents the 'if' keyword. 'if' keywords indicate the start of a conditional block. This
-     * is a standalone statement, and is not required to be combined with other statements.
+     * Represents the 'if' keyword. 'if' keywords indicate the start of a conditional block. This is
+     * a standalone statement, and is not required to be combined with other statements.
      */
     IF(true),
     /**
@@ -77,8 +77,8 @@ public enum ControlTokenType implements EnumTokenType {
     RETURN(true),
     /**
      * Represents the 'yield' keyword. 'yield' keywords indicate the transfer of control back to the
-     * enclosing generator function, optionally providing a value to be sent back to the caller. This is
-     * a standalone statement and is not required to be combined with other statements.
+     * enclosing generator function, optionally providing a value to be sent back to the caller.
+     * This is a standalone statement and is not required to be combined with other statements.
      *
      */
     YIELD(true),
@@ -91,18 +91,19 @@ public enum ControlTokenType implements EnumTokenType {
 
     /**
      * Represents the opening of a 'case' or 'default' block which only contains a single expression
-     * statement. This is not a standalone statement, and is required to be combined with a 'case' or
-     * 'default' statement.
+     * statement. This is not a standalone statement, and is required to be combined with a 'case'
+     * or 'default' statement.
      */
-    ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER).build()),
+    ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER)
+        .build()),
     ;
 
     private final TokenMetaData metaData;
 
     ControlTokenType(boolean standalone) {
         this(builder -> builder
-                .standaloneStatement(standalone)
-                .keyword(true)
+            .standaloneStatement(standalone)
+            .keyword(true)
         );
     }
 

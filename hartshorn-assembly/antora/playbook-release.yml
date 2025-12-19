@@ -23,7 +23,7 @@ content:
     - url: ./../..
       # Antora was not included in releases before 0.7.0, ensure we don't attempt to build things
       # that do not exist.
-      tags: ['{0..9}.{0..9}.{0..9}', '!0.{4..6}.*']
+      tags: [ '{0..9}.{0..9}.{0..9}', '!0.{4..6}.*' ]
       version: true
       # Disable branch builds, only include tags
       branches: ~

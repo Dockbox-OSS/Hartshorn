@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
 /**
- * Specialization of {@link ExecutableScript} for {@link ValidateExpressionRuntime expression validation runtimes}.
+ * Specialization of {@link ExecutableScript} for
+ * {@link ValidateExpressionRuntime expression validation runtimes}.
  *
  * @see ExecutableScript
  * @see ValidateExpressionRuntime
@@ -47,6 +48,7 @@ public class ExpressionScript extends ExecutableScript {
      *
      * @param context the application context
      * @param source the source of the script
+     *
      * @return the created script
      */
     public static ExpressionScript of(ApplicationContext context, String source) {
@@ -58,7 +60,9 @@ public class ExpressionScript extends ExecutableScript {
      *
      * @param context the application context
      * @param path the path to the source of the script
+     *
      * @return the created script
+     *
      * @throws IOException if the source cannot be read
      */
     public static ExpressionScript of(ApplicationContext context, Path path) throws IOException {
@@ -70,7 +74,9 @@ public class ExpressionScript extends ExecutableScript {
      *
      * @param context the application context
      * @param file the file containing the source of the script
+     *
      * @return the created script
+     *
      * @throws IOException if the source cannot be read
      */
     public static ExpressionScript of(ApplicationContext context, File file) throws IOException {
@@ -91,6 +97,7 @@ public class ExpressionScript extends ExecutableScript {
      * Returns whether the result of the given {@link ScriptContext} is valid.
      *
      * @param collector the result collector
+     *
      * @return whether the result is valid
      */
     public static boolean valid(ResultCollector collector) {

@@ -94,7 +94,7 @@ public class ReportingConfiguration {
     @Singleton
     @CompositeMember
     public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(
-            ApplicationContext applicationContext
+        ApplicationContext applicationContext
     ) {
         return new ApplicationDiagnosticsReporter(applicationContext);
     }
@@ -113,7 +113,7 @@ public class ReportingConfiguration {
     @Singleton
     @CompositeMember
     public CategorizedDiagnosticsReporter componentDiagnosticsReporter(
-            ApplicationContext applicationContext
+        ApplicationContext applicationContext
     ) {
         return new ComponentDiagnosticsReporter(applicationContext);
     }
@@ -132,7 +132,7 @@ public class ReportingConfiguration {
     @Singleton
     @CompositeMember
     public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(
-            ApplicationContext applicationContext
+        ApplicationContext applicationContext
     ) {
         return new ComponentProcessorDiagnosticsReporter(applicationContext);
     }

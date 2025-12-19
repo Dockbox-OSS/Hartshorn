@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * Represents the different types of tokens that are used to assert or test conditions in a script.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum AssertTokenType implements EnumTokenType {

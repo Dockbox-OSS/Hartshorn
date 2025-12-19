@@ -31,22 +31,22 @@ public class ManualProxyCreationStarter implements ApplicationStarter {
         TypeView<Greeter> greeterType = introspector.introspect(Greeter.class);
 
         StateAwareProxyFactory<Greeter> proxyFactory = proxyOrchestrator.factory(Greeter.class)
-                .implement(Fareweller.class)
-                .advisors(advisors -> advisors
-                        // Greeter.sayHello()
-                        .method(greeterType.methods().named("sayHello").get())
-                        .intercept(MethodInterceptor.withoutReturnValue(context -> {
-                            context.instance().sayHello("world");
-                        }))
-                        // Greeter.sayHello(name)
-                        .method(greeterType.methods().named("sayHello", String.class).get())
-                        .intercept(MethodInterceptor.withoutReturnValue(context -> {
-                            this.logger.info("Hello {}!", context.args()[0]);
-                        }))
-                        // All non-configured methods
-                        .defaultStub(MethodStub.withoutReturnValue(stubContext -> {
-                            this.logger.info("Stubbing method {}", stubContext.target());
-                        })));
+            .implement(Fareweller.class)
+            .advisors(advisors -> advisors
+                // Greeter.sayHello()
+                .method(greeterType.methods().named("sayHello").get())
+                .intercept(MethodInterceptor.withoutReturnValue(context -> {
+                    context.instance().sayHello("world");
+                }))
+                // Greeter.sayHello(name)
+                .method(greeterType.methods().named("sayHello", String.class).get())
+                .intercept(MethodInterceptor.withoutReturnValue(context -> {
+                    this.logger.info("Hello {}!", context.args()[0]);
+                }))
+                // All non-configured methods
+                .defaultStub(MethodStub.withoutReturnValue(stubContext -> {
+                    this.logger.info("Stubbing method {}", stubContext.target());
+                })));
 
         Option<Greeter> greeterOption = proxyFactory.proxy();
         greeterOption.peek(greeter -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,46 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import java.util.function.Supplier;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+
+import java.util.function.Supplier;
 
 /**
- * A {@link HierarchicalBinderPostProcessor} that delegates to a list of other {@link HierarchicalBinderPostProcessor}s. Each
- * processor is invoked in order according to its indicated {@link HierarchicalBinderPostProcessor#priority()}. However, the
- * composite processor itself has a priority of {@link ProcessingPriority#NORMAL_PRECEDENCE}, which could mean that ordering
- * may behave differently than expected if the composite is part of a list of processors itself.
+ * A {@link HierarchicalBinderPostProcessor} that delegates to a list of other
+ * {@link HierarchicalBinderPostProcessor}s. Each processor is invoked in order according to its
+ * indicated {@link HierarchicalBinderPostProcessor#priority()}. However, the composite processor
+ * itself has a priority of {@link ProcessingPriority#NORMAL_PRECEDENCE}, which could mean that
+ * ordering may behave differently than expected if the composite is part of a list of processors
+ * itself.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class CompositeHierarchicalBinderPostProcessor implements HierarchicalBinderPostProcessor {
 
-    private final Supplier<MultiMap<Integer, HierarchicalBinderPostProcessor>> postProcessors;
+    private final Supplier<NavigableMultiMap<Integer, HierarchicalBinderPostProcessor>>
+        postProcessors;
 
-    public CompositeHierarchicalBinderPostProcessor(Supplier<MultiMap<Integer, HierarchicalBinderPostProcessor>> postProcessors) {
+    public CompositeHierarchicalBinderPostProcessor(
+        Supplier<NavigableMultiMap<Integer, HierarchicalBinderPostProcessor>> postProcessors
+    ) {
         this.postProcessors = postProcessors;
     }
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
-        MultiMap<Integer, HierarchicalBinderPostProcessor> processors = this.postProcessors.get();
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
+        NavigableMultiMap<Integer, HierarchicalBinderPostProcessor> processors =
+            this.postProcessors.get();
         for (Integer priority : processors.keySet()) {
-            for(HierarchicalBinderPostProcessor processor : processors.get(priority)) {
+            for (HierarchicalBinderPostProcessor processor : processors.get(priority)) {
                 processor.process(application, scope, binder);
             }
         }

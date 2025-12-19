@@ -30,7 +30,8 @@ import org.dockbox.hartshorn.util.properties.SimpleNode;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
- * A diagnostics property writer that writes to a {@link GroupNode} in a {@link StandardDiagnosticsReportCollector}.
+ * A diagnostics property writer that writes to a {@link GroupNode} in a
+ * {@link StandardDiagnosticsReportCollector}.
  *
  * @since 0.5.0
  *
@@ -43,7 +44,11 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     private final StandardDiagnosticsReportCollector collector;
     private final GroupNode group;
 
-    public StandardDiagnosticsPropertyWriter(String name, StandardDiagnosticsReportCollector collector, GroupNode group) {
+    public StandardDiagnosticsPropertyWriter(
+        String name,
+        StandardDiagnosticsReportCollector collector,
+        GroupNode group
+    ) {
         this.name = name;
         this.collector = collector;
         this.group = group;
@@ -95,7 +100,9 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     public DiagnosticsReportCollector writeDelegate(Reportable reportable) {
         this.checkClosed();
         GroupNode group = new GroupNode(this.name);
-        reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+        reportable.report(property -> new StandardDiagnosticsPropertyWriter(property,
+            this.collector,
+            group));
         return this.exit(group);
     }
 
@@ -146,7 +153,9 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
         List<Node<?>> nodes = new ArrayList<>();
         for (Reportable reportable : reportables) {
             GroupNode group = new GroupNode(this.name);
-            reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+            reportable.report(property -> new StandardDiagnosticsPropertyWriter(property,
+                this.collector,
+                group));
             nodes.add(group);
         }
         return this.exit(new ArrayNode<>(this.name, nodes));

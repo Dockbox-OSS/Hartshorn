@@ -33,12 +33,14 @@ import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 public class PostfixExpressionTests {
 
     @Test
-    void postFixIncrementYieldsOriginalValueAndIncrementsVariable(@Inject ApplicationContext applicationContext) {
+    void postFixIncrementYieldsOriginalValueAndIncrementsVariable(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a++")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("a", 5)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("a", 5)
+            .build();
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
@@ -52,28 +54,30 @@ public class PostfixExpressionTests {
     void postFixIncrementOnNonNumberValueFails(@Inject ApplicationContext applicationContext) {
         String actual = "not a number";
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a++")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("a", actual)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("a", actual)
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpretValue
+            ScriptEvaluationError.class,
+            helper::interpretValue
         );
         ScriptAssertions.assertEvaluationError(
-                error,
-                FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
+            error,
+            FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
         );
     }
 
     @Test
-    void postFixDecrementYieldsOriginalValueAndDecrementsVariable(@Inject ApplicationContext applicationContext) {
+    void postFixDecrementYieldsOriginalValueAndDecrementsVariable(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a--")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("a", 5)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("a", 5)
+            .build();
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
@@ -87,18 +91,18 @@ public class PostfixExpressionTests {
     void postFixDecrementOnNonNumberValueFails(@Inject ApplicationContext applicationContext) {
         String actual = "not a number";
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a--")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("a", actual)
-                .build();
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("a", actual)
+            .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
-                ScriptEvaluationError.class,
-                helper::interpretValue
+            ScriptEvaluationError.class,
+            helper::interpretValue
         );
         ScriptAssertions.assertEvaluationError(
-                error,
-                FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
+            error,
+            FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
         );
     }
 }

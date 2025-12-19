@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A {@link TypeReferenceCollector} that provides a predefined set of {@link TypeReference}s. The provided set is
- * returned on every invocation of {@link #collect()}. This is useful when classpath scanning is not desired, but
- * standalone components are to be used.
+ * A {@link TypeReferenceCollector} that provides a predefined set of {@link TypeReference}s. The
+ * provided set is returned on every invocation of {@link #collect()}. This is useful when classpath
+ * scanning is not desired, but standalone components are to be used.
  *
  * @since 0.4.13
  *
@@ -46,43 +46,45 @@ public final class PredefinedSetTypeReferenceCollector implements TypeReferenceC
     }
 
     /**
-     * Creates a new instance of {@link PredefinedSetTypeReferenceCollector} that provides the provided set of
-     * {@link Class classes} as {@link TypeReference}s.
+     * Creates a new instance of {@link PredefinedSetTypeReferenceCollector} that provides the
+     * provided set of {@link Class classes} as {@link TypeReference}s.
      *
      * @param references The classes to provide as {@link TypeReference}s
+     *
      * @return A new instance of {@link PredefinedSetTypeReferenceCollector}
      */
     public static PredefinedSetTypeReferenceCollector of(Set<Class<?>> references) {
         return new PredefinedSetTypeReferenceCollector(references.stream()
-                .map(ClassReference::new)
-                .collect(Collectors.toSet()));
+            .map(ClassReference::new)
+            .collect(Collectors.toSet()));
     }
 
     /**
-     * Creates a new instance of {@link PredefinedSetTypeReferenceCollector} that provides the provided set of
-     * {@link Class classes} as {@link TypeReference}s.
+     * Creates a new instance of {@link PredefinedSetTypeReferenceCollector} that provides the
+     * provided set of {@link Class classes} as {@link TypeReference}s.
      *
      * @param references The classes to provide as {@link TypeReference}s
+     *
      * @return A new instance of {@link PredefinedSetTypeReferenceCollector}
      */
     public static PredefinedSetTypeReferenceCollector of(Class<?>... references) {
         return new PredefinedSetTypeReferenceCollector(Stream.of(references)
-                .map(ClassReference::new)
-                .collect(Collectors.toSet()));
+            .map(ClassReference::new)
+            .collect(Collectors.toSet()));
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         String[] typeNames = this.references.stream()
-                .map(TypeReference::qualifiedName)
-                .toArray(String[]::new);
+            .map(TypeReference::qualifiedName)
+            .toArray(String[]::new);
         collector.property("references").writeStrings(typeNames);
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("references", this.references)
-                .describe();
+            .field("references", this.references)
+            .describe();
     }
 }

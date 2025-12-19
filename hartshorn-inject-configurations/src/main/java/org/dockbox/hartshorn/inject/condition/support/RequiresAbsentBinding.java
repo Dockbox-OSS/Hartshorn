@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * A condition that requires a binding to be present in the {@link org.dockbox.hartshorn.inject.binding.HierarchicalBinder}.
+ * A condition that requires a binding to be present in the
+ * {@link org.dockbox.hartshorn.inject.binding.HierarchicalBinder}.
  *
  * @see AbsentBindingCondition
  *
@@ -34,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  *
  * @author Guus Lieben
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = AbsentBindingCondition.class)
@@ -56,8 +57,9 @@ public @interface RequiresAbsentBinding {
     String name() default "";
 
     /**
-     * @see RequiresCondition#failOnNoMatch()
      * @return whether to fail on no match
+     *
+     * @see RequiresCondition#failOnNoMatch()
      */
     @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;

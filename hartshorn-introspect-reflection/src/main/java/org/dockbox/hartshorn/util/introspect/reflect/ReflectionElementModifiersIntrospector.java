@@ -53,7 +53,7 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
         }
         catch (NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
             syntheticModifier = 0x00001000;
-            mandatedModifier  = 0x00008000;
+            mandatedModifier = 0x00008000;
         }
         SYNTHETIC = syntheticModifier;
         MANDATED = mandatedModifier;

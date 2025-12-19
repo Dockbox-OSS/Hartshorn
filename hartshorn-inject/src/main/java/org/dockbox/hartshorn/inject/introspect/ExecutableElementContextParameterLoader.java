@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * A {@link RuleBasedParameterLoader} that loads parameters for executable elements (methods or constructors)
- * within injectable contexts. Supports the following behaviors:
+ * A {@link RuleBasedParameterLoader} that loads parameters for executable elements (methods or
+ * constructors) within injectable contexts. Supports the following behaviors:
  * <ul>
  *     <li>{@link ContextParameterLoaderRule} for loading context parameters</li>
  *     <li>{@link PropertyParameterLoaderRule} for loading properties</li>
@@ -39,7 +39,8 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  *
  * @author Guus Lieben
  */
-public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
+public class ExecutableElementContextParameterLoader
+    extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
     private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
     private final InjectionCapableApplication application;
@@ -53,16 +54,28 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     }
 
     @Override
-    protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        ComponentKey<?> componentKey = this.application.environment().componentKeyResolver().resolve(parameter, context.scope());
+    protected <T> T loadDefault(
+        ParameterView<T> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
+        ComponentKey<?> componentKey = this.application.environment()
+            .componentKeyResolver()
+            .resolve(parameter, context.scope());
         InjectionPoint injectionPoint = new InjectionPoint(parameter);
-        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
+        ComponentRequestContext requestContext =
+            ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object out = context.provider().get(componentKey, requestContext);
 
         boolean required = this.requireRule.isRequired(injectionPoint);
 
         if (required && out == null) {
-            throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
+            throw new ComponentRequiredException("Parameter "
+                + parameter.name()
+                + " on "
+                + parameter.declaredBy().qualifiedName()
+                + " is required");
         }
         return parameter.type().cast(out);
     }

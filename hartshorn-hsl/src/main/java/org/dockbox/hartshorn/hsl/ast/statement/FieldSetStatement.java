@@ -32,8 +32,18 @@ public class FieldSetStatement extends FieldMemberStatement {
 
     private final Parameter parameter;
 
-    public FieldSetStatement(Token modifier, Token set, FieldStatement fieldStatement, BlockStatement body, Parameter parameter) {
-        super(modifier, set, fieldStatement, parameter == null ? List.of() : List.of(parameter), body);
+    public FieldSetStatement(
+        Token modifier,
+        Token set,
+        FieldStatement fieldStatement,
+        BlockStatement body,
+        Parameter parameter
+    ) {
+        super(modifier,
+            set,
+            fieldStatement,
+            parameter == null ? List.of() : List.of(parameter),
+            body);
         this.parameter = parameter;
     }
 

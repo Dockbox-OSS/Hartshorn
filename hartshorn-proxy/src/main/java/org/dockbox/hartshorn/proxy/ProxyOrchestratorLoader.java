@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * Service discovery interface for {@link ProxyOrchestrator} implementations.
  *
  * @since 0.4.1
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -31,6 +32,7 @@ public interface ProxyOrchestratorLoader {
      * Creates a new {@link ProxyOrchestrator} instance.
      *
      * @param introspector The introspector to use for introspection
+     *
      * @return The created {@link ProxyOrchestrator} instance
      */
     ProxyOrchestrator create(Introspector introspector);

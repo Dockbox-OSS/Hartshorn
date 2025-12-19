@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegist
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * Orchestrator for component providers, which allows for the management of component providers within
- * various scopes. Alongside additional scopes, there is always a global scope available, for which the
- * provider is exposed through {@link #applicationProvider()}.
+ * Orchestrator for component providers, which allows for the management of component providers
+ * within various scopes. Alongside additional scopes, there is always a global scope available, for
+ * which the provider is exposed through {@link #applicationProvider()}.
  *
  * @since 0.5.0
  *
@@ -49,6 +49,7 @@ public interface ComponentProviderOrchestrator extends PostProcessingComponentPr
      * Returns whether a component provider exists for the specified scope.
      *
      * @param scope the scope for which to retrieve the provider
+     *
      * @return {@code true} if a provider exists for the specified scope, {@code false} otherwise
      */
     boolean containsScope(Scope scope);

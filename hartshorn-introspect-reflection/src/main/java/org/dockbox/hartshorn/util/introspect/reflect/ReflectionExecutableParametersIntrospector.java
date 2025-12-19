@@ -38,7 +38,8 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ReflectionExecutableParametersIntrospector implements ExecutableParametersIntrospector {
+public class ReflectionExecutableParametersIntrospector
+    implements ExecutableParametersIntrospector {
 
     private final Introspector introspector;
     private final ReflectionExecutableElementView<?> executable;
@@ -46,7 +47,10 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     private List<TypeView<?>> parameterTypes;
     private List<TypeView<?>> genericParameterTypes;
 
-    public ReflectionExecutableParametersIntrospector(Introspector introspector, ReflectionExecutableElementView<?> executable) {
+    public ReflectionExecutableParametersIntrospector(
+        Introspector introspector,
+        ReflectionExecutableElementView<?> executable
+    ) {
         this.introspector = introspector;
         this.executable = executable;
     }
@@ -55,8 +59,8 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     public List<TypeView<?>> types() {
         if (this.parameterTypes == null) {
             this.parameterTypes = Arrays.stream(this.executable.executable().getParameterTypes())
-                    .map(this.introspector::introspect)
-                    .collect(Collectors.toList());
+                .map(this.introspector::introspect)
+                .collect(Collectors.toList());
         }
         return this.parameterTypes;
     }
@@ -64,7 +68,8 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     @Override
     public List<TypeView<?>> genericTypes() {
         if (this.genericParameterTypes == null) {
-            this.genericParameterTypes = Arrays.stream(this.executable.executable().getGenericParameterTypes())
+            this.genericParameterTypes =
+                Arrays.stream(this.executable.executable().getGenericParameterTypes())
                     .map(this.introspector::introspect)
                     .collect(Collectors.toList());
         }
@@ -86,8 +91,8 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     @Override
     public List<ParameterView<?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-                .filter(parameter -> parameter.annotations().has(annotation))
-                .toList();
+            .filter(parameter -> parameter.annotations().has(annotation))
+            .toList();
     }
 
     @Override
@@ -125,7 +130,10 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
         return this.matches(parameterTypes, TypeView::isParentOf);
     }
 
-    private boolean matches(List<Class<?>> parameterTypes, BiPredicate<TypeView<?>, Class<?>> predicate) {
+    private boolean matches(
+        List<Class<?>> parameterTypes,
+        BiPredicate<TypeView<?>, Class<?>> predicate
+    ) {
         if (parameterTypes.size() != this.count()) {
             return false;
         }
@@ -138,6 +146,5 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
             }
         }
         return true;
-
     }
 }

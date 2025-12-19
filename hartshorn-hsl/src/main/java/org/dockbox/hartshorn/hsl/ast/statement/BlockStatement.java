@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * A statement representing a block of code, which is a collection of statements enclosed
- * within configured tokens (typically, curly braces).
+ * A statement representing a block of code, which is a collection of statements enclosed within
+ * configured tokens (typically, curly braces).
  *
  * @since 0.4.12
  *
@@ -38,6 +38,11 @@ public class BlockStatement extends Statement {
         this.statementList = statementList;
     }
 
+    /**
+     * Returns the list of statements that make up the block of code.
+     *
+     * @return the list of statements in the block
+     */
     public List<Statement> statements() {
         return this.statementList;
     }

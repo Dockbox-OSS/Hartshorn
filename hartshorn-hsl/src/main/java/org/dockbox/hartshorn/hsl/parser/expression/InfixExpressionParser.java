@@ -24,18 +24,22 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for infix function (call) expressions. Infix functions are functions that
- * are called using an operator-like syntax, such as <code>a add b</code> instead of
+ * Parser for infix function (call) expressions. Infix functions are functions that are called using
+ * an operator-like syntax, such as <code>a add b</code> instead of
  * <code>add(a, b)</code>.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class InfixExpressionParser extends AbstractFunctionOperatorExpressionParser {
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         Expression expression = chain.next(parser, validator);
 
         TokenType identifier = parser.tokenRegistry().literals().identifier();
@@ -48,6 +52,7 @@ public class InfixExpressionParser extends AbstractFunctionOperatorExpressionPar
     }
 
     private boolean hasInfixFunction(TokenParser parser, Token name) {
-        return this.containedInFunctionContext(parser, context -> context.infixFunctions().contains(name.lexeme()));
+        return this.containedInFunctionContext(parser,
+            context -> context.infixFunctions().contains(name.lexeme()));
     }
 }

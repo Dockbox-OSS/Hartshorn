@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.launchpad.activation;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Thrown when an attempt is made to register a type as module activator, but the type does not
- * meet the requirements of a module activator.
+ * Thrown when an attempt is made to register a type as module activator, but the type does not meet
+ * the requirements of a module activator.
  *
  * @see ModuleActivator
- *
+ * 
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class InvalidActivatorException extends ApplicationRuntimeException {

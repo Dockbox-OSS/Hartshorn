@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,12 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
- * A proxy context container is a {@link Context} implementation that acts as a temporary container for
- * contexts which are later used to create a proxy. This container is used to store the contexts that are
- * created during the proxy creation process.
+ * A proxy context container is a {@link Context} implementation that acts as a temporary container
+ * for contexts which are later used to create a proxy. This container is used to store the contexts
+ * that are created during the proxy creation process.
  *
  * @since 0.4.12
+ *
  * @author Guus Lieben
  */
 public class ProxyContextContainer extends DefaultContext {

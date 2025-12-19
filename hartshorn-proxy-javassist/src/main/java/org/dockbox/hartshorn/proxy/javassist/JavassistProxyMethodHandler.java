@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,15 @@ import javassist.util.proxy.MethodHandler;
  *
  * @author Guus Lieben
  */
-public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
+public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor,
+                                             Introspector introspector) implements MethodHandler {
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args)
+        throws Throwable {
         return this.interceptor.intercept(self,
-                new MethodInvokable(thisMethod, this.introspector()),
-                new MethodInvokable(proceed, this.introspector()),
-                args);
+            new MethodInvokable(thisMethod, this.introspector()),
+            new MethodInvokable(proceed, this.introspector()),
+            args);
     }
 }

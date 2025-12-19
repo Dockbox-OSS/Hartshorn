@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Context for {@link MethodInterceptorPostProcessor} implementations to obtain information
- * about the candidate method being processed.
+ * Context for {@link MethodInterceptorPostProcessor} implementations to obtain information about
+ * the candidate method being processed.
  *
  * @param <T> the type of the class containing the method
  *
@@ -57,6 +57,7 @@ public interface MethodProxyContext<T> extends InjectionApplicationAwareContext 
      *
      * @param annotation the type of the annotation to find
      * @param <A> the type of the annotation
+     *
      * @return the annotation instance, or {@code null} if the annotation is not present
      */
     <A extends Annotation> A annotation(Class<A> annotation);

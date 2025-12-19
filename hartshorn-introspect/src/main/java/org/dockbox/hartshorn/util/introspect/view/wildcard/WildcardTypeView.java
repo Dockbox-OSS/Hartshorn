@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link TypeView} that represents a wildcard type. This type is used to represent the type of
- * a wildcard parameterized type, such as the {@code ?} in {@code List<?>}.
+ * A {@link TypeView} that represents a wildcard type. This type is used to represent the type of a
+ * wildcard parameterized type, such as the {@code ?} in {@code List<?>}.
  *
  * <p>This type is not a real type, and as such, does not provide access to any information about
  * the type it represents. It does, however, provide empty introspectors for e.g. annotations and

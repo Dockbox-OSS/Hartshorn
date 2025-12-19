@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
 import java.nio.file.Path;
 
 /**
- * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and handed
- * over to {@link ResourceHandler}s for further processing.
+ * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and
+ * handed over to {@link ResourceHandler}s for further processing.
  *
  * @see ClassPathScanner
  * @see ResourceHandler
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public interface ClassPathResource {
@@ -49,6 +49,7 @@ public interface ClassPathResource {
     /**
      * The name of the resource. For classes this is the fully qualified class name, for other
      * resources this is the path to the resource.
+     *
      * @return The name, never {@code null}.
      */
     String resourceName();

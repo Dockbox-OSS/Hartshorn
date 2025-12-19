@@ -30,26 +30,30 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * A {@link InstantiationStrategy} of which the result can be mapped using a list of {@link Function}s. This
- * can be useful to apply a set of transformations to a {@link ObjectContainer}, without having
- * to create a new provider.
+ * A {@link InstantiationStrategy} of which the result can be mapped using a list of
+ * {@link Function}s. This can be useful to apply a set of transformations to a
+ * {@link ObjectContainer}, without having to create a new provider.
  *
  * @param <T> The type instance to provide.
  *
  * @see InstantiationStrategy
  * @see ObjectContainer
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public final class CompositeInstantiationStrategy<T> implements InstantiationStrategy<T> {
 
-    private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions = new LinkedList<>();
+    private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions =
+        new LinkedList<>();
     private final InstantiationStrategy<T> strategy;
 
     @SafeVarargs
-    public CompositeInstantiationStrategy(InstantiationStrategy<T> strategy, Function<ObjectContainer<T>, ObjectContainer<T>>... functions) {
+    public CompositeInstantiationStrategy(
+        InstantiationStrategy<T> strategy,
+        Function<ObjectContainer<T>, ObjectContainer<T>>... functions
+    ) {
         this.strategy = strategy;
         this.functions.addAll(List.of(functions));
     }
@@ -65,8 +69,8 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     /**
-     * Returns the list of functions that are applied to the result of the provider. The list
-     * is immutable, and will be in the order in which the functions are applied.
+     * Returns the list of functions that are applied to the result of the provider. The list is
+     * immutable, and will be in the order in which the functions are applied.
      *
      * @return The list of functions that are applied to the result of the provider.
      */
@@ -75,9 +79,13 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+    public Option<ObjectContainer<T>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException {
         return this.strategy.provide(application, requestContext, scope)
-                .map(this::transformContainer);
+            .map(this::transformContainer);
     }
 
     private ObjectContainer<T> transformContainer(ObjectContainer<T> container) {
@@ -88,7 +96,9 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     @Override
-    public InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+    public InstantiationStrategy<T> map(
+        Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction
+    ) {
         this.functions.add(mappingFunction);
         return this;
     }
@@ -106,8 +116,8 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("strategy", this.strategy)
-                .field("functions", this.functions)
-                .describe();
+            .field("strategy", this.strategy)
+            .field("functions", this.functions)
+            .describe();
     }
 }

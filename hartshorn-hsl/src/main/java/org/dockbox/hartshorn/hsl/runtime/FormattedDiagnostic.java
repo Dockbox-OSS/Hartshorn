@@ -46,6 +46,7 @@ public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments
      *
      * @param message the diagnostic message
      * @param arguments the arguments to format the message with
+     *
      * @return the formatted diagnostic
      */
     public static FormattedDiagnostic of(DiagnosticMessage message, Object... arguments) {
@@ -76,6 +77,7 @@ public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments
          * Sets the diagnostic message.
          *
          * @param message the diagnostic message
+         *
          * @return this builder
          */
         public Builder message(DiagnosticMessage message) {
@@ -87,6 +89,7 @@ public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments
          * Adds an argument to the diagnostic message. The order of arguments is preserved.
          *
          * @param argument the argument to add
+         *
          * @return this builder
          */
         public Builder argument(Object argument) {

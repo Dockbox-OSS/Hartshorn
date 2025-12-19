@@ -24,11 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A {@link ResultCollector} implementation that only stores results in memory, without any
- * persistent caching. This is primarily useful for short-lived scripts or when results do not
- * need to be reused.
+ * persistent caching. This is primarily useful for short-lived scripts or when results do not need
+ * to be reused.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class CacheOnlyResultCollector implements ResultCollector {

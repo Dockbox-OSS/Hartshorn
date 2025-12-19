@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <V> the type of the values
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {

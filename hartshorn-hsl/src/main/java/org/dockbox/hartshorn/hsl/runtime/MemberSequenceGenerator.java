@@ -22,8 +22,8 @@ class MemberSequenceGenerator {
 
     static int nextMember(Phase phase) {
         int group = phase == null
-                ? Phase.values().length
-                : phase.ordinal();
+            ? Phase.values().length
+            : phase.ordinal();
         MEMBER_SEQUENCE[group]++;
         return MEMBER_SEQUENCE[group];
     }

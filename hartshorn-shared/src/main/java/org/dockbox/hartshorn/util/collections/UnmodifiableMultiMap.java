@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
-import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * An unmodifiable {@link MultiMap} implementation that wraps another {@link MultiMap} and prevents
@@ -44,9 +45,18 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
         this.map = map;
     }
 
+    /**
+     * Get the internal modifiable map. This may be used by subclasses to delegate read operations.
+     *
+     * @return the internal modifiable map
+     */
+    protected MultiMap<K, V> internalMap() {
+        return this.map;
+    }
+
     @Override
     public Collection<V> allValues() {
-        return this.map.allValues();
+        return this.internalMap().allValues();
     }
 
     @Override
@@ -71,37 +81,37 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public Collection<V> get(K key) {
-        return List.copyOf(this.map.get(key));
+        return List.copyOf(this.internalMap().get(key));
     }
 
     @Override
     public Set<K> keySet() {
-        return CollectionUtilities.copyOf(this.map.keySet());
+        return CollectionUtilities.copyOf(this.internalMap().keySet());
     }
 
     @Override
     public Set<Entry<K, Collection<V>>> entrySet() {
-        return CollectionUtilities.copyOf(this.map.entrySet());
+        return CollectionUtilities.copyOf(this.internalMap().entrySet());
     }
 
     @Override
     public Collection<Collection<V>> values() {
-        return List.copyOf(this.map.values());
+        return List.copyOf(this.internalMap().values());
     }
 
     @Override
     public boolean containsKey(K key) {
-        return this.map.containsKey(key);
+        return this.internalMap().containsKey(key);
     }
 
     @Override
     public boolean containsValue(V value) {
-        return this.map.containsValue(value);
+        return this.internalMap().containsValue(value);
     }
 
     @Override
     public boolean containsEntry(K key, V value) {
-        return this.map.containsEntry(key, value);
+        return this.internalMap().containsEntry(key, value);
     }
 
     @Override
@@ -116,12 +126,12 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public int size() {
-        return this.map.size();
+        return this.internalMap().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.map.isEmpty();
+        return this.internalMap().isEmpty();
     }
 
     @Override
@@ -141,7 +151,7 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void forEach(BiConsumer<K, V> consumer) {
-        this.map.forEach(consumer);
+        this.internalMap().forEach(consumer);
     }
 
     @Override
@@ -151,11 +161,11 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public EntryStream<K, Collection<V>> stream() {
-        return this.map.stream();
+        return this.internalMap().stream();
     }
 
     @Override
     public Iterator<Entry<K, Collection<V>>> iterator() {
-        return this.map.iterator();
+        return this.internalMap().iterator();
     }
 }

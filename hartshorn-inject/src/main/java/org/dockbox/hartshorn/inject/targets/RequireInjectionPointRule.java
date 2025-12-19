@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
  * dependencies.
  *
  * @see ComponentPopulator
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -36,8 +36,8 @@ public interface RequireInjectionPointRule {
      * Indicates whether the given {@link InjectionPoint} is required to be populated.
      *
      * @param injectionPoint the injection point to check
+     *
      * @return {@code true} if the injection point is required, {@code false} otherwise
      */
     boolean isRequired(InjectionPoint injectionPoint);
-
 }

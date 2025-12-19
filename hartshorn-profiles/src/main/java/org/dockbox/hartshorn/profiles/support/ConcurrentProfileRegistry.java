@@ -39,17 +39,23 @@ public class ConcurrentProfileRegistry implements ProfileRegistry {
     @Override
     public Option<EnvironmentProfile> profile(String name) {
         return Option.of(this.prioritizedProfiles.values().stream()
-                .filter(profile -> profile.name().equals(name))
-                .findFirst());
+            .filter(profile -> profile.name().equals(name))
+            .findFirst());
     }
 
     @Override
     public void register(int priority, EnvironmentProfile profile) {
-        if(this.prioritizedProfiles.containsKey(priority)) {
-            throw new IllegalArgumentException("Profile with priority " + priority + " already exists");
+        if (this.prioritizedProfiles.containsKey(priority)) {
+            throw new IllegalArgumentException("Profile with priority "
+                + priority
+                + " already exists");
         }
-        if(this.prioritizedProfiles.values().stream().anyMatch(p -> p.name().equals(profile.name()))) {
-            throw new IllegalArgumentException("Profile with name " + profile.name() + " already exists");
+        if (this.prioritizedProfiles.values()
+            .stream()
+            .anyMatch(p -> p.name().equals(profile.name()))) {
+            throw new IllegalArgumentException("Profile with name "
+                + profile.name()
+                + " already exists");
         }
         this.prioritizedProfiles.put(priority, profile);
     }
@@ -62,8 +68,8 @@ public class ConcurrentProfileRegistry implements ProfileRegistry {
     @Override
     public List<EnvironmentProfile> profiles() {
         return EntryStream.of(this.prioritizedProfiles)
-                .sortedKeys()
-                .values()
-                .toList();
+            .sortedKeys()
+            .values()
+            .toList();
     }
 }

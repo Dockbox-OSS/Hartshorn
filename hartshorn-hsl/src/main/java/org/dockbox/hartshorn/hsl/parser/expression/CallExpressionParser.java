@@ -34,12 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parser for call expressions, property access, and postfix operations. Handles function calls with arguments,
- * property access using the dot operator, and postfix increment/decrement operations.
+ * Parser for call expressions, property access, and postfix operations. Handles function calls with
+ * arguments, property access using the dot operator, and postfix increment/decrement operations.
  *
- * <p>Call expressions are parsed when an opening parenthesis is encountered after an expression, indicating a
- * function call. The parser collects arguments until a closing parenthesis is found, enforcing an artificial
- * maximum number of arguments (defaults to {@value #MAX_NUM_OF_ARGUMENTS}).
+ * <p>Call expressions are parsed when an opening parenthesis is encountered after an expression,
+ * indicating a
+ * function call. The parser collects arguments until a closing parenthesis is found, enforcing an
+ * artificial maximum number of arguments (defaults to {@value #MAX_NUM_OF_ARGUMENTS}).
  *
  * @since 0.7.0
  *
@@ -50,19 +51,24 @@ public class CallExpressionParser implements ExpressionParser {
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         Expression expression = chain.next(parser, validator);
         if (expression != null) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
-            while(true) {
-                if(parser.match(parser.tokenRegistry().tokenPairs().parameters().open())) {
+            while (true) {
+                if (parser.match(parser.tokenRegistry().tokenPairs().parameters().open())) {
                     expression = this.finishCall(parser, validator, expression);
                 }
-                else if(parser.match(BaseTokenType.DOT)) {
+                else if (parser.match(BaseTokenType.DOT)) {
                     Token name = parser.consume(identifier, "Expected property name after '.'.");
                     expression = new GetExpression(name, expression);
                 }
-                else if(parser.match(ArithmeticTokenType.PLUS_PLUS, ArithmeticTokenType.MINUS_MINUS)) {
+                else if (parser.match(ArithmeticTokenType.PLUS_PLUS,
+                    ArithmeticTokenType.MINUS_MINUS)) {
                     Token operator = parser.previous();
                     expression = new PostfixExpression(operator, expression);
                 }
@@ -74,7 +80,11 @@ public class CallExpressionParser implements ExpressionParser {
         return expression;
     }
 
-    private Expression finishCall(TokenParser parser, TokenStepValidator validator, Expression callee) {
+    private Expression finishCall(
+        TokenParser parser,
+        TokenStepValidator validator,
+        Expression callee
+    ) {
         List<Expression> arguments = new ArrayList<>();
         Token parenOpen = parser.previous();
         // For zero arguments
@@ -82,15 +92,17 @@ public class CallExpressionParser implements ExpressionParser {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
                     throw ScriptEvaluationError.builder(Phase.PARSING)
-                            .message(DiagnosticMessage.TOO_MANY_PARAMETERS, MAX_NUM_OF_ARGUMENTS)
-                            .at(parser.peek())
-                            .build();
+                        .message(DiagnosticMessage.TOO_MANY_PARAMETERS, MAX_NUM_OF_ARGUMENTS)
+                        .at(parser.peek())
+                        .build();
                 }
                 arguments.add(parser.expression());
             }
             while (parser.match(BaseTokenType.COMMA));
         }
-        Token parenClose = validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "arguments");
+        Token parenClose =
+            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(),
+                "arguments");
         return new FunctionCallExpression(callee, parenOpen, parenClose, arguments);
     }
 }

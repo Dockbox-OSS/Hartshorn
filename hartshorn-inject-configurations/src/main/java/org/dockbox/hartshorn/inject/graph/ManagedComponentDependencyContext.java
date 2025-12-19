@@ -33,31 +33,41 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * A {@link DependencyContext} implementation that is used for managed components. Managed components are components that
- * are managed by the container. Typically, these are obtained through the active {@link ComponentRegistry}.
+ * A {@link DependencyContext} implementation that is used for managed components. Managed
+ * components are components that are managed by the container. Typically, these are obtained
+ * through the active {@link ComponentRegistry}.
  *
  * @param <T> the type of the component that is managed
  *
  * @see DependencyContext
  * @see ComponentRegistry
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public abstract class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
+public abstract class ManagedComponentDependencyContext<T>
+    implements LifecycleAwareDependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
     public ManagedComponentDependencyContext(
-            ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
+        ComponentKey<T> componentKey,
+        DependencyMap dependencies,
+        ConstructorView<? extends T> constructorView
+    ) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
     }
 
+    /**
+     * The type of the managed component.
+     *
+     * @return the type view of the managed component
+     */
     protected abstract TypeView<T> type();
 
     @Override
@@ -105,11 +115,12 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
         Class<T> componentType = this.type().type();
         LifecycleType lifecycleType = this.lifecycleType();
         switch (lifecycleType) {
-            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
-            // by the context constructor when the application is ready for initialization.
+            // At this point we ignore the ComponentContainer#lazy() property. This will later be
+            // handled by the context constructor when the application is ready for initialization.
             case SINGLETON -> function.lazySingleton(componentType);
             case PROTOTYPE -> function.to(componentType);
-            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + lifecycleType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: "
+                + lifecycleType);
         }
     }
 }

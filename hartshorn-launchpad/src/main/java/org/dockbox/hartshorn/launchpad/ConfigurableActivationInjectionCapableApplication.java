@@ -20,14 +20,20 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
 
 /**
- * An {@link InjectionCapableApplication} of which the enabled functionality can be configured and expanded upon
- * using {@link ModuleActivatorHolder}s.
+ * An {@link InjectionCapableApplication} of which the enabled functionality can be configured and
+ * expanded upon using {@link ModuleActivatorHolder}s.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public interface ConfigurableActivationInjectionCapableApplication extends InjectionCapableApplication {
+public interface ConfigurableActivationInjectionCapableApplication
+    extends InjectionCapableApplication {
 
+    /**
+     * Get the module activators configured for this application.
+     *
+     * @return the module activators
+     */
     ModuleActivatorHolder activators();
 }

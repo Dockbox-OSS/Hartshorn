@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,25 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
  * A parameter loader context that provides access to the {@link ProxyOrchestrator} instance.
  *
  * @since 0.5.0
+ * 
  * @author Guus Lieben
  */
 public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
     private final ProxyOrchestrator proxyOrchestrator;
 
-    public ProxyParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ProxyOrchestrator proxyOrchestrator) {
+    public ProxyParameterLoaderContext(
+        ExecutableElementView<?> executable,
+        Object instance,
+        ProxyOrchestrator proxyOrchestrator
+    ) {
         super(executable, instance);
         this.proxyOrchestrator = proxyOrchestrator;
     }
 
     /**
-     * Returns the {@link ProxyOrchestrator} instance that owns the proxy that is being created or used.
+     * Returns the {@link ProxyOrchestrator} instance that owns the proxy that is being created or
+     * used.
      *
      * @return the proxy orchestrator
      */

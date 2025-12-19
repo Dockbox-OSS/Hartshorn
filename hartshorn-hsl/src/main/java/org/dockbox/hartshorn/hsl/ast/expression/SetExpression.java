@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing a set operation, which is used to assign a value to a property
- * of an object. For example, the expression <code>object.property = value</code> assigns the
- * value of <code>value</code> to the property <code>property</code> of the object
+ * An expression representing a set operation, which is used to assign a value to a property of an
+ * object. For example, the expression <code>object.property = value</code> assigns the value of
+ * <code>value</code> to the property <code>property</code> of the object
  * <code>object</code>.
  *
  * @since 0.4.12
@@ -43,6 +43,11 @@ public class SetExpression extends Expression implements NamedNode {
         this.value = value;
     }
 
+    /**
+     * Returns the expression representing the object whose property is being set.
+     *
+     * @return the object expression
+     */
     public Expression object() {
         return this.object;
     }
@@ -52,6 +57,11 @@ public class SetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the value being assigned to the property.
+     *
+     * @return the expression representing the value being assigned
+     */
     public Expression value() {
         return this.value;
     }

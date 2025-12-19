@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.proxy;
 
 /**
- * The name generator is responsible for generating the name of the proxy class. The name is generated
- * based on the type context or the type name. The way the name is generated is based on the implementation
- * of the {@link NameGenerator} interface.
+ * The name generator is responsible for generating the name of the proxy class. The name is
+ * generated based on the type context or the type name. The way the name is generated is based on
+ * the implementation of the {@link NameGenerator} interface.
  *
  * @since 0.4.10
  *
@@ -29,14 +29,18 @@ public interface NameGenerator {
 
     /**
      * Gets the name of the proxy class based on the type class.
+     *
      * @param type The type class.
+     *
      * @return The name of the proxy class.
      */
     String get(Class<?> type);
 
     /**
      * Gets the name of the proxy class based on the type name.
+     *
      * @param type The type name.
+     *
      * @return The name of the proxy class.
      */
     String get(String type);

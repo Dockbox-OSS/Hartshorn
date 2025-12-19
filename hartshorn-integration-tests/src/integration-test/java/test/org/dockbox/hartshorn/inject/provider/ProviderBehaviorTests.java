@@ -120,9 +120,11 @@ public class ProviderBehaviorTests {
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SampleInterface.class));
+        Assertions.assertThrows(ComponentResolutionException.class,
+            () -> this.applicationContext.get(SampleInterface.class));
 
-        SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
+        SampleInterface provided =
+            this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -150,27 +152,34 @@ public class ProviderBehaviorTests {
 
     @Test
     void testFailureInComponentConstructorYieldsInitializationException() {
-        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
+        ComponentResolutionException exception = Assertions.assertThrows(
+            ComponentResolutionException.class,
+            () -> this.applicationContext.get(
                 ErrorInConstructorObject.class));
         Throwable cause = exception.getCause();
         Assertions.assertNotNull(cause);
         Assertions.assertTrue(cause instanceof ApplicationException);
 
         ApplicationException applicationException = (ApplicationException) cause;
-        Assertions.assertEquals("Failed to create instance of type " + ErrorInConstructorObject.class.getName(), applicationException.getMessage());
+        Assertions.assertEquals("Failed to create instance of type "
+            + ErrorInConstructorObject.class.getName(), applicationException.getMessage());
     }
 
     @Test
     void testFailingConstructorIsRethrown() {
-        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
+        ComponentResolutionException exception = Assertions.assertThrows(
+            ComponentResolutionException.class,
+            () -> this.applicationContext.get(
                 TypeWithFailingConstructor.class));
         Assertions.assertTrue(exception.getCause() instanceof ApplicationException);
 
         ApplicationException applicationException = (ApplicationException) exception.getCause();
         Assertions.assertTrue(applicationException.getCause() instanceof IllegalStateException);
 
-        IllegalStateException illegalStateException = (IllegalStateException) applicationException.getCause();
-        Assertions.assertEquals(TypeWithFailingConstructor.ERROR_MESSAGE, illegalStateException.getMessage());
+        IllegalStateException illegalStateException =
+            (IllegalStateException) applicationException.getCause();
+        Assertions.assertEquals(TypeWithFailingConstructor.ERROR_MESSAGE,
+            illegalStateException.getMessage());
     }
 
     @Test
@@ -183,12 +192,21 @@ public class ProviderBehaviorTests {
 
     @ParameterizedTest
     @MethodSource("providers")
-    @TestComponents({ SampleFieldImplementation.class, SampleProviderConfiguration.class})
-    void testProvidersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
+    @TestComponents({SampleFieldImplementation.class, SampleProviderConfiguration.class})
+    void testProvidersCanApply(
+        String meta,
+        String name,
+        boolean field,
+        String fieldMeta,
+        boolean singleton
+    ) {
         if (field) {
-            if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
+            if (fieldMeta == null) {
+                this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);
+            }
             else {
-                this.applicationContext.bind(ComponentKey.of(SampleField.class, fieldMeta)).to(SampleFieldImplementation.class);
+                this.applicationContext.bind(ComponentKey.of(SampleField.class, fieldMeta))
+                    .to(SampleFieldImplementation.class);
             }
         }
 
@@ -211,7 +229,8 @@ public class ProviderBehaviorTests {
                 second = this.applicationContext.get(ProvidedInterface.class);
             }
             else {
-                second = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
+                second =
+                    this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
             }
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
@@ -220,11 +239,11 @@ public class ProviderBehaviorTests {
 
     private static Stream<Arguments> providers() {
         return Stream.of(
-                Arguments.of(null, "Provision", false, null, false),
-                Arguments.of("named", "NamedProvision", false, null, false),
-                Arguments.of("parameter", "ParameterProvision", true, null, false),
-                Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
-                Arguments.of("singleton", "SingletonProvision", false, null, true)
+            Arguments.of(null, "Provision", false, null, false),
+            Arguments.of("named", "NamedProvision", false, null, false),
+            Arguments.of("parameter", "ParameterProvision", true, null, false),
+            Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
+            Arguments.of("singleton", "SingletonProvision", false, null, true)
         );
     }
 }

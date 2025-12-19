@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import org.dockbox.hartshorn.proxy.constraint.ProxyValidator;
 
 /**
  * A {@link ProxyFactory} that will first validate the type before creating the proxy. The
- * validation may be performed during initialization or during the creation of the proxy,
- * depending on the implementation.
+ * validation may be performed during initialization or during the creation of the proxy, depending
+ * on the implementation.
  *
  * @param <T> the type of the proxy
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public interface ValidatorProxyFactory<T> extends ProxyFactory<T> {

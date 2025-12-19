@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing the setting of a value in an array at a specific index. For
- * example, the expression <code>array[0] = value</code> sets the first element of the
- * array named <code>array</code> to the value specified by the <code>value</code> expression.
+ * An expression representing the setting of a value in an array at a specific index. For example,
+ * the expression <code>array[0] = value</code> sets the first element of the array named
+ * <code>array</code> to the value specified by the <code>value</code> expression.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ArraySetExpression extends Expression implements NamedNode {
@@ -47,10 +47,20 @@ public class ArraySetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the index in the array where the value should be set.
+     *
+     * @return The index expression.
+     */
     public Expression index() {
         return this.index;
     }
 
+    /**
+     * Returns the expression representing the value to be set in the array.
+     *
+     * @return The value expression.
+     */
     public Expression value() {
         return this.value;
     }

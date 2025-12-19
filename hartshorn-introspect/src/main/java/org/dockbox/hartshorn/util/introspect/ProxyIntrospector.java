@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A proxy introspector is used to introspect a proxy instance. It provides access to the original type of
- * the proxy, the proxied type of the proxy, the proxy instance itself and the original instance delegate
- * of the proxy if it is present and accessible.
+ * A proxy introspector is used to introspect a proxy instance. It provides access to the original
+ * type of the proxy, the proxied type of the proxy, the proxy instance itself and the original
+ * instance delegate of the proxy if it is present and accessible.
  *
  * @param <T> the type of the proxy
  *
@@ -32,16 +32,16 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface ProxyIntrospector<T> {
 
     /**
-     * Returns the original type of the proxy. This is the type of the object that is proxied, but is not the proxied
-     * type itself.
+     * Returns the original type of the proxy. This is the type of the object that is proxied, but
+     * is not the proxied type itself.
      *
      * @return the original type of the proxy
      */
     Class<T> targetClass();
 
     /**
-     * Gets the proxied type of the proxy. This is the type of the object that is proxied, but is not the original
-     * type of the proxy.
+     * Gets the proxied type of the proxy. This is the type of the object that is proxied, but is
+     * not the original type of the proxy.
      *
      * @return the proxied type of the proxy
      */

@@ -28,16 +28,17 @@ import java.util.Locale;
 public class ScriptAssertions {
 
     public static void assertEvaluationFails(
-            ExecutableScript executableScript,
-            FormattedDiagnostic diagnosticMessage
+        ExecutableScript executableScript,
+        FormattedDiagnostic diagnosticMessage
     ) {
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, executableScript::evaluate);
+        ScriptEvaluationError error =
+            Assertions.assertThrows(ScriptEvaluationError.class, executableScript::evaluate);
         assertEvaluationError(error, diagnosticMessage);
     }
 
     public static void assertEvaluationError(
-            ScriptEvaluationError error,
-            FormattedDiagnostic diagnosticMessage
+        ScriptEvaluationError error,
+        FormattedDiagnostic diagnosticMessage
     ) {
         if (diagnosticMessage.message().phase() != null) {
             Assertions.assertEquals(diagnosticMessage.message().phase(), error.phase());
@@ -49,8 +50,8 @@ public class ScriptAssertions {
     }
 
     public static void assertEvaluationError(
-            ScriptEvaluationError error,
-            DiagnosticMessage diagnosticMessage
+        ScriptEvaluationError error,
+        DiagnosticMessage diagnosticMessage
     ) {
         if (diagnosticMessage.phase() != null) {
             Assertions.assertEquals(diagnosticMessage.phase(), error.phase());
@@ -59,14 +60,18 @@ public class ScriptAssertions {
         String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
         String rawMessage = diagnosticMessage.format();
         Assertions.assertTrue(
-                StringUtilities.matchesFormatted(rawMessage, actualMessageStart),
-                "Expected message to match:\n" +
+            StringUtilities.matchesFormatted(rawMessage, actualMessageStart),
+            "Expected message to match:\n" +
                 rawMessage + "\nbut was:\n" +
                 actualMessageStart
         );
     }
 
-    public static void assertEvaluationFailedAtPosition(ScriptEvaluationError error, int line, int column) {
+    public static void assertEvaluationFailedAtPosition(
+        ScriptEvaluationError error,
+        int line,
+        int column
+    ) {
         Assertions.assertEquals(line, error.line());
         Assertions.assertEquals(column, error.column());
     }

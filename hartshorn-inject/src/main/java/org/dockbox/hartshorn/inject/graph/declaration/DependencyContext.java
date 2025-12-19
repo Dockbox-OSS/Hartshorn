@@ -32,8 +32,8 @@ import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A dependency context represents the definition of a single dependency, along with its
- * dependencies, scope and priority. The context can be used to automatically configure
- * a {@link BindingFunction} for the dependency.
+ * dependencies, scope and priority. The context can be used to automatically configure a
+ * {@link BindingFunction} for the dependency.
  *
  * @param <T> the type of the dependency
  *
@@ -44,8 +44,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface DependencyContext<T> {
 
     /**
-     * Returns the key that is used to identify the dependency in dependency visitors or
-     * graphs.
+     * Returns the key that is used to identify the dependency in dependency visitors or graphs.
      *
      * @return the key of the dependency
      */
@@ -60,20 +59,21 @@ public interface DependencyContext<T> {
     DependencyMap dependencies();
 
     /**
-     * Returns all dependencies of the dependency, of the given {@link DependencyResolutionType}.
-     * If the dependency does not have any dependencies of the given type, an empty set is
-     * returned.
+     * Returns all dependencies of the dependency, of the given {@link DependencyResolutionType}. If
+     * the dependency does not have any dependencies of the given type, an empty set is returned.
      *
      * @param resolutionType the type of dependencies to return
+     *
      * @return all dependencies of the dependency, of the given type
      */
     Set<ComponentKey<?>> dependencies(DependencyResolutionType resolutionType);
 
     /**
-     * Returns whether the dependency needs to be resolved immediately. If the dependency
-     * is not part of this context, {@code false} is returned.
+     * Returns whether the dependency needs to be resolved immediately. If the dependency is not
+     * part of this context, {@code false} is returned.
      *
      * @param dependencyCandidate the dependency to check
+     *
      * @return whether the dependency needs to be resolved immediately
      *
      * @see DependencyResolutionType#IMMEDIATE
@@ -81,16 +81,15 @@ public interface DependencyContext<T> {
     boolean needsImmediateResolution(ComponentKey<?> dependencyCandidate);
 
     /**
-     * Returns the priority of the dependency. This priority is used to determine the order
-     * in which dependencies are instantiated.
+     * Returns the priority of the dependency. This priority is used to determine the order in which
+     * dependencies are instantiated.
      *
      * @return the priority of the dependency
      */
     int priority();
 
     /**
-     * Returns the scope of the dependency. The scope determines the lifecycle of the
-     * dependency.
+     * Returns the scope of the dependency. The scope determines the lifecycle of the dependency.
      *
      * @return the scope of the dependency
      *
@@ -99,44 +98,44 @@ public interface DependencyContext<T> {
     Option<ScopeKey> scope();
 
     /**
-     * Returns the type of the binding. The type determines how the dependency is bound to
-     * the container.
+     * Returns the type of the binding. The type determines how the dependency is bound to the
+     * container.
      *
      * @return the type of the binding
      */
     ComponentMemberType memberType();
 
     /**
-     * Configures the given binding function for the dependency. The binding function is
-     * used to configure the dependency in the container. The implementation may decide
-     * whether to configure the dependency as whichever binding it prefers, or default to
-     * a no-op.
+     * Configures the given binding function for the dependency. The binding function is used to
+     * configure the dependency in the container. The implementation may decide whether to configure
+     * the dependency as whichever binding it prefers, or default to a no-op.
      *
      * @param function the binding function to configure
+     *
      * @throws ComponentConfigurationException when the binding could not be configured
      */
     void configure(BindingFunction<T> function) throws ComponentConfigurationException;
 
     /**
-     * Returns the origin of the dependency. The origin is the location where the dependency
-     * is defined. This is typically a constructor, field or method.
+     * Returns the origin of the dependency. The origin is the location where the dependency is
+     * defined. This is typically a constructor, field or method.
      *
      * @return the origin of the dependency
      */
     View origin();
 
     /**
-     * Returns whether the dependency is lazy. A lazy dependency is only resolved when it is
-     * first requested. Note that this only applies to dependencies that are singletons, as
-     * prototype dependencies are always resolved on-demand.
+     * Returns whether the dependency is lazy. A lazy dependency is only resolved when it is first
+     * requested. Note that this only applies to dependencies that are singletons, as prototype
+     * dependencies are always resolved on-demand.
      *
      * @return whether the dependency is lazy
      */
     boolean lazy();
 
     /**
-     * Returns the lifecycle type of the dependency. The lifecycle type determines the lifecycle
-     * of the dependency.
+     * Returns the lifecycle type of the dependency. The lifecycle type determines the lifecycle of
+     * the dependency.
      *
      * @return the lifecycle type of the dependency
      */
@@ -144,7 +143,8 @@ public interface DependencyContext<T> {
 
     /**
      * Returns whether the dependency should be processed after initialization. This is used to
-     * determine whether the dependency should be processed after the container has been initialized.
+     * determine whether the dependency should be processed after the container has been
+     * initialized.
      *
      * @return whether the dependency should be processed after initialization
      */

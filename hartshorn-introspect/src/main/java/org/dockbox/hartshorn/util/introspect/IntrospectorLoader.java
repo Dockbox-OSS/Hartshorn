@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
 /**
- * A loader for {@link Introspector} instances. This may be registered to a SPI registry to allow for
- * custom introspectors to be used.
+ * A loader for {@link Introspector} instances. This may be registered to a SPI registry to allow
+ * for custom introspectors to be used.
  *
  * @since 0.5.0
  *
@@ -30,11 +30,12 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 public interface IntrospectorLoader {
 
     /**
-     * Creates a new introspector instance. The provided {@link ProxyLookup} and {@link AnnotationLookup}
-     * instances can be used to introspect proxy and annotation instances.
+     * Creates a new introspector instance. The provided {@link ProxyLookup} and
+     * {@link AnnotationLookup} instances can be used to introspect proxy and annotation instances.
      *
      * @param proxyLookup the proxy lookup
      * @param annotationLookup the annotation lookup
+     *
      * @return the introspector instance
      */
     Introspector create(ProxyLookup proxyLookup, AnnotationLookup annotationLookup);

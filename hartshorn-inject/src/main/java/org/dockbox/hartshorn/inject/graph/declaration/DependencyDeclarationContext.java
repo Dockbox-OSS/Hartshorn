@@ -38,7 +38,8 @@ public interface DependencyDeclarationContext<T> {
     TypeView<T> type();
 
     /**
-     * Returns the composite qualifier of the dependency, which may be used to identify the dependency.
+     * Returns the composite qualifier of the dependency, which may be used to identify the
+     * dependency.
      *
      * @return the composite qualifier of the dependency
      */

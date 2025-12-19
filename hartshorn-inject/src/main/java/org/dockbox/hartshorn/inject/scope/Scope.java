@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,43 +20,40 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
- * {@link Scope Scopes} can be used to represent a specific scope in which
- * components are registered. Scopes are used to determine which components are
- * available in which context.
+ * {@link Scope Scopes} can be used to represent a specific scope in which components are
+ * registered. Scopes are used to determine which components are available in which context.
  *
  * <p>Implementations of this interface do not need to be thread-safe, as they
- * are not directly responsible for managing the hierarchies of components.
- * Instead, these hierarchies are managed by a {@link ComponentProvider} which
- * is capable of managing scoped component registrations.
+ * are not directly responsible for managing the hierarchies of components. Instead, these
+ * hierarchies are managed by a {@link ComponentProvider} which is capable of managing scoped
+ * component registrations.
  *
  * <p>A scope can be provided to a {@link ComponentKey}, which can then be used
- * by a {@link ComponentProvider} to determine which components are available.
- * It is not ensured individual {@link ComponentProvider}s will support this.
+ * by a {@link ComponentProvider} to determine which components are available. It is not ensured
+ * individual {@link ComponentProvider}s will support this.
  *
  * <p>Scopes can be used to determine which components are available in which
- * context. For example, this may be used to create short-lived singletons for
- * HTTP requests (e.g. for a {@code HttpRequest} and {@code HttpResponse}).
+ * context. For example, this may be used to create short-lived singletons for HTTP requests (e.g.
+ * for a {@code HttpRequest} and {@code HttpResponse}).
  *
  * <p>Scopes are expected to correctly implement {@link Object#equals(Object)} and
- * {@link Object#hashCode()} to ensure that they can be used as keys in a dictionary
- * of scopes.
+ * {@link Object#hashCode()} to ensure that they can be used as keys in a dictionary of scopes.
  *
  * @see ComponentKey#scope()
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Scope {
 
     /**
-     * The type of the scope, or a parent scope. This is used to determine which
-     * scope configurations are modified when this scope is referenced, by allowing
-     * subclasses to be installed based on the configuration of a parent scope.
+     * The type of the scope, or a parent scope. This is used to determine which scope
+     * configurations are modified when this scope is referenced, by allowing subclasses to be
+     * installed based on the configuration of a parent scope.
      *
      * @return The type of the scope, or a parent scope.
      */
     ScopeKey installableScopeType();
-
 }

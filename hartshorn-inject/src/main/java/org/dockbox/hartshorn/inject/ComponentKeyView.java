@@ -20,25 +20,24 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
- * Simplified view of a {@link ComponentKey}. This view can be used to compare keys, or to use as a key in a
- * map. Essentially, a view represents a component key without its dynamic properties, such as its scope and
- * provider strategy. Scopes are not included in the view, as they are not part of the key's identity, and
- * are often only used to select an appropriate {@link ComponentProvider}.
+ * Simplified view of a {@link ComponentKey}. This view can be used to compare keys, or to use as a
+ * key in a map. Essentially, a view represents a component key without its dynamic properties, such
+ * as its scope and provider strategy. Scopes are not included in the view, as they are not part of
+ * the key's identity, and are often only used to select an appropriate {@link ComponentProvider}.
  *
  * @param type The fully parameterized type of the component key
  * @param qualifier The qualifier of the component key
- *
  * @param <T> the type of the component
  *
  * @see ComponentKey#view()
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public record ComponentKeyView<T>(
-        ParameterizableType type,
-        CompositeQualifier qualifier
+    ParameterizableType type,
+    CompositeQualifier qualifier
 ) {
 
     public ComponentKeyView(ComponentKey<T> key) {
@@ -46,10 +45,11 @@ public record ComponentKeyView<T>(
     }
 
     /**
-     * Returns whether this view matches the given key. A view matches if both the type and qualifiers are
-     * equal.
+     * Returns whether this view matches the given key. A view matches if both the type and
+     * qualifiers are equal.
      *
      * @param componentKey the key to match
+     *
      * @return whether this view matches the given key
      */
     public boolean matches(ComponentKey<?> componentKey) {
@@ -57,10 +57,11 @@ public record ComponentKeyView<T>(
     }
 
     /**
-     * Returns whether this view matches the given view. A view matches if both the type and qualifiers are
-     * equal.
+     * Returns whether this view matches the given view. A view matches if both the type and
+     * qualifiers are equal.
      *
      * @param componentKeyView the view to match
+     *
      * @return whether this view matches the given view
      */
     public boolean matches(ComponentKeyView<?> componentKeyView) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,11 @@ public class SampleBinderPostProcessor implements HierarchicalBinderPostProcesso
     public static final String HELLO_WORLD = "Hello, World!";
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         binder.bind(String.class).singleton(HELLO_WORLD);
     }
 

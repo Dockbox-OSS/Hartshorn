@@ -48,16 +48,17 @@ public class InstantiationStrategySelectionStrategyTests {
 
     public static Stream<Arguments> strategies() {
         return Stream.of(
-                Arguments.of(new MaximumPriorityProviderSelectionStrategy(0)),
-                Arguments.of(new ExactPriorityProviderSelectionStrategy(0)),
-                Arguments.of(new MinimumPriorityProviderSelectionStrategy(0)),
-                Arguments.of(new HighestPriorityProviderSelectionStrategy())
+            Arguments.of(new MaximumPriorityProviderSelectionStrategy(0)),
+            Arguments.of(new ExactPriorityProviderSelectionStrategy(0)),
+            Arguments.of(new MinimumPriorityProviderSelectionStrategy(0)),
+            Arguments.of(new HighestPriorityProviderSelectionStrategy())
         );
     }
 
     private BindingHierarchy<?> createHierarchy() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
-        hierarchy.add(Priority.DEFAULT_PRIORITY, new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
+        hierarchy.add(Priority.DEFAULT_PRIORITY,
+            new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
         hierarchy.add(0, new SingletonInstantiationStrategy<>(PRIORITY_ZERO_VALUE));
         hierarchy.add(1, new SingletonInstantiationStrategy<>(PRIORITY_ONE_VALUE));
         hierarchy.add(2, new SingletonInstantiationStrategy<>(PRIORITY_TWO_VALUE));

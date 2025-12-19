@@ -29,13 +29,14 @@ import java.lang.annotation.Target;
  * Module activator for bootstrap-dependent components. This activator is automatically injected
  * when the application is created through {@link StandardApplicationBuilder}.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ModuleActivator(componentPreProcessors = {
-        LifecycleObserverPreProcessor.class,
+    LifecycleObserverPreProcessor.class,
 })
 public @interface UseLifecycleObservers {
 }

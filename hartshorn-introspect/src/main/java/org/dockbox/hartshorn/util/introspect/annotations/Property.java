@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,21 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The interface to provide custom introspection information to an object field when creating
- * an object dynamically.
+ * The interface to provide custom introspection information to an object field when creating an
+ * object dynamically.
+ *
+ * @since 0.4.13
  *
  * @author Guus Lieben
- * @since 0.4.13
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Property {
 
     /**
-     * The alternative identifier for the field. For example a field called {@code firstName} which is
-     * being injected into with a value of a property called {@code fn} could look like the following
-     * example:
+     * The alternative identifier for the field. For example a field called {@code firstName} which
+     * is being injected into with a value of a property called {@code fn} could look like the
+     * following example:
      *
      * <pre>{@code
      * @Property("fn")
@@ -97,8 +98,8 @@ public @interface Property {
     Class<?> key() default Void.class;
 
     /**
-     * If the field is a wrapper type (array, {@link Collection}, or {@link Map}), this value will be used as the
-     * content type if defined.
+     * If the field is a wrapper type (array, {@link Collection}, or {@link Map}), this value will
+     * be used as the content type if defined.
      *
      * @return the content type
      */

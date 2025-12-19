@@ -47,9 +47,9 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
 /**
- * Default {@link HierarchicalBinderPostProcessor} that binds common components to the binder. This processor
- * should typically only be applied once, and only to the global binder, as it binds components that are shared
- * across the application.
+ * Default {@link HierarchicalBinderPostProcessor} that binds common components to the binder. This
+ * processor should typically only be applied once, and only to the global binder, as it binds
+ * components that are shared across the application.
  *
  * @since 0.7.0
  *
@@ -58,27 +58,37 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 public class DefaultConfigurationBinderPostProcessor implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         this.processEnvironmentBindings(application, binder);
         this.processApplicationBindings(application, binder);
         this.processCommonBindings(binder);
     }
 
-    private void processEnvironmentBindings(InjectionCapableApplication application, Binder binder) {
+    private void processEnvironmentBindings(
+        InjectionCapableApplication application,
+        Binder binder
+    ) {
         binder.bind(InjectorEnvironment.class).singleton(application.environment());
         if (application.environment() instanceof ApplicationEnvironment applicationEnvironment) {
             binder.bind(ApplicationEnvironment.class).singleton(applicationEnvironment);
             binder.bind(FileSystemProvider.class).singleton(applicationEnvironment.fileSystem());
-            binder.bind(ClasspathResourceLocator.class).singleton(applicationEnvironment.classpath());
+            binder.bind(ClasspathResourceLocator.class)
+                .singleton(applicationEnvironment.classpath());
             binder.bind(ResourceLookup.class).singleton(applicationEnvironment.resourceLookup());
             binder.bind(ComponentRegistry.class)
                 .processAfterInitialization(false)
                 .singleton(applicationEnvironment.componentRegistry());
         }
         binder.bind(Introspector.class).singleton(application.environment().introspector());
-        binder.bind(AnnotationLookup.class).singleton(application.environment().introspector().annotations());
+        binder.bind(AnnotationLookup.class)
+            .singleton(application.environment().introspector().annotations());
         binder.bind(ProxyLookup.class).singleton(application.environment().proxyOrchestrator());
-        binder.bind(ProxyOrchestrator.class).singleton(application.environment().proxyOrchestrator());
+        binder.bind(ProxyOrchestrator.class)
+            .singleton(application.environment().proxyOrchestrator());
         binder.bind(PropertyRegistry.class).singleton(application.environment().propertyRegistry());
 
         if (application instanceof ObservableApplicationEnvironment observableEnvironment) {
@@ -86,7 +96,10 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
         }
     }
 
-    private void processApplicationBindings(InjectionCapableApplication application, Binder binder) {
+    private void processApplicationBindings(
+        InjectionCapableApplication application,
+        Binder binder
+    ) {
         binder.bind(InjectionCapableApplication.class).singleton(application);
         if (application instanceof ApplicationContext applicationContext) {
             if (binder instanceof AliasCapableBinder aliasCapableBinder) {
@@ -108,10 +121,15 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
                 .processAfterInitialization(false)
                 .singleton(componentProvider.scope());
 
-            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator scopeAwareComponentProvider) {
-                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
+            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator
+                scopeAwareComponentProvider
+            ) {
+                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider
+                    .applicationProvider();
 
-                if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
+                if (applicationProvider instanceof SingletonCacheComponentProvider
+                    singletonCacheComponentProvider
+                ) {
                     binder.bind(SingletonCache.class)
                         .processAfterInitialization(false)
                         .lazySingleton(scope -> singletonCacheComponentProvider.singletonCache());

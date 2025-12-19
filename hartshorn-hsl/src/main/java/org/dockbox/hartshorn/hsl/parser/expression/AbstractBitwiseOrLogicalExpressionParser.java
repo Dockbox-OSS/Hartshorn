@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Abstract base implementation for bitwise or logical expression parsers. This parser
- * handles the common logic for parsing left-associative binary expressions, while
- * leaving the specific operator tokens and expression construction to subclasses.
+ * Abstract base implementation for bitwise or logical expression parsers. This parser handles the
+ * common logic for parsing left-associative binary expressions, while leaving the specific operator
+ * tokens and expression construction to subclasses.
  *
  * @since 0.7.0
  *
@@ -34,9 +34,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 public abstract class AbstractBitwiseOrLogicalExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         Expression expression = chain.next(parser, validator);
-        while(parser.match(this.whileMatching())) {
+        while (parser.match(this.whileMatching())) {
             Token operator = parser.previous();
             // Unlike most, we do not want to call parser.expression() for the right-hand side,
             // as that would allow for operators with a lower precedence to be parsed first.
@@ -49,20 +53,21 @@ public abstract class AbstractBitwiseOrLogicalExpressionParser implements Expres
     }
 
     /**
-     * Defines the token types that this parser should match while parsing. These
-     * token types represent the operators for the bitwise or logical expressions.
+     * Defines the token types that this parser should match while parsing. These token types
+     * represent the operators for the bitwise or logical expressions.
      *
      * @return the token types to match
      */
     protected abstract TokenType[] whileMatching();
 
     /**
-     * Defines how to construct the expression for the given left-hand side,
-     * operator, and right-hand side expressions.
+     * Defines how to construct the expression for the given left-hand side, operator, and
+     * right-hand side expressions.
      *
      * @param expression the left-hand side expression
      * @param operator the operator token
      * @param right the right-hand side expression
+     *
      * @return the constructed expression
      */
     protected abstract Expression define(Expression expression, Token operator, Expression right);

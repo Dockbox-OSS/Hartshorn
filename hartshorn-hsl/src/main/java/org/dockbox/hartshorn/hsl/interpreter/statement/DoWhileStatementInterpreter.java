@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
  * Interpreter for {@link DoWhileStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class DoWhileStatementInterpreter implements StatementInterpreter<DoWhileStatement> {

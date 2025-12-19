@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import java.util.Set;
  * ComponentPopulator} is expected to filter injection points based on available metadata.
  *
  * @see ComponentPopulator
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface ComponentInjectionPointsResolver {
@@ -42,16 +42,18 @@ public interface ComponentInjectionPointsResolver {
      * {@link ComponentInjectionPoint}s that represent the injection points of the given type.
      *
      * @param type the type to resolve the injection points for
-     * @return the injection points of the given type
      * @param <T> the type of the component
+     *
+     * @return the injection points of the given type
      */
     <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type);
 
     /**
-     * Determines if the given declaration is injectable. This method is expected to return {@code
-     * true} if the given declaration is injectable, {@code false} otherwise.
+     * Determines if the given declaration is injectable. This method is expected to return
+     * {@code true} if the given declaration is injectable, {@code false} otherwise.
      *
      * @param declaration the declaration to check
+     *
      * @return {@code true} if the given declaration is injectable, {@code false} otherwise
      */
     boolean isInjectable(AnnotatedGenericTypeView<?> declaration);

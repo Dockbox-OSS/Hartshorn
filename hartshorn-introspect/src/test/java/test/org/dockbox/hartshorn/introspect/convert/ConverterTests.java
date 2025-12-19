@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ public class ConverterTests {
     @Test
     void testConverterChainingFollowsCorrectOrder() {
         Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
-                .andThen(Double::longValue)
-                .andThen(Long::intValue)
-                .andThen(Integer::byteValue);
+            .andThen(Double::longValue)
+            .andThen(Long::intValue)
+            .andThen(Integer::byteValue);
 
         byte result = converter.convert("1.0");
         Assertions.assertEquals((byte) 1, result);

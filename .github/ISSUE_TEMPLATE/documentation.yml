@@ -1,6 +1,6 @@
 name: 'Documentation'
 description: 'Any issues related to documentation, such as missing or incorrect information.'
-labels: ['type: documentation']
+labels: [ 'type: documentation' ]
 body:
   - type: dropdown
     id: type

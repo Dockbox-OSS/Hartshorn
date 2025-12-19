@@ -26,13 +26,13 @@ import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
 /**
- * Converts primitive wrapper types to their corresponding primitive types and vice versa. For example, converts
- * {@link Integer} to {@code int} and {@code int} to {@link Integer}.
+ * Converts primitive wrapper types to their corresponding primitive types and vice versa. For
+ * example, converts {@link Integer} to {@code int} and {@code int} to {@link Integer}.
  *
  * @see TypeUtils#isPrimitiveWrapper(Class, Class)
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class PrimitiveWrapperConverter implements GenericConverter, ConditionalConverter {
@@ -48,7 +48,8 @@ public class PrimitiveWrapperConverter implements GenericConverter, ConditionalC
             return false;
         }
         Class<?> sourceType = source.getClass();
-        boolean primitiveToWrapper = sourceType.isPrimitive() && TypeUtils.isPrimitiveWrapper(targetType, sourceType);
+        boolean primitiveToWrapper = sourceType.isPrimitive()
+            && TypeUtils.isPrimitiveWrapper(targetType, sourceType);
         if (primitiveToWrapper) {
             return true;
         }
@@ -57,7 +58,11 @@ public class PrimitiveWrapperConverter implements GenericConverter, ConditionalC
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
+    ) {
         assert source != null;
         // Implicit (un)boxing
         return source;

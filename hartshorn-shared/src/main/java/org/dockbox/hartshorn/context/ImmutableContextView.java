@@ -74,14 +74,14 @@ public class ImmutableContextView implements ContextView {
             MultiMap<String, ContextView> namedContexts = defaultContext.namedContexts();
             Set<ContextView> unnamedContexts = defaultContext.unnamedContexts();
             return ObjectDescriber.of(this)
-                    .field("namedContexts", namedContexts)
-                    .field("unnamedContexts", unnamedContexts)
-                    .describe();
+                .field("namedContexts", namedContexts)
+                .field("unnamedContexts", unnamedContexts)
+                .describe();
         }
         else {
             return ObjectDescriber.of(this)
-                    .field("contexts", this.contexts())
-                    .describe();
+                .field("contexts", this.contexts())
+                .describe();
         }
     }
 }

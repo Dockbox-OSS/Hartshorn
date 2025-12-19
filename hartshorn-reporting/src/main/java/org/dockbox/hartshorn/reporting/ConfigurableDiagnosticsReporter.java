@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.reporting;
 
 /**
- * A reporter that can be configured using a configuration object. This configuration may be
- * mutable or immutable, depending on the implementation.
+ * A reporter that can be configured using a configuration object. This configuration may be mutable
+ * or immutable, depending on the implementation.
  *
  * @param <C> the type of the configuration object
  *
@@ -34,5 +34,4 @@ public interface ConfigurableDiagnosticsReporter<C> extends Reportable {
      * @return the configuration object of this reporter
      */
     C configuration();
-
 }

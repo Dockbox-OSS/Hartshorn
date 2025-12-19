@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,17 @@ import org.slf4j.Logger;
  * when the application starts.
  *
  * @see HartshornLogoBanner
- *
+ * 
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Banner {
 
     /**
-     * Prints the banner to the given {@link Logger}. The logger is expected to be the primary logger
-     * of the application.
+     * Prints the banner to the given {@link Logger}. The logger is expected to be the primary
+     * logger of the application.
      *
      * @param logger The logger to print the banner to.
      */

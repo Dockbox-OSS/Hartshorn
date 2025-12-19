@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * An expression representing a literal value, such as a number, string, or boolean.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class LiteralExpression extends Expression {
@@ -35,6 +35,11 @@ public class LiteralExpression extends Expression {
         this.value = value;
     }
 
+    /**
+     * Returns the literal value represented by this expression. May be null.
+     *
+     * @return the literal value
+     */
     public Object value() {
         return this.value;
     }

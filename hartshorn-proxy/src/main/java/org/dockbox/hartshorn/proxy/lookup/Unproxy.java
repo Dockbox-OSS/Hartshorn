@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to indicate a method parameter should be unproxied, if the parameter is a proxy. If the parameter is not a proxy, the method should
- * be called as normal. If the parameter is a proxy, but there is no underlying instance, the parameter will be transformed to {@code null}, unless
- * {@link #fallbackToProxy()} is set to {@code true}, in which case the proxy instance will be provided to the method.
+ * Annotation to indicate a method parameter should be unproxied, if the parameter is a proxy. If
+ * the parameter is not a proxy, the method should be called as normal. If the parameter is a proxy,
+ * but there is no underlying instance, the parameter will be transformed to {@code null}, unless
+ * {@link #fallbackToProxy()} is set to {@code true}, in which case the proxy instance will be
+ * provided to the method.
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
- * @since 0.5.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Unproxy {
 
     /**
-     * If {@code true}, the proxy instance will be provided to the method if the parameter is a proxy, but
-     * there is no underlying delegate instance.
+     * If {@code true}, the proxy instance will be provided to the method if the parameter is a
+     * proxy, but there is no underlying delegate instance.
      *
      * @return {@code true} if the proxy instance may be used as a fallback, {@code false} otherwise
      */

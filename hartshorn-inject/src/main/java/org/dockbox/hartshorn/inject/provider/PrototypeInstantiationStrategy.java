@@ -36,10 +36,24 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantiationStrategy<T> {
 
     @Override
-    default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+    default Option<ObjectContainer<T>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException {
         return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext, scope)));
     }
 
+    /**
+     * Instantiates a new component instance within the given context and scope.
+     *
+     * @param context the component request context
+     * @param scope the scope in which the component is being instantiated
+     *
+     * @return the instantiated component
+     *
+     * @throws ApplicationException if instantiation fails
+     */
     T get(ComponentRequestContext context, Scope scope) throws ApplicationException;
 
     @Override
@@ -52,6 +66,13 @@ public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantia
         return Tristate.TRUE;
     }
 
+    /**
+     * An empty prototype instantiation strategy that always returns {@code null}.
+     *
+     * @param <T> the type of the component
+     *
+     * @return an empty prototype instantiation strategy
+     */
     static <T> PrototypeInstantiationStrategy<T> empty() {
         return (context, scope) -> null;
     }

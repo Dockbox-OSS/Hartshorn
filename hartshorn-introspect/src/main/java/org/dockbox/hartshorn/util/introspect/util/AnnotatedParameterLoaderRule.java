@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import java.lang.annotation.Annotation;
 
 /**
- * A {@link ParameterLoaderRule} that accepts parameters that are annotated with a specific annotation.
+ * A {@link ParameterLoaderRule} that accepts parameters that are annotated with a specific
+ * annotation.
  *
  * @param <A> the annotation type
  * @param <C> the context type
@@ -30,8 +31,16 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  */
-public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext> implements ParameterLoaderRule<C>{
+public abstract class AnnotatedParameterLoaderRule<
+    A extends Annotation,
+    C extends ParameterLoaderContext
+    > implements ParameterLoaderRule<C> {
 
+    /**
+     * The annotation that this rule accepts.
+     *
+     * @return the annotation class
+     */
     protected abstract Class<A> annotation();
 
     @Override

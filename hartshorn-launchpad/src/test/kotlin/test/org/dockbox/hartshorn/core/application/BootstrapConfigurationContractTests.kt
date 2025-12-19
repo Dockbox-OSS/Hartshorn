@@ -53,196 +53,389 @@ import java.util.stream.Stream
 
 class BootstrapConfigurationContractTests {
 
-    @Test
-    fun testApplicationBuilderContract() {
-        val instance = StandardApplicationBuilder.Configurer()
+  @Test
+  fun testApplicationBuilderContract() {
+    val instance = StandardApplicationBuilder.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: ApplicationContextFactory? -> configurer.applicationContextFactory(deferred) }
-        assertInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
-
-        assertCustom(instance) { configurer -> configurer.inferMainClass() }
-        assertDeferred(instance) { configurer, deferred: Class<*>? -> configurer.mainClass(deferred) }
-        assertInitializer(instance) { configurer, initializer -> configurer.mainClass(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: Array<String>? -> configurer.arguments(*(deferred ?: arrayOf("a"))) }
-        assertDeferred(instance) { configurer, deferred: List<String>? -> configurer.arguments(deferred) }
-        assertCustomizer(instance) { configurer, customizer -> configurer.arguments(customizer) }
+    assertDeferred(instance) { configurer, deferred: ApplicationContextFactory? ->
+      configurer.applicationContextFactory(
+        deferred
+      )
+    }
+    assertInitializer(instance) { configurer, initializer ->
+      configurer.applicationContextFactory(
+        initializer
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.applicationContextFactory(
+        initializer
+      )
     }
 
-    @Test
-    fun testApplicationConstructorContract() {
-        val instance = StandardApplicationContextFactory.Configurer()
+    assertCustom(instance) { configurer -> configurer.inferMainClass() }
+    assertDeferred(instance) { configurer, deferred: Class<*>? -> configurer.mainClass(deferred) }
+    assertInitializer(instance) { configurer, initializer -> configurer.mainClass(initializer) }
 
-        assertCustomizer(instance) { configurer, customizer -> configurer.moduleActivators(customizer) }
-        assertCustomizer(instance) { configurer, customizer -> configurer.componentPreProcessors(customizer) }
-        assertCustomizer(instance) { configurer, customizer -> configurer.componentPostProcessors(customizer) }
-        assertCustomizer(instance) { configurer, customizer -> configurer.standaloneComponents(customizer) }
-        assertCustomizer(instance) { configurer, customizer -> configurer.scanPackages(customizer) }
+    assertDeferred(instance) { configurer, deferred: Array<String>? ->
+      configurer.arguments(
+        *(deferred ?: arrayOf("a"))
+      )
+    }
+    assertDeferred(instance) { configurer, deferred: List<String>? -> configurer.arguments(deferred) }
+    assertCustomizer(instance) { configurer, customizer -> configurer.arguments(customizer) }
+  }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationEnvironment? -> configurer.environment(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.environment(initializer) }
+  @Test
+  fun testApplicationConstructorContract() {
+    val instance = StandardApplicationContextFactory.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: Boolean? -> configurer.includeBasePackages(deferred ?: true) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.includeBasePackages(initializer) }
+    assertCustomizer(instance) { configurer, customizer -> configurer.moduleActivators(customizer) }
+    assertCustomizer(instance) { configurer, customizer ->
+      configurer.componentPreProcessors(
+        customizer
+      )
+    }
+    assertCustomizer(instance) { configurer, customizer ->
+      configurer.componentPostProcessors(
+        customizer
+      )
+    }
+    assertCustomizer(instance) { configurer, customizer ->
+      configurer.standaloneComponents(
+        customizer
+      )
+    }
+    assertCustomizer(instance) { configurer, customizer -> configurer.scanPackages(customizer) }
+
+    assertDeferred(instance) { configurer, deferred: ApplicationEnvironment? ->
+      configurer.environment(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.environment(
+        initializer
+      )
     }
 
-    @Test
-    fun testContextualEnvironmentContract() {
-        val instance = ConfigurableApplicationEnvironment.Configurer()
+    assertDeferred(instance) { configurer, deferred: Boolean? ->
+      configurer.includeBasePackages(
+        deferred ?: true
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.includeBasePackages(
+        initializer
+      )
+    }
+  }
 
-        assertContextInitializer(instance) { configurer, initializer -> configurer.enableBanner(initializer) }
-        assertCustom(instance) { configurer -> configurer.enableBanner() }
-        assertCustom(instance) { configurer -> configurer.disableBanner() }
+  @Test
+  fun testContextualEnvironmentContract() {
+    val instance = ConfigurableApplicationEnvironment.Configurer()
 
-        assertContextInitializer(instance) { configurer, initializer -> configurer.enableBatchMode(initializer) }
-        assertCustom(instance) { configurer -> configurer.enableBatchMode() }
-        assertCustom(instance) { configurer -> configurer.disableBatchMode() }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.enableBanner(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.enableBanner() }
+    assertCustom(instance) { configurer -> configurer.disableBanner() }
 
-        assertContextInitializer(instance) { configurer, initializer -> configurer.showStacktraces(initializer) }
-        assertCustom(instance) { configurer -> configurer.showStacktraces() }
-        assertCustom(instance) { configurer -> configurer.hideStacktraces() }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.enableBatchMode(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.enableBatchMode() }
+    assertCustom(instance) { configurer -> configurer.disableBatchMode() }
 
-        assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? -> configurer.applicationOrchestrator(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationOrchestrator(initializer) }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.showStacktraces(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.showStacktraces() }
+    assertCustom(instance) { configurer -> configurer.hideStacktraces() }
 
-        assertDeferred(instance) { configurer, deferred: FileSystemProvider? -> configurer.applicationFSProvider(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationFSProvider(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ExceptionHandler? -> configurer.exceptionHandler(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.exceptionHandler(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ClasspathResourceLocator? -> configurer.classpathResourceLocator(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.classpathResourceLocator(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: AnnotationLookup? -> configurer.annotationLookup(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.annotationLookup(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ApplicationContext? -> configurer.applicationContext(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContext(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ComponentRegistry? -> configurer.componentRegistry(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentRegistry(initializer) }
-
+    assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? ->
+      configurer.applicationOrchestrator(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.applicationOrchestrator(
+        initializer
+      )
     }
 
-    @Test
-    fun testSimpleApplicationContextContract() {
-        val instance = SimpleApplicationContext.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer? -> configurer.dependencyGraphInitializer(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.dependencyGraphInitializer(initializer) }
+    assertDeferred(instance) { configurer, deferred: FileSystemProvider? ->
+      configurer.applicationFSProvider(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.applicationFSProvider(
+        initializer
+      )
     }
 
-    @Test
-    fun testDelegatingApplicationContextContract() {
-        val instance = DelegatingApplicationContext.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ComponentProviderOrchestrator? -> configurer.componentProvider(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentProvider(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: DefaultBindingConfigurer? -> configurer.defaultBindings(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.defaultBindings(initializer) }
-
-        val biConsumerDefaultBindingsResult = instance.defaultBindings { _: ApplicationContext, _: Binder -> }
-        Assertions.assertSame(instance, biConsumerDefaultBindingsResult)
+    assertDeferred(instance) { configurer, deferred: ExceptionHandler? ->
+      configurer.exceptionHandler(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.exceptionHandler(
+        initializer
+      )
     }
 
-    @Test
-    fun testScopeAwareComponentProviderContract() {
-        val instance = HierarchicalComponentProviderOrchestrator.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentPostConstructor(initializer) }
+    assertDeferred(instance) { configurer, deferred: ClasspathResourceLocator? ->
+      configurer.classpathResourceLocator(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.classpathResourceLocator(
+        initializer
+      )
     }
 
-    @Test
-    fun testComponentPostConstructorImplContract() {
-        val instance = AnnotatedMethodComponentPostConstructor.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ComponentExecutableInvocationAdapter? -> configurer.viewContextAdapter(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.viewContextAdapter(initializer) }
+    assertDeferred(instance) { configurer, deferred: AnnotationLookup? ->
+      configurer.annotationLookup(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.annotationLookup(
+        initializer
+      )
     }
 
-    @Test
-    fun testDependencyGraphInitializerContract() {
-        val instance = org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: DependencyResolver? -> configurer.dependencyResolver(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.dependencyResolver(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: DependencyGraphBuilder? -> configurer.dependencyGraphBuilder(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.dependencyGraphBuilder(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ConfigurationDependencyVisitor? -> configurer.dependencyVisitor(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.dependencyVisitor(initializer) }
+    assertDeferred(instance) { configurer, deferred: ApplicationContext? ->
+      configurer.applicationContext(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.applicationContext(
+        initializer
+      )
     }
 
-    @Test
-    fun testApplicationDependencyResolverContract() {
-        val instance = ManagedConfigurationDependencyResolver.Configurer()
+    assertDeferred(instance) { configurer, deferred: ComponentRegistry? ->
+      configurer.componentRegistry(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.componentRegistry(
+        initializer
+      )
+    }
+  }
 
-        assertDeferred(instance) { configurer, deferred: ConditionMatcher? -> configurer.conditionMatcher(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.conditionMatcher(initializer) }
+  @Test
+  fun testSimpleApplicationContextContract() {
+    val instance = SimpleApplicationContext.Configurer()
+
+    assertDeferred(instance) { configurer, deferred: org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer? ->
+      configurer.dependencyGraphInitializer(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.dependencyGraphInitializer(
+        initializer
+      )
+    }
+  }
+
+  @Test
+  fun testDelegatingApplicationContextContract() {
+    val instance = DelegatingApplicationContext.Configurer()
+
+    assertDeferred(instance) { configurer, deferred: ComponentProviderOrchestrator? ->
+      configurer.componentProvider(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.componentProvider(
+        initializer
+      )
     }
 
-    @Test
-    fun testStreamableConfigurerContract() {
-        val instance = StreamableConfigurer.empty<Any, Any>()
-
-        var result: StreamableConfigurer<Any, Any>? = instance.add(null as Any?)
-        Assertions.assertSame(instance, result)
-
-        result = instance.add(Initializer.of(null))
-        Assertions.assertSame(instance, result)
-
-        result = instance.add(ContextualInitializer.of(null as Any?))
-        Assertions.assertSame(instance, result)
-
-        result = instance.addAll(listOf(null as Any?))
-        Assertions.assertSame(instance, result)
-
-        result = instance.addAll(*arrayOf(null as Any?))
-        Assertions.assertSame(instance, result)
-
-        result = instance.addAll(listOf(Initializer.of(null)))
-        Assertions.assertSame(instance, result)
-
-        result = instance.addAll(*arrayOf(ContextualInitializer.of(null as Any?)))
-        Assertions.assertSame(instance, result)
-
-        result = instance.remove(ContextualInitializer.of(null as Any?))
-        Assertions.assertSame(instance, result)
-
-        result = instance.clear()
-        Assertions.assertSame(instance, result)
-
-        val stream: Stream<*> = instance.stream()
-        Assertions.assertNotNull(stream)
+    assertDeferred(instance) { configurer, deferred: DefaultBindingConfigurer? ->
+      configurer.defaultBindings(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.defaultBindings(
+        initializer
+      )
     }
 
-    fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
-        val result = deferredFunction.apply(configurer)
-        Assertions.assertSame(configurer, result)
+    val biConsumerDefaultBindingsResult =
+      instance.defaultBindings { _: ApplicationContext, _: Binder -> }
+    Assertions.assertSame(instance, biConsumerDefaultBindingsResult)
+  }
+
+  @Test
+  fun testScopeAwareComponentProviderContract() {
+    val instance = HierarchicalComponentProviderOrchestrator.Configurer()
+
+    assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? ->
+      configurer.componentPostConstructor(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.componentPostConstructor(
+        initializer
+      )
+    }
+  }
+
+  @Test
+  fun testComponentPostConstructorImplContract() {
+    val instance = AnnotatedMethodComponentPostConstructor.Configurer()
+
+    assertDeferred(instance) { configurer, deferred: ComponentExecutableInvocationAdapter? ->
+      configurer.viewContextAdapter(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.viewContextAdapter(
+        initializer
+      )
+    }
+  }
+
+  @Test
+  fun testDependencyGraphInitializerContract() {
+    val instance = org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer.Configurer()
+
+    assertDeferred(instance) { configurer, deferred: DependencyResolver? ->
+      configurer.dependencyResolver(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.dependencyResolver(
+        initializer
+      )
     }
 
-    fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
-        val result = deferredFunction.apply(configurer, null)
-        Assertions.assertSame(configurer, result)
+    assertDeferred(instance) { configurer, deferred: DependencyGraphBuilder? ->
+      configurer.dependencyGraphBuilder(
+        deferred
+      )
+    }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.dependencyGraphBuilder(
+        initializer
+      )
     }
 
-    fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
-        val result = initializerFunction.apply(configurer) { _ -> null }
-        Assertions.assertSame(configurer, result)
+    assertDeferred(instance) { configurer, deferred: ConfigurationDependencyVisitor? ->
+      configurer.dependencyVisitor(
+        deferred
+      )
     }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.dependencyVisitor(
+        initializer
+      )
+    }
+  }
 
-    fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
-        val result = initializerFunction.apply(configurer) { null }
-        Assertions.assertSame(configurer, result)
-    }
+  @Test
+  fun testApplicationDependencyResolverContract() {
+    val instance = ManagedConfigurationDependencyResolver.Configurer()
 
-    fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
-        val result = customizableFunction.apply(configurer) { _: C -> }
-        Assertions.assertSame(configurer, result)
+    assertDeferred(instance) { configurer, deferred: ConditionMatcher? ->
+      configurer.conditionMatcher(
+        deferred
+      )
     }
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.conditionMatcher(
+        initializer
+      )
+    }
+  }
+
+  @Test
+  fun testStreamableConfigurerContract() {
+    val instance = StreamableConfigurer.empty<Any, Any>()
+
+    var result: StreamableConfigurer<Any, Any>? = instance.add(null as Any?)
+    Assertions.assertSame(instance, result)
+
+    result = instance.add(Initializer.of(null))
+    Assertions.assertSame(instance, result)
+
+    result = instance.add(ContextualInitializer.of(null as Any?))
+    Assertions.assertSame(instance, result)
+
+    result = instance.addAll(listOf(null as Any?))
+    Assertions.assertSame(instance, result)
+
+    result = instance.addAll(*arrayOf(null as Any?))
+    Assertions.assertSame(instance, result)
+
+    result = instance.addAll(listOf(Initializer.of(null)))
+    Assertions.assertSame(instance, result)
+
+    result = instance.addAll(*arrayOf(ContextualInitializer.of(null as Any?)))
+    Assertions.assertSame(instance, result)
+
+    result = instance.remove(ContextualInitializer.of(null as Any?))
+    Assertions.assertSame(instance, result)
+
+    result = instance.clear()
+    Assertions.assertSame(instance, result)
+
+    val stream: Stream<*> = instance.stream()
+    Assertions.assertNotNull(stream)
+  }
+
+  fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
+    val result = deferredFunction.apply(configurer)
+    Assertions.assertSame(configurer, result)
+  }
+
+  fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
+    val result = deferredFunction.apply(configurer, null)
+    Assertions.assertSame(configurer, result)
+  }
+
+  fun <T, I, C> assertContextInitializer(
+    configurer: T,
+    initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>
+  ) {
+    val result = initializerFunction.apply(configurer) { _ -> null }
+    Assertions.assertSame(configurer, result)
+  }
+
+  fun <T, C> assertInitializer(
+    configurer: T,
+    initializerFunction: BiFunction<T, Initializer<C?>, T>
+  ) {
+    val result = initializerFunction.apply(configurer) { null }
+    Assertions.assertSame(configurer, result)
+  }
+
+  fun <T, C> assertCustomizer(
+    configurer: T,
+    customizableFunction: BiFunction<T, Customizer<C>, T>
+  ) {
+    val result = customizableFunction.apply(configurer) { _: C -> }
+    Assertions.assertSame(configurer, result)
+  }
 }

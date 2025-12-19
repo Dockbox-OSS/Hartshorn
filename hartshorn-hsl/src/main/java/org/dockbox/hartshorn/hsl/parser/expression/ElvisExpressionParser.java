@@ -24,10 +24,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
 /**
- * Parser for Elvis expressions. An elvis expression is a shorthand for a conditional expression that
- * returns the left-hand side if it is truthy, and the right-hand side otherwise.
+ * Parser for Elvis expressions. An elvis expression is a shorthand for a conditional expression
+ * that returns the left-hand side if it is truthy, and the right-hand side otherwise.
  *
- * <p>For example, the expression <code>a ?: b</code> will return <code>a</code> if it is truthy, or
+ * <p>For example, the expression <code>a ?: b</code> will return <code>a</code> if it is truthy,
+ * or
  * <code>b</code> if <code>a</code> is falsy.
  *
  * @since 0.7.0
@@ -37,7 +38,11 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 public class ElvisExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         Expression expression = chain.next(parser, validator);
         if (parser.match(ConditionTokenType.ELVIS)) {
             Token elvis = parser.previous();
@@ -46,5 +51,4 @@ public class ElvisExpressionParser implements ExpressionParser {
         }
         return expression;
     }
-
 }

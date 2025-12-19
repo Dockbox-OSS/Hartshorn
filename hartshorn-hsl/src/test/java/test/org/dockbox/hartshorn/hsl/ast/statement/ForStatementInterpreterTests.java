@@ -36,17 +36,17 @@ public class ForStatementInterpreterTests {
     @Test
     void forLoopWithFalseConditionNeverExecutes(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        for (var i = 0; false; i++) {
-                            checkpoint("inside-for-loop")
-                        }
-                        """)
-                .statementParser(new ForStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                for (var i = 0; false; i++) {
+                    checkpoint("inside-for-loop")
+                }
+                """)
+            .statementParser(new ForStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-for-loop"));
@@ -55,18 +55,18 @@ public class ForStatementInterpreterTests {
     @Test
     void forLoopExecutesUntilConditionIsFalse(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        for (var i = 0; i < 3; i++) {
-                            checkpoint("inside-for-loop")
-                        }
-                        """)
-                .statementParser(new ForStatementParser())
-                .statementParser(new BlockStatementParser())
-                .statementParser(new VariableDeclarationParser())
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new BinaryComparisonExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .build();
+                for (var i = 0; i < 3; i++) {
+                    checkpoint("inside-for-loop")
+                }
+                """)
+            .statementParser(new ForStatementParser())
+            .statementParser(new BlockStatementParser())
+            .statementParser(new VariableDeclarationParser())
+            .expressionParser(new CallExpressionParser())
+            .expressionParser(new BinaryComparisonExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-for-loop"));

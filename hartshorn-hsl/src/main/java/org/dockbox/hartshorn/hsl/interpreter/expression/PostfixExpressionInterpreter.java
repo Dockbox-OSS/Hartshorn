@@ -44,17 +44,17 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
-                    .at(node.operator())
-                    .build();
+                .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
+                .at(node.operator())
+                .build();
         }
         double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> leftNumber.doubleValue() + 1;
             case MINUS_MINUS -> leftNumber.doubleValue() - 1;
             default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
-                    .at(node.operator())
-                    .build();
+                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
+                .at(node.operator())
+                .build();
         };
 
         if (node.leftExpression() instanceof VariableExpression variable) {

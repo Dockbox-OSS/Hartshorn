@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,10 @@ public interface IntrospectionEnvironment {
      *
      * @return {@code true} if parameter names are available, {@code false} otherwise
      *
-     * @see <a href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">Obtaining Names of Method Parameters</a>
+     * @see
+     * <a href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">
+     * Obtaining Names of Method Parameters
+     * </a>
      */
     boolean parameterNamesAvailable();
-
 }

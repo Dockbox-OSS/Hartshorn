@@ -37,17 +37,17 @@ public class ArraySetExpressionTests {
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
-                        array[0] = "value"
-                        """)
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("array", hslArray)
-                .build();
+                array[0] = "value"
+                """)
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("array", hslArray)
+            .build();
 
         Object interpreted = helper
-                .evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
-                .interpretValue();
+            .evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
+            .interpretValue();
         Assertions.assertEquals("value", interpreted);
         Assertions.assertEquals("value", hslArray.value(0));
         Assertions.assertEquals("value", realArray[0]);
@@ -58,18 +58,18 @@ public class ArraySetExpressionTests {
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
-                        array[1] = "value"
-                        """)
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("array", hslArray)
-                .build();
+                array[1] = "value"
+                """)
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("array", hslArray)
+            .build();
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             helper.evaluateWith(
-                    ArraySetExpression.class,
-                    new ArraySetExpressionInterpreter()
+                ArraySetExpression.class,
+                new ArraySetExpressionInterpreter()
             ).interpretValue();
         });
     }

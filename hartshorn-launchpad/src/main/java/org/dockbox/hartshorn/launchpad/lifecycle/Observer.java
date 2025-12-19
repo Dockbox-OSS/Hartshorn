@@ -23,10 +23,17 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
  * {@link LifecycleObservable}.
  *
  * @since 0.4.12
+ *
  * @author Guus Lieben
  */
 public interface Observer {
 
+    /**
+     * Returns the priority of the observer. The priority is used to determine the order in which
+     * the observer are notified. The lower the priority, the earlier the observer will be notified.
+     *
+     * @return The phase of when the observer should be notified.
+     */
     default int priority() {
         return ProcessingPriority.NORMAL_PRECEDENCE;
     }

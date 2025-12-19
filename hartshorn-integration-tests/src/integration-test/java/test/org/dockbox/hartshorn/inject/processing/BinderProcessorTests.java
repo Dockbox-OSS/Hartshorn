@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,10 @@ import org.junit.jupiter.api.Test;
 public class BinderProcessorTests {
 
     @Test
-    void testBinderPostProcessorIsCalled(@Inject HierarchicalBinder binder, @Inject ComponentProvider provider) {
+    void testBinderPostProcessorIsCalled(
+        @Inject HierarchicalBinder binder,
+        @Inject ComponentProvider provider
+    ) {
         BindingHierarchy<String> hierarchy = binder.hierarchy(ComponentKey.of(String.class));
         Assertions.assertTrue(hierarchy.size() > 0);
 

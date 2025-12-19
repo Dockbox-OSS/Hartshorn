@@ -1,5 +1,0 @@
-hartshorn:
-  profiles:
-  - base
-  - dev
-some.property: 0

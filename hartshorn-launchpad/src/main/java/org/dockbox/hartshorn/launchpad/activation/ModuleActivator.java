@@ -29,8 +29,8 @@ import java.lang.annotation.Target;
 
 /**
  * Meta-annotation used to mark annotations as module activators. Module activators indicate whether
- * specific components processors become active. Additionally, they can be used to filter the activation
- * of components using the {@link RequiresActivator} annotation.
+ * specific components processors become active. Additionally, they can be used to filter the
+ * activation of components using the {@link RequiresActivator} annotation.
  *
  * <p>Module activators always need to be annotated with {@link ModuleActivator}. If an annotation
  * is used as activator, but is not annotated with {@link ModuleActivator}, it will be rejected by
@@ -40,25 +40,41 @@ import java.lang.annotation.Target;
  * active when the activator is present on the application activator. These packages will be scanned
  * when the application is initializing.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ModuleActivator {
 
     /**
-     * Additional packages to scan for components if this module activator is present. If a package has already
-     * been processed before, it is up to the active {@link InjectionCapableApplication} to decide whether to
-     * process it again.
+     * Additional packages to scan for components if this module activator is present. If a package
+     * has already been processed before, it is up to the active {@link InjectionCapableApplication}
+     * to decide whether to process it again.
      *
      * @return The additional packages to scan for components.
      */
     String[] scanPackages() default {};
 
+    /**
+     * Component pre-processors to register if this module activator is present.
+     *
+     * @return The component pre-processors to register.
+     */
     Class<? extends ComponentPreProcessor>[] componentPreProcessors() default {};
 
+    /**
+     * Component post-processors to register if this module activator is present.
+     *
+     * @return The component post-processors to register.
+     */
     Class<? extends ComponentPostProcessor>[] componentPostProcessors() default {};
 
+    /**
+     * Hierarchical binder post-processors to register if this module activator is present.
+     *
+     * @return The hierarchical binder post-processors to register.
+     */
     Class<? extends HierarchicalBinderPostProcessor>[] binderPostProcessors() default {};
 }

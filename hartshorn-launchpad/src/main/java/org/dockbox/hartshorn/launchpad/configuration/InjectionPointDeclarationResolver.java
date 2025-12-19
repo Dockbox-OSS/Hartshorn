@@ -32,6 +32,7 @@ public interface InjectionPointDeclarationResolver {
      * Resolves the declaration type of the given injection point.
      *
      * @param injectionPoint the injection point to resolve
+     *
      * @return the type view representing the declaration type of the injection point
      */
     TypeView<?> resolve(InjectionPoint injectionPoint);

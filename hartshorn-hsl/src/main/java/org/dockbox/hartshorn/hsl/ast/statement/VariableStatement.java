@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * A variable statement, which declares a variable with an optional initializer. If the
- * initializer is not provided, the variable will be initialized to <code>null</code>.
+ * A variable statement, which declares a variable with an optional initializer. If the initializer
+ * is not provided, the variable will be initialized to <code>null</code>.
  *
  * <p>For example, the statement below declares a variable named <code>x</code> with an
  * initializer of <code>10</code>:
@@ -56,6 +56,12 @@ public class VariableStatement extends FinalizableStatement implements NamedNode
         return this.name;
     }
 
+    /**
+     * Returns the initializer expression for this variable. If no initializer was provided,
+     * this method may return <code>null</code>.
+     *
+     * @return the initializer expression, or <code>null</code> if none was provided
+     */
     public Expression initializer() {
         return this.initializer;
     }

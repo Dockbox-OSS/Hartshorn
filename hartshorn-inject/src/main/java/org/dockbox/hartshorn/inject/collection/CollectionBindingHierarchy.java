@@ -21,35 +21,40 @@ import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
- * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The primary
- * difference being that this hierarchy is constrained to only permit {@link CollectionInstantiationStrategy} instances
- * which can delegate to zero or more other {@link InstantiationStrategy}s.
+ * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The
+ * primary difference being that this hierarchy is constrained to only permit
+ * {@link CollectionInstantiationStrategy} instances which can delegate to zero or more other
+ * {@link InstantiationStrategy}s.
  *
  * @param <T> the type of the elements in the collection
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<ComponentCollection<T>> {
+public class CollectionBindingHierarchy<T>
+    extends AbstractBindingHierarchy<ComponentCollection<T>> {
 
     public CollectionBindingHierarchy(ComponentKey<ComponentCollection<T>> componentKey) {
         super(componentKey);
     }
 
     /**
-     * Retrieves the {@link CollectionInstantiationStrategy} for the given priority, or creates a new one if it does not
-     * exist yet.
+     * Retrieves the {@link CollectionInstantiationStrategy} for the given priority, or creates a
+     * new one if it does not exist yet.
      *
      * @param priority the priority of the instantiation strategy
+     *
      * @return the instantiation strategy
      */
     public CollectionInstantiationStrategy<T> getOrCreateInstantiationStrategy(int priority) {
-        InstantiationStrategy<ComponentCollection<T>> existingStrategy = this.get(priority).orCompute(() -> {
-            InstantiationStrategy<ComponentCollection<T>> collectionStrategy = new CollectionInstantiationStrategy<>();
-            this.add(priority, collectionStrategy);
-            return collectionStrategy;
-        }).orNull();
+        InstantiationStrategy<ComponentCollection<T>> existingStrategy =
+            this.get(priority).orCompute(() -> {
+                InstantiationStrategy<ComponentCollection<T>> collectionStrategy =
+                    new CollectionInstantiationStrategy<>();
+                this.add(priority, collectionStrategy);
+                return collectionStrategy;
+            }).orNull();
         if (existingStrategy instanceof CollectionInstantiationStrategy<T> collectionProvider) {
             return collectionProvider;
         }

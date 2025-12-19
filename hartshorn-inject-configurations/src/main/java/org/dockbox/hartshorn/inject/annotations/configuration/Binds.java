@@ -29,14 +29,15 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
- * method, combined with optional {@link Qualifier} annotations form the {@link ComponentKey} of
- * the binding.
+ * method, combined with optional {@link Qualifier} annotations form the {@link ComponentKey} of the
+ * binding.
  *
  * <p>Provider methods can have parameters, which will be injected through the active
  * {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}. Depending on the active
  * {@link DependencyResolver}, the binding provider may support additional features.
  *
- * <p>If a binding provider requires additional components to be available, these can be declared as method
+ * <p>If a binding provider requires additional components to be available, these can be declared as
+ * method
  * parameters. As such, a valid binding provider method signature is (for example):
  *
  * <pre>{@code
@@ -46,50 +47,58 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Binds {
 
     /**
-     * Whether the binding should be lazily loaded. If not specified, the binding will be loaded eagerly. Note
-     * that this only applies to bindings that are registered as singletons.
+     * Whether the binding should be lazily loaded. If not specified, the binding will be loaded
+     * eagerly. Note that this only applies to bindings that are registered as singletons.
      *
      * @return whether the binding should be lazily loaded
+     *
      * @see Singleton#lazy()
      */
     boolean lazy() default false;
 
     /**
-     * Bindings that should be registered before this binding, for example if this binding depends on other
-     * bindings, but doesn't require them to be provided by the container. If not specified, no guarantees are made
-     * about the order in which bindings are registered, besides their priority.
+     * Bindings that should be registered before this binding, for example if this binding depends
+     * on other bindings, but doesn't require them to be provided by the container. If not
+     * specified, no guarantees are made about the order in which bindings are registered, besides
+     * their priority.
      *
-     * <p>Bindings declared here are considered to be dependencies of this binding. This is similar to requiring the
-     * bindings as method parameters, but without the requirement to actually declare method parameters.
+     * <p>Bindings declared here are considered to be dependencies of this binding. This is similar
+     * to requiring the
+     * bindings as method parameters, but without the requirement to actually declare method
+     * parameters.
      *
      * @return the bindings that should be registered before this binding
      */
     Class<?>[] after() default {};
 
     /**
-     * Whether the result of the binding provider should be processed by {@link ComponentPostProcessor}s after
-     * it has been initialized. If not specified, the result of the binding provider will be processed after it
-     * has been initialized. If {@code false}, the result of the binding provider will not be processed until
-     * it is requested from the container.
+     * Whether the result of the binding provider should be processed by
+     * {@link ComponentPostProcessor}s after it has been initialized. If not specified, the result
+     * of the binding provider will be processed after it has been initialized. If {@code false},
+     * the result of the binding provider will not be processed until it is requested from the
+     * container.
      *
-     * @return whether the result of the binding provider should be processed after it has been initialized
+     * @return whether the result of the binding provider should be processed after it has been
+     * initialized
      */
     boolean processAfterInitialization() default true;
 
     /**
-     * The lifecycle of the binding. If not specified, the binding will be registered with a {@link
-     * LifecycleType#PROTOTYPE prototype lifecycle}. Lifecycles indicate when the component is created and
-     * destroyed.
+     * The lifecycle of the binding. If not specified, the binding will be registered with a
+     * {@link LifecycleType#PROTOTYPE prototype lifecycle}. Lifecycles indicate when the component
+     * is created and destroyed.
      *
-     * <p><b>Note</b>: If you are specifying a lifecycle explicitly, consider using the {@link Singleton} or
+     * <p><b>Note</b>: If you are specifying a lifecycle explicitly, consider using the
+     * {@link Singleton} or
      * {@link Prototype} stereotype annotations instead.
      *
      * @return the lifecycle of the binding

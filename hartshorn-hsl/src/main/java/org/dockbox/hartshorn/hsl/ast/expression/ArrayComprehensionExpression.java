@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing an array comprehension, which allows for the creation of a new array by
- * performing a transformation on an existing collection, with optional filtering.
+ * An expression representing an array comprehension, which allows for the creation of a new array
+ * by performing a transformation on an existing collection, with optional filtering.
  *
  * <p>In its most basic form, an array comprehension consists of a collection, and a transformation
  * expression. For example:
@@ -34,16 +34,17 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * [x * 2 for x in collection if x > 10]
  * }</pre>
  *
- * <p>Additionally, a default expression can be provided, which is used when the condition is not met:
+ * <p>Additionally, a default expression can be provided, which is used when the condition is not
+ * met:
  * <pre>{@code
  * [x * 2 for x in collection if x > 10 else 0]
  * }</pre>
  *
- * <p>The transformation, condition, and default expression can all be arbitrary expressions, with access
- * to the current element of the collection via the provided selector token.
+ * <p>The transformation, condition, and default expression can all be arbitrary expressions, with
+ * access to the current element of the collection via the provided selector token.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ArrayComprehensionExpression extends Expression {
@@ -64,13 +65,15 @@ public class ArrayComprehensionExpression extends Expression {
     private final Token elseToken;
     private final Expression elseExpression;
 
-    public ArrayComprehensionExpression(Expression collection,
-                                        Expression expression,
-                                        Token selector,
-                                        Token forToken, Token inToken,
-                                        Token open, Token close,
-                                        Token ifToken, Expression condition,
-                                        Token elseToken, Expression elseExpression) {
+    public ArrayComprehensionExpression(
+        Expression collection,
+        Expression expression,
+        Token selector,
+        Token forToken, Token inToken,
+        Token open, Token close,
+        Token ifToken, Expression condition,
+        Token elseToken, Expression elseExpression
+    ) {
         super(open);
         this.collection = collection;
         this.expression = expression;
@@ -85,46 +88,107 @@ public class ArrayComprehensionExpression extends Expression {
         this.elseExpression = elseExpression;
     }
 
+    /**
+     * Returns the collection expression over which the comprehension iterates.
+     *
+     * @return the collection expression
+     */
     public Expression collection() {
         return this.collection;
     }
 
+    /**
+     * Returns the main expression that defines how each element in the collection is transformed.
+     * This may be conditionally executed based on the presence of a filtering condition.
+     *
+     * @return the transformation expression
+     */
     public Expression expression() {
         return this.expression;
     }
 
+    /**
+     * Returns the selector token representing the variable used to reference the current element
+     * in the collection during iteration.
+     *
+     * @return the selector token
+     */
     public Token selector() {
         return this.selector;
     }
 
+    /**
+     * Returns the 'for' token used in the comprehension syntax.
+     *
+     * @return the 'for' token
+     */
     public Token forToken() {
         return this.forToken;
     }
 
+    /**
+     * Returns the 'in' token used in the comprehension syntax.
+     *
+     * @return the 'in' token
+     */
     public Token inToken() {
         return this.inToken;
     }
 
+    /**
+     * Returns the opening token of the comprehension (typically a '[').
+     *
+     * @return the opening token
+     */
     public Token open() {
         return this.open;
     }
 
+    /**
+     * Returns the closing token of the comprehension (typically a ']').
+     *
+     * @return the closing token
+     */
     public Token close() {
         return this.close;
     }
 
+    /**
+     * Returns the 'if' token used in the comprehension syntax, if a filtering condition is present.
+     * If no condition is specified, this may be null.
+     *
+     * @return the 'if' token
+     */
     public Token ifToken() {
         return this.ifToken;
     }
 
+    /**
+     * Returns the filtering condition expression that determines whether the transformation
+     * expression is applied to each element. If no condition is specified, this may be null.
+     *
+     * @return the filtering condition expression
+     */
     public Expression condition() {
         return this.condition;
     }
 
+    /**
+     * Returns the 'else' token used in the comprehension syntax, if a default expression is
+     * provided. If no default is specified, this may be null.
+     *
+     * @return the 'else' token
+     */
     public Token elseToken() {
         return this.elseToken;
     }
 
+    /**
+     * Returns the default expression that is used when the filtering condition is not met.
+     * If no default is specified, this may be null.
+     *
+     * @return the default expression
+     */
     public Expression elseExpression() {
         return this.elseExpression;
     }

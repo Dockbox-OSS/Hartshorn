@@ -71,7 +71,9 @@ public final class StringUtilities {
      *     <li>1d4m: 1 day, 4 minutes</li>
      * </ul>
      */
-    private static final Pattern DURATION_PATTERN = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+    private static final Pattern DURATION_PATTERN = Pattern.compile(
+        "^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$"
+    );
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int SECONDS_IN_HOUR = 60 * StringUtilities.SECONDS_IN_MINUTE;
     private static final int SECONDS_IN_DAY = 24 * StringUtilities.SECONDS_IN_HOUR;
@@ -91,14 +93,15 @@ public final class StringUtilities {
      */
     public static String capitalize(String value) {
         return StringUtilities.empty(value)
-                ? value
-                : (value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1));
+            ? value
+            : (value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1));
     }
 
     /**
      * Returns {@code true} if the given string is {@code null} or empty.
      *
      * @param value the string to check
+     *
      * @return {@code true} if the given string is {@code null} or empty
      */
     public static boolean empty(CharSequence value) {
@@ -109,6 +112,7 @@ public final class StringUtilities {
      * Returns {@code true} if the given string is not {@code null} and not empty.
      *
      * @param value the string to check
+     *
      * @return {@code true} if the given string is not {@code null} and not empty
      */
     public static boolean notEmpty(CharSequence value) {
@@ -120,8 +124,9 @@ public final class StringUtilities {
      * string.
      *
      * @param value the string to check
+     *
      * @return an empty string if the given string is {@code null}, otherwise returns the given
-     *         string
+     * string
      */
     public static String emptyIfNull(String value) {
         return null == value ? "" : value;
@@ -131,6 +136,7 @@ public final class StringUtilities {
      * Returns {@code null} if the given string is empty, otherwise returns the given string.
      *
      * @param value the string to check
+     *
      * @return {@code null} if the given string is empty, otherwise returns the given string.
      */
     public static String nullIfEmpty(String value) {
@@ -142,6 +148,7 @@ public final class StringUtilities {
      * and spaces.
      *
      * @param value the string to strip
+     *
      * @return the stripped string
      */
     public static String strip(String value) {
@@ -150,7 +157,8 @@ public final class StringUtilities {
 
     /**
      * Returns a second-precision duration representing the given string. The string must be an
-     * unsigned long if only seconds are represented, or a sequence of one or more of the following:
+     * unsigned long if only seconds are represented, or a sequence of one or more of the
+     * following:
      * <ul>
      *     <li>Unsigned long followed by 'w' for weeks</li>
      *     <li>Unsigned long followed by 'd' for days</li>
@@ -161,8 +169,9 @@ public final class StringUtilities {
      * The string must not contain any other characters, including whitespace.
      *
      * @param value the string to parse
+     *
      * @return a {@link Duration} representing the given string, or {@link Option#empty()} if the
-     *         string could not be parsed
+     * string could not be parsed
      */
     public static Option<Duration> durationOf(String value) {
         // First, if just digits, return the number in seconds.
@@ -205,6 +214,7 @@ public final class StringUtilities {
      * </ul>
      *
      * @param value the string to split
+     *
      * @return an array of strings, using each capital letter as a delimiter
      */
     public static String[] splitCapitals(String value) {
@@ -222,6 +232,7 @@ public final class StringUtilities {
      *
      * @param trimCharacter the character to trim
      * @param value the string to trim
+     *
      * @return the trimmed string
      */
     public static String trimWith(char trimCharacter, String value) {
@@ -235,7 +246,9 @@ public final class StringUtilities {
         while ((currentIndex < length) && (characters[length - 1] <= trimCharacter)) {
             length--;
         }
-        return ((currentIndex > 0) || (length < value.length())) ? value.substring(currentIndex, length) : value;
+        return ((currentIndex > 0) || (length < value.length()))
+            ? value.substring(currentIndex, length)
+            : value;
     }
 
     /**
@@ -250,12 +263,19 @@ public final class StringUtilities {
      * <p>Examples:
      * <ul>
      *     <li>{@code "Hello {0}", "world"} -> {@code "Hello world"}</li>
-     *     <li>{@code "Hello {0}", "world", "!"} -> {@code "Hello world"} (ignores value {@code "!"})</li>
-     *     <li>{@code "{0} {1}", "Hello"} -> {@code "Hello {1}"} (ignores placeholder {@code {1}})</li>
+     *     <li>
+     *         {@code "Hello {0}", "world", "!"} -> {@code "Hello world"}
+     *         (ignores value {@code "!"})
+     *     </li>
+     *     <li>
+     *         {@code "{0} {1}", "Hello"} -> {@code "Hello {1}"}
+     *         (ignores placeholder {@code {1}})
+     *     </li>
      * </ul>
      *
      * @param format the string to format
      * @param args the arguments to use for formatting
+     *
      * @return the formatted string
      */
     public static String format(String format, Object... args) {
@@ -280,12 +300,19 @@ public final class StringUtilities {
      * <p>Examples:
      * <ul>
      *     <li>{@code "Hello {name}", {"name", "world"}} -> {@code "Hello world"}</li>
-     *     <li>{@code "Hello {name}", {"name", "world"}, {"!", "!"}} -> {@code "Hello world"} (ignores value {@code "!"})</li>
-     *     <li>{@code "{name} {exclamation}", {"name", "Hello"}} -> {@code "Hello {exclamation}"} (ignores placeholder {@code {exclamation}})</li>
+     *     <li>
+     *         {@code "Hello {name}", {"name", "world"}, {"!", "!"}} -> {@code "Hello world"}
+     *         (ignores value {@code "!"})
+     *     </li>
+     *     <li>
+     *         {@code "{name} {exclamation}", {"name", "Hello"}} -> {@code "Hello {exclamation}"}
+     *         (ignores placeholder {@code {exclamation}})
+     *     </li>
      * </ul>
      *
      * @param string the string to format
      * @param replacements the replacements to use for formatting
+     *
      * @return the formatted string
      */
     public static String format(String string, Map<String, String> replacements) {
@@ -333,8 +360,10 @@ public final class StringUtilities {
      *
      * <p>Examples:
      * <ul>
-     *     <li>{@code join(", ", Arrays.asList(1, 2, 3), String::valueOf)} -> {@code "1, 2, 3"}</li>
-     *     <li>{@code join(", ", Arrays.asList("a", "b", "c"), String::toUpperCase)} -> {@code "A, B, C"}</li>
+     *     <li>{@code join(", ", Arrays.asList(1, 2, 3), String::valueOf)}
+     *     -> {@code "1, 2, 3"}</li>
+     *     <li>{@code join(", ", Arrays.asList("a", "b", "c"), String::toUpperCase)}
+     *     -> {@code "A, B, C"}</li>
      * </ul>
      *
      * @param delimiter the delimiter to use
@@ -344,7 +373,11 @@ public final class StringUtilities {
      *
      * @return the joined string
      */
-    public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
+    public static <T> String join(
+        String delimiter,
+        Iterable<T> elements,
+        Function<T, String> toStringFunction
+    ) {
         StringJoiner joiner = new StringJoiner(delimiter);
         for (T element : elements) {
             joiner.add(toStringFunction.apply(element));
@@ -362,9 +395,9 @@ public final class StringUtilities {
     }
 
     /**
-     * A builder for creating a matrix of strings. The matrix is built by adding segments, where each
-     * segment is a collection of strings. The resulting matrix contains all possible combinations of
-     * the segments.
+     * A builder for creating a matrix of strings. The matrix is built by adding segments, where
+     * each segment is a collection of strings. The resulting matrix contains all possible
+     * combinations of the segments.
      *
      * <p>For example, given the segments:
      * <ul>
@@ -398,6 +431,7 @@ public final class StringUtilities {
          * Adds a segment to the matrix.
          *
          * @param segment the segment to add
+         *
          * @return this {@link MatrixBuilder} instance
          */
         public MatrixBuilder segment(Collection<String> segment) {
@@ -409,24 +443,39 @@ public final class StringUtilities {
          * Adds a segment to the matrix.
          *
          * @param segment the segment to add
+         *
          * @return this {@link MatrixBuilder} instance
          */
         public MatrixBuilder segment(String... segment) {
             return this.segment(List.of(segment));
         }
 
+        /**
+         * Adds an optional segment to the matrix. An optional segment may be omitted in the
+         * resulting combinations.
+         *
+         * @param segment the optional segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
         public MatrixBuilder optionalSegment(Collection<String> segment) {
             this.segments.add(new Segment(segment, true));
             return this;
         }
 
+        /**
+         * Adds an optional segment to the matrix. An optional segment may be omitted in the
+         * resulting combinations.
+         *
+         * @param segment the optional segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
         public MatrixBuilder optionalSegment(String... segment) {
             return this.optionalSegment(List.of(segment));
         }
 
         /**
-         * Builds the matrix and returns the resulting list of strings. Each string in the
-         * resulting list is a unique combination of the segments added to the builder.
+         * Builds the matrix and returns the resulting list of strings. Each string in the resulting
+         * list is a unique combination of the segments added to the builder.
          *
          * @return the resulting list of strings
          */
@@ -437,9 +486,9 @@ public final class StringUtilities {
         }
 
         private void generate(
-                List<String> results,
-                String current,
-                int depth
+            List<String> results,
+            String current,
+            int depth
         ) {
             if (depth >= this.segments.size()) {
                 results.add(current);

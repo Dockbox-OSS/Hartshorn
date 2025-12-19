@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.test.junit;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.HartshornIntegrationTestInitializer;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -26,20 +23,24 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+
 /**
- * A callback that initializes the Hartshorn application context before a test lifecycle has been started. This callback
- * is responsible for creating the application context and registering it in the extension context. The application
- * context is created by a {@link HartshornIntegrationTestInitializer}.
+ * A callback that initializes the Hartshorn application context before a test lifecycle has been
+ * started. This callback is responsible for creating the application context and registering it in
+ * the extension context. The application context is created by a
+ * {@link HartshornIntegrationTestInitializer}.
  *
  * @see HartshornIntegrationTestInitializer
- *
+ * 
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class HartshornJUnitIntegrationTestBootstrapCallback implements
-        BeforeAllCallback,
-        BeforeEachCallback {
+    BeforeAllCallback,
+    BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) throws ApplicationException {
@@ -58,10 +59,24 @@ public class HartshornJUnitIntegrationTestBootstrapCallback implements
         }
     }
 
-    protected void beforeLifecycle(ExtensionContext context, Class<?> testClass, Object testInstance, AnnotatedElement... testComponentSources)
-            throws ApplicationException {
+    /**
+     * Common method to initialize the Hartshorn application context before a test lifecycle has
+     * been started.
+     *
+     * @param context the extension context of the test, used to store the application context
+     * @param testClass the test class
+     * @param testInstance the test instance
+     * @param testComponentSources optional sources of test components, such as test methods
+     */
+    protected void beforeLifecycle(
+        ExtensionContext context,
+        Class<?> testClass,
+        Object testInstance,
+        AnnotatedElement... testComponentSources
+    ) {
         HartshornIntegrationTestInitializer initializer = new HartshornIntegrationTestInitializer();
-        ApplicationContext applicationContext = initializer.createTestApplicationContext(testClass, testInstance, testComponentSources);
+        ApplicationContext applicationContext =
+            initializer.createTestApplicationContext(testClass, testInstance, testComponentSources);
         HartshornJUnitNamespace.application(context, applicationContext);
     }
 }

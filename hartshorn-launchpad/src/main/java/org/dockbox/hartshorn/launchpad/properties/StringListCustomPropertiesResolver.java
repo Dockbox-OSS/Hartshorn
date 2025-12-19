@@ -26,10 +26,9 @@ import java.util.List;
  * values should be formatted as key-value pairs, compatible with the Java Properties format.
  *
  * <p>This resolver is typically used to provide custom properties that are not sourced from
- * external files or resources, but rather defined directly in the code or passed
- * as command line arguments. It is useful for scenarios where properties need to be
- * dynamically defined or configured at runtime, such as in testing environments or
- * during application startup.
+ * external files or resources, but rather defined directly in the code or passed as command line
+ * arguments. It is useful for scenarios where properties need to be dynamically defined or
+ * configured at runtime, such as in testing environments or during application startup.
  *
  * @since 0.7.0
  *
@@ -44,7 +43,9 @@ public class StringListCustomPropertiesResolver extends AbstractCustomProperties
     }
 
     @Override
-    protected List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    protected List<String> resolveStringProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         return this.properties;
     }
 }

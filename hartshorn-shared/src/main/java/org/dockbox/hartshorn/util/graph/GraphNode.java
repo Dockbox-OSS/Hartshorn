@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.Set;
 
 /**
- * A node in a {@link Graph}. A node has a value, and may have children. A node that has no children is
- * considered a leaf node.
+ * A node in a {@link Graph}. A node has a value, and may have children. A node that has no children
+ * is considered a leaf node.
  *
  * @param <T> the type of the value of the node
  *
@@ -38,8 +38,8 @@ public interface GraphNode<T> {
     T value();
 
     /**
-     * Returns a set of all children of this node. If this node is a leaf node, this method returns an
-     * empty set.
+     * Returns a set of all children of this node. If this node is a leaf node, this method returns
+     * an empty set.
      *
      * @return a set of all children of this node
      */

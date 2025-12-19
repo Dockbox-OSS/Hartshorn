@@ -21,21 +21,28 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 
 /**
- * A member statement that defines a getter or setter for a field, with optional parameters and a body. This
- * abstract class serves as a base for specific field member statements like {@link FieldGetStatement} and
- * {@link FieldSetStatement}.
+ * A member statement that defines a getter or setter for a field, with optional parameters and a
+ * body. This abstract class serves as a base for specific field member statements like
+ * {@link FieldGetStatement} and {@link FieldSetStatement}.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
-public abstract class FieldMemberStatement extends ParametricExecutableBodyStatement implements MemberStatement {
+public abstract class FieldMemberStatement extends ParametricExecutableBodyStatement
+    implements MemberStatement {
 
     private final Token modifier;
     private final Token keyword;
     private final FieldStatement fieldStatement;
 
-    protected FieldMemberStatement(Token modifier, Token keyword, FieldStatement fieldStatement, List<Parameter> parameters, BlockStatement body) {
+    protected FieldMemberStatement(
+        Token modifier,
+        Token keyword,
+        FieldStatement fieldStatement,
+        List<Parameter> parameters,
+        BlockStatement body
+    ) {
         super(modifier != null ? modifier : keyword, parameters, body);
         this.modifier = modifier;
         this.keyword = keyword;
@@ -44,6 +51,7 @@ public abstract class FieldMemberStatement extends ParametricExecutableBodyState
 
     /**
      * Indicates whether this member statement has a body.
+     *
      * @return true if a body is present, false otherwise
      */
     public boolean hasBody() {
@@ -52,6 +60,7 @@ public abstract class FieldMemberStatement extends ParametricExecutableBodyState
 
     /**
      * The keyword token representing the type of field member (e.g., "get" or "set").
+     *
      * @return the keyword token
      */
     public Token keyword() {
@@ -60,6 +69,7 @@ public abstract class FieldMemberStatement extends ParametricExecutableBodyState
 
     /**
      * The field statement associated with this member.
+     *
      * @return the field statement
      */
     public FieldStatement field() {

@@ -26,12 +26,20 @@ import org.junit.jupiter.api.Assertions;
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> void postConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         if (instance instanceof NonProcessableType) {
             try {
-                processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+                processingContext.type()
+                    .fields()
+                    .named("nonNullIfProcessed")
+                    .get()
+                    .set(instance, "processed");
             }
-            catch(Throwable throwable) {
+            catch (Throwable throwable) {
                 Assertions.fail(throwable);
             }
         }

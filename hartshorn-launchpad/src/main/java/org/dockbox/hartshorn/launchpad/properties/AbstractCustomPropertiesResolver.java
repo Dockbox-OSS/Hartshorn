@@ -36,7 +36,9 @@ import java.util.stream.Collectors;
 public abstract class AbstractCustomPropertiesResolver implements CustomPropertiesResolver {
 
     @Override
-    public Properties resolveProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    public Properties resolveProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         Properties properties = new Properties();
         String propertyString = this.resolveStringProperties(initializerContext).stream()
             .filter(StringUtilities::notEmpty)
@@ -51,9 +53,21 @@ public abstract class AbstractCustomPropertiesResolver implements CustomProperti
         }
         catch (Exception e) {
             // Should never happen, as the StringReader is created from a stable String
-            throw new ComponentInitializationException("Failed to load command line arguments as properties", e);
+            throw new ComponentInitializationException(
+                "Failed to load command line arguments as properties",
+                e);
         }
     }
 
-    protected abstract List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext);
+    /**
+     * Resolves the raw string properties, optionally using the provided initializer context for
+     * additional information about the application environment.
+     *
+     * @param initializerContext the initializer context
+     *
+     * @return a list of string properties
+     */
+    protected abstract List<String> resolveStringProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    );
 }

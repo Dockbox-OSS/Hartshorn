@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.function.Supplier;
 
 /**
- * A {@link ProxyLookup} that delegates to a lazily initialized {@link ProxyLookup}. This is useful when the
- * {@link ProxyLookup} is not available at the time of construction, but is available at the time of use.
+ * A {@link ProxyLookup} that delegates to a lazily initialized {@link ProxyLookup}. This is useful
+ * when the {@link ProxyLookup} is not available at the time of construction, but is available at
+ * the time of use.
  *
  * @since 0.5.0
  *

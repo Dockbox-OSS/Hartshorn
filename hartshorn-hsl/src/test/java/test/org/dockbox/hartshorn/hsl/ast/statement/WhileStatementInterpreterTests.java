@@ -38,14 +38,14 @@ public class WhileStatementInterpreterTests {
     @Test
     void whileWithFalseExpressionNeverExecutes(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        while (false) {
-                            checkpoint("inside-while")
-                        }
-                        """)
-                .statementParser(new WhileStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                while (false) {
+                    checkpoint("inside-while")
+                }
+                """)
+            .statementParser(new WhileStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-while"));
@@ -53,20 +53,22 @@ public class WhileStatementInterpreterTests {
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void whileWithConditionalExpressionExecutesUntilFalse(@Inject ApplicationContext applicationContext) {
+    void whileWithConditionalExpressionExecutesUntilFalse(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        while (counter < 3) {
-                            counter = checkpoint("inside-while")
-                        }
-                        """)
-                .statementParser(new WhileStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new BinaryComparisonExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("counter", 0)
-                .build();
+                while (counter < 3) {
+                    counter = checkpoint("inside-while")
+                }
+                """)
+            .statementParser(new WhileStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new BinaryComparisonExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("counter", 0)
+            .build();
 
         helper.interpret();
         Assertions.assertEquals(3, helper.checkpoints().checkpointAccessCount("inside-while"));

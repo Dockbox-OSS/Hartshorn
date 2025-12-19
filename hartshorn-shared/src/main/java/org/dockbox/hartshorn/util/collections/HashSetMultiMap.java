@@ -26,7 +26,7 @@ import java.util.HashSet;
  * @param <V> the type of the values
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class HashSetMultiMap<K, V> extends HashMultiMap<K, V> {

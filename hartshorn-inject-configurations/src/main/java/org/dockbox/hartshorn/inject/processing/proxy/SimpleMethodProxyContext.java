@@ -29,15 +29,20 @@ import java.lang.annotation.Annotation;
  * @param <T> ...
  *
  * @since 0.4.1
- *
+ * 
  * @author Guus Lieben
  */
-public class SimpleMethodProxyContext<T> extends DefaultInjectionApplicationAwareContext implements MethodProxyContext<T> {
+public class SimpleMethodProxyContext<T> extends DefaultInjectionApplicationAwareContext
+    implements MethodProxyContext<T> {
 
     private final TypeView<T> type;
     private final MethodView<T, ?> method;
 
-    public SimpleMethodProxyContext(InjectionCapableApplication application, TypeView<T> type, MethodView<T, ?> method) {
+    public SimpleMethodProxyContext(
+        InjectionCapableApplication application,
+        TypeView<T> type,
+        MethodView<T, ?> method
+    ) {
         super(application);
         this.type = type;
         this.method = method;

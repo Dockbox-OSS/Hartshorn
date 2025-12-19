@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,28 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Collection;
-import java.util.Objects;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 
+import java.util.Collection;
+import java.util.Objects;
+
 /**
- * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source collection to the
- * target collection. The target collection is created using the {@link DefaultValueProvider} of the target type.
+ * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source
+ * collection to the target collection. The target collection is created using the
+ * {@link DefaultValueProvider} of the target type.
  *
  * @see CollectionDefaultValueProviderFactory
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class CollectionToCollectionConverterFactory implements ConverterFactory<Collection<?>, Collection<?>> {
+public class CollectionToCollectionConverterFactory
+    implements ConverterFactory<Collection<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
@@ -43,18 +45,24 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         this(new CollectionDefaultValueProviderFactory(introspector).withDefaults());
     }
 
-    public CollectionToCollectionConverterFactory(DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
+    public CollectionToCollectionConverterFactory(
+        DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory
+    ) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
 
     @Override
     public <O extends Collection<?>> Converter<Collection<?>, O> create(Class<O> targetType) {
-        return new CollectionToCollectionConverter<>(this.defaultValueProviderFactory.create(targetType), targetType);
+        return new CollectionToCollectionConverter<>(
+            this.defaultValueProviderFactory.create(targetType),
+            targetType
+        );
     }
 
     /**
-     * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source collection to the
-     * target collection. The target collection is created using the given {@link DefaultValueProvider} for the target type.
+     * Converts a {@link Collection} to another {@link Collection} by adding all elements of the
+     * source collection to the target collection. The target collection is created using the given
+     * {@link DefaultValueProvider} for the target type.
      *
      * @param <O> the target type
      *
@@ -62,12 +70,16 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
      *
      * @author Guus Lieben
      */
-    public static class CollectionToCollectionConverter<O extends Collection<?>> implements Converter<Collection<?>, O> {
+    public static class CollectionToCollectionConverter<O extends Collection<?>>
+        implements Converter<Collection<?>, O> {
 
         private final DefaultValueProvider<O> defaultValueProvider;
         private final Class<O> targetType;
 
-        public CollectionToCollectionConverter(DefaultValueProvider<O> defaultValueProvider, Class<O> targetType) {
+        public CollectionToCollectionConverter(
+            DefaultValueProvider<O> defaultValueProvider,
+            Class<O> targetType
+        ) {
             this.defaultValueProvider = defaultValueProvider;
             this.targetType = targetType;
         }
@@ -75,7 +87,8 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         @Override
         public O convert(Collection<?> source) {
             //noinspection unchecked
-            Collection<Object> collection = (Collection<Object>) this.defaultValueProvider.defaultValue();
+            Collection<Object> collection = (Collection<Object>) this.defaultValueProvider
+                .defaultValue();
             Objects.requireNonNull(collection).addAll(source);
             return this.targetType.cast(collection);
         }

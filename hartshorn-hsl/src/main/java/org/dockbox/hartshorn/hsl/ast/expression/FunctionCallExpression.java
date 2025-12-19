@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import java.util.List;
 
 /**
- * An expression representing a function call, which is an operation that invokes a function
- * with a specified set of arguments. This may be a function on an object, a static function,
- * or a global function.
+ * An expression representing a function call, which is an operation that invokes a function with a
+ * specified set of arguments. This may be a function on an object, a static function, or a global
+ * function.
  *
  * @since 0.4.12
  *
@@ -37,7 +37,12 @@ public class FunctionCallExpression extends Expression {
     private final Token openParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(Expression callee, Token open, Token close, List<Expression> arguments) {
+    public FunctionCallExpression(
+        Expression callee,
+        Token open,
+        Token close,
+        List<Expression> arguments
+    ) {
         super(callee);
         this.callee = callee;
         this.openParenthesis = open;
@@ -45,18 +50,40 @@ public class FunctionCallExpression extends Expression {
         this.arguments = arguments;
     }
 
+    /**
+     * Returns the expression representing the function being called.
+     *
+     * @return the callee expression
+     */
     public Expression callee() {
         return this.callee;
     }
 
+    /**
+     * Returns the token representing the opening parenthesis for the arguments of the function
+     * call.
+     *
+     * @return the opening parenthesis token
+     */
     public Token openParenthesis() {
         return this.openParenthesis;
     }
 
+    /**
+     * Returns the token representing the closing parenthesis for the arguments of the function
+     * call.
+     *
+     * @return the closing parenthesis token
+     */
     public Token closingParenthesis() {
         return this.closingParenthesis;
     }
 
+    /**
+     * Returns the list of expressions representing the arguments passed to the function call.
+     *
+     * @return the list of argument expressions
+     */
     public List<Expression> arguments() {
         return this.arguments;
     }

@@ -21,16 +21,16 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing a logical operation, which is an operation that combines two
- * expressions using a logical operator, such as <code>&&</code> (AND), <code>||</code> (OR),
- * or <code>^</code> (XOR).
+ * expressions using a logical operator, such as <code>&&</code> (AND), <code>||</code> (OR), or
+ * <code>^</code> (XOR).
  *
  * <p>For example, in the expression <code>a && b</code>, the <code>&&</code> (AND) operator
  * is a logical operator that combines the two expressions <code>a</code> and <code>b</code>,
- * resulting in a new expression that evaluates to <code>true</code> if both <code>a</code>
- * and <code>b</code> are truthy.
+ * resulting in a new expression that evaluates to <code>true</code> if both <code>a</code> and
+ * <code>b</code> are truthy.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class LogicalExpression extends Expression {
@@ -46,14 +46,29 @@ public class LogicalExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left operand expression of the logical operation.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the operator token of the logical operation.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the right operand expression of the logical operation.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

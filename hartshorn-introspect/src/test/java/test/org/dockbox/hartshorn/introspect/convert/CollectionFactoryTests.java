@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,8 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithArrayList() {
-        List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class);
+        List<Integer> list =
+            this.createDefaultFactory().createCollection(List.class, Integer.class);
         Assertions.assertInstanceOf(ArrayList.class, list);
         Assertions.assertEquals(list.size(), 0);
     }
@@ -56,14 +57,16 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithTreeSet() {
-        SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
+        SortedSet<Double> sortedSet =
+            this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
         Assertions.assertInstanceOf(TreeSet.class, sortedSet);
         Assertions.assertEquals(sortedSet.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithLinkedList() {
-        Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
+        Queue<Boolean> queue =
+            this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
         Assertions.assertInstanceOf(LinkedList.class, queue);
         Assertions.assertEquals(queue.size(), 0);
     }
@@ -80,7 +83,8 @@ public class CollectionFactoryTests {
     public void testInitialCapacityIsConfigured() {
         int initialCapacity = 23;
         CollectionFactory factory = this.createFactory(Vector.class, Vector::new, Vector::new);
-        Vector<String> enumSet = factory.createCollection(Vector.class, String.class, initialCapacity);
+        Vector<String> enumSet =
+            factory.createCollection(Vector.class, String.class, initialCapacity);
         Assertions.assertInstanceOf(Vector.class, enumSet);
         Assertions.assertEquals(enumSet.size(), 0);
         Assertions.assertEquals(enumSet.capacity(), initialCapacity);
@@ -89,7 +93,8 @@ public class CollectionFactoryTests {
     @Test
     public void testCreateCollectionWithUnsupportedInterface() {
         CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> factory.createCollection(BeanContext.class, Integer.class, 0));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> factory.createCollection(BeanContext.class, Integer.class, 0));
     }
 
     @Test
@@ -100,13 +105,24 @@ public class CollectionFactoryTests {
         Assertions.assertEquals(list.size(), 0);
     }
 
-    private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor) {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
+    private <T extends Collection<?>> CollectionFactory createFactory(
+        Class<T> targetType,
+        Supplier<T> constructor
+    ) {
+        Introspector introspector =
+            ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
         return new SimpleCollectionFactory(introspector);
     }
 
-    private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor, IntFunction<T> capacityConstructor) {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor, capacityConstructor);
+    private <T extends Collection<?>> CollectionFactory createFactory(
+        Class<T> targetType,
+        Supplier<T> constructor,
+        IntFunction<T> capacityConstructor
+    ) {
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
+            targetType,
+            constructor,
+            capacityConstructor);
         return new SimpleCollectionFactory(introspector);
     }
 
@@ -115,6 +131,8 @@ public class CollectionFactoryTests {
     }
 
     enum Color {
-        RED, BLUE, GREEN
+        RED,
+        BLUE,
+        GREEN
     }
 }

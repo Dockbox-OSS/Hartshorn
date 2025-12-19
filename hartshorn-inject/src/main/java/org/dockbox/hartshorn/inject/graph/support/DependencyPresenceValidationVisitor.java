@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,25 +25,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A graph visitor that validates the presence of dependencies in a graph. This visitor is used to determine if all
- * dependencies in a graph are present, and if not, which dependencies are missing.
+ * A graph visitor that validates the presence of dependencies in a graph. This visitor is used to
+ * determine if all dependencies in a graph are present, and if not, which dependencies are
+ * missing.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class DependencyPresenceValidationVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>> {
+public class DependencyPresenceValidationVisitor
+    implements BreadthFirstGraphVisitor<DependencyContext<?>> {
 
     private final Set<GraphNode<DependencyContext<?>>> missingDependencies = new HashSet<>();
     private final Set<GraphNode<DependencyContext<?>>> visitedDependencies;
 
-    public DependencyPresenceValidationVisitor(Set<GraphNode<DependencyContext<?>>> visitedDependencies) {
+    public DependencyPresenceValidationVisitor(
+        Set<GraphNode<DependencyContext<?>>> visitedDependencies
+    ) {
         this.visitedDependencies = visitedDependencies;
     }
 
     /**
-     * Returns the set of missing dependencies that were not visited during the traversal of the graph. If
-     * this set is empty, all dependencies were visited.
+     * Returns the set of missing dependencies that were not visited during the traversal of the
+     * graph. If this set is empty, all dependencies were visited.
      *
      * @return the set of missing dependencies
      */

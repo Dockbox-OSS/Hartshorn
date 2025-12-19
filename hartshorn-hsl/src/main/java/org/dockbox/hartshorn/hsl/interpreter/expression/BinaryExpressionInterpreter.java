@@ -37,7 +37,7 @@ import java.util.function.BiPredicate;
  * Interpreter for {@link BinaryExpression} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
@@ -70,20 +70,24 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                 }
                 // Otherwise, unsupported
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.UNSUPPORTED_CHILD, ArithmeticTokenType.PLUS.representation(), left, right)
-                        .at(operator)
-                        .build();
+                    .message(DiagnosticMessage.UNSUPPORTED_CHILD,
+                        ArithmeticTokenType.PLUS.representation(),
+                        left,
+                        right)
+                    .at(operator)
+                    .build();
             }
             case ArithmeticTokenType.MINUS -> {
                 Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                        operator,
-                        left,
-                        right
+                    operator,
+                    left,
+                    right
                 );
                 yield tuple.left().doubleValue() - tuple.right().doubleValue();
             }
             case ArithmeticTokenType.STAR -> {
-                if ((left instanceof String || left instanceof Character) && right instanceof Number number) {
+                if ((left instanceof String || left instanceof Character)
+                    && right instanceof Number number) {
                     int times = number.intValue();
                     int length = left.toString().length() * times;
                     StringBuilder result = new StringBuilder(length);
@@ -102,49 +106,57 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     yield result;
                 }
                 Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                        operator,
-                        left,
-                        right
+                    operator,
+                    left,
+                    right
                 );
                 yield tuple.left().doubleValue() * tuple.right().doubleValue();
             }
             case ArithmeticTokenType.MODULO -> {
                 Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                        operator,
-                        left,
-                        right
+                    operator,
+                    left,
+                    right
                 );
                 yield tuple.left().doubleValue() % tuple.right().doubleValue();
             }
             case ArithmeticTokenType.SLASH -> {
                 Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                        operator,
-                        left,
-                        right
+                    operator,
+                    left,
+                    right
                 );
                 if (tuple.right().doubleValue() == 0) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
-                            .at(operator)
-                            .build();
+                        .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
+                        .at(operator)
+                        .build();
                 }
                 yield tuple.left().doubleValue() / tuple.right().doubleValue();
             }
-            case ConditionTokenType.GREATER -> this.compareNumbers(node, left, right, (l, r) -> l > r);
-            case ConditionTokenType.GREATER_EQUAL -> this.compareNumbers(node, left, right, (l, r) -> l >= r);
+            case ConditionTokenType.GREATER ->
+                this.compareNumbers(node, left, right, (l, r) -> l > r);
+            case ConditionTokenType.GREATER_EQUAL ->
+                this.compareNumbers(node, left, right, (l, r) -> l >= r);
             case ConditionTokenType.LESS -> this.compareNumbers(node, left, right, (l, r) -> l < r);
-            case ConditionTokenType.LESS_EQUAL -> this.compareNumbers(node, left, right, (l, r) -> l <= r);
+            case ConditionTokenType.LESS_EQUAL ->
+                this.compareNumbers(node, left, right, (l, r) -> l <= r);
             case ConditionTokenType.BANG_EQUAL -> !InterpreterUtilities.isEqual(left, right);
             case ConditionTokenType.EQUAL_EQUAL -> InterpreterUtilities.isEqual(left, right);
             default -> null;
         };
     }
 
-    private boolean compareNumbers(BinaryExpression expression, Object left, Object right, BiPredicate<Double, Double> predicate) {
+    private boolean compareNumbers(
+        BinaryExpression expression,
+        Object left,
+        Object right,
+        BiPredicate<Double, Double> predicate
+    ) {
         Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
-                expression.operator(),
-                left,
-                right
+            expression.operator(),
+            left,
+            right
         );
         return predicate.test(tuple.left().doubleValue(), tuple.right().doubleValue());
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,11 @@ import java.util.Collection;
 public interface ListPropertyParser<T> {
 
     /**
-     * Parses the given {@link ListProperty} to a collection of instances of the target type. If the conversion fails,
-     * an empty collection is returned.
+     * Parses the given {@link ListProperty} to a collection of instances of the target type. If the
+     * conversion fails, an empty collection is returned.
      *
      * @param property the property to parse
+     *
      * @return the parsed values
      */
     Collection<T> parse(ListProperty property);

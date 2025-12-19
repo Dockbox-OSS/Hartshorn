@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A functional interface for initializing an {@link Option} based on an input. This interface is
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the type of the value in the option
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -44,6 +44,7 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
      * option if it is present.
      *
      * @param mapper the mapper to apply to the value of the option
+     *
      * @return a new {@link OptionInitializer} that will apply the given mapper to the value
      *
      * @see Option#map(Function)
@@ -56,6 +57,7 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
      * Returns a new {@link OptionInitializer} that will apply the given mapper to {@link Option}.
      *
      * @param mapper the mapper to apply to the option
+     *
      * @return a new {@link OptionInitializer} that will apply the given mapper to the option
      *
      * @see Option#flatMap(Function)
@@ -65,12 +67,13 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
     }
 
     /**
-     * Returns a new {@link ContextualInitializer} that will either return the value of the {@link
-     * Option}, or the given default value if the option is empty.
+     * Returns a new {@link ContextualInitializer} that will either return the value of the
+     * {@link Option}, or the given default value if the option is empty.
      *
      * @param supplier the supplier to provide the default value
-     * @return a new {@link ContextualInitializer} that will return either the wrapped value, or
-     * the given value
+     *
+     * @return a new {@link ContextualInitializer} that will return either the wrapped value, or the
+     * given value
      *
      * @see Option#orElse(Object)
      */
@@ -84,8 +87,9 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
      *
      * @param transformer the transformer to apply to the option
      * @param <R> the type of the transformed value
-     * 
-     * @return a new {@link ContextualInitializer} that will transform the option into a different type
+     *
+     * @return a new {@link ContextualInitializer} that will transform the option into a different
+     * type
      */
     default <R> ContextualInitializer<I, R> transform(Function<Option<T>, R> transformer) {
         return input -> transformer.apply(this.initialize(input));

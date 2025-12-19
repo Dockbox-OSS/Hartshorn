@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
 /**
- * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a case-sensitive
- * manner. If no match is found, {@code null} is returned.
+ * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a
+ * case-sensitive manner. If no match is found, {@code null} is returned.
  *
  * @see Enum#valueOf(Class, String)
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 @SuppressWarnings("rawtypes")
@@ -39,8 +39,9 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
     }
 
     /**
-     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a case-sensitive
-     * manner. Extraneous whitespace is trimmed. If no match is found, {@code null} is returned.
+     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in
+     * a case-sensitive manner. Extraneous whitespace is trimmed. If no match is found, {@code null}
+     * is returned.
      *
      * @param enumType The type of {@link Enum} to convert to
      * @param <T> The type of {@link Enum} to convert to
@@ -52,19 +53,20 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
      * @author Guus Lieben
      */
     @SuppressWarnings("unchecked")
-    private record StringToEnumConverter<T extends Enum>(Class<T> enumType) implements Converter<String, T> {
+    private record StringToEnumConverter<T extends Enum>(Class<T> enumType)
+        implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String source) {
             assert source != null;
-            if(source.isEmpty()) {
+            if (source.isEmpty()) {
                 return null;
             }
             try {
                 Enum value = Enum.valueOf(this.enumType, source.trim());
                 return this.enumType.cast(value);
             }
-            catch(IllegalArgumentException e) {
+            catch (IllegalArgumentException e) {
                 return null;
             }
         }

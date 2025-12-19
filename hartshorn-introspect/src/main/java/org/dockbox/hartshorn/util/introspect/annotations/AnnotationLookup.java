@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,22 +46,31 @@ public interface AnnotationLookup {
      *
      * @param element The element to find the annotation on
      * @param annotationType The type of the annotation to find
-     * @return The annotation of the given type on the given element, or {@code null} if it is not present.
      * @param <A> The type of the annotation
-     * @throws DuplicateAnnotationCompositeException If there are multiple composite annotations matching the given type
+     *
+     * @return The annotation of the given type on the given element, or {@code null} if it is not
+     * present.
+     *
+     * @throws DuplicateAnnotationCompositeException If there are multiple composite annotations
+     * matching the given type
      */
-    <A extends Annotation> A find(AnnotatedElement element, Class<A> annotationType) throws DuplicateAnnotationCompositeException;
+    <A extends Annotation> A find(
+        AnnotatedElement element,
+        Class<A> annotationType
+    ) throws DuplicateAnnotationCompositeException;
 
     /**
-     * Returns all (composite) annotations of the given type on the given element, or an empty list if
-     * none are present. Unlike {@link #find(AnnotatedElement, Class)}, this method will return all
-     * composite annotations of the given type, even if there are multiple. This will never yield a
-     * {@link DuplicateAnnotationCompositeException}, as duplicates are allowed.
+     * Returns all (composite) annotations of the given type on the given element, or an empty list
+     * if none are present. Unlike {@link #find(AnnotatedElement, Class)}, this method will return
+     * all composite annotations of the given type, even if there are multiple. This will never
+     * yield a {@link DuplicateAnnotationCompositeException}, as duplicates are allowed.
      *
      * @param element The element to find the annotations on
      * @param annotationType The type of the annotations to find
-     * @return All (composite) annotations of the given type on the given element, or an empty list if none are present.
      * @param <A> The type of the annotation
+     *
+     * @return All (composite) annotations of the given type on the given element, or an empty list
+     * if none are present.
      */
     <A extends Annotation> List<A> findAll(AnnotatedElement element, Class<A> annotationType);
 
@@ -69,21 +78,23 @@ public interface AnnotationLookup {
      * Returns the backing {@link Annotation} of a given {@link Annotation}. If the given annotation
      * is not a composite annotation, it is returned as-is. If it is a composite annotation, the
      * underlying base annotation is returned if it exists. Typically, this indicates the annotation
-     * is a proxy instance, though this is not required and can be decided on by the implementation of
-     * this interface.
+     * is a proxy instance, though this is not required and can be decided on by the implementation
+     * of this interface.
      *
      * @param annotation The annotation to get the backing annotation of
+     *
      * @return The backing annotation of the given annotation
      */
     Annotation unproxy(Annotation annotation);
 
     /**
-     * Returns the linear hierarchy of the given annotation. This is the list of annotations which the
-     * given annotation extends, in order of precedence. The first element in the list is the given
-     * annotation, and the last element is the base annotation. As annotations can only extend one
-     * other annotation, the last element is always the base annotation.
+     * Returns the linear hierarchy of the given annotation. This is the list of annotations which
+     * the given annotation extends, in order of precedence. The first element in the list is the
+     * given annotation, and the last element is the base annotation. As annotations can only extend
+     * one other annotation, the last element is always the base annotation.
      *
      * @param type The annotation to get the hierarchy of
+     *
      * @return The linear hierarchy of the given annotation
      */
     SequencedSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type);

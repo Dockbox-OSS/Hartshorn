@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,11 @@ public class CollectionToCollectionConverterFactoryTests {
         Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3));
         List<Integer> expectedOutput = Arrays.asList(1, 2, 3);
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
-        Converter<Collection<?>, ArrayList> converter = new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
+            ArrayList.class,
+            ArrayList::new);
+        Converter<Collection<?>, ArrayList> converter =
+            new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
         List<Integer> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof ArrayList);
@@ -52,8 +55,11 @@ public class CollectionToCollectionConverterFactoryTests {
         Set<String> input = new LinkedHashSet<>(Arrays.asList("foo", "bar", "baz"));
         List<String> expectedOutput = new LinkedList<>(Arrays.asList("foo", "bar", "baz"));
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedList.class, LinkedList::new);
-        Converter<Collection<?>, LinkedList> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
+            LinkedList.class,
+            LinkedList::new);
+        Converter<Collection<?>, LinkedList> converter =
+            new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
         List<String> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof LinkedList);
@@ -66,8 +72,11 @@ public class CollectionToCollectionConverterFactoryTests {
         Set<Integer> input = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
         Set<Integer> expectedOutput = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedHashSet.class, LinkedHashSet::new);
-        Converter<Collection<?>, LinkedHashSet> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
+            LinkedHashSet.class,
+            LinkedHashSet::new);
+        Converter<Collection<?>, LinkedHashSet> converter =
+            new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
         Set<?> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof LinkedHashSet);

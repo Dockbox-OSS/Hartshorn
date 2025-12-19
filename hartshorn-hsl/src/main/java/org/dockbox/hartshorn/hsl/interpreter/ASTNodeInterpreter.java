@@ -33,12 +33,13 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
  */
 public interface ASTNodeInterpreter<R, T extends ASTNode> {
 
-     /**
-      * Interprets the given AST node using the provided interpreter context.
-      *
-      * @param node the AST node to interpret
-      * @param interpreter the interpreter context used for interpreting the node
-      * @return the result of the interpretation, which can vary based on the node type
-      */
-     R interpret(T node, Interpreter interpreter);
+    /**
+     * Interprets the given AST node using the provided interpreter context.
+     *
+     * @param node the AST node to interpret
+     * @param interpreter the interpreter context used for interpreting the node
+     *
+     * @return the result of the interpretation, which can vary based on the node type
+     */
+    R interpret(T node, Interpreter interpreter);
 }

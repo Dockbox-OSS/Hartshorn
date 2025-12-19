@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.launchpad.lifecycle;
 
 /**
- * A lifecycle observable is an object that can be observed for lifecycle events. The lifecycle events are defined by the
- * {@link LifecycleObserver} interface.
+ * A lifecycle observable is an object that can be observed for lifecycle events. The lifecycle
+ * events are defined by the {@link LifecycleObserver} interface.
  *
  * @since 0.4.8
  *
@@ -34,8 +34,8 @@ public interface LifecycleObservable {
     void register(Observer observer);
 
     /**
-     * Adds a lazily instantiated lifecycle observer to this observable. The observer is instantiated when it's first
-     * needed.
+     * Adds a lazily instantiated lifecycle observer to this observable. The observer is
+     * instantiated when it's first needed.
      *
      * @param observer the observer to add
      */

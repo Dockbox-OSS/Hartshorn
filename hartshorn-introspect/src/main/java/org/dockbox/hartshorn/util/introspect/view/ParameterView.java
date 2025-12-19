@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.util.introspect.view;
 
 /**
- * Represents a view of a method- or constructor parameter. This view can be used to introspect
- * the parameter's annotations, as well as its name and type.
+ * Represents a view of a method- or constructor parameter. This view can be used to introspect the
+ * parameter's annotations, as well as its name and type.
  *
  * @param <T> the type of the parameter
  *
  * @since 0.4.7
- *
+ * 
  * @author Guus Lieben
  */
 public interface ParameterView<T> extends AnnotatedGenericTypeView<T> {
@@ -46,8 +46,8 @@ public interface ParameterView<T> extends AnnotatedGenericTypeView<T> {
     boolean isNamePresent();
 
     /**
-     * Returns the executable element that declares this parameter. This can be either a method or
-     * a constructor.
+     * Returns the executable element that declares this parameter. This can be either a method or a
+     * constructor.
      *
      * @return the executable element that declares this parameter
      */

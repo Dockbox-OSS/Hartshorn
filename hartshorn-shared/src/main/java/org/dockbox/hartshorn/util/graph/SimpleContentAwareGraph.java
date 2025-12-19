@@ -34,7 +34,9 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class SimpleContentAwareGraph<T> extends SimpleGraph<T> implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
+public class SimpleContentAwareGraph<T>
+    extends SimpleGraph<T>
+    implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
 
     private final Set<GraphNode<T>> nodes = new HashSet<>();
 

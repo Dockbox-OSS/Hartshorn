@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * A {@link MultiMap} implementation that lazily creates its backing map. The creation
- * of the backing map is delegated to the {@link #createEmptyMap()} method.
+ * A {@link MultiMap} implementation that lazily creates its backing map. The creation of the
+ * backing map is delegated to the {@link #createEmptyMap()} method.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
@@ -50,8 +50,8 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
     }
 
     /**
-     * Creates the backing map. This method is only called once, after which the
-     * backing map is stored in a field.
+     * Creates the backing map. This method is only called once, after which the backing map is
+     * stored in a field.
      *
      * @return the backing map
      */

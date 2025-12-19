@@ -20,7 +20,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Prints a banner from a given resource path. The resource path is expected to be a (plain) text file.
+ * Prints a banner from a given resource path. The resource path is expected to be a (plain) text
+ * file.
  *
  * @since 0.4.13
  *

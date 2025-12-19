@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Exception to indicate that a component could not be resolved. This can be caused by a number of reasons, such as
- * missing dependencies, invalid constructors, or absent bindings.
+ * Exception to indicate that a component could not be resolved. This can be caused by a number of
+ * reasons, such as missing dependencies, invalid constructors, or absent bindings.
  *
  * @since 0.5.0
  *

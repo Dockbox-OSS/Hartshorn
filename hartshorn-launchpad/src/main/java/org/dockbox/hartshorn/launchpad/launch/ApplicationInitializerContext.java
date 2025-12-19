@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.context.AbstractSingleElementContext;
 import org.dockbox.hartshorn.context.SingleElementContext;
 
 /**
- * A context used to initialize the application. This context will always provide a {@link DefaultBindingConfigurerContext}
- * as the first element, which can be used to configure the {@link DefaultBindingConfigurer} used to create the application's
- * default bindings.
+ * A context used to initialize the application. This context will always provide a
+ * {@link DefaultBindingConfigurerContext} as the first element, which can be used to configure the
+ * {@link DefaultBindingConfigurer} used to create the application's default bindings.
  *
  * @param <I> The type of the input object.
  *

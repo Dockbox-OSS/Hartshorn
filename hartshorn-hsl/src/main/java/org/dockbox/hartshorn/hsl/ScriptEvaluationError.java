@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
  * Represents an error that occurred during the evaluation of a script. This error can occur during
- * any {@link Phase phase} of the evaluation process, and will include as much information as possible
- * about the location of the error.
+ * any {@link Phase phase} of the evaluation process, and will include as much information as
+ * possible about the location of the error.
  *
  * @see Phase
  * @see ASTNode
@@ -90,6 +90,7 @@ public class ScriptEvaluationError extends RuntimeException {
      * Creates a new builder for a {@link ScriptEvaluationError} at the given phase.
      *
      * @param phase the phase at which the error occurred
+     *
      * @return a new builder for a {@link ScriptEvaluationError}
      */
     public static Builder builder(Phase phase) {
@@ -117,10 +118,11 @@ public class ScriptEvaluationError extends RuntimeException {
         }
 
         /**
-         * Sets the node at which the error occurred. If the node is not {@code null}, the
-         * line and column will be set to the line and column of the node.
+         * Sets the node at which the error occurred. If the node is not {@code null}, the line and
+         * column will be set to the line and column of the node.
          *
          * @param at the node at which the error occurred
+         *
          * @return this builder
          */
         public Builder at(ASTNode at) {
@@ -148,6 +150,7 @@ public class ScriptEvaluationError extends RuntimeException {
          *
          * @param line the line number of the error
          * @param column the column number of the error
+         *
          * @return this builder
          */
         public Builder position(int line, int column) {
@@ -160,6 +163,7 @@ public class ScriptEvaluationError extends RuntimeException {
          * Sets the message of the error.
          *
          * @param message the message of the error
+         *
          * @return this builder
          */
         public Builder message(String message) {
@@ -173,25 +177,31 @@ public class ScriptEvaluationError extends RuntimeException {
          *
          * @param message the diagnostic message
          * @param args the arguments for the diagnostic message
+         *
          * @return this builder
-         * @throws IllegalArgumentException if the phase of the message does not match the phase of the builder
+         *
+         * @throws IllegalArgumentException if the phase of the message does not match the phase of
+         * the builder
          */
         public Builder message(DiagnosticMessage message, Object... args) {
             if (message.phase() != null && message.phase() != this.phase) {
                 throw new IllegalArgumentException("Diagnostic message phase " + message.phase() +
-                        " does not match builder phase " + this.phase);
+                    " does not match builder phase " + this.phase);
             }
             this.message = message.format(args);
             return this;
         }
 
         /**
-         * Sets the message of the error using a {@link FormattedDiagnostic}. Requires that the phase of
-         * the diagnostic matches the phase of the builder.
+         * Sets the message of the error using a {@link FormattedDiagnostic}. Requires that the
+         * phase of the diagnostic matches the phase of the builder.
          *
          * @param diagnostic the formatted diagnostic
+         *
          * @return this builder
-         * @throws IllegalArgumentException if the phase of the diagnostic does not match the phase of the builder
+         *
+         * @throws IllegalArgumentException if the phase of the diagnostic does not match the phase
+         * of the builder
          */
         public Builder message(FormattedDiagnostic diagnostic) {
             return this.message(diagnostic.message(), diagnostic.arguments());
@@ -201,6 +211,7 @@ public class ScriptEvaluationError extends RuntimeException {
          * Sets the cause of the error.
          *
          * @param cause the cause of the error
+         *
          * @return this builder
          */
         public Builder cause(Throwable cause) {

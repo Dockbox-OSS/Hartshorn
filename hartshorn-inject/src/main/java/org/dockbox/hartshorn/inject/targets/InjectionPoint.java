@@ -20,8 +20,9 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Represents an injection point, which is a combination of a type and an annotated element. Typically,
- * the annotated element is a field or parameter, and the type is the type of the field or parameter.
+ * Represents an injection point, which is a combination of a type and an annotated element.
+ * Typically, the annotated element is a field or parameter, and the type is the type of the field
+ * or parameter.
  *
  * @since 0.6.0
  *
@@ -38,7 +39,8 @@ public final class InjectionPoint {
     }
 
     /**
-     * Returns the type of the injection point. This is typically the type of the {@link #injectionPoint()}.
+     * Returns the type of the injection point. This is typically the type of the
+     * {@link #injectionPoint()}.
      *
      * @return the type of the injection point
      */
@@ -47,8 +49,8 @@ public final class InjectionPoint {
     }
 
     /**
-     * Returns the annotated element of the injection point. This is typically the field or parameter
-     * that is being injected into.
+     * Returns the annotated element of the injection point. This is typically the field or
+     * parameter that is being injected into.
      *
      * @return the annotated element of the injection point
      */

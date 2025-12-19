@@ -62,8 +62,8 @@ public class SingletonCacheTests {
         // Given
         ComponentKey<String> key = ComponentKey.of(String.class);
         this.binder.bind(key)
-                .processAfterInitialization(false)
-                .singleton("Hello, World!");
+            .processAfterInitialization(false)
+            .singleton("Hello, World!");
 
         // Then
         Assertions.assertTrue(this.cache.contains(key));

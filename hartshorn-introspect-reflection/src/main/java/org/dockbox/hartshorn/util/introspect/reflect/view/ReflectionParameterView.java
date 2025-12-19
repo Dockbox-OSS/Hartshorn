@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
- * A view that provides access to the parameters of a method or constructor. This view is backed by a {@link Parameter}
- * instance.
+ * A view that provides access to the parameters of a method or constructor. This view is backed by
+ * a {@link Parameter} instance.
  *
  * @param <T> the type of the parameter
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
-public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView implements ParameterView<T> {
+public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
+    implements ParameterView<T> {
 
     private final Introspector introspector;
     private final Parameter parameter;
@@ -67,7 +68,8 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     @Override
     public TypeView<T> genericType() {
         if (this.genericType == null) {
-            this.genericType = (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
+            this.genericType =
+                (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
         }
         return this.genericType;
     }
@@ -76,8 +78,12 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     public String name() {
         if (this.name == null) {
             if (this.annotations().has(org.dockbox.hartshorn.util.introspect.Parameter.class)) {
-                this.name = this.annotations().get(org.dockbox.hartshorn.util.introspect.Parameter.class).get().value();
-            } else {
+                this.name = this.annotations()
+                    .get(org.dockbox.hartshorn.util.introspect.Parameter.class)
+                    .get()
+                    .value();
+            }
+            else {
                 this.name = this.parameter.getName();
             }
         }

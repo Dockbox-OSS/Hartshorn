@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.context;
 
 /**
- * A context identity is a key that can be used to identify a context. It can be used to
- * look up a context in a {@link ContextView} instance, or to create a new context instance.
+ * A context identity is a key that can be used to identify a context. It can be used to look up a
+ * context in a {@link ContextView} instance, or to create a new context instance.
  *
  * <p>Note that a context identity is not a context itself. It is only a key that can be
  * used to reach a usable context.
@@ -33,14 +33,16 @@ public interface ContextIdentity<T extends ContextView> {
 
     /**
      * Gets the type of the context represented by this identity.
+     *
      * @return The type of the context represented by this identity.
      */
     Class<T> type();
 
     /**
-     * Gets the name of the context represented by this identity. This is null if no name was defined.
-     * If the context represented by this identity is a {@link NamedContext}, it is not ensured that
-     * the name of the context is equal to the name of the identity. This is only a recommendation.
+     * Gets the name of the context represented by this identity. This is null if no name was
+     * defined. If the context represented by this identity is a {@link NamedContext}, it is not
+     * ensured that the name of the context is equal to the name of the identity. This is only a
+     * recommendation.
      *
      * @return The name of the context represented by this identity.
      */
@@ -51,8 +53,8 @@ public interface ContextIdentity<T extends ContextView> {
      * to create the value.
      *
      * @return The newly created context value.
+     *
      * @throws IllegalStateException If no fallback function is present to create the value.
      */
     T create();
-
 }

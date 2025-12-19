@@ -28,7 +28,7 @@ import java.util.List;
  * delegates parsing to them in order.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public class SimpleExpressionParserChain implements MutableExpressionParserChain {

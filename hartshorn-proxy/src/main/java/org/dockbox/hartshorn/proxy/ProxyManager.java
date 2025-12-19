@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A proxy manager is responsible for managing the lifecycle of a single proxy object. How the proxy is created is
- * determined by the {@link ProxyFactory} that is used to create the proxy. The proxy manager is responsible for
- * providing the proxy with the necessary information to function.
+ * A proxy manager is responsible for managing the lifecycle of a single proxy object. How the proxy
+ * is created is determined by the {@link ProxyFactory} that is used to create the proxy. The proxy
+ * manager is responsible for providing the proxy with the necessary information to function.
  *
- * <p>The necessary information is provided by the {@link ProxyFactory} and the {@link ProxyManager} is responsible
- * for providing it to the proxy after it has been created. As a legal side effect of this, the proxy manager is
- * capable of exposing the active delegates, interceptors, and proxy context.
+ * <p>The necessary information is provided by the {@link ProxyFactory} and the {@link ProxyManager}
+ * is responsible
+ * for providing it to the proxy after it has been created. As a legal side effect of this, the
+ * proxy manager is capable of exposing the active delegates, interceptors, and proxy context.
  *
  * @param <T> the type of the proxy
  *
@@ -41,17 +42,16 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface ProxyManager<T> extends ProxyIntrospector<T>, Context {
 
     /**
-     * Returns the {@link ProxyAdvisor} that is responsible for this proxy. The advisor is responsible for providing
-     * the proxy with the necessary advisors to function.
+     * Returns the {@link ProxyAdvisor} that is responsible for this proxy. The advisor is
+     * responsible for providing the proxy with the necessary advisors to function.
      *
      * @return the {@link ProxyAdvisor} that is responsible for this proxy
      */
     ProxyAdvisor<T> advisor();
 
-
     /**
-     * Returns the {@link ProxyOrchestrator} that is responsible for managing the lifecycle of proxies in the current
-     * application, including the proxy managed by this manager.
+     * Returns the {@link ProxyOrchestrator} that is responsible for managing the lifecycle of
+     * proxies in the current application, including the proxy managed by this manager.
      *
      * @return the {@link ProxyOrchestrator}
      */
@@ -59,7 +59,9 @@ public interface ProxyManager<T> extends ProxyIntrospector<T>, Context {
 
     /**
      * Returns the original instance delegate of the proxy.
+     *
      * @return the original instance delegate of the proxy
+     *
      * @see StateAwareTypeAdvisorRegistryStep#delegate()
      * @see StateAwareAdvisorRegistry#type()
      */

@@ -23,10 +23,12 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
 /**
- * An abstract {@link ComponentPostProcessor} that is used to delegate non-implemented methods of a parent
- * type to a concrete implementation of that parent type. By default, the concrete implementation is provided
- * by the {@link InjectionCapableApplication}, though this behavior may be changed by overriding {@link
- * #concreteDelegator(InjectionCapableApplication, ProxyFactory, Class) the concrete delegator} method.
+ * An abstract {@link ComponentPostProcessor} that is used to delegate non-implemented methods of a
+ * parent type to a concrete implementation of that parent type. By default, the concrete
+ * implementation is provided by the {@link InjectionCapableApplication}, though this behavior may
+ * be changed by overriding
+ * {@link #concreteDelegator(InjectionCapableApplication, ProxyFactory, Class) the concrete
+ * delegator} method.
  *
  * @param <P> the type of the parent that is being delegated to
  *
@@ -36,15 +38,26 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
  */
 public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProcessor {
 
+    /**
+     * The parent target class of which a component must be a child in order to be eligible for
+     * proxy delegation.
+     *
+     * @return the parent target class
+     */
     protected abstract Class<P> parentTarget();
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return processingContext.permitsProxying() && processingContext.type().isChildOf(this.parentTarget());
+        return processingContext.permitsProxying() && processingContext.type()
+            .isChildOf(this.parentTarget());
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         ProxyFactory<P> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
@@ -53,7 +66,8 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
         P concreteDelegator = this.concreteDelegator(application, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
-            // Ensure we keep the original instance as delegate if possible, to avoid losing context. This rule is defined by the finalizing process.
+            // Ensure we keep the original instance as delegate if possible, to avoid losing
+            // context. This rule is defined by the finalizing process.
             if (instance != null) {
                 factory.advisors().type().delegate(this.parentTarget().cast(instance));
             }
@@ -64,10 +78,30 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
         }
     }
 
-    protected P concreteDelegator(InjectionCapableApplication application, ProxyFactory<P> handler, Class<? extends P> parent) {
+    /**
+     * Provides the concrete delegator instance to which methods will be delegated. By default, this
+     * method retrieves an instance from the application's default provider.
+     *
+     * @param application the injection-capable application
+     * @param handler the proxy factory handling the proxy creation
+     * @param parent the parent class being delegated to
+     *
+     * @return the concrete delegator instance
+     */
+    protected P concreteDelegator(
+        InjectionCapableApplication application,
+        ProxyFactory<P> handler,
+        Class<? extends P> parent
+    ) {
         return application.defaultProvider().get(this.parentTarget());
     }
 
+    /**
+     * Whether to skip concrete methods when delegating to the concrete implementation. If true,
+     * only abstract methods will be delegated.
+     *
+     * @return true to skip concrete methods, false to delegate all methods
+     */
     protected boolean skipConcreteMethods() {
         return false;
     }

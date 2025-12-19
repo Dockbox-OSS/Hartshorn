@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier;
 
 /**
- * Provides default bindings for the framework. These bindings are not required for the framework to function, but
- * are provided for convenience.
+ * Provides default bindings for the framework. These bindings are not required for the framework to
+ * function, but are provided for convenience.
  *
  * @since 0.4.10
  *
@@ -38,11 +38,13 @@ import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier
 public class ApplicationContextCarrierConfiguration {
 
     /**
-     * Provides a simple wrapper around the {@link ApplicationContext} to allow for easy access to the context in
-     * components. This carrier should typically not be used directly, but may be used by proxies to delegate the
-     * use of {@link ApplicationContextCarrier#applicationContext()} to the actual context.
+     * Provides a simple wrapper around the {@link ApplicationContext} to allow for easy access to
+     * the context in components. This carrier should typically not be used directly, but may be
+     * used by proxies to delegate the use of {@link ApplicationContextCarrier#applicationContext()}
+     * to the actual context.
      *
      * @param applicationContext the application context to wrap
+     *
      * @return a {@link ApplicationContextCarrier} wrapping the provided context
      */
     @Singleton

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,20 +25,21 @@ import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
 
 /**
- * Indicates that a field or parameter is required. If the output of a binding is {@code null} after a
- * {@link ComponentPopulator} has attempted to populate it, a
- * {@link ComponentRequiredException} will be thrown.
+ * Indicates that a field or parameter is required. If the output of a binding is {@code null} after
+ * a {@link ComponentPopulator} has attempted to populate it, a {@link ComponentRequiredException}
+ * will be thrown.
+ *
+ * @since 0.4.1
  *
  * @author Guus Lieben
- * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 public @interface Required {
 
     /**
-     * If {@code true}, the annotated element will be required. If {@code false}, the annotated element will not be
-     * required.
+     * If {@code true}, the annotated element will be required. If {@code false}, the annotated
+     * element will not be required.
      *
      * @return {@code true} if the annotated element is required, {@code false} otherwise.
      */

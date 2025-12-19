@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
+     *
      * @return a new instance of the class that declares the constructor
      */
     default T create(Object... arguments) throws Throwable {
@@ -61,6 +62,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
+     *
      * @return a new instance of the class that declares the constructor
      */
     T create(Collection<?> arguments) throws Throwable;

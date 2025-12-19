@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.launchpad.environment;
 import java.util.Set;
 
 /**
- * A predicate that checks if the application is running in a build environment. This is useful
- * to determine if certain features should be enabled or disabled.
+ * A predicate that checks if the application is running in a build environment. This is useful to
+ * determine if certain features should be enabled or disabled.
  *
  * <p>Supported environments include:
  * <ul>
@@ -30,7 +30,10 @@ import java.util.Set;
  *     <li>Travis CI, using the <a href="https://docs.travis-ci.com/user/environment-variables/#default-environment-variables">{@code TRAVIS}</a> environment variable</li>
  *     <li>GitHub Actions, using the <a href="https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables">{@code GITHUB_ACTIONS}</a> environment variable</li>
  *     <li>AppVeyor, using the <a href="https://www.appveyor.com/docs/environment-variables/">{@code APPVEYOR}</a> environment variable</li>
- *     <li>Any environment that defines any of the above environment variables, where the value equals {@code "true"}</li>
+ *     <li>
+ *         Any environment that defines any of the above environment variables, where the value
+ *         equals {@code "true"}
+ *     </li>
  * </ul>
  *
  * <p>If an environment does not define any of the above environment variables, this predicate will
@@ -43,22 +46,23 @@ import java.util.Set;
 public class BuildEnvironmentPredicate {
 
     private static final Set<String> BUILD_ENVIRONMENT_VARIABLES = Set.of(
-            "GITLAB_CI",
-            "JENKINS_HOME",
-            "TRAVIS",
-            "GITHUB_ACTIONS",
-            "APPVEYOR"
+        "GITLAB_CI",
+        "JENKINS_HOME",
+        "TRAVIS",
+        "GITHUB_ACTIONS",
+        "APPVEYOR"
     );
 
     /**
-     * Checks if the application is running in a build environment. Returns {@code true} if any of the
-     * supported environment variables are defined, and the value of the variable equals {@code "true"}.
+     * Checks if the application is running in a build environment. Returns {@code true} if any of
+     * the supported environment variables are defined, and the value of the variable equals
+     * {@code "true"}.
      *
      * @return whether the application is running in a build environment
      */
     public static boolean isBuildEnvironment() {
-        for(String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
-            if(System.getenv().containsKey(buildEnvironmentVariable)) {
+        for (String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
+            if (System.getenv().containsKey(buildEnvironmentVariable)) {
                 String value = System.getenv().get(buildEnvironmentVariable);
                 if (Boolean.parseBoolean(value)) {
                     return true;

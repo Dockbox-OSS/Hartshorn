@@ -46,7 +46,11 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     private final CollectionBindingHierarchy<T> hierarchy;
     private final int priority;
 
-    public HierarchyCollectorBindingFunction(Binder binder, CollectionBindingHierarchy<T> hierarchy, int priority) {
+    public HierarchyCollectorBindingFunction(
+        Binder binder,
+        CollectionBindingHierarchy<T> hierarchy,
+        int priority
+    ) {
         this.binder = binder;
         this.hierarchy = hierarchy;
         this.priority = priority;

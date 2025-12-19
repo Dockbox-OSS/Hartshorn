@@ -28,11 +28,12 @@ import org.slf4j.LoggerFactory;
 import java.util.function.Predicate;
 
 /**
- * Activates all non-lazy singleton components in the application context when the application starts. This is done to
- * ensure that all components are instantiated and ready for use when the application starts.
+ * Activates all non-lazy singleton components in the application context when the application
+ * starts. This is done to ensure that all components are instantiated and ready for use when the
+ * application starts.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ComponentActivatorObserver implements LifecycleObserver {
@@ -45,7 +46,8 @@ public class ComponentActivatorObserver implements LifecycleObserver {
             .filter(container -> container.lifecycle() == LifecycleType.SINGLETON)
             .filter(Predicate.not(ComponentContainer::lazy))
             .forEach(container -> {
-                LOG.debug("Activating non-lazy singleton {} in application context", container.id());
+                LOG.debug("Activating non-lazy singleton {} in application context",
+                    container.id());
                 // No need to store the instance manually, as the container will do this for us
                 applicationContext.get(container.type().type());
             });

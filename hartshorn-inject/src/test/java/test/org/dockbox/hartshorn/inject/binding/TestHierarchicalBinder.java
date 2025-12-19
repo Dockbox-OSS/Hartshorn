@@ -35,9 +35,9 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
 
     public TestHierarchicalBinder() {
         super(
-                null,
-                new DefaultBindingAliasNormalizer(),
-                new ConcurrentHashSingletonCache()
+            null,
+            new DefaultBindingAliasNormalizer(),
+            new ConcurrentHashSingletonCache()
         );
     }
 
@@ -48,13 +48,12 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
 
     @Override
     public HierarchyCache hierarchyCache() {
-        if (this.hierarchyCache == null ) {
+        if (this.hierarchyCache == null) {
             this.hierarchyCache = new HierarchyCache(
-                    this.configuration(),
-                    this,
-                    this
+                this.configuration(),
+                this,
+                this
             );
-
         }
         return this.hierarchyCache;
     }

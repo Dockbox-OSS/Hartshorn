@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A provider that always returns the same instance. While the instance is available, this
- * provider is not type-aware, as the instance may be {@code null}, or deviate from the
- * binding key.
+ * A provider that always returns the same instance. While the instance is available, this provider
+ * is not type-aware, as the instance may be {@code null}, or deviate from the binding key.
  *
  * @param <T> the type of the instance
  *
@@ -43,7 +42,11 @@ public class SingletonInstantiationStrategy<T> implements NonTypeAwareInstantiat
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) {
+    public Option<ObjectContainer<T>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) {
         return Option.of(this.container);
     }
 
@@ -60,7 +63,7 @@ public class SingletonInstantiationStrategy<T> implements NonTypeAwareInstantiat
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("container", this.container)
-                .describe();
+            .field("container", this.container)
+            .describe();
     }
 }

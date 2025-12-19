@@ -23,14 +23,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * An {@link InvocationHandler} for an annotation which is backed by a {@link Map} of values.
- * This is used to create a dynamic proxy for an annotation which is not present at runtime, or
- * to create a virtual annotation which was never declared on a member.
+ * An {@link InvocationHandler} for an annotation which is backed by a {@link Map} of values. This
+ * is used to create a dynamic proxy for an annotation which is not present at runtime, or to create
+ * a virtual annotation which was never declared on a member.
  *
  * <p>Values are retrieved from the map, or from the default value of the method if the map does
  * not contain a value for the method name. Standard methods such as {@link Object#toString()},
- * {@link Object#hashCode()} and {@link Object#equals(Object)} are also supported. {@link Annotation#annotationType()}
- * will use the type provided in the constructor.
+ * {@link Object#hashCode()} and {@link Object#equals(Object)} are also supported.
+ * {@link Annotation#annotationType()} will use the type provided in the constructor.
  *
  * @see TypeUtils#annotation(Class)
  * @see TypeUtils#annotation(Class, Map)
@@ -45,8 +45,9 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
     private final Map<String, Object> values;
 
     /**
-     * Creates a new {@link MapBackedAnnotationInvocationHandler} instance. The values map is checked
-     * for validity, and an exception is thrown if the values are not valid for the annotation type.
+     * Creates a new {@link MapBackedAnnotationInvocationHandler} instance. The values map is
+     * checked for validity, and an exception is thrown if the values are not valid for the
+     * annotation type.
      *
      * @param type the type of the annotation
      * @param values the values of the annotation
@@ -59,17 +60,18 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
     }
 
     /**
-     * Checks if the values map is valid for the annotation type. This is done by checking if the keys
-     * of the map are present as methods on the annotation type, and if the values are assignable to
-     * the return type of the method. If the values map is null, or the type is null, an exception is
-     * thrown.
+     * Checks if the values map is valid for the annotation type. This is done by checking if the
+     * keys of the map are present as methods on the annotation type, and if the values are
+     * assignable to the return type of the method. If the values map is null, or the type is null,
+     * an exception is thrown.
      *
      * @param type the type of the annotation
      * @param values the values of the annotation
+     *
      * @return the values map
      *
-     * @throws IllegalStateException if the values are not valid for the annotation type, or if either the
-     *                               values map or the type are null
+     * @throws IllegalStateException if the values are not valid for the annotation type, or if
+     * either the values map or the type are null
      */
     private Map<String, Object> checkValues(Class<?> type, Map<String, Object> values) {
         if (values == null) {
@@ -82,11 +84,15 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
             try {
                 Method method = type.getDeclaredMethod(property);
                 if (!TypeUtils.isAssignable(method.getReturnType(), value.getClass())) {
-                    throw new IllegalStateException("Value " + value + " is not assignable to " + method.getReturnType());
+                    throw new IllegalStateException(
+                        "Value " + value + " is not assignable to " + method.getReturnType()
+                    );
                 }
             }
             catch (NoSuchMethodException e) {
-                throw new IllegalStateException("No such method " + property + " on annotation " + type.getCanonicalName());
+                throw new IllegalStateException(
+                    "No such method " + property + " on annotation " + type.getCanonicalName()
+                );
             }
         });
         return values;
@@ -98,8 +104,8 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         return switch (methodName) {
             case "annotationType" -> this.type;
             case "toString" -> "@%s(%s)".formatted(this.type, this.values.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())
-                    .collect(Collectors.joining()));
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining()));
             case "hashCode" -> this.values.hashCode();
             case "equals" -> proxy == args[0];
             default -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
 /**
- * Functional interface for custom resolver extensions, specific to custom AST nodes.
- * This interface is used to provide custom resolver logic for custom AST nodes, which
- * is used during the semantic analysis phase of the compilation process.
+ * Functional interface for custom resolver extensions, specific to custom AST nodes. This interface
+ * is used to provide custom resolver logic for custom AST nodes, which is used during the semantic
+ * analysis phase of the compilation process.
  *
  * @param <T> The type of the custom AST node.
  *
@@ -37,8 +37,8 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 public interface ResolverExtension<T extends ASTNode & CustomASTNode<?, ?>> {
 
     /**
-     * Resolves the provided node using the provided resolver. This is used to resolve any references
-     * that are present in the node.
+     * Resolves the provided node using the provided resolver. This is used to resolve any
+     * references that are present in the node.
      *
      * @param node The node to resolve.
      * @param resolver The resolver to use to resolve the node.

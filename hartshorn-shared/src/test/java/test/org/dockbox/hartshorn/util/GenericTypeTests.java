@@ -29,7 +29,8 @@ public class GenericTypeTests {
 
     @Test
     void testGenericTypeOfSimpleTypeIsCorrect() {
-        GenericType<String> genericType = new GenericType<>() {};
+        GenericType<String> genericType = new GenericType<>() {
+        };
         Type type = genericType.type();
         Assertions.assertTrue(type instanceof Class<?>);
         Assertions.assertEquals(String.class, type);
@@ -41,7 +42,8 @@ public class GenericTypeTests {
 
     @Test
     void testGenericTypeOfParameterizedTypeIsCorrect() {
-        GenericType<List<String>> genericType = new GenericType<>() {};
+        GenericType<List<String>> genericType = new GenericType<>() {
+        };
         Type type = genericType.type();
         Assertions.assertTrue(type instanceof ParameterizedType);
 
@@ -57,7 +59,8 @@ public class GenericTypeTests {
 
     @Test
     void testWildcardTypeYieldsObject() {
-        GenericType<?> genericType = new GenericType<>() {};
+        GenericType<?> genericType = new GenericType<>() {
+        };
         Type type = genericType.type();
         Assertions.assertTrue(type instanceof Class<?>);
         Assertions.assertEquals(Object.class, type);
@@ -69,6 +72,7 @@ public class GenericTypeTests {
 
     @Test
     void testRawGenericTypeFails() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new GenericType() {});
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new GenericType() {
+        });
     }
 }

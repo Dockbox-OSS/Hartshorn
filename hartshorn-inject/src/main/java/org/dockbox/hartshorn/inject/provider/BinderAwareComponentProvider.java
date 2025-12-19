@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,22 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 
 /**
- * A {@link ComponentProvider} that is aware of the {@link Binder} associated with the provider. Typically the associated
- * binder is the sole binder that is used to bind components to the provider.
+ * A {@link ComponentProvider} that is aware of the {@link Binder} associated with the provider.
+ * Typically the associated binder is the sole binder that is used to bind components to the
+ * provider.
  *
  * @see Binder
- *
+ * 
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface BinderAwareComponentProvider extends ComponentProvider {
 
+    /**
+     * The binder associated with this component provider.
+     *
+     * @return the associated binder
+     */
     Binder binder();
 }

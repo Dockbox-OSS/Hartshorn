@@ -29,30 +29,39 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
- * A {@link BindingFunction} that delegates all calls to the provided {@link BindingFunction delegate}, but returns the
- * {@link ApplicationContext} instead of the {@link Binder} to allow for chaining. This is used to allow for the
- * {@link ApplicationContext} to use custom binders, while still allowing for the {@link ApplicationContext} to be
- * returned.
+ * A {@link BindingFunction} that delegates all calls to the provided
+ * {@link BindingFunction delegate}, but returns the {@link ApplicationContext} instead of the
+ * {@link Binder} to allow for chaining. This is used to allow for the {@link ApplicationContext} to
+ * use custom binders, while still allowing for the {@link ApplicationContext} to be returned.
  *
  * @param <T> the type of the binding
  *
  * @see ApplicationContext
  * @see BindingFunction
- *
+ * 
  * @since 0.4.11
- *
+ * 
  * @author Guus Lieben
  */
-public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T>, ApplicationContextCarrier {
+public class DelegatingApplicationBindingFunction<T>
+    implements BindingFunction<T>, ApplicationContextCarrier {
 
     private final ApplicationContext applicationContext;
     private final BindingFunction<T> delegate;
 
-    public DelegatingApplicationBindingFunction(ApplicationContext applicationContext, BindingFunction<T> delegate) {
+    public DelegatingApplicationBindingFunction(
+        ApplicationContext applicationContext,
+        BindingFunction<T> delegate
+    ) {
         this.applicationContext = applicationContext;
         this.delegate = delegate;
     }
 
+    /**
+     * Returns the delegate binding function.
+     *
+     * @return the delegate binding function
+     */
     protected BindingFunction<T> delegate() {
         return this.delegate;
     }

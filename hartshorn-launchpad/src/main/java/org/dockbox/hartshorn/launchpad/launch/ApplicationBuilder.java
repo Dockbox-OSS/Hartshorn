@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.launchpad.launch;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * The {@link ApplicationBuilder} is responsible for creating the {@link ApplicationContext} and constructing the
- * required components. By default, all components are required, and will be validated before a {@link ApplicationContext}
- * is created.
+ * The {@link ApplicationBuilder} is responsible for creating the {@link ApplicationContext} and
+ * constructing the required components. By default, all components are required, and will be
+ * validated before a {@link ApplicationContext} is created.
  *
  * @param <C> The type of the {@link ApplicationContext} that is created.
  *
@@ -33,7 +33,8 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 public interface ApplicationBuilder<C extends ApplicationContext> {
 
     /**
-     * Creates a new {@link ApplicationContext} instance with the components configured in this {@link ApplicationBuilder}.
+     * Creates a new {@link ApplicationContext} instance with the components configured in this
+     * {@link ApplicationBuilder}.
      *
      * @return The created {@link ApplicationContext}.
      */

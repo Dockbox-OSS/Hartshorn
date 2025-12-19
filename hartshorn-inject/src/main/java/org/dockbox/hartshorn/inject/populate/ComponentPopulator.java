@@ -19,23 +19,22 @@ package org.dockbox.hartshorn.inject.populate;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * Interface that defines a component populator. A component populator is used to populate injection points of
- * a component after it has been instantiated. This allows for additional configuration of components after they
- * have been created.
+ * Interface that defines a component populator. A component populator is used to populate injection
+ * points of a component after it has been instantiated. This allows for additional configuration of
+ * components after they have been created.
  *
  * @since 0.4.1
- *
+ * 
  * @author Guus Lieben
  */
 public interface ComponentPopulator {
 
     /**
-     * Populates the provided instance with additional configuration. This method is called after the instance has been
-     * created and before it is returned to the caller.
+     * Populates the provided instance with additional configuration. This method is called after
+     * the instance has been created and before it is returned to the caller.
      *
      * @param instance the instance to populate
      * @param scope the scope in which the instance is being populated
-     *
      * @param <T> the type of the instance
      *
      * @return the populated instance

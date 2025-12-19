@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A complex node that can contain multiple other nodes. This does not constrain
- * the present names to be unique, but it is recommended to ensure that they are.
+ * A complex node that can contain multiple other nodes. This does not constrain the present names
+ * to be unique, but it is recommended to ensure that they are.
  *
  * @since 0.5.0
  *
@@ -46,25 +46,28 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
      * Returns whether the group contains a node with the given name.
      *
      * @param name the name to check
-     * @return {@code true} if the group contains a node with the given name, {@code false} otherwise
+     *
+     * @return {@code true} if the group contains a node with the given name, {@code false}
+     * otherwise
      */
     public boolean has(String name) {
         return this.value().stream()
-                .anyMatch(node -> node.name().equals(name));
+            .anyMatch(node -> node.name().equals(name));
     }
 
     /**
-     * Returns the node with the given name, or {@code null} if no such node exists. If multiple nodes
-     * with the same name exist, the first one is returned.
+     * Returns the node with the given name, or {@code null} if no such node exists. If multiple
+     * nodes with the same name exist, the first one is returned.
      *
      * @param name the name of the node to return
+     *
      * @return the node with the given name, or {@code null} if no such node exists
      */
     public Node<?> get(String name) {
         return this.value().stream()
-                .filter(node -> node.name().equals(name))
-                .findFirst()
-                .orElse(null);
+            .filter(node -> node.name().equals(name))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override

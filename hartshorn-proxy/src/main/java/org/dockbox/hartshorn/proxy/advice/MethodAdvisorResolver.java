@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,37 +23,38 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Collection;
 
 /**
- * A resolver to look up advisors for a given method. This resolver can be used by {@link ProxyMethodInterceptHandler}s
- * to determine which advisors should be applied to a given method. This resolver is inherently immutable, and can not
- * be used to add or remove advisors.
+ * A resolver to look up advisors for a given method. This resolver can be used by
+ * {@link ProxyMethodInterceptHandler}s to determine which advisors should be applied to a given
+ * method. This resolver is inherently immutable, and can not be used to add or remove advisors.
  *
  * @param <T> The type of the proxy instance
  * @param <R> The type of the return value of the method
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public interface MethodAdvisorResolver<T, R> {
 
     /**
-     * Returns the delegate instance to which the method invocation should be delegated. If no delegate is available,
-     * an empty {@link Option} is returned.
+     * Returns the delegate instance to which the method invocation should be delegated. If no
+     * delegate is available, an empty {@link Option} is returned.
      *
      * @return The delegate instance, if available
      */
     Option<T> delegate();
 
     /**
-     * Returns the {@link MethodInterceptor} that should be applied to the method invocation. If no interceptor is
-     * available, an empty {@link Option} is returned.
+     * Returns the {@link MethodInterceptor} that should be applied to the method invocation. If no
+     * interceptor is available, an empty {@link Option} is returned.
      *
      * @return The interceptor, if available
      */
     Option<MethodInterceptor<T, R>> interceptor();
 
     /**
-     * Returns the {@link MethodWrapper}s that should be applied to the method invocation. If no wrappers are available,
-     * an empty {@link Collection} is returned.
+     * Returns the {@link MethodWrapper}s that should be applied to the method invocation. If no
+     * wrappers are available, an empty {@link Collection} is returned.
      *
      * @return The wrappers, if available
      */

@@ -72,7 +72,9 @@ public class None<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public <E extends Throwable> @NonNull T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E {
+    public <E extends Throwable> @NonNull T orElseThrow(
+        @NonNull Supplier<@NonNull E> supplier
+    ) throws E {
         throw supplier.get();
     }
 
@@ -107,7 +109,9 @@ public class None<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function) {
+    public @NonNull <U> Option<U> flatMap(
+        @NonNull Function<@NonNull T, @NonNull Option<U>> function
+    ) {
         return Option.empty();
     }
 

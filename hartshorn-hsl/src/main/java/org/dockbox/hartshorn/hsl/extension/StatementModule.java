@@ -31,7 +31,8 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  *
  * @author Guus Lieben
  */
-public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>> extends ASTExtensionModule<T, Void> {
+public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>>
+    extends ASTExtensionModule<T, Void> {
 
     /**
      * The parser that is responsible for parsing the node.
@@ -44,8 +45,9 @@ public non-sealed interface StatementModule<T extends Statement & CustomASTNode<
      * Accept a visitor for this statement.
      *
      * @param visitor the visitor to accept
-     * @return the result of the visitor
      * @param <U> the type of the result
+     *
+     * @return the result of the visitor
      */
     <U> U accept(StatementVisitor<U> visitor);
 }

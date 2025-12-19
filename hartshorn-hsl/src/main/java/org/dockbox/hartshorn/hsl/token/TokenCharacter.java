@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * character and how it should be handled.
  *
  * @see TokenType#characters()
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public interface TokenCharacter {
@@ -54,16 +54,16 @@ public interface TokenCharacter {
     boolean isAlpha();
 
     /**
-     * Returns whether this character is alphanumeric, meaning it is either a letter or a number. Often
-     * this is used to determine
+     * Returns whether this character is alphanumeric, meaning it is either a letter or a number.
+     * Often this is used to determine
      *
      * @return true if the character is alphanumeric, false otherwise
      */
     boolean isAlphaNumeric();
 
     /**
-     * Returns whether this character is a standalone character, meaning it is not part of a
-     * larger dynamically named token like literal values.
+     * Returns whether this character is a standalone character, meaning it is not part of a larger
+     * dynamically named token like literal values.
      *
      * @return true if the character is standalone, false otherwise
      */

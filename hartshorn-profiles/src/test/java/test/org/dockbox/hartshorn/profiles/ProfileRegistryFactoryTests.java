@@ -47,7 +47,8 @@ public class ProfileRegistryFactoryTests {
         Assertions.assertEquals(3, profiles.size());
 
         // Default profile is always priority 0 (highest)
-        Assertions.assertEquals(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME, profiles.get(0).name());
+        Assertions.assertEquals(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME,
+            profiles.get(0).name());
         // profile1 was provided first in resolver passed to constructor, thus should have priority 1 (higher than profile2, but lower than default)
         Assertions.assertEquals("profile1", profiles.get(1).name());
         // profile2 was provided last in resolver passed to constructor, thus should have priority 2 (lowest)

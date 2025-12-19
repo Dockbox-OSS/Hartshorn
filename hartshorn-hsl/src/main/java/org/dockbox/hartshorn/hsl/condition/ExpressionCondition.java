@@ -33,22 +33,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
- * is obtained from the {@link org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView} provided through the
+ * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given
+ * expression. The expression is obtained from the
+ * {@link org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView} provided through the
  * {@link ScriptConditionContext} for the condition.
  *
- * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
+ * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the
+ * active
  * {@link ValidateExpressionRuntime}.
  *
- * <p>The runtime is by default always enhanced with the active {@link ApplicationContext}, under the global alias configured
- * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ScriptConditionContext} contains a {@link ExpressionConditionContext}
- * which has the {@link ExpressionConditionContext#includeApplicationContext()} set to {@code false}, the application context
- * will not be included in the runtime. Any configured customizers, imports, variables, and modules in the {@link
- * ExpressionConditionContext} are made available to the runtime automatically.
+ * <p>The runtime is by default always enhanced with the active {@link ApplicationContext}, under
+ * the global alias configured
+ * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ScriptConditionContext} contains a
+ * {@link ExpressionConditionContext} which has the
+ * {@link ExpressionConditionContext#includeApplicationContext()} set to {@code false}, the
+ * application context will not be included in the runtime. Any configured customizers, imports,
+ * variables, and modules in the {@link ExpressionConditionContext} are made available to the
+ * runtime automatically.
  *
- * <p>Note that if the application context is not explicitly disabled, other variables should not use the {@link
- * #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the active {@link ApplicationContext}. If a
- * conflict arises a warning is logged, but the runtime will proceed as usual.
+ * <p>Note that if the application context is not explicitly disabled, other variables should not
+ * use the {@link
+ * #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the active
+ * {@link ApplicationContext}. If a conflict arises a warning is logged, but the runtime will
+ * proceed as usual.
  *
  * @since 0.4.12
  *
@@ -59,20 +66,24 @@ public class ExpressionCondition implements Condition {
     private static final Logger LOG = LoggerFactory.getLogger(ExpressionCondition.class);
 
     /**
-     * The global alias for the application context in the expression runtime. This should be the default alias for any
-     * application context that is exposed in a HSL runtime, and should not be used for any other variables.
+     * The global alias for the application context in the expression runtime. This should be the
+     * default alias for any application context that is exposed in a HSL runtime, and should not be
+     * used for any other variables.
      */
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
     public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresExpression.class)
-                .map(condition -> this.calculateResult(context, condition))
-                .orElse(ConditionResult.invalidCondition("expression"));
+            .map(condition -> this.calculateResult(context, condition))
+            .orElse(ConditionResult.invalidCondition("expression"));
     }
 
     @NonNull
-    private ConditionResult calculateResult(ConditionContext context, RequiresExpression condition) {
+    private ConditionResult calculateResult(
+        ConditionContext context,
+        RequiresExpression condition
+    ) {
         String expression = condition.value();
         ValidateExpressionRuntime runtime = this.createRuntime(context);
 
@@ -87,11 +98,13 @@ public class ExpressionCondition implements Condition {
     }
 
     /**
-     * Creates a new {@link ValidateExpressionRuntime} from the given {@link ScriptConditionContext}. This will customize
-     * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
-     * in the given context.
+     * Creates a new {@link ValidateExpressionRuntime} from the given
+     * {@link ScriptConditionContext}. This will customize the runtime based on the presence of a
+     * {@link ExpressionConditionContext} and a {@link ProvidedParameterContext} in the given
+     * context.
      *
      * @param context the context to create the runtime from
+     *
      * @return a new runtime
      */
     protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
@@ -114,27 +127,38 @@ public class ExpressionCondition implements Condition {
     }
 
     /**
-     * Enhances the given {@link ValidateExpressionRuntime} with the given {@link ScriptConditionContext}. This will customize
-     * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
-     * in the given context.
+     * Enhances the given {@link ValidateExpressionRuntime} with the given
+     * {@link ScriptConditionContext}. This will customize the runtime based on the presence of a
+     * {@link ExpressionConditionContext} and a {@link ProvidedParameterContext} in the given
+     * context.
      *
-     * <p>To allow customizers to work on parameters and imports, the context is first checked for a {@link ProvidedParameterContext}
-     * and the parameters are loaded into the runtime. Then, the context is checked for a {@link ExpressionConditionContext}
-     * and the customizers, imports, global variables, and external modules are loaded into the runtime.
+     * <p>To allow customizers to work on parameters and imports, the context is first checked for a
+     * {@link ProvidedParameterContext}
+     * and the parameters are loaded into the runtime. Then, the context is checked for a
+     * {@link ExpressionConditionContext} and the customizers, imports, global variables, and
+     * external modules are loaded into the runtime.
      *
-     * <p>If no {@link ExpressionConditionContext} is present, the runtime is enhanced with the active {@link ApplicationContext}
-     * from the given context. If the context contains a {@link ExpressionConditionContext}, the application context will only
-     * be included if the context's {@link ExpressionConditionContext#includeApplicationContext()} returns {@code true}. If the
-     * application context is exposed, it will always be exposed under the global alias configured in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}.
+     * <p>If no {@link ExpressionConditionContext} is present, the runtime is enhanced with the
+     * active {@link ApplicationContext}
+     * from the given context. If the context contains a {@link ExpressionConditionContext}, the
+     * application context will only be included if the context's
+     * {@link ExpressionConditionContext#includeApplicationContext()} returns {@code true}. If the
+     * application context is exposed, it will always be exposed under the global alias configured
+     * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}.
      *
      * @param runtime the runtime to enhance
      * @param context the context to enhance the runtime with
+     *
      * @return the enhanced runtime
      */
-    protected ValidateExpressionRuntime enhance(ValidateExpressionRuntime runtime, ConditionContext context) {
+    protected ValidateExpressionRuntime enhance(
+        ValidateExpressionRuntime runtime,
+        ConditionContext context
+    ) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.firstContext(ProvidedParameterContext.class).peek(parameterContext -> {
-            parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
+            parameterContext.arguments()
+                .forEach((parameter, value) -> runtime.global(parameter.name(), value));
         });
 
         context.firstContext(ExpressionConditionContext.class).peek(expressionContext -> {
@@ -153,12 +177,17 @@ public class ExpressionCondition implements Condition {
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(ScriptRuntime runtime, InjectionCapableApplication application) {
+    private void enhanceWithApplicationContext(
+        ScriptRuntime runtime,
+        InjectionCapableApplication application
+    ) {
         if (!(application instanceof ApplicationContext applicationContext)) {
-            throw new IllegalStateException("Application context is not available in the current context");
+            throw new IllegalStateException(
+                "Application context is not available in the current context");
         }
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
-            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
+            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME)
+                != applicationContext) {
                 LOG.warn("Runtime contains mismatched application context reference");
             }
             // Ignore if the global application is equal to our active context

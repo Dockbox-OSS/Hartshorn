@@ -33,7 +33,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
  */
 public class IdentifierExpressionParser implements ExpressionParser {
     @Override
-    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+    public Expression parse(
+        TokenParser parser,
+        TokenStepValidator validator,
+        ExpressionParserChain chain
+    ) {
         if (parser.match(parser.tokenRegistry().literals().identifier())) {
             Token next = parser.peek();
             TokenTypePair array = parser.tokenRegistry().tokenPairs().array();
@@ -48,5 +52,4 @@ public class IdentifierExpressionParser implements ExpressionParser {
         }
         return chain.next(parser, validator);
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,9 +110,14 @@ public class CollectionDefaultValueProviderFactoryTests {
         return createProvider(type, () -> null);
     }
 
-    private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(Class<T> type, Supplier<T> supplier) {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
-        DefaultValueProviderFactory<Collection<?>> factory = new CollectionDefaultValueProviderFactory(introspector).withDefaults();
+    private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(
+        Class<T> type,
+        Supplier<T> supplier
+    ) {
+        Introspector introspector =
+            ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
+        DefaultValueProviderFactory<Collection<?>> factory =
+            new CollectionDefaultValueProviderFactory(introspector).withDefaults();
 
         DefaultValueProvider<T> provider = factory.create(type);
         Assertions.assertNotNull(provider);

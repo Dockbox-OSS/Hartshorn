@@ -29,11 +29,13 @@ package org.dockbox.hartshorn.inject;
 public interface ObjectFactory {
 
     /**
-     * Creates an instance of the given type. The type is expected to have a no-argument constructor.
+     * Creates an instance of the given type. The type is expected to have a no-argument
+     * constructor.
      *
      * @param type the type to create an instance of
-     * @return the created instance
      * @param <T> the type of the instance
+     *
+     * @return the created instance
      */
     <T> T create(Class<T> type);
 }

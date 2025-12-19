@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ public interface ConfiguredPropertyParser<T> {
      * value cannot be parsed, an empty {@link Option} is returned.
      *
      * @param property the property to parse
+     *
      * @return the parsed value, or an empty {@link Option}
      */
     Option<T> parse(ConfiguredProperty property);

@@ -37,6 +37,7 @@ public interface CheckedSupplier<T> {
      * Gets a result.
      *
      * @return a result
+     *
      * @throws ApplicationException if an error occurs during the execution of the supplier
      */
     T get() throws ApplicationException;

@@ -34,8 +34,8 @@ public class BindingAliasingTests {
     @Test
     void testAliasBindingsCanBeResolved(@Inject ApplicationContext applicationContext) {
         applicationContext.bind(String.class)
-                .alias(CharSequence.class)
-                .singleton("Hello world");
+            .alias(CharSequence.class)
+            .singleton("Hello world");
 
         String helloWorldString = applicationContext.get(String.class);
         CharSequence helloWorldCharSequence = applicationContext.get(CharSequence.class);
@@ -54,7 +54,9 @@ public class BindingAliasingTests {
 
     @Test
     @TestComponents(OverlappingDefaultAndAliasBindingConfiguration.class)
-    void testOverlappingDefaultAndAliasBindingsFromConfigurationCanResolve(@Inject ComponentProvider provider) {
+    void testOverlappingDefaultAndAliasBindingsFromConfigurationCanResolve(
+        @Inject ComponentProvider provider
+    ) {
         Assertions.assertDoesNotThrow(() -> provider.get(String.class));
         Assertions.assertDoesNotThrow(() -> provider.get(CharSequence.class));
     }
@@ -62,15 +64,16 @@ public class BindingAliasingTests {
     @Test
     void testOverlappingPriorityAliasBindingsFails(@Inject ApplicationContext applicationContext) {
         applicationContext.bind(String.class)
-                .alias(CharSequence.class)
-                .priority(1)
-                .singleton("Hello world");
+            .alias(CharSequence.class)
+            .priority(1)
+            .singleton("Hello world");
         applicationContext.bind(StringBuilder.class)
-                .alias(CharSequence.class)
-                .priority(1)
-                .singleton(new StringBuilder("Hello world"));
+            .alias(CharSequence.class)
+            .priority(1)
+            .singleton(new StringBuilder("Hello world"));
 
-        Assertions.assertThrows(AmbiguousComponentException.class, () -> applicationContext.get(CharSequence.class));
+        Assertions.assertThrows(AmbiguousComponentException.class,
+            () -> applicationContext.get(CharSequence.class));
     }
 
     @Configuration

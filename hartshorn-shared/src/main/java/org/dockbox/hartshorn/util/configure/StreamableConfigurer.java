@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 /**
  * A {@link Configurer} that can be used to configure a collection of objects. Each object is
- * represented by a {@link ContextualInitializer} that can be used to initialize the object
- * with a given input.
+ * represented by a {@link ContextualInitializer} that can be used to initialize the object with a
+ * given input.
  *
  * @param <I> the type of the input
  * @param <T> the type of the output
@@ -41,8 +41,8 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     private final List<ContextualInitializer<I, T>> objects = new CopyOnWriteArrayList<>();
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance. Protected to prevent direct instantiation
-     * outside of extending classes and static factory methods.
+     * Creates a new {@link StreamableConfigurer} instance. Protected to prevent direct
+     * instantiation outside of extending classes and static factory methods.
      */
     protected StreamableConfigurer() {
     }
@@ -60,9 +60,9 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     }
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance with the given objects. The objects
-     * are expected to be fully configured, and will not be modified by the configurer or a given
-     * input value.
+     * Creates a new {@link StreamableConfigurer} instance with the given objects. The objects are
+     * expected to be fully configured, and will not be modified by the configurer or a given input
+     * value.
      *
      * @param objects the objects to add
      * @param <I> the type of the input
@@ -77,9 +77,9 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     }
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance with the given objects. The objects
-     * are expected to be fully configured, and will not be modified by the configurer or a given
-     * input value.
+     * Creates a new {@link StreamableConfigurer} instance with the given objects. The objects are
+     * expected to be fully configured, and will not be modified by the configurer or a given input
+     * value.
      *
      * @param objects the objects to add
      * @param <I> the type of the input
@@ -93,8 +93,8 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     }
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance with the given initializer. The initializer
-     * will be added as the only initializer to the configurer.
+     * Creates a new {@link StreamableConfigurer} instance with the given initializer. The
+     * initializer will be added as the only initializer to the configurer.
      *
      * @param initializer the initializer to add
      * @param <I> the type of the input
@@ -102,16 +102,19 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @return the new instance
      */
-    public static <I, O> StreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
+    public static <I, O> StreamableConfigurer<I, O> ofInitializer(
+        ContextualInitializer<I, O> initializer
+    ) {
         StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();
         return configurer.add(initializer);
     }
 
     /**
-     * Adds the given object to the configurer. The object is expected to be fully configured,
-     * and will not be modified by the configurer or a given input value.
+     * Adds the given object to the configurer. The object is expected to be fully configured, and
+     * will not be modified by the configurer or a given input value.
      *
      * @param object the object to add
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> add(T object) {
@@ -121,11 +124,12 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
 
     /**
      * Adds the given initializer to the configurer. The initializer will be wrapped in a
-     * {@link ContextualInitializer} that will ignore the input value. The result of the
-     * initializer is expected to be fully configured, and will not be modified by the configurer
-     * or a given input value.
+     * {@link ContextualInitializer} that will ignore the input value. The result of the initializer
+     * is expected to be fully configured, and will not be modified by the configurer or a given
+     * input value.
      *
      * @param initializer the initializer to add
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> add(Initializer<T> initializer) {
@@ -137,6 +141,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * Adds the given initializer to the configurer.
      *
      * @param initializer the initializer to add
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> add(ContextualInitializer<I, T> initializer) {
@@ -149,6 +154,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @param index the index at which to insert the object
      * @param object the object to insert
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> insert(int index, T object) {
@@ -160,6 +166,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @param index the index at which to insert the initializer
      * @param initializer the initializer to insert
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> insert(int index, Initializer<T> initializer) {
@@ -171,6 +178,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @param index the index at which to insert the initializer
      * @param initializer the initializer to insert
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> insert(int index, ContextualInitializer<I, T> initializer) {
@@ -186,6 +194,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * and will not be modified by the configurer or a given input value.
      *
      * @param objects the objects to add
+     *
      * @return the configurer
      */
     @SafeVarargs
@@ -201,6 +210,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * and will not be modified by the configurer or a given input value.
      *
      * @param objects the objects to add
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> addAll(Collection<T> objects) {
@@ -213,10 +223,11 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     /**
      * Adds all given initializers to the configurer. The initializers will be wrapped in
      * {@link ContextualInitializer}s that will ignore the input value. The result of each
-     * initializer is expected to be fully configured, and will not be modified by the configurer
-     * or a given input value.
+     * initializer is expected to be fully configured, and will not be modified by the configurer or
+     * a given input value.
      *
      * @param initializers the initializers to add
+     *
      * @return the configurer
      */
     @SafeVarargs
@@ -231,6 +242,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * Adds all given initializers to the configurer.
      *
      * @param initializers the initializers to add
+     *
      * @return the configurer
      */
     @SafeVarargs
@@ -246,6 +258,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * and will not be modified by the configurer or a given input value.
      *
      * @param objects the objects to add
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> addAll(Iterable<? extends T> objects) {
@@ -260,6 +273,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * configurer, no action is taken.
      *
      * @param initializer the initializer to remove
+     *
      * @return the configurer
      */
     public StreamableConfigurer<I, T> remove(ContextualInitializer<I, T> initializer) {
@@ -292,11 +306,12 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * {@code null} values in the result.
      *
      * @param input the input value
+     *
      * @return a list of all initialized objects
      */
     public List<T> initialize(SingleElementContext<? extends I> input) {
         return this.stream()
-                .map(resolver -> resolver.initialize(input))
-                .toList();
+            .map(resolver -> resolver.initialize(input))
+            .toList();
     }
 }

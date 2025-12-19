@@ -20,8 +20,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A basic context implementation that provides a single input object. This context is often used to initialize a
- * context chain, which is then used to create a new context with a different input object.
+ * A basic context implementation that provides a single input object. This context is often used to
+ * initialize a context chain, which is then used to create a new context with a different input
+ * object.
  *
  * @param <I> The type of the input object.
  *
@@ -29,7 +30,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractSingleElementContext<I> extends DefaultContext implements SingleElementContext<I> {
+public abstract class AbstractSingleElementContext<I>
+    extends DefaultContext
+    implements SingleElementContext<I> {
 
     private final I input;
 
@@ -50,9 +53,9 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
     }
 
     /**
-     * Creates a clone of the current context with the provided input object. The clone will be a shallow copy of the
-     * current context, with the exception of the input object. The clone will not contain any of the elements of the
-     * current context.
+     * Creates a clone of the current context with the provided input object. The clone will be a
+     * shallow copy of the current context, with the exception of the input object. The clone will
+     * not contain any of the elements of the current context.
      *
      * @param input The input object to use in the clone.
      * @param <T> The type of the input object.

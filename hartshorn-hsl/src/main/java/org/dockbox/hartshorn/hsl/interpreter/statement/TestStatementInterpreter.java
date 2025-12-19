@@ -51,9 +51,9 @@ public class TestStatementInterpreter implements StatementInterpreter<TestStatem
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
-                        .at(node)
-                        .build();
+                    .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
+                    .at(node)
+                    .build();
             }
         }
         finally {

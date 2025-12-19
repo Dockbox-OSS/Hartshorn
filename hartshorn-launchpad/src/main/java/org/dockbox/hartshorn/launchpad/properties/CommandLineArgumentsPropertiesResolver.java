@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.launchpad.launch.ApplicationBuildContext;
 import java.util.List;
 
 /**
- * Resolves command line arguments from the {@link ApplicationBuildContext} as properties for
- * the application environment.
+ * Resolves command line arguments from the {@link ApplicationBuildContext} as properties for the
+ * application environment.
  *
  * @since 0.7.0
  *
@@ -33,7 +33,9 @@ import java.util.List;
 public class CommandLineArgumentsPropertiesResolver extends AbstractCustomPropertiesResolver {
 
     @Override
-    protected List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    protected List<String> resolveStringProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         return initializerContext.firstContext(ApplicationBuildContext.class)
             .map(ApplicationBuildContext::arguments)
             .orElseGet(List::of);

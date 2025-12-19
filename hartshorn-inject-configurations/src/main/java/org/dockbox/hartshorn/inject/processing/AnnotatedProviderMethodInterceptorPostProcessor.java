@@ -37,21 +37,29 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class AnnotatedProviderMethodInterceptorPostProcessor extends AnnotatedMethodInterceptorPostProcessor<Provided> {
+public class AnnotatedProviderMethodInterceptorPostProcessor
+    extends AnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
-        ConversionService conversionService = application.defaultProvider().get(ConversionService.class);
+    public <T, R> MethodInterceptor<T, R> process(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    ) {
+        ConversionService conversionService =
+            application.defaultProvider().get(ConversionService.class);
         MethodView<T, ?> method = methodContext.method();
 
         //noinspection unchecked
         TypeView<R> type = (TypeView<R>) method.returnType();
         ComponentKey<?> componentKey = application.environment()
-                .componentKeyResolver()
-                .resolve(method, processingContext.key().scope().orElse(application.defaultProvider().scope()));
+            .componentKeyResolver()
+            .resolve(method,
+                processingContext.key().scope().orElse(application.defaultProvider().scope()));
 
         InjectionPoint injectionPoint = new InjectionPoint(method);
-        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
+        ComponentRequestContext requestContext =
+            ComponentRequestContext.createForInjectionPoint(injectionPoint);
         return interceptorContext -> {
             Object result = application.defaultProvider().get(componentKey, requestContext);
             return conversionService.convert(result, type.type());
@@ -59,7 +67,11 @@ public class AnnotatedProviderMethodInterceptorPostProcessor extends AnnotatedMe
     }
 
     @Override
-    public <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return !methodContext.method().returnType().isVoid();
     }
 

@@ -36,10 +36,10 @@ import java.util.Map;
 public class CheckpointModule implements ExpressionModule<CheckpointModule.CheckpointExpression> {
 
     public static final TokenType CHECKPOINT = SimpleTokenType.builder()
-            .representation("checkpoint")
-            .tokenName("checkpoint")
-            .keyword(true)
-            .build();
+        .representation("checkpoint")
+        .tokenName("checkpoint")
+        .keyword(true)
+        .build();
 
     private final Map<String, Integer> checkpoints = new HashMap<>();
 
@@ -64,9 +64,9 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
                 Expression expression = parser.expression();
                 validator.expectAfter(parameters.close(), "checkpoint descriptor");
                 return new CheckpointExpression(
-                        parser.previous(),
-                        CheckpointModule.this,
-                        expression
+                    parser.previous(),
+                    CheckpointModule.this,
+                    expression
                 );
             }
             return chain.next(parser, validator);
@@ -91,11 +91,12 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
                 Integer count = this.checkpoints.getOrDefault(string, 0) + 1;
                 this.checkpoints.put(string, count);
                 return count;
-            } else {
+            }
+            else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(node.descriptor())
-                        .message("Checkpoint descriptor must be a string")
-                        .build();
+                    .at(node.descriptor())
+                    .message("Checkpoint descriptor must be a string")
+                    .build();
             }
         };
     }

@@ -31,10 +31,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the type of statement that is parsed by this parser
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
-public abstract class AbstractControlStatementParser<T extends Statement> implements StatementParser<T> {
+public abstract class AbstractControlStatementParser<T extends Statement>
+    implements StatementParser<T> {
 
     /**
      * The keyword that represents the control statement.
@@ -47,12 +48,14 @@ public abstract class AbstractControlStatementParser<T extends Statement> implem
      * Creates a new instance of the control statement that is parsed by this parser.
      *
      * @param keyword the keyword that represents the control statement
+     *
      * @return a new instance of the control statement that is parsed by this parser
      */
     protected abstract T create(Token keyword);
 
     @Override
-    public Option<? extends T> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
+    public Option<? extends T> parse(TokenParser parser, TokenStepValidator validator)
+        throws ScriptEvaluationError {
         TokenType tokenType = this.keyword();
         if (parser.match(tokenType)) {
             Token keyword = parser.previous();

@@ -27,7 +27,9 @@ public class OnInitializedCallbackTests {
 
     @Test
     @TestComponents(TypeWithPostConstructableInjectField.class)
-    void testPostConstructInjectDoesNotInjectTwice(@Inject TypeWithPostConstructableInjectField instance) {
+    void testPostConstructInjectDoesNotInjectTwice(
+        @Inject TypeWithPostConstructableInjectField instance
+    ) {
         Assertions.assertNotNull(instance);
         Assertions.assertNotNull(instance.postConstructableObject());
         Assertions.assertEquals(1, instance.postConstructableObject().getTimesConstructed());

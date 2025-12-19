@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 /**
- * A {@link ConfigurableDiagnosticsReporter} that reports information about the system. The information that is
- * reported can be configured using {@link SystemReportingConfiguration}. The following information is reported by
- * default:
+ * A {@link ConfigurableDiagnosticsReporter} that reports information about the system. The
+ * information that is reported can be configured using {@link SystemReportingConfiguration}. The
+ * following information is reported by default:
  * <ul>
  *     <li>Uptime</li>
  *     <li>Java runtime, through {@link JavaDiagnosticsReporter}</li>
@@ -39,10 +39,12 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
  * </ul>
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
+public class SystemDiagnosticsReporter
+    implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>,
+    CategorizedDiagnosticsReporter {
 
     /**
      * Default category for {@link SystemDiagnosticsReporter} instances.
@@ -61,7 +63,8 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
             collector.property("java").writeDelegate(new JavaDiagnosticsReporter());
         }
         if (this.configuration.includeJvmDiagnostics()) {
-            collector.property("jvm").writeDelegate(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
+            collector.property("jvm")
+                .writeDelegate(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
         }
         if (this.configuration.includeOsDiagnostics()) {
             collector.property("os").writeDelegate(new OSDiagnosticsReporter());

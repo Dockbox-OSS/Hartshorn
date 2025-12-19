@@ -169,7 +169,8 @@ public class OptionTests {
     @Test
     void testOrElseThrowWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertThrows(IllegalArgumentException.class, () -> option.orElseThrow(IllegalArgumentException::new));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> option.orElseThrow(IllegalArgumentException::new));
     }
 
     @Test

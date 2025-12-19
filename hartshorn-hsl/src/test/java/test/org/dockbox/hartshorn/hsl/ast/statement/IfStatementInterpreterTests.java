@@ -35,14 +35,14 @@ public class IfStatementInterpreterTests {
     @Test
     void testIfStatementEvaluatesIfConditionIsTrue() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (true) {
-                            checkpoint("inside-true");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (true) {
+                    checkpoint("inside-true");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -51,14 +51,14 @@ public class IfStatementInterpreterTests {
     @Test
     void testIfStatementEvaluatesIfConditionIsTruthy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if ("truthy-value") {
-                            checkpoint("inside-true");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if ("truthy-value") {
+                    checkpoint("inside-true");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -67,14 +67,14 @@ public class IfStatementInterpreterTests {
     @Test
     void testIfStatementDoesNotEvaluateIfConditionIsFalse() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (false) {
-                            checkpoint("inside-true");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (false) {
+                    checkpoint("inside-true");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -83,14 +83,14 @@ public class IfStatementInterpreterTests {
     @Test
     void testIfStatementDoesNotEvaluateIfConditionIsFalsy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (null) {
-                            checkpoint("inside-true");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (null) {
+                    checkpoint("inside-true");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -99,17 +99,17 @@ public class IfStatementInterpreterTests {
     @Test
     void ifStatementDoesnotExecuteElseBranchIfConditionTrue() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (true) {
-                            checkpoint("inside-true");
-                        }
-                        else {
-                            checkpoint("inside-false");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (true) {
+                    checkpoint("inside-true");
+                }
+                else {
+                    checkpoint("inside-false");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -119,17 +119,17 @@ public class IfStatementInterpreterTests {
     @Test
     void ifStatementDoesNotExecuteElseBranchIfConditionTruthy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if ("truthy-value") {
-                            checkpoint("inside-true");
-                        }
-                        else {
-                            checkpoint("inside-false");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if ("truthy-value") {
+                    checkpoint("inside-true");
+                }
+                else {
+                    checkpoint("inside-false");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -139,17 +139,17 @@ public class IfStatementInterpreterTests {
     @Test
     void ifStatementExecutesElseBranchIfConditionFalse() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (false) {
-                            checkpoint("inside-true");
-                        }
-                        else {
-                            checkpoint("inside-false");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (false) {
+                    checkpoint("inside-true");
+                }
+                else {
+                    checkpoint("inside-false");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
@@ -159,17 +159,17 @@ public class IfStatementInterpreterTests {
     @Test
     void ifStatementExecutesElseBranchIfConditionFalsy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
-                        if (null) {
-                            checkpoint("inside-true");
-                        }
-                        else {
-                            checkpoint("inside-false");
-                        }
-                        """)
-                .statementParser(new IfStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                if (null) {
+                    checkpoint("inside-true");
+                }
+                else {
+                    checkpoint("inside-false");
+                }
+                """)
+            .statementParser(new IfStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,26 @@ import org.dockbox.hartshorn.util.option.Option;
  * Utility class for working with annotations.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public class AnnotationUtilities {
 
     /**
-     * Checks if a given type is a stereotype of another type. This method will recursively check the hierarchy of
-     * stereotypes to determine if the given type is a stereotype of the provided type.
+     * Checks if a given type is a stereotype of another type. This method will recursively check
+     * the hierarchy of stereotypes to determine if the given type is a stereotype of the provided
+     * type.
      *
      * @param type The type to check
      * @param stereotype The stereotype to check against
-     * @return {@code true} if the type is a stereotype of the provided stereotype, {@code false} otherwise
+     *
+     * @return {@code true} if the type is a stereotype of the provided stereotype, {@code false}
+     * otherwise
      */
     public static boolean isStereotypeOf(Class<?> type, Class<?> stereotype) {
         return Option.of(type.getAnnotation(Extends.class)).test(annotation -> {
-            return annotation.value() == stereotype || isStereotypeOf(annotation.value(), stereotype);
+            return annotation.value() == stereotype
+                || isStereotypeOf(annotation.value(), stereotype);
         });
     }
 }

@@ -24,30 +24,42 @@ import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link ParameterLoaderRule} that loads the current {@link Scope} from the
- * {@link ApplicationBoundParameterLoaderContext} if a parameter matches the type of the current scope (or a parent
- * type thereof).
+ * {@link ApplicationBoundParameterLoaderContext} if a parameter matches the type of the current
+ * scope (or a parent type thereof).
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ScopeParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
+public class ScopeParameterLoaderRule
+    implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        TypeView<?> genericScopeType = context.application().environment().introspector().introspect(context.scope()
+    public boolean accepts(
+        ParameterView<?> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
+        TypeView<?> genericScopeType =
+            context.application().environment().introspector().introspect(context.scope()
                 .installableScopeType()
                 .scopeType()
-        );
+            );
         return parameter.type().is(Scope.class)
-                || parameter.type().isParentOf(genericScopeType.type())
-                || parameter.type().equals(genericScopeType);
+            || parameter.type().isParentOf(genericScopeType.type())
+            || parameter.type().equals(genericScopeType);
     }
 
     @Override
-    public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+    public <T> Option<T> load(
+        ParameterView<T> parameter,
+        int index,
+        ApplicationBoundParameterLoaderContext context,
+        Object... args
+    ) {
         return Option.of(context.scope())
-                .orCompute(() -> context.application().defaultProvider().scope())
-                .cast(parameter.type().type());
+            .orCompute(() -> context.application().defaultProvider().scope())
+            .cast(parameter.type().type());
     }
 }

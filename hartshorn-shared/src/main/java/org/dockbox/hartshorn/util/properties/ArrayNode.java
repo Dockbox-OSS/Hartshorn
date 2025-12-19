@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A node that contains an array of values. Unlike {@link GroupNode}, this node does not require values
- * to be named.
+ * A node that contains an array of values. Unlike {@link GroupNode}, this node does not require
+ * values to be named.
  *
  * @param <T> the type of the values
  *

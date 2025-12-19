@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 /**
- * Represents a specific return value, which immediately exits the current
- * scope, even if there are more statements to evaluate.
+ * Represents a specific return value, which immediately exits the current scope, even if there are
+ * more statements to evaluate.
  *
  * @since 0.4.12
  *
@@ -35,6 +35,7 @@ public class Return extends RuntimeException {
 
     /**
      * Gets the value of the return statement.
+     *
      * @return The value of the statement.
      */
     public Object value() {

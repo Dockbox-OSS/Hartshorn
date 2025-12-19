@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a binding declaration as a member of a composite collection. Composite members are not exposed
- * as individual components, but rather as a {@link ComponentCollection} that contains all members.
+ * Marks a binding declaration as a member of a composite collection. Composite members are not
+ * exposed as individual components, but rather as a {@link ComponentCollection} that contains all
+ * members.
  *
- * <p>Composite members may be declared in any configuration class, and are typically used to provide
- * multiple implementations of a single interface. A simple declaration may look like the example below.
+ * <p>Composite members may be declared in any configuration class, and are typically used to
+ * provide
+ * multiple implementations of a single interface. A simple declaration may look like the example
+ * below.
  * <pre>{@code
  * @Configuration
  * class SampleConfiguration {
@@ -46,16 +49,17 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * <p>Note that the example consumer above does not consider {@link Strict strictness} of the collection.
- *
- * @since 0.6.0
+ * <p>Note that the example consumer above does not consider {@link Strict strictness} of the
+ * collection.
  *
  * @see ComponentCollection
- *
+ * 
+ * @since 0.6.0
+ * 
  * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD})
 public @interface CompositeMember {
 }
 

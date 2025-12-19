@@ -116,7 +116,7 @@ public class ComponentProcessingContext<T> extends DataContext {
      * @return the type view of the component
      */
     public TypeView<T> type() {
-        if(this.container != null) {
+        if (this.container != null) {
             T instance = this.container.instance();
             if (instance != null) {
                 return this.application.environment().introspector().introspect(instance);

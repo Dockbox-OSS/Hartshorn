@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +38,11 @@ public interface DefaultValueProvider<T> extends Converter<Null, T> {
     }
 
     /**
-     * Returns the default value to use when the input is {@code null}. This method should only
-     * be called through {@link #convert(Null)}, and serves purely as a convenience method.
+     * Returns the default value to use when the input is {@code null}. This method should only be
+     * called through {@link #convert(Null)}, and serves purely as a convenience method.
      *
      * @return the default value to use when the input is {@code null}
      */
-    @Nullable T defaultValue();
+    @Nullable
+    T defaultValue();
 }

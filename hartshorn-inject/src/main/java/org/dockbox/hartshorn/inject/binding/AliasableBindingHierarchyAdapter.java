@@ -29,9 +29,9 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A delegating {@link AliasableBindingHierarchy} that delegates all calls to the wrapped {@link BindingHierarchy}, except
- * for aliasing calls. This allows for the addition of aliases to an existing hierarchy, without affecting the underlying
- * providers.
+ * A delegating {@link AliasableBindingHierarchy} that delegates all calls to the wrapped
+ * {@link BindingHierarchy}, except for aliasing calls. This allows for the addition of aliases to
+ * an existing hierarchy, without affecting the underlying providers.
  *
  * @param <C> The type of the component that this hierarchy is for.
  *
@@ -119,7 +119,8 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
 
     @Override
     public <T> boolean isCompatible(ComponentKey<T> key) {
-        return this.delegate.isCompatible(key) || this.aliases.stream().anyMatch(alias -> alias.equals(key));
+        return this.delegate.isCompatible(key) || this.aliases.stream()
+            .anyMatch(alias -> alias.equals(key));
     }
 
     @Override
@@ -130,8 +131,8 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("aliases", this.aliases)
-                .field("delegate", this.delegate)
-                .describe();
+            .field("aliases", this.aliases)
+            .field("delegate", this.delegate)
+            .describe();
     }
 }

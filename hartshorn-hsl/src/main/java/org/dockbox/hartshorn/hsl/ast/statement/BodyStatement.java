@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 
 /**
- * An abstract class representing a statement that contains a body, which is a block of code
- * that may be executed when the statement is executed.
+ * An abstract class representing a statement that contains a body, which is a block of code that
+ * may be executed when the statement is executed.
  *
  * @see ForStatement
  * @see RepeatStatement
@@ -42,6 +42,11 @@ public abstract class BodyStatement extends Statement {
         this.body = body;
     }
 
+    /**
+     * Returns the body of this statement, which is a block of code to be executed.
+     *
+     * @return the body block statement
+     */
     public BlockStatement body() {
         return this.body;
     }

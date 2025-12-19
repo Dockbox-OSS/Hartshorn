@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * Parser for binary addition and subtraction expressions. Handles the parsing of expressions involving
- * addition (<code>+</code>) and subtraction (<code>-</code>) operators.
+ * Parser for binary addition and subtraction expressions. Handles the parsing of expressions
+ * involving addition (<code>+</code>) and subtraction (<code>-</code>) operators.
  *
  * @since 0.7.0
  *
@@ -35,8 +35,8 @@ public class BinaryAdditionExpressionParser extends AbstractBitwiseOrLogicalExpr
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-                ArithmeticTokenType.MINUS,
-                ArithmeticTokenType.PLUS,
+            ArithmeticTokenType.MINUS,
+            ArithmeticTokenType.PLUS,
         };
     }
 

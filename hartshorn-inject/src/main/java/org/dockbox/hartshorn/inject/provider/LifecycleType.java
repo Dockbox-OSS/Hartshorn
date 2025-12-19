@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.inject.provider;
 
 /**
- * Represents the lifecycle type of a component. This is used to indicate whether a component should be
- * created as a singleton or prototype.
+ * Represents the lifecycle type of a component. This is used to indicate whether a component should
+ * be created as a singleton or prototype.
  *
  * @since 0.6.0
  *
@@ -26,12 +26,13 @@ package org.dockbox.hartshorn.inject.provider;
  */
 public enum LifecycleType {
     /**
-     * Represents a singleton component, meaning the component will be created once and shared across all
-     * consumers.
+     * Represents a singleton component, meaning the component will be created once and shared
+     * across all consumers.
      */
     SINGLETON,
     /**
-     * Represents a prototype component, meaning the component will be created each time it is requested.
+     * Represents a prototype component, meaning the component will be created each time it is
+     * requested.
      */
     PROTOTYPE,
 }

@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link HierarchicalBinder} that is aware of the scope it is bound to. This binder will only allow
- * bindings to be added to the scope it is bound to, and will not allow bindings to be added to a different
- * scope.
+ * A {@link HierarchicalBinder} that is aware of the scope it is bound to. This binder will only
+ * allow bindings to be added to the scope it is bound to, and will not allow bindings to be added
+ * to a different scope.
  *
  * @since 0.7.0
  *
@@ -57,9 +57,9 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
     public <C> AliasBindingFunction<C> bind(Class<C> type) {
         // Strict, so new hierarchies are created if needed, rather than using fuzzy search
         ComponentKey<C> componentKey = ComponentKey.builder(type)
-                .strict()
-                .scope(this.scope) // No explicit scope provided, so expected to use the current scope instead
-                .build();
+            .strict()
+            .scope(this.scope) // No explicit scope provided, so expected to use the current scope
+            .build();
         return this.bind(componentKey);
     }
 
@@ -67,7 +67,11 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
     protected <C> AliasBindingFunction<C> bind(Scope scope, ComponentKey<C> key) {
         if (scope != this.scope() && scope != this.applicationScope()) {
             throw new IllegalArgumentException(
-                    "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(this.scope(), scope, key));
+                "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(
+                    this.scope(),
+                    scope,
+                    key
+                ));
         }
         return super.bind(this.scope(), key);
     }
@@ -76,7 +80,8 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
     protected Option<ScopeModuleContext> resolveScopeModuleContext() {
         Option<ScopeModuleContext> scopeModuleContext = super.resolveScopeModuleContext();
         if (scopeModuleContext.absent() && this.scope() != this.applicationScope()) {
-            throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
+            throw new IllegalModificationException(
+                "Cannot add binding to non-application hierarchy without a module context");
         }
         return scopeModuleContext;
     }
@@ -87,7 +92,8 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
         if (!key.scope().contains(this.scope()) && this.scope() != this.applicationScope()) {
-            throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
+            throw new IllegalArgumentException(
+                "Cannot create a binding hierarchy for a component key with a different scope");
         }
         return super.hierarchy(key, useGlobalIfAbsent);
     }

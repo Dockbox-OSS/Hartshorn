@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
- * Marks a method as a method that should be invoked after the component has been initialized. A component is
- * considered initialized if it has been fully populated and processed by any applicable {@link ComponentPostProcessor}s
- * The method may have any parameters which match injectable components that can be provided through the current {@link
- * ComponentProvider}.
+ * Marks a method as a method that should be invoked after the component has been initialized. A
+ * component is considered initialized if it has been fully populated and processed by any
+ * applicable {@link ComponentPostProcessor}s The method may have any parameters which match
+ * injectable components that can be provided through the current {@link ComponentProvider}.
  *
  * @since 0.6.0
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 
 /**
- * A specific {@link ProxyFactory} that is aware of its own state, and exposes it to the outside world.
+ * A specific {@link ProxyFactory} that is aware of its own state, and exposes it to the outside
+ * world.
  *
  * @param <T> the type of the proxy
  *
@@ -40,19 +41,21 @@ public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
     StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 
     /**
-     * Sets whether the current factory should continue tracking changes. If set to false, the factory will not track
-     * changes.
+     * Sets whether the current factory should continue tracking changes. If set to false, the
+     * factory will not track changes.
      *
      * @param trackState whether the factory should track changes
+     *
      * @return the current factory
      */
     StateAwareProxyFactory<T> trackState(boolean trackState);
 
     /**
-     * Returns whether the current factory was modified since its creation. If {@link #trackState(boolean)}
-     * was previously set to {@code false}, this method will always return {@code false}. Otherwise, it will return
-     * {@code true} if the factory was modified since its creation. If the factory was not modified since its
-     * creation, it will return {@code false}.
+     * Returns whether the current factory was modified since its creation. If
+     * {@link #trackState(boolean)} was previously set to {@code false}, this method will always
+     * return {@code false}. Otherwise, it will return {@code true} if the factory was modified
+     * since its creation. If the factory was not modified since its creation, it will return
+     * {@code false}.
      *
      * @return whether the factory was modified since its creation
      */

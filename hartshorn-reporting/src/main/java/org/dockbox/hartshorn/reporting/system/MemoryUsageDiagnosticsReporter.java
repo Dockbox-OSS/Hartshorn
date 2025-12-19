@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,11 +59,12 @@ public class MemoryUsageDiagnosticsReporter implements Reportable {
     }
 
     /**
-     * Returns a human-readable representation of the given number of bytes. The returned value is in SI units, where
-     * 1000 bytes = 1kB. Formatted strings are exact up to one decimal place. For example, {@code humanReadableByteCountSI(1000)}
-     * returns {@code "1.0 kB"}.
+     * Returns a human-readable representation of the given number of bytes. The returned value is
+     * in SI units, where 1000 bytes = 1kB. Formatted strings are exact up to one decimal place. For
+     * example, {@code humanReadableByteCountSI(1000)} returns {@code "1.0 kB"}.
      *
      * @param bytes the number of bytes to represent
+     *
      * @return a human-readable representation of the given number of bytes
      */
     public static String humanReadableByteCountSI(long bytes) {
@@ -79,11 +80,12 @@ public class MemoryUsageDiagnosticsReporter implements Reportable {
     }
 
     /**
-     * Returns a human-readable representation of the given number of bytes. The returned value is in IEC units, where
-     * 1024 bytes = 1KiB. Formatted strings are exact up to one decimal place. For example, {@code humanReadableByteCountIEC(1024)}
-     * returns {@code "1.0 KiB"}.
+     * Returns a human-readable representation of the given number of bytes. The returned value is
+     * in IEC units, where 1024 bytes = 1KiB. Formatted strings are exact up to one decimal place.
+     * For example, {@code humanReadableByteCountIEC(1024)} returns {@code "1.0 KiB"}.
      *
      * @param bytes the number of bytes to represent
+     *
      * @return a human-readable representation of the given number of bytes
      */
     public static String humanReadableByteCountIEC(long bytes) {

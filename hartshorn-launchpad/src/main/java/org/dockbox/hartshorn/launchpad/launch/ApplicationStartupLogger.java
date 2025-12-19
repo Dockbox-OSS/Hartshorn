@@ -26,11 +26,12 @@ import java.lang.management.RuntimeMXBean;
 import java.time.Duration;
 
 /**
- * A logger that logs the startup phases of an application. This includes the startup message and the started
- * message. This is commonly used by {@link ApplicationBuilder application builders} to delegate the logging of
- * startup messages to a separate class.
+ * A logger that logs the startup phases of an application. This includes the startup message and
+ * the started message. This is commonly used by {@link ApplicationBuilder application builders} to
+ * delegate the logging of startup messages to a separate class.
  *
- * <p>Note that this does not include banners or other forms of visual startup messages. This is purely for
+ * <p>Note that this does not include banners or other forms of visual startup messages. This is
+ * purely for
  * practical logging purposes.
  *
  * @since 0.6.0
@@ -46,9 +47,10 @@ public class ApplicationStartupLogger {
      * @param buildContext build context of the application
      */
     public record ApplicationData(
-            RuntimeMXBean runtimeMXBean,
-            ApplicationBuildContext buildContext
-    ) { }
+        RuntimeMXBean runtimeMXBean,
+        ApplicationBuildContext buildContext
+    ) {
+    }
 
     private final boolean includeApplicationName;
     private final boolean includeStartupTime;
@@ -61,12 +63,16 @@ public class ApplicationStartupLogger {
 
     private final ApplicationData applicationData;
 
-    protected ApplicationStartupLogger(Configurer configurer, ApplicationBuildContext buildContext) {
+    protected ApplicationStartupLogger(
+        Configurer configurer,
+        ApplicationBuildContext buildContext
+    ) {
         this.applicationData = new ApplicationData(
-                ManagementFactory.getRuntimeMXBean(),
-                buildContext
+            ManagementFactory.getRuntimeMXBean(),
+            buildContext
         );
-        SimpleSingleElementContext<ApplicationData> context = SimpleSingleElementContext.create(this.applicationData);
+        SimpleSingleElementContext<ApplicationData> context =
+            SimpleSingleElementContext.create(this.applicationData);
         this.includeApplicationName = configurer.includeApplicationName.initialize(context);
         this.includeStartupTime = configurer.includeStartupTime.initialize(context);
         this.includeJvmUptime = configurer.includeJvmUptime.initialize(context);
@@ -79,13 +85,13 @@ public class ApplicationStartupLogger {
 
     protected boolean isEnabled() {
         return this.includeApplicationName ||
-               this.includeStartupTime ||
-               this.includeJvmUptime ||
-               this.includeHost ||
-               this.includeJavaVersion ||
-               this.includeProcessId ||
-               this.includeResponsibleUser ||
-               this.includeDirectory;
+            this.includeStartupTime ||
+            this.includeJvmUptime ||
+            this.includeHost ||
+            this.includeJavaVersion ||
+            this.includeProcessId ||
+            this.includeResponsibleUser ||
+            this.includeDirectory;
     }
 
     /**
@@ -98,38 +104,40 @@ public class ApplicationStartupLogger {
     }
 
     /**
-     * Logs the startup message of the application. This message includes practical information about the
-     * application and its environment, such as its name, host, Java version, PID, and working directory.
+     * Logs the startup message of the application. This message includes practical information
+     * about the application and its environment, such as its name, host, Java version, PID, and
+     * working directory.
      */
     public void logStartup() {
         if (this.includeApplicationName
-                || this.includeHost
-                || this.includeJavaVersion
-                || this.includeProcessId
-                || this.includeResponsibleUser
-                || this.includeDirectory
+            || this.includeHost
+            || this.includeJavaVersion
+            || this.includeProcessId
+            || this.includeResponsibleUser
+            || this.includeDirectory
         ) {
             this.logger().info(this.getStartupMessage().toString());
         }
     }
 
     /**
-     * Logs the started message of the application. This message includes practical information about the
-     * application and its environment, such as its name, startup time, and JVM uptime.
+     * Logs the started message of the application. This message includes practical information
+     * about the application and its environment, such as its name, startup time, and JVM uptime.
      *
      * @param startupTime The duration it took for the application to start
      */
     public void logStarted(Duration startupTime) {
         if (this.includeApplicationName
-                || this.includeStartupTime
-                || this.includeJvmUptime) {
+            || this.includeStartupTime
+            || this.includeJvmUptime) {
             this.logger().info(this.getStartedMessage(startupTime).toString());
         }
     }
 
     /**
-     * Returns the startup message of the application. This message includes practical information about the
-     * application and its environment, such as its name, host, Java version, PID, and working directory.
+     * Returns the startup message of the application. This message includes practical information
+     * about the application and its environment, such as its name, host, Java version, PID, and
+     * working directory.
      *
      * @return The startup message of the application
      */
@@ -157,10 +165,11 @@ public class ApplicationStartupLogger {
     }
 
     /**
-     * Returns the started message of the application. This message includes practical information about the
-     * application and its environment, such as its name, startup time, and JVM uptime.
+     * Returns the started message of the application. This message includes practical information
+     * about the application and its environment, such as its name, startup time, and JVM uptime.
      *
      * @param startupTime The duration it took for the application to start
+     *
      * @return The started message of the application
      */
     protected CharSequence getStartedMessage(Duration startupTime) {
@@ -187,19 +196,19 @@ public class ApplicationStartupLogger {
      */
     protected void appendApplicationName(StringBuilder message) {
         message.append(" ")
-                .append(this.applicationData.buildContext().applicationName());
+            .append(this.applicationData.buildContext().applicationName());
     }
 
     /**
      * Appends the startup time to the given message. The startup time is formatted as seconds.
      *
-     * @param message     The message to append the startup time to
+     * @param message The message to append the startup time to
      * @param startupTime The duration it took for the application to start
      */
     protected void appendStartupTime(StringBuilder message, Duration startupTime) {
         message.append(" in ")
-                .append(startupTime.toMillis() / 1000.0d)
-                .append(" seconds");
+            .append(startupTime.toMillis() / 1000.0d)
+            .append(" seconds");
     }
 
     /**
@@ -209,15 +218,17 @@ public class ApplicationStartupLogger {
      */
     protected void appendJvmUptime(StringBuilder message) {
         message.append(" (JVM running for ")
-                .append(this.applicationData.runtimeMXBean().getUptime() / 1000.0d)
-                .append(")");
+            .append(this.applicationData.runtimeMXBean().getUptime() / 1000.0d)
+            .append(")");
     }
 
     /**
-     * Appends the hostname of the system on which the application is running. This is determined by the present
-     * {@link RuntimeMXBean}. The hostname is extracted from the {@link RuntimeMXBean#getName()}.
+     * Appends the hostname of the system on which the application is running. This is determined by
+     * the present {@link RuntimeMXBean}. The hostname is extracted from the
+     * {@link RuntimeMXBean#getName()}.
      *
-     * <p>For example, if the {@link RuntimeMXBean#getName()} returns {@code root@hartshorn-ci}, the returned value will be
+     * <p>For example, if the {@link RuntimeMXBean#getName()} returns {@code root@hartshorn-ci}, the
+     * returned value will be
      * {@code hartshorn-ci}.
      *
      * @param message The message to append the host to
@@ -226,7 +237,7 @@ public class ApplicationStartupLogger {
         // Alternative to InetAddress.getLocalHost().getHostName()
         final String host = this.applicationData.runtimeMXBean().getName().split("@")[1];
         message.append(" on ")
-                .append(host);
+            .append(host);
     }
 
     /**
@@ -236,7 +247,7 @@ public class ApplicationStartupLogger {
      */
     protected void appendJavaVersion(StringBuilder message) {
         message.append(" using Java ")
-                .append(this.applicationData.runtimeMXBean().getVmVersion());
+            .append(this.applicationData.runtimeMXBean().getVmVersion());
     }
 
     /**
@@ -246,11 +257,12 @@ public class ApplicationStartupLogger {
      */
     protected void appendPID(StringBuilder message) {
         message.append(" with PID ")
-                .append(this.applicationData.runtimeMXBean().getPid());
+            .append(this.applicationData.runtimeMXBean().getPid());
     }
 
     /**
-     * Appends the execution context to the given message. This includes the user name and working directory.
+     * Appends the execution context to the given message. This includes the user name and working
+     * directory.
      *
      * @param message The message to append the execution context to
      */
@@ -261,16 +273,24 @@ public class ApplicationStartupLogger {
         message.append(" (Started");
         if (this.includeResponsibleUser) {
             message.append(" by ")
-                    .append(System.getProperty("user.name"));
+                .append(System.getProperty("user.name"));
         }
         if (this.includeDirectory) {
             message.append(" in ")
-                    .append(System.getProperty("user.dir"));
+                .append(System.getProperty("user.dir"));
         }
         message.append(")");
     }
 
-    public static ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> create(Customizer<Configurer> customizer) {
+    /**
+     * Creates a new {@link ApplicationStartupLogger} initializer with the provided customizer.
+     *
+     * @param customizer the customizer to configure the logger
+     * @return the initializer for the logger
+     */
+    public static ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> create(
+        Customizer<Configurer> customizer
+    ) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -287,107 +307,233 @@ public class ApplicationStartupLogger {
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationData, Boolean> includeApplicationName = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeStartupTime = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeJvmUptime = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeHost = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeJavaVersion = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeProcessId = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeResponsibleUser = ContextualInitializer.of(true);
-        private ContextualInitializer<ApplicationData, Boolean> includeDirectory = ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeApplicationName =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeStartupTime =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeJvmUptime =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeHost =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeJavaVersion =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeProcessId =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeResponsibleUser =
+            ContextualInitializer.of(true);
+        private ContextualInitializer<ApplicationData, Boolean> includeDirectory =
+            ContextualInitializer.of(true);
 
-        public Configurer includeApplicationName(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the application name in the startup and started messages.
+         *
+         * @param include whether to include the application name
+         * @return the configurer instance
+         */
+        public Configurer includeApplicationName(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeApplicationName = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the application name in the startup and started messages.
+         *
+         * @param include whether to include the application name
+         * @return the configurer instance
+         */
         public Configurer includeApplicationName(boolean include) {
             return this.includeApplicationName(ContextualInitializer.of(include));
         }
 
-        public Configurer includeStartupTime(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the startup time in the started message.
+         *
+         * @param include whether to include the startup time
+         * @return the configurer instance
+         */
+        public Configurer includeStartupTime(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeStartupTime = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the startup time in the started message.
+         *
+         * @param include whether to include the startup time
+         * @return the configurer instance
+         */
         public Configurer includeStartupTime(boolean include) {
             return this.includeStartupTime(ContextualInitializer.of(include));
         }
 
-        public Configurer includeJvmUptime(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the JVM uptime in the started message.
+         *
+         * @param include whether to include the JVM uptime
+         * @return the configurer instance
+         */
+        public Configurer includeJvmUptime(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeJvmUptime = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the JVM uptime in the started message.
+         *
+         * @param include whether to include the JVM uptime
+         * @return the configurer instance
+         */
         public Configurer includeJvmUptime(boolean include) {
             return this.includeJvmUptime(ContextualInitializer.of(include));
         }
 
+        /**
+         * Configures whether to include the host in the startup message.
+         *
+         * @param include whether to include the host
+         * @return the configurer instance
+         */
         public Configurer includeHost(ContextualInitializer<ApplicationData, Boolean> include) {
             this.includeHost = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the host in the startup message.
+         *
+         * @param include whether to include the host
+         * @return the configurer instance
+         */
         public Configurer includeHost(boolean include) {
             return this.includeHost(ContextualInitializer.of(include));
         }
 
-        public Configurer includeJavaVersion(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the Java version in the startup message.
+         *
+         * @param include whether to include the Java version
+         * @return the configurer instance
+         */
+        public Configurer includeJavaVersion(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeJavaVersion = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the Java version in the startup message.
+         *
+         * @param include whether to include the Java version
+         * @return the configurer instance
+         */
         public Configurer includeJavaVersion(boolean include) {
             return this.includeJavaVersion(ContextualInitializer.of(include));
         }
 
-        public Configurer includeProcessId(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the process ID in the startup message.
+         *
+         * @param include whether to include the process ID
+         * @return the configurer instance
+         */
+        public Configurer includeProcessId(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeProcessId = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the process ID in the startup message.
+         *
+         * @param include whether to include the process ID
+         * @return the configurer instance
+         */
         public Configurer includeProcessId(boolean include) {
             return this.includeProcessId(ContextualInitializer.of(include));
         }
 
-        public Configurer includeResponsibleUser(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the responsible user in the startup message.
+         *
+         * @param include whether to include the responsible user
+         * @return the configurer instance
+         */
+        public Configurer includeResponsibleUser(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeResponsibleUser = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the responsible user in the startup message.
+         *
+         * @param include whether to include the responsible user
+         * @return the configurer instance
+         */
         public Configurer includeResponsibleUser(boolean include) {
             return this.includeResponsibleUser(ContextualInitializer.of(include));
         }
 
-        public Configurer includeDirectory(ContextualInitializer<ApplicationData, Boolean> include) {
+        /**
+         * Configures whether to include the working directory in the startup message.
+         *
+         * @param include whether to include the working directory
+         * @return the configurer instance
+         */
+        public Configurer includeDirectory(
+                ContextualInitializer<ApplicationData, Boolean> include
+        ) {
             this.includeDirectory = include;
             return this;
         }
 
+        /**
+         * Configures whether to include the working directory in the startup message.
+         *
+         * @param include whether to include the working directory
+         * @return the configurer instance
+         */
         public Configurer includeDirectory(boolean include) {
             return this.includeDirectory(ContextualInitializer.of(include));
         }
 
+        /**
+         * Disables all optional logging options.
+         * @return the configurer instance
+         */
         public Configurer disableAll() {
             return this.includeApplicationName(false)
-                    .includeStartupTime(false)
-                    .includeJvmUptime(false)
-                    .includeHost(false)
-                    .includeJavaVersion(false)
-                    .includeProcessId(false)
-                    .includeResponsibleUser(false)
-                    .includeDirectory(false);
+                .includeStartupTime(false)
+                .includeJvmUptime(false)
+                .includeHost(false)
+                .includeJavaVersion(false)
+                .includeProcessId(false)
+                .includeResponsibleUser(false)
+                .includeDirectory(false);
         }
 
+        /**
+         * Enables all optional logging options.
+         * @return the configurer instance
+         */
         public Configurer enableAll() {
             return this.includeApplicationName(true)
-                    .includeStartupTime(true)
-                    .includeJvmUptime(true)
-                    .includeHost(true)
-                    .includeJavaVersion(true)
-                    .includeProcessId(true)
-                    .includeResponsibleUser(true)
-                    .includeDirectory(true);
+                .includeStartupTime(true)
+                .includeJvmUptime(true)
+                .includeHost(true)
+                .includeJavaVersion(true)
+                .includeProcessId(true)
+                .includeResponsibleUser(true)
+                .includeDirectory(true);
         }
     }
 }

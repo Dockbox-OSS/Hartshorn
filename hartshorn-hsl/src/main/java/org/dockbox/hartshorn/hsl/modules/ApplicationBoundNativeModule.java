@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.hsl.modules;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * Implementation of {@link AbstractNativeModule} which provides the instance of the module
- * using the {@link ApplicationContext}. The instance is lazy loaded, and only created when
- * it is accessed for the first time.
+ * Implementation of {@link AbstractNativeModule} which provides the instance of the module using
+ * the {@link ApplicationContext}. The instance is lazy loaded, and only created when it is accessed
+ * for the first time.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ApplicationBoundNativeModule extends AbstractNativeModule {
@@ -34,7 +34,10 @@ public class ApplicationBoundNativeModule extends AbstractNativeModule {
 
     private Object instance;
 
-    public ApplicationBoundNativeModule(Class<?> moduleClass, ApplicationContext applicationContext) {
+    public ApplicationBoundNativeModule(
+        Class<?> moduleClass,
+        ApplicationContext applicationContext
+    ) {
         this.moduleClass = moduleClass;
         this.applicationContext = applicationContext;
     }

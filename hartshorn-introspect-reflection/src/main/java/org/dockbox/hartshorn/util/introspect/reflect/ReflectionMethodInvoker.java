@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
     @Override
     public Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable {
         Option<Method> jlrMethod = method.method();
-        if(jlrMethod.absent()) {
+        if (jlrMethod.absent()) {
             return null;
         }
 

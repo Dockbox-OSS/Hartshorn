@@ -31,12 +31,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Standard implementation of {@link ProfilePropertyRegistryAggregator} that aggregates properties from multiple
- * {@link EnvironmentProfile}s into a single {@link ProfilePropertyRegistry}, respecting profile priorities.
+ * Standard implementation of {@link ProfilePropertyRegistryAggregator} that aggregates properties
+ * from multiple {@link EnvironmentProfile}s into a single {@link ProfilePropertyRegistry},
+ * respecting profile priorities.
  *
- * <p>This aggregator creates a new {@link ProfileMapPropertyRegistry} containing all properties from the profiles
- * in the given {@link ProfileRegistry}. Properties from higher priority profiles override those from lower priority
- * ones.
+ * <p>This aggregator creates a new {@link ProfileMapPropertyRegistry} containing all properties
+ * from the profiles
+ * in the given {@link ProfileRegistry}. Properties from higher priority profiles override those
+ * from lower priority ones.
  *
  * @since 0.7.0
  *
@@ -56,9 +58,14 @@ public class SimpleProfilePropertyRegistryAggregator implements ProfilePropertyR
                 // Don't override properties defined in higher priority profiles
                 if (!properties.containsKey(key)) {
                     ValueProperty valueProperty = propertyRegistry.get(key)
-                            .orElseThrow(() -> new IllegalStateException("Property " + key + " not found in registry"));
+                        .orElseThrow(() -> new IllegalStateException("Property "
+                            + key
+                            + " not found in registry"));
                     properties.put(key, new SingleConfiguredProperty(valueProperty.name(),
-                            valueProperty.value().orElseThrow(() -> new IllegalStateException("Property " + key + " has no value"))));
+                        valueProperty.value()
+                            .orElseThrow(() -> new IllegalStateException("Property "
+                                + key
+                                + " has no value"))));
                 }
             }
         }

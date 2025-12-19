@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Represents a node that can be called, producing a result. This is the base class for all types
- * of executable nodes, including functions and constructors.
+ * Represents a node that can be called, producing a result. This is the base class for all types of
+ * executable nodes, including functions and constructors.
  *
  * @since 0.4.12
  *
@@ -34,15 +34,23 @@ import org.dockbox.hartshorn.util.ApplicationException;
 public interface CallableNode {
 
     /**
-     * Executes the node, producing a result. The arguments may or may not be used, depending on
-     * the type of node.
+     * Executes the node, producing a result. The arguments may or may not be used, depending on the
+     * type of node.
      *
      * @param at The token at which the node is being executed. This is used for error reporting.
      * @param interpreter The interpreter that is executing the node.
-     * @param instance The instance on which the node is being executed. This is used for method calls.
+     * @param instance The instance on which the node is being executed. This is used for method
+     * calls.
      * @param arguments The arguments that are passed to the node.
+     *
      * @return The result of the node.
+     *
      * @throws ApplicationException If an error occurs while executing the node.
      */
-    Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException;
+    Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) throws ApplicationException;
 }

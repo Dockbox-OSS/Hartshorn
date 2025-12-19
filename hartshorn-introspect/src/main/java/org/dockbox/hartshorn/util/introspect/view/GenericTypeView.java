@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.util.introspect.view;
 
 /**
  * Represents a view of an element which may have a generic type. This view can be used to
- * introspect the element's generic type, allowing you to extract information about the type's
- * type parameters.
+ * introspect the element's generic type, allowing you to extract information about the type's type
+ * parameters.
  *
  * @param <T> the type of the element's generic type
  *
@@ -30,19 +30,18 @@ package org.dockbox.hartshorn.util.introspect.view;
 public interface GenericTypeView<T> extends View {
 
     /**
-     * Returns a {@link TypeView} for the element's non-generic type. A non-generic type can be
-     * for example {@code TypeView<List>} for a {@code List<String>}.
+     * Returns a {@link TypeView} for the element's non-generic type. A non-generic type can be for
+     * example {@code TypeView<List>} for a {@code List<String>}.
      *
      * @return a view of the element's non-generic type
      */
     TypeView<T> type();
 
     /**
-     * Returns a {@link TypeView} for the element's generic type. A generic type can be for
-     * example {@code TypeView<List<String>>} for a {@code List<String>}.
+     * Returns a {@link TypeView} for the element's generic type. A generic type can be for example
+     * {@code TypeView<List<String>>} for a {@code List<String>}.
      *
      * @return a view of the element's generic type
      */
     TypeView<T> genericType();
-
 }

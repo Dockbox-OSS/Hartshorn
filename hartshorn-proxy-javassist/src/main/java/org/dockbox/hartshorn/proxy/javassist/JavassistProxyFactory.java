@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import javassist.util.proxy.ProxyFactory;
 
 /**
  * A proxy factory that uses Javassist to create proxies. This implementation is based on the
- * {@link JDKInterfaceProxyFactory}, but uses Javassist to create the proxy class if the type
- * is not an interface. This allows for the creation of proxies for concrete and abstract classes. The
+ * {@link JDKInterfaceProxyFactory}, but uses Javassist to create the proxy class if the type is not
+ * an interface. This allows for the creation of proxies for concrete and abstract classes. The
  * proxy class is created by extending the target class, and implementing all interfaces that the
  * target class implements.
  *
@@ -34,9 +34,9 @@ import javassist.util.proxy.ProxyFactory;
  *
  * @see ProxyFactory
  * @see MethodHandler
- *
+ * 
  * @since 0.4.10
- *
+ * 
  * @author Guus Lieben
  */
 public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
@@ -50,13 +50,15 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
     }
 
     @Override
-    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor) {
+    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(
+        ProxyMethodInterceptor<T> interceptor
+    ) {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
+        MethodHandler methodHandler =
+            new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
-
 }

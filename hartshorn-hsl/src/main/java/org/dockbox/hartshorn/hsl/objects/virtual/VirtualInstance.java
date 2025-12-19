@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an instance of a {@link VirtualClass} inside a script. The instance is
- * identified by its {@link VirtualClass type}. The instance can carry a variety of
- * properties, which are not bound to a specific contract.
+ * Represents an instance of a {@link VirtualClass} inside a script. The instance is identified by
+ * its {@link VirtualClass type}. The instance can carry a variety of properties, which are not
+ * bound to a specific contract.
  *
  * @since 0.4.12
  *
@@ -52,6 +52,11 @@ public class VirtualInstance implements InstanceReference {
         this.virtualClass = virtualClass;
     }
 
+    /**
+     * The virtual type of this instance.
+     *
+     * @return the virtual class
+     */
     public VirtualClass virtualClass() {
         return this.virtualClass;
     }
@@ -61,17 +66,18 @@ public class VirtualInstance implements InstanceReference {
         VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(name)
-                    .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type().name())
-                    .build();
+                .at(name)
+                .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type().name())
+                .build();
         }
         if (field != null) {
-            FormattedDiagnostic accessError = this.accessVerifier().write(name, field, this, fromScope);
+            FormattedDiagnostic accessError =
+                this.accessVerifier().write(name, field, this, fromScope);
             if (accessError != null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(accessError)
-                        .build();
+                    .at(name)
+                    .message(accessError)
+                    .build();
             }
             if (field.setter() != null) {
                 if (field.setter().hasBody()) {
@@ -81,9 +87,12 @@ public class VirtualInstance implements InstanceReference {
             }
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT, "property", name.lexeme(), this.type().name())
-                        .build();
+                    .at(name)
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT,
+                        "property",
+                        name.lexeme(),
+                        this.type().name())
+                    .build();
             }
         }
         this.fields.put(name.lexeme(), value);
@@ -93,12 +102,13 @@ public class VirtualInstance implements InstanceReference {
     public Object get(Interpreter interpreter, Token name, VariableScope fromScope) {
         VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field != null) {
-            FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
+            FormattedDiagnostic accessError =
+                this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(accessError)
-                        .build();
+                    .at(name)
+                    .message(accessError)
+                    .build();
             }
             if (field.getter() != null) {
                 if (field.getter().hasBody()) {
@@ -121,6 +131,12 @@ public class VirtualInstance implements InstanceReference {
             .build();
     }
 
+    /**
+     * Gets the property access verifier to use for this instance. This verifier is used to verify
+     * whether a property can be accessed or modified.
+     *
+     * @return the property access verifier
+     */
     protected PropertyAccessVerifier accessVerifier() {
         return new StandardPropertyAccessVerifier();
     }
@@ -128,9 +144,9 @@ public class VirtualInstance implements InstanceReference {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.virtualClass)
-                .field("fields", this.fields)
-                .describe();
+            .field("type", this.virtualClass)
+            .field("fields", this.fields)
+            .describe();
     }
 
     @NonNull

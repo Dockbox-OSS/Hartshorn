@@ -25,23 +25,27 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 
 /**
- * A {@link BindingFunction} that delegates all calls to the provided {@link BindingFunction delegate}, but returns the
- * {@link ApplicationContext} instead of the {@link Binder} to allow for chaining. This is used to allow for the
- * {@link ApplicationContext} to use custom binders, while still allowing for the {@link ApplicationContext} to be
- * returned.
+ * A {@link BindingFunction} that delegates all calls to the provided
+ * {@link BindingFunction delegate}, but returns the {@link ApplicationContext} instead of the
+ * {@link Binder} to allow for chaining. This is used to allow for the {@link ApplicationContext} to
+ * use custom binders, while still allowing for the {@link ApplicationContext} to be returned.
  *
  * @param <T> the type of the binding
  *
  * @see ApplicationContext
  * @see BindingFunction
- *
+ * 
  * @since 0.4.11
- *
+ * 
  * @author Guus Lieben
  */
-public class DelegatingApplicationAliasBindingFunction<T> extends DelegatingApplicationBindingFunction<T> implements AliasBindingFunction<T> {
+public class DelegatingApplicationAliasBindingFunction<T>
+    extends DelegatingApplicationBindingFunction<T> implements AliasBindingFunction<T> {
 
-    public DelegatingApplicationAliasBindingFunction(ApplicationContext applicationContext, AliasBindingFunction<T> delegate) {
+    public DelegatingApplicationAliasBindingFunction(
+        ApplicationContext applicationContext,
+        AliasBindingFunction<T> delegate
+    ) {
         super(applicationContext, delegate);
     }
 
@@ -77,6 +81,8 @@ public class DelegatingApplicationAliasBindingFunction<T> extends DelegatingAppl
 
     @Override
     public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
-        return (AliasBindingFunction<T>) super.processAfterInitialization(processAfterInitialization);
+        return (AliasBindingFunction<T>) super.processAfterInitialization(
+            processAfterInitialization
+        );
     }
 }

@@ -36,25 +36,27 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A provider which provides a {@link ComponentCollection} of all the provided instances. This provider
- * should be used when backing a {@link CollectionBindingHierarchy}, and should typically be created
- * through {@link CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)}.
+ * A provider which provides a {@link ComponentCollection} of all the provided instances. This
+ * provider should be used when backing a {@link CollectionBindingHierarchy}, and should typically
+ * be created through {@link CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)}.
  *
- * <p>Note that while this type is not type-aware itself, providers that are added to this collection
+ * <p>Note that while this type is not type-aware itself, providers that are added to this
+ * collection
  * may be. Providers will be accessed every time the collection is provided, and may be removed from
- * the collection at any time. As such, providers can apply rules for prototype or singleton behavior,
- * or any other behavior that is supported by a {@link InstantiationStrategy}.
+ * the collection at any time. As such, providers can apply rules for prototype or singleton
+ * behavior, or any other behavior that is supported by a {@link InstantiationStrategy}.
  *
  * @param <T> the type of the components
  *
  * @see CollectionBindingHierarchy
  * @see CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
+public class CollectionInstantiationStrategy<T>
+    implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
     private final Set<InstantiationStrategy<T>> strategies = ConcurrentHashMap.newKeySet();
 
@@ -97,7 +99,8 @@ public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantia
     }
 
     /**
-     * Removes all providers from the collection. If a provider is not present, nothing will happen.
+     * Removes all providers from the collection. If a provider is not present, nothing will
+     * happen.
      *
      * @param strategies the providers to remove
      */
@@ -113,19 +116,25 @@ public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantia
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
-        for(InstantiationStrategy<T> strategy : this.strategies) {
-            Option<ObjectContainer<T>> container = strategy.provide(application, requestContext, scope);
-            if(container.present()) {
+        for (InstantiationStrategy<T> strategy : this.strategies) {
+            Option<ObjectContainer<T>> container =
+                strategy.provide(application, requestContext, scope);
+            if (container.present()) {
                 containers.add(container.get());
             }
         }
 
-        ContainerAwareComponentCollection<T> collection = new ContainerAwareComponentCollection<>(containers);
+        ContainerAwareComponentCollection<T> collection =
+            new ContainerAwareComponentCollection<>(containers);
         ObjectContainer<ComponentCollection<T>> container = TypeUtils.unchecked(
-                new CollectionObjectContainer<>(collection),
-                ObjectContainer.class
+            new CollectionObjectContainer<>(collection),
+            ObjectContainer.class
         );
         return Option.of(container);
     }
@@ -143,7 +152,7 @@ public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantia
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("providers", this.strategies)
-                .describe();
+            .field("providers", this.strategies)
+            .describe();
     }
 }

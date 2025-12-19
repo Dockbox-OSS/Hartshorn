@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,15 @@ import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 
 /**
- * A context type that is used to pass information to a {@link org.dockbox.hartshorn.proxy.advice.stub.MethodStub} that
- * is being invoked. This context is used to provide information about the stub, the method that is being invoked, and
- * the proxy instance on which the method is invoked.
+ * A context type that is used to pass information to a
+ * {@link org.dockbox.hartshorn.proxy.advice.stub.MethodStub} that is being invoked. This context is
+ * used to provide information about the stub, the method that is being invoked, and the proxy
+ * instance on which the method is invoked.
  *
  * @param <T> The type of the proxy instance
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public class MethodStubContext<T> extends DefaultContext {
@@ -39,11 +41,13 @@ public class MethodStubContext<T> extends DefaultContext {
     private final ProxyMethodInterceptor<T> interceptor;
     private final Object[] args;
 
-    public MethodStubContext(T self,
-                             Invokable source,
-                             Invokable target,
-                             ProxyMethodInterceptor<T> interceptor,
-                             Object[] args) {
+    public MethodStubContext(
+        T self,
+        Invokable source,
+        Invokable target,
+        ProxyMethodInterceptor<T> interceptor,
+        Object[] args
+    ) {
         this.self = self;
         this.source = source;
         this.target = target;
@@ -61,7 +65,8 @@ public class MethodStubContext<T> extends DefaultContext {
     }
 
     /**
-     * The real method that is being invoked. This is the method that is <b>being</b> proxied, but not the method that
+     * The real method that is being invoked. This is the method that is <b>being</b> proxied, but
+     * not the method that
      * <b>is</b> proxied.
      *
      * @return The real method that is being invoked.
@@ -71,8 +76,9 @@ public class MethodStubContext<T> extends DefaultContext {
     }
 
     /**
-     * The proxy method that is being invoked. This is the method that <b>is</b> proxied, but may also be equal to the
-     * {@link #source()} if the method does not require rewriting (e.g. for concrete methods).
+     * The proxy method that is being invoked. This is the method that <b>is</b> proxied, but may
+     * also be equal to the {@link #source()} if the method does not require rewriting (e.g. for
+     * concrete methods).
      *
      * @return The proxy method that is being invoked.
      */
@@ -99,8 +105,8 @@ public class MethodStubContext<T> extends DefaultContext {
     }
 
     /**
-     * Returns the arguments that are passed to the method. These arguments may be equal to those provided by the
-     * original caller, or may have been modified by an advisor.
+     * Returns the arguments that are passed to the method. These arguments may be equal to those
+     * provided by the original caller, or may have been modified by an advisor.
      *
      * @return The arguments that are passed to the method.
      */

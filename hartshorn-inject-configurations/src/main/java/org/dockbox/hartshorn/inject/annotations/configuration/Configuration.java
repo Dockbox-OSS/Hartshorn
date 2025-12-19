@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * }</pre>
  *
  * <p>Configurations should often be conditional, so that they are only loaded when the application
- * meets certain requirements. This can be achieved by annotating the configuration with {@link
- * RequiresCondition} or appropriate meta-annotations. For example:
+ * meets certain requirements. This can be achieved by annotating the configuration with
+ * {@link RequiresCondition} or appropriate meta-annotations. For example:
  *
  * <pre>{@code
  * @RequiresActivator(UseBootstrap.class)
@@ -59,22 +59,24 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 @Component(
-        lifecycle = LifecycleType.SINGLETON,
-        permitProxying = false,
-        lazy = false
+    lifecycle = LifecycleType.SINGLETON,
+    permitProxying = false,
+    lazy = false
 )
 public @interface Configuration {
 
     /**
-     * @see Component#id()
      * @return The id of the configuration.
+     *
+     * @see Component#id()
      */
     @AttributeAlias(value = "id", target = Component.class)
     String id() default "";
 
     /**
-     * @see Component#name()
      * @return The name of the configuration.
+     *
+     * @see Component#name()
      */
     @AttributeAlias(value = "name", target = Component.class)
     String name() default "";

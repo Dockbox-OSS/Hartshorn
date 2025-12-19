@@ -51,10 +51,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * A builder for creating a {@link DependencyGraph} from a set of {@link DependencyContext}s. This builder supports
- * both standalone dependencies and composite dependencies (component collections). Depending on how the {@link
- * DependencyResolver} is configured, this builder can support different types of dependencies, as long as no
- * duplicate contexts are present for the same dependency.
+ * A builder for creating a {@link DependencyGraph} from a set of {@link DependencyContext}s. This
+ * builder supports both standalone dependencies and composite dependencies (component collections).
+ * Depending on how the {@link DependencyResolver} is configured, this builder can support different
+ * types of dependencies, as long as no duplicate contexts are present for the same dependency.
  *
  * @since 0.5.0
  *
@@ -67,9 +67,9 @@ public class DependencyGraphBuilder {
     private final Introspector introspector;
 
     protected DependencyGraphBuilder(
-            DependencyResolver resolver,
-            HierarchicalBinder binder,
-            Introspector introspector
+        DependencyResolver resolver,
+        HierarchicalBinder binder,
+        Introspector introspector
     ) {
         this.resolver = resolver;
         this.binder = binder;
@@ -80,26 +80,35 @@ public class DependencyGraphBuilder {
      * Creates a new {@link ContextualInitializer} that can be used to create a new instance of
      * {@link DependencyGraphBuilder}.
      *
-     * @return a new {@link ContextualInitializer} that can be used to create a new {@link DependencyGraphBuilder}.
+     * @return a new {@link ContextualInitializer} that can be used to create a new
+     * {@link DependencyGraphBuilder}.
      */
     public static ContextualInitializer<DependencyResolver, DependencyGraphBuilder> create() {
         return context -> {
-            InjectionCapableApplication application = context.firstContext(InjectionCapableApplication.class)
+            InjectionCapableApplication application =
+                context.firstContext(InjectionCapableApplication.class)
                     .orElseThrow(() -> new IllegalStateException("No application context found"));
-            return create(context.input(), application.defaultBinder(), application.environment().introspector());
+            return create(context.input(),
+                application.defaultBinder(),
+                application.environment().introspector());
         };
     }
 
     /**
-     * Creates a new instance of {@link DependencyGraphBuilder} with the given {@link DependencyResolver},
-     * {@link HierarchicalBinder} and {@link Introspector}.
+     * Creates a new instance of {@link DependencyGraphBuilder} with the given
+     * {@link DependencyResolver}, {@link HierarchicalBinder} and {@link Introspector}.
      *
      * @param resolver the resolver to use
      * @param binder the binder to use
      * @param introspector the introspector to use
+     *
      * @return a new instance of {@link DependencyGraphBuilder}
      */
-    public static DependencyGraphBuilder create(DependencyResolver resolver, HierarchicalBinder binder, Introspector introspector) {
+    public static DependencyGraphBuilder create(
+        DependencyResolver resolver,
+        HierarchicalBinder binder,
+        Introspector introspector
+    ) {
         return new DependencyGraphBuilder(resolver, binder, introspector);
     }
 
@@ -107,15 +116,20 @@ public class DependencyGraphBuilder {
      * Builds a new {@link DependencyGraph} from the given {@link DependencyContext}s.
      *
      * @param dependencyContexts the contexts to build the graph from
+     *
      * @return a new {@link DependencyGraph} from the given {@link DependencyContext}s
+     *
      * @throws DependencyResolutionException if the resolution of the dependencies fails
      */
-    public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
+    public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts)
+        throws DependencyResolutionException {
         Set<DependencyContext<?>> contexts = this.inflateDependencyContexts(dependencyContexts);
-        MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.computeNodeMap(contexts);
+        MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes =
+            this.computeNodeMap(contexts);
         DependencyGraph graph = new DependencyGraph();
-        // Don't use inflated contexts here, as we want to keep the original context for the graph. If the inflated contexts are relevant,
-        // they've already been attached to the component key of the original context.
+        // Don't use inflated contexts here, as we want to keep the original context for the graph.
+        // If the inflated contexts are relevant, they've already been attached to the component
+        // key of the original context.
         this.buildDependencyNodes(dependencyContexts, nodes, graph);
         return graph;
     }
@@ -130,7 +144,9 @@ public class DependencyGraphBuilder {
         }
     }
 
-    protected <T> Set<InstantiationStrategy<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
+    private <T> Set<InstantiationStrategy<? extends T>> lookupImplementationProviders(
+        DependencyContext<T> dependencyContext
+    ) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
         BindingHierarchy<T> hierarchy = this.binder.hierarchy(componentKey);
         int highestPriority = hierarchy.highestPriority();
@@ -145,29 +161,34 @@ public class DependencyGraphBuilder {
             .collect(Collectors.toSet());
     }
 
-    private Set<DependencyContext<?>> inflateDependencyContexts(Iterable<DependencyContext<?>> dependencyContexts)
-        throws DependencyResolutionException {
+    private Set<DependencyContext<?>> inflateDependencyContexts(
+        Iterable<DependencyContext<?>> dependencyContexts
+    ) throws DependencyResolutionException {
         Set<DependencyContext<?>> contexts = new HashSet<>();
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
             contexts.add(dependencyContext);
             Class<?> dependencyType = dependencyContext.componentKey().type();
-            Set<DependencyContext<?>> resolvedContexts = this.resolver.resolve(this.getImplementationContexts(dependencyContext)).stream()
-                .map(implementationContext -> {
-                    Class<?> implementationType = implementationContext.componentKey().type();
-                    if (dependencyType.isAssignableFrom(implementationType)) {
-                        return new ImplementationDependencyContext<>(implementationContext,
-                            TypeUtils.unchecked(dependencyContext, DependencyContext.class));
-                    }
-                    return null;
-                }).collect(Collectors.toSet());
+            Set<DependencyContext<?>> resolvedContexts =
+                this.resolver.resolve(this.getImplementationContexts(dependencyContext)).stream()
+                    .map(implementationContext -> {
+                        Class<?> implementationType = implementationContext.componentKey().type();
+                        if (dependencyType.isAssignableFrom(implementationType)) {
+                            return new ImplementationDependencyContext<>(implementationContext,
+                                TypeUtils.unchecked(dependencyContext, DependencyContext.class));
+                        }
+                        return null;
+                    }).collect(Collectors.toSet());
             contexts.addAll(resolvedContexts);
         }
         return contexts;
     }
 
     @NonNull
-    private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
-        Set<InstantiationStrategy<? extends T>> strategies = this.lookupImplementationProviders(dependencyContext);
+    private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(
+        DependencyContext<T> dependencyContext
+    ) {
+        Set<InstantiationStrategy<? extends T>> strategies =
+            this.lookupImplementationProviders(dependencyContext);
         return strategies.stream()
             .filter(provider -> provider instanceof TypeAwareInstantiationStrategy<? extends T>)
             .map(provider -> (TypeAwareInstantiationStrategy<? extends T>) provider)
@@ -176,32 +197,42 @@ public class DependencyGraphBuilder {
                     .mutable()
                     .type(provider.type())
                     .build();
-                return new ComponentKeyDependencyDeclarationContext<>(this.introspector, implementationKey, TypeUtils.unchecked(provider, InstantiationStrategy.class));
+                return new ComponentKeyDependencyDeclarationContext<>(this.introspector,
+                    implementationKey,
+                    TypeUtils.unchecked(provider, InstantiationStrategy.class));
             })
             .collect(Collectors.toSet());
     }
 
-    protected void visitContextForNodeMapping(
+    private void visitContextForNodeMapping(
         DependencyContext<?> dependencyContext,
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes
     ) {
-        MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(dependencyContext);
-        if (dependencyContext instanceof ImplementationDependencyContext<?, ?> implementationDependencyContext) {
-            ComponentKey<?> componentKey = implementationDependencyContext.declarationContext().componentKey();
-            PriorityComponentKey key = new PriorityComponentKey(implementationDependencyContext.priority(), componentKey);
+        MutableContainableGraphNode<DependencyContext<?>> node =
+            new SimpleGraphNode<>(dependencyContext);
+        if (dependencyContext instanceof ImplementationDependencyContext<?, ?>
+            implementationDependencyContext) {
+            ComponentKey<?> componentKey =
+                implementationDependencyContext.declarationContext().componentKey();
+            PriorityComponentKey key =
+                new PriorityComponentKey(implementationDependencyContext.priority(), componentKey);
             nodes.put(key, node);
         }
 
         ComponentKey<?> componentKey = dependencyContext.componentKey();
-        PriorityComponentKey key = new PriorityComponentKey(dependencyContext.priority(), componentKey);
+        PriorityComponentKey key =
+            new PriorityComponentKey(dependencyContext.priority(), componentKey);
         switch (dependencyContext.memberType()) {
             case ComponentMemberType.STANDALONE -> nodes.put(key, node);
             case ComponentMemberType.COMPOSITE -> {
-                ComponentKey<? extends ComponentCollection<?>> collectorComponentKey = componentKey.mutable().collector().build();
-                PriorityComponentKey collectorKey = new PriorityComponentKey(dependencyContext.priority(), collectorComponentKey);
+                ComponentKey<? extends ComponentCollection<?>> collectorComponentKey =
+                    componentKey.mutable().collector().build();
+                PriorityComponentKey collectorKey =
+                    new PriorityComponentKey(dependencyContext.priority(), collectorComponentKey);
                 nodes.put(collectorKey, node);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + dependencyContext.memberType());
+            default -> throw new IllegalStateException("Unexpected value: "
+                + dependencyContext.memberType());
         }
     }
 
@@ -216,13 +247,15 @@ public class DependencyGraphBuilder {
 
         for (MutableContainableGraphNode<DependencyContext<?>> componentNode : dependencyContexts) {
             DependencyContext<?> componentDependencyContext = componentNode.value();
-            for (ComponentKey<?> dependency : componentDependencyContext.dependencies().allValues()) {
-                Set<GraphNode<DependencyContext<?>>> dependencyNodes = this.getHighestPriorityNodes(nodes, dependency, key -> {
-                    if (key.componentKey().equals(dependencyContext.componentKey())) {
-                        return key.priority() < dependencyContext.priority();
-                    }
-                    return true;
-                });
+            for (ComponentKey<?> dependency : componentDependencyContext.dependencies()
+                .allValues()) {
+                Set<GraphNode<DependencyContext<?>>> dependencyNodes =
+                    this.getHighestPriorityNodes(nodes, dependency, key -> {
+                        if (key.componentKey().equals(dependencyContext.componentKey())) {
+                            return key.priority() < dependencyContext.priority();
+                        }
+                        return true;
+                    });
                 this.checkNoDuplicateContexts(dependency, dependencyNodes);
                 graph.addRoots(dependencyNodes);
                 dependencyContexts.forEach(node -> node.addParents(dependencyNodes));
@@ -238,12 +271,13 @@ public class DependencyGraphBuilder {
         Set<GraphNode<DependencyContext<?>>> highestPriorityNodes = new HashSet<>();
         for (PriorityComponentKey key : nodes.keySet()) {
             if (key.componentKey().equals(componentKey) && predicate.test(key)) {
-                Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(key);
+                Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes =
+                    nodes.get(key);
                 int highestPriority = componentNodes.stream()
                     .mapToInt(node -> node.value().priority())
                     .max()
                     .orElseThrow();
-                for (MutableContainableGraphNode<DependencyContext<?>> componentNode : componentNodes) {
+                for (var componentNode : componentNodes) {
                     if (componentNode.value().priority() == highestPriority) {
                         highestPriorityNodes.add(componentNode);
                     }
@@ -253,22 +287,31 @@ public class DependencyGraphBuilder {
         return highestPriorityNodes;
     }
 
-    private void checkNoDuplicateContexts(ComponentKey<?> dependency, Set<GraphNode<DependencyContext<?>>> dependencyNodes) {
+    private void checkNoDuplicateContexts(
+        ComponentKey<?> dependency,
+        Set<GraphNode<DependencyContext<?>>> dependencyNodes
+    ) {
         ScopeKey applicationScope = this.binder.scope().installableScopeType();
         MultiMap<ScopeKey, DependencyContext<?>> dependenciesByScope = dependencyNodes.stream()
-                .map(GraphNode::value)
-                .collect(MultiMapCollector.groupingBy(d -> d.scope().orElse(applicationScope)));
+            .map(GraphNode::value)
+            .collect(MultiMapCollector.groupingBy(d -> d.scope().orElse(applicationScope)));
 
         for (Map.Entry<ScopeKey, Collection<DependencyContext<?>>> entry : dependenciesByScope) {
             Collection<DependencyContext<?>> dependencyContexts = entry.getValue();
             if (dependencyContexts.size() > 1) {
-                boolean collectionsOnly = dependencyContexts.stream().allMatch(context -> context.memberType() == ComponentMemberType.COMPOSITE);
+                boolean collectionsOnly = dependencyContexts.stream()
+                    .allMatch(context -> context.memberType() == ComponentMemberType.COMPOSITE);
                 if (!collectionsOnly) {
-                    MultiMap<Integer, DependencyContext<?>> contextsByPriority = this.groupDependenciesByPriority(dependencyContexts);
+                    MultiMap<Integer, DependencyContext<?>> contextsByPriority =
+                        this.groupDependenciesByPriority(dependencyContexts);
                     for (int priority : contextsByPriority.keySet()) {
-                        Collection<DependencyContext<?>> dependenciesAtPriority = contextsByPriority.get(priority);
+                        Collection<DependencyContext<?>> dependenciesAtPriority =
+                            contextsByPriority.get(priority);
                         if (dependenciesAtPriority.size() > 1) {
-                            this.reportDuplicatePrioritiesForDependencyNode(dependency, entry.getKey(), priority, dependenciesAtPriority);
+                            this.reportDuplicatePrioritiesForDependencyNode(dependency,
+                                entry.getKey(),
+                                priority,
+                                dependenciesAtPriority);
                         }
                     }
                 }
@@ -278,7 +321,8 @@ public class DependencyGraphBuilder {
 
     @NonNull
     private MultiMap<Integer, DependencyContext<?>> groupDependenciesByPriority(
-        Collection<DependencyContext<?>> dependencyNodes) {
+        Collection<DependencyContext<?>> dependencyNodes
+    ) {
         MultiMap<Integer, DependencyContext<?>> contextsByPriority = new ArrayListMultiMap<>();
         for (DependencyContext<?> dependencyNode : dependencyNodes) {
             int priority = dependencyNode.priority();
@@ -287,13 +331,19 @@ public class DependencyGraphBuilder {
         return contextsByPriority;
     }
 
-    private void reportDuplicatePrioritiesForDependencyNode(ComponentKey<?> dependency, ScopeKey scope, int priority, Collection<DependencyContext<?>> dependencyContexts) {
+    private void reportDuplicatePrioritiesForDependencyNode(
+        ComponentKey<?> dependency,
+        ScopeKey scope,
+        int priority,
+        Collection<DependencyContext<?>> dependencyContexts
+    ) {
         String origins = dependencyContexts.stream()
             .map(DependencyContext::origin)
             .map(View::qualifiedName)
             .collect(Collectors.joining(",\n"));
         throw new IllegalStateException(
-            "Multiple nodes found for dependency %s at priority %d in scope %s but not all are collections. Defined by: %s".formatted(
+            ("Multiple nodes found for dependency %s at priority %d in scope %s but not all are "
+                + "collections. Defined by: %s").formatted(
                 dependency,
                 priority,
                 scope.name(),
@@ -302,26 +352,31 @@ public class DependencyGraphBuilder {
     }
 
     @NonNull
-    private static Collection<MutableContainableGraphNode<DependencyContext<?>>> collectDependencyContexts(
+    private static Collection<MutableContainableGraphNode<DependencyContext<?>>>
+    collectDependencyContexts(
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes,
         DependencyContext<?> dependencyContext
     ) {
-        PriorityComponentKey key = new PriorityComponentKey(dependencyContext.priority(), dependencyContext.componentKey());
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(key);
+        PriorityComponentKey key = new PriorityComponentKey(dependencyContext.priority(),
+            dependencyContext.componentKey());
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes =
+            nodes.get(key);
 
         ComponentKey<? extends ComponentCollection<?>> collectionComponentKey =
             dependencyContext.componentKey().mutable().collector().build();
-        PriorityComponentKey collectionKey = new PriorityComponentKey(key.priority(), collectionComponentKey);
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes = nodes.get(collectionKey);
+        PriorityComponentKey collectionKey =
+            new PriorityComponentKey(key.priority(), collectionComponentKey);
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes =
+            nodes.get(collectionKey);
 
         return CollectionUtilities.merge(componentNodes, collectionComponentNodes);
     }
 
     @NonNull
-    private MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> computeNodeMap(
-        Iterable<DependencyContext<?>> allDependencyContexts
-    ) {
-        MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes = new ArrayListMultiMap<>();
+    private MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>>
+    computeNodeMap(Iterable<DependencyContext<?>> allDependencyContexts) {
+        MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes =
+            new ArrayListMultiMap<>();
         for (DependencyContext<?> dependencyContext : allDependencyContexts) {
             this.visitContextForNodeMapping(dependencyContext, nodes);
         }
@@ -330,8 +385,9 @@ public class DependencyGraphBuilder {
     }
 
     /**
-     * A record to store a priority-based component key. This may be used for sorting purposes, and should typically only
-     * be used in the context of a map-like structure, where this record represents a key.
+     * A record to store a priority-based component key. This may be used for sorting purposes, and
+     * should typically only be used in the context of a map-like structure, where this record
+     * represents a key.
      *
      * @param priority the priority
      * @param componentKey the component key

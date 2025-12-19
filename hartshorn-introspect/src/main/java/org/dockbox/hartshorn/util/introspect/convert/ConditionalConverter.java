@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,10 @@ public interface ConditionalConverter {
     /**
      * Returns whether this converter can convert the given source object to the target type.
      *
-     * @param source the source object to convert. Will only be {@code null} if this is a {@link DefaultValueProvider}
+     * @param source the source object to convert. Will only be {@code null} if this is a
+     * {@link DefaultValueProvider}
      * @param targetType the target type to convert to
+     *
      * @return {@code true} if this converter can perform the conversion; {@code false} otherwise
      */
     boolean canConvert(Object source, Class<?> targetType);

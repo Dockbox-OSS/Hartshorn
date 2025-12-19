@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
- * A {@link ComponentPopulatorPostProcessor} that is aware of {@link ComponentContainer} instances and their proxying
- * capabilities. This post-processor will only permit proxying if the {@link ComponentContainer} permits it.
+ * A {@link ComponentPopulatorPostProcessor} that is aware of {@link ComponentContainer} instances
+ * and their proxying capabilities. This post-processor will only permit proxying if the
+ * {@link ComponentContainer} permits it.
  *
  * @since 0.7.0
  *
@@ -39,15 +40,30 @@ public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopu
     }
 
     @Override
-    protected <T> boolean permitsProxying(InjectionCapableApplication application, @Nullable T instance,
-            ComponentProcessingContext<T> processingContext) {
+    protected <T> boolean permitsProxying(
+        InjectionCapableApplication application, @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         if (!super.permitsProxying(application, instance, processingContext)) {
             return false;
         }
-        return !processingContext.containsKey(ComponentContainer.class) || processingContext.get(ComponentContainer.class).permitsProxying();
+        return !processingContext.containsKey(ComponentContainer.class) || processingContext.get(
+            ComponentContainer.class).permitsProxying();
     }
 
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
+    /**
+     * Creates a {@link ContextualInitializer} that initializes a
+     * {@link ContainerAwareComponentPopulatorPostProcessor}, which can be customized using the
+     * provided {@link Customizer}.
+     *
+     * @param customizer the customizer to configure the {@link Configurer}
+     *
+     * @return a {@link ContextualInitializer} for a
+     * {@link ContainerAwareComponentPopulatorPostProcessor}
+     */
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(
+        Customizer<Configurer> customizer
+    ) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);

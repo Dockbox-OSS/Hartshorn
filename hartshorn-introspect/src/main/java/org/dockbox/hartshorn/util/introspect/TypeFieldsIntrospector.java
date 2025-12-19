@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Provides access to the fields of a type. A field is a variable that is declared within a type. For example, in the
- * following declaration, {@code foo} is a field:
+ * Provides access to the fields of a type. A field is a variable that is declared within a type.
+ * For example, in the following declaration, {@code foo} is a field:
  * <pre>{@code
  * public class Bar {
  *    private String foo;
@@ -37,32 +37,35 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see org.dockbox.hartshorn.util.introspect.view.TypeView#fields()
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
 public interface TypeFieldsIntrospector<T> {
 
     /**
-     * Returns the field with the provided name. If no field with the provided name exists, an empty {@link Option} is
-     * returned.
+     * Returns the field with the provided name. If no field with the provided name exists, an empty
+     * {@link Option} is returned.
      *
      * @param name the name of the field
+     *
      * @return the field with the provided name
      */
     Option<FieldView<T, ?>> named(String name);
 
     /**
-     * Returns all fields for the element. If the element does not declare any fields, an empty list is returned.
+     * Returns all fields for the element. If the element does not declare any fields, an empty list
+     * is returned.
      *
      * @return all fields for the element
      */
     List<FieldView<T, ?>> all();
 
     /**
-     * Returns all fields annotated with the provided annotation. If no fields are annotated with the provided
-     * annotation, an empty list is returned.
+     * Returns all fields annotated with the provided annotation. If no fields are annotated with
+     * the provided annotation, an empty list is returned.
      *
      * @param annotation the annotation to filter by
+     *
      * @return all fields annotated with the provided annotation
      */
     List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation);

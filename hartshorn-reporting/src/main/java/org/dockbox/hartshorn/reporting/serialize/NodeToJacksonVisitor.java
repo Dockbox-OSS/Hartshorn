@@ -42,7 +42,7 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
     public JsonNode visit(Node<?> node) {
         JsonNodeFactory factory = JsonNodeFactory.instance;
         Object value = node.value();
-        return switch(value) {
+        return switch (value) {
             case String stringValue -> factory.textNode(stringValue);
             case Integer integerValue -> factory.numberNode(integerValue);
             case Double doubleValue -> factory.numberNode(doubleValue);
@@ -51,7 +51,8 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
             case Boolean booleanValue -> factory.booleanNode(booleanValue);
             case Node<?> nodeValue -> nodeValue.accept(this);
             case null -> throw new IllegalArgumentException("Unsupported type null");
-            default -> throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+            default -> throw new IllegalArgumentException("Unsupported type " + value.getClass()
+                .getName());
         };
     }
 
@@ -70,16 +71,17 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
         JsonNodeFactory factory = JsonNodeFactory.instance;
         List<JsonNode> nodes = new ArrayList<>();
         for (Object value : node.value()) {
-            switch(value) {
-            case String stringValue -> nodes.add(factory.textNode(stringValue));
-            case Integer integerValue -> nodes.add(factory.numberNode(integerValue));
-            case Double doubleValue -> nodes.add(factory.numberNode(doubleValue));
-            case Long longValue -> nodes.add(factory.numberNode(longValue));
-            case Short shortValue -> nodes.add(factory.numberNode(shortValue));
-            case Boolean booleanValue -> nodes.add(factory.booleanNode(booleanValue));
-            case Node<?> nodeValue -> nodes.add(nodeValue.accept(this));
-            case null -> throw new IllegalArgumentException("Unsupported type null");
-            default -> throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+            switch (value) {
+                case String stringValue -> nodes.add(factory.textNode(stringValue));
+                case Integer integerValue -> nodes.add(factory.numberNode(integerValue));
+                case Double doubleValue -> nodes.add(factory.numberNode(doubleValue));
+                case Long longValue -> nodes.add(factory.numberNode(longValue));
+                case Short shortValue -> nodes.add(factory.numberNode(shortValue));
+                case Boolean booleanValue -> nodes.add(factory.booleanNode(booleanValue));
+                case Node<?> nodeValue -> nodes.add(nodeValue.accept(this));
+                case null -> throw new IllegalArgumentException("Unsupported type null");
+                default -> throw new IllegalArgumentException("Unsupported type " + value.getClass()
+                    .getName());
             }
         }
         return factory.arrayNode().addAll(nodes);

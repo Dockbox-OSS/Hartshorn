@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.launchpad.processing.ContextConfiguringComponentProcessor;
 
-public class SimpleContextConfiguringComponentProcessor extends ContextConfiguringComponentProcessor<SimpleContext> {
+public class SimpleContextConfiguringComponentProcessor
+    extends ContextConfiguringComponentProcessor<SimpleContext> {
 
     public SimpleContextConfiguringComponentProcessor() {
         super(SimpleContext.class);

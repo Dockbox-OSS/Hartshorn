@@ -28,10 +28,11 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * @param <T> The type of the custom expression.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
-public non-sealed interface ExpressionModule<T extends Expression & CustomASTNode<T, Object>> extends ASTExtensionModule<T, Object> {
+public non-sealed interface ExpressionModule<T extends Expression & CustomASTNode<T, Object>>
+    extends ASTExtensionModule<T, Object> {
 
     /**
      * The parser that is responsible for parsing the node.
@@ -44,8 +45,9 @@ public non-sealed interface ExpressionModule<T extends Expression & CustomASTNod
      * Accept a visitor for this expression.
      *
      * @param visitor the visitor to accept
-     * @return the result of the visitor
      * @param <U> the type of the result
+     *
+     * @return the result of the visitor
      */
     <U> U accept(ExpressionVisitor<U> visitor);
 }

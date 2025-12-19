@@ -1,63 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-staging</artifactId>
-        <version>${revision}</version>
-        <relativePath>pom.staging.xml</relativePath>
-    </parent>
-
-    <artifactId>hartshorn-platform-updates</artifactId>
-    <packaging>pom</packaging>
+  <parent>
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn-staging</artifactId>
     <version>${revision}</version>
+    <relativePath>pom.staging.xml</relativePath>
+  </parent>
 
-    <name>Hartshorn Platform Updates</name>
-    <description>Common parent POM for Hartshorn modules which require update automation</description>
+  <artifactId>hartshorn-platform-updates</artifactId>
+  <packaging>pom</packaging>
+  <version>${revision}</version>
 
-    <properties>
-        <updates.skip>false</updates.skip>
-        <plugin.versions.version>2.19.1</plugin.versions.version>
-    </properties>
+  <name>Hartshorn Platform Updates</name>
+  <description>Common parent POM for Hartshorn modules which require update automation</description>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>${plugin.versions.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <!-- Dependency version upgrades -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <configuration>
-                    <skip>${updates.skip}</skip>
-                    <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
-                    <generateBackupPoms>false</generateBackupPoms>
+  <properties>
+    <updates.skip>false</updates.skip>
+    <plugin.versions.version>2.19.1</plugin.versions.version>
+  </properties>
 
-                    <!--
-                    Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
-                    instead of being directly updated by the versions plugin.
-                    -->
-                    <excludeProperties>plugin.kotlin.version</excludeProperties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>version-update</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>update-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${plugin.versions.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- Dependency version upgrades -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <configuration>
+          <skip>${updates.skip}</skip>
+          <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*
+          </ignoredVersions>
+          <generateBackupPoms>false</generateBackupPoms>
+
+          <!--
+          Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
+          instead of being directly updated by the versions plugin.
+          -->
+          <excludeProperties>plugin.kotlin.version</excludeProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>version-update</id>
+            <phase>install</phase>
+            <goals>
+              <goal>update-properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,24 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
 /**
- * Represents a custom AST node, which can be interpreted and resolved. This is the base interface for
- * {@link CustomExpression} and {@link CustomStatement}, which limit the types of nodes that can be
- * added to a language runtime.
+ * Represents a custom AST node, which can be interpreted and resolved. This is the base interface
+ * for {@link CustomExpression} and {@link CustomStatement}, which limit the types of nodes that can
+ * be added to a language runtime.
  *
  * @param <T> The type of the node.
  * @param <R> The type of the result of interpreting the node.
  *
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
-public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R> permits CustomExpression, CustomStatement {
+public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R>
+    permits CustomExpression, CustomStatement {
 
     /**
      * Returns the module that is responsible for interpreting and resolving this node. This is used
-     * to gain access to the appropriate token type, parser, interpreter, and resolver for the node.
+     * to gain access to the appropriate token type, parser, interpreter, and resolver for the
+     * node.
      *
      * @return The module that is responsible for interpreting and resolving this node.
      */
@@ -47,6 +49,7 @@ public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R
      * returned.
      *
      * @param interpreter The interpreter to use to interpret this node.
+     *
      * @return The result of interpreting this node.
      */
     default R interpret(Interpreter interpreter) {

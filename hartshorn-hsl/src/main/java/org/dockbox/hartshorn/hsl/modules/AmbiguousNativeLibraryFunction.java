@@ -29,9 +29,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a function that is ambiguous due to multiple libraries with the same name being present. At
- * runtime the correct library will be chosen based on the number of arguments provided. If no libraries
- * match the number of arguments, or if multiple libraries match, an error will be thrown due to the ambiguity.
+ * Represents a function that is ambiguous due to multiple libraries with the same name being
+ * present. At runtime the correct library will be chosen based on the number of arguments provided.
+ * If no libraries match the number of arguments, or if multiple libraries match, an error will be
+ * thrown due to the ambiguity.
  *
  * @param libraries The set of libraries that share the same name.
  *
@@ -42,28 +43,34 @@ import java.util.Set;
 public record AmbiguousNativeLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
-            throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    )
+        throws ApplicationException {
 
         List<NativeLibrary> applicableLibraries = this.libraries.stream()
-                .filter(library -> library.declaration().params().size() == arguments.size())
-                .filter(library -> {
-                    Class<?>[] parameterTypes = arguments.stream().map(Object::getClass).toArray(Class[]::new);
-                    return library.declaration().method().parameters().matches(parameterTypes);
-                })
-                .toList();
+            .filter(library -> library.declaration().params().size() == arguments.size())
+            .filter(library -> {
+                Class<?>[] parameterTypes =
+                    arguments.stream().map(Object::getClass).toArray(Class[]::new);
+                return library.declaration().method().parameters().matches(parameterTypes);
+            })
+            .toList();
 
-        if(applicableLibraries.isEmpty()) {
+        if (applicableLibraries.isEmpty()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
-                    .at(at)
-                    .build();
+                .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
+                .at(at)
+                .build();
         }
-        else if(applicableLibraries.size() > 1) {
+        else if (applicableLibraries.size() > 1) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
-                    .at(at)
-                    .build();
+                .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
+                .at(at)
+                .build();
         }
         else {
             CallableNode callableNode = applicableLibraries.getFirst();

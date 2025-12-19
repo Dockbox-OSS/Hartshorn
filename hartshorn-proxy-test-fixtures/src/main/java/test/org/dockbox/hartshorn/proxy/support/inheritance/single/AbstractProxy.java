@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.proxy.support.inheritance.single;
 
 /**
- * Abstract class that implements the {@link InterfaceProxy} interface. Intended to test the proxying of
- * abstract classes and interfaces.
+ * Abstract class that implements the {@link InterfaceProxy} interface. Intended to test the
+ * proxying of abstract classes and interfaces.
  *
  * @since 0.7.0
  *

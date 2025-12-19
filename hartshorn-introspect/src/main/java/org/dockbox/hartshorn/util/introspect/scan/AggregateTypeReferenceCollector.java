@@ -28,10 +28,10 @@ import java.util.Set;
  * {@link TypeReferenceCollector}s. The provided collectors are invoked in no particular order.
  *
  * @since 0.4.13
- *
+ * 
  * @author Guus Lieben
  */
-public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
+public class AggregateTypeReferenceCollector implements TypeReferenceCollector {
 
     private final Set<TypeReferenceCollector> collectors;
 
@@ -60,7 +60,7 @@ public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("collectors", this.collectors)
-                .describe();
+            .field("collectors", this.collectors)
+            .describe();
     }
 }

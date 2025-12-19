@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.inject.annotations.Named;
 public class ConditionalConfiguration {
 
     /**
-     * Passes as long as {@code java.lang.String} is on the classpath. As this is
-     * part of the standard library, it should always be available.
+     * Passes as long as {@code java.lang.String} is on the classpath. As this is part of the
+     * standard library, it should always be available.
      */
     @Singleton
     @Named("a")
@@ -37,8 +37,8 @@ public class ConditionalConfiguration {
     }
 
     /**
-     * Fails when {@code java.gnal.String} is not on the classpath. As this is
-     * an intentional typo, it should never be available.
+     * Fails when {@code java.gnal.String} is not on the classpath. As this is an intentional typo,
+     * it should never be available.
      */
     @Singleton
     @Named("b")
@@ -48,8 +48,7 @@ public class ConditionalConfiguration {
     }
 
     /**
-     * Passes as long as {@code property.c} is present as a property, no matter
-     * what its value is.
+     * Passes as long as {@code property.c} is present as a property, no matter what its value is.
      */
     @Singleton
     @Named("c")
@@ -59,9 +58,8 @@ public class ConditionalConfiguration {
     }
 
     /**
-     * Passes as long as {@code property.d} is present as a property, and its
-     * value is equal to {@code d}. This is handled by {@link ConditionTests},
-     * so the property is <b>present</b>.
+     * Passes as long as {@code property.d} is present as a property, and its value is equal to
+     * {@code d}. This is handled by {@link ConditionTests}, so the property is <b>present</b>.
      */
     @Singleton
     @Named("d")
@@ -71,9 +69,8 @@ public class ConditionalConfiguration {
     }
 
     /**
-     * Passes as long as {@code property.e} is present as a property, and its
-     * value is equal to {@code e}. This is handled by {@link ConditionTests},
-     * so the property is <b>absent</b>.
+     * Passes as long as {@code property.e} is present as a property, and its value is equal to
+     * {@code e}. This is handled by {@link ConditionTests}, so the property is <b>absent</b>.
      */
     @Singleton
     @Named("e")
@@ -83,8 +80,8 @@ public class ConditionalConfiguration {
     }
 
     /**
-     * Passes if there is no property named {@code property.l}. This is handled
-     * by {@link ConditionTests}, so the property is <b>absent</b>.
+     * Passes if there is no property named {@code property.l}. This is handled by
+     * {@link ConditionTests}, so the property is <b>absent</b>.
      */
     @Singleton
     @Named("f")

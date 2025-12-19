@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,15 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 
 /**
- * Represents a {@link ComponentProviderOrchestrator} that is aware of the {@link ComponentRegistry} that is used to locate
- * managed components.
+ * Represents a {@link ComponentProviderOrchestrator} that is aware of the {@link ComponentRegistry}
+ * that is used to locate managed components.
  *
  * @see ComponentRegistry
- *
+ * 
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
-public interface ComponentRegistryAwareProviderOrchestrator extends ComponentRegistryAwareComponentProvider, ComponentProviderOrchestrator {
+public interface ComponentRegistryAwareProviderOrchestrator
+    extends ComponentRegistryAwareComponentProvider, ComponentProviderOrchestrator {
 }

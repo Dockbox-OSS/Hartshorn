@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,18 +47,19 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * </pre>
  *
  * @see TypeView
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class TypeHierarchyGraph extends SimpleGraph<TypeView<?>> {
 
     /**
-     * Creates a new graph for the given type. If the type has no super class or interfaces, the graph will
-     * only contain a single node.
+     * Creates a new graph for the given type. If the type has no super class or interfaces, the
+     * graph will only contain a single node.
      *
      * @param type the type to create a graph for
+     *
      * @return the graph
      */
     public static TypeHierarchyGraph of(TypeView<?> type) {

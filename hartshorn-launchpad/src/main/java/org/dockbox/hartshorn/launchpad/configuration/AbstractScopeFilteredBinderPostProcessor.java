@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,47 @@ import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * A {@link HierarchicalBinderPostProcessor} that filters the {@link HierarchicalBinder} based on the {@link Scope} of the
- * binder.
+ * A {@link HierarchicalBinderPostProcessor} that filters the {@link HierarchicalBinder} based on
+ * the {@link Scope} of the binder.
  *
  * @since 0.7.0
- *
+ * 
  * @author Guus Lieben
  */
-public abstract class AbstractScopeFilteredBinderPostProcessor implements HierarchicalBinderPostProcessor {
+public abstract class AbstractScopeFilteredBinderPostProcessor
+    implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         if (this.supportsScope(application, scope)) {
             this.processBinder(application, scope, binder);
         }
     }
 
-    protected abstract void processBinder(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder);
+    /**
+     * Processes the given binder for the given scope.
+     *
+     * @param application the application the binder belongs to
+     * @param scope the scope of the binder
+     * @param binder the binder to process
+     */
+    protected abstract void processBinder(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    );
 
+    /**
+     * Determines whether this post processor supports the given scope.
+     *
+     * @param application the application the binder belongs to
+     * @param scope the scope of the binder
+     *
+     * @return true if the post processor supports the scope, false otherwise
+     */
     protected abstract boolean supportsScope(InjectionCapableApplication application, Scope scope);
 }

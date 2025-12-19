@@ -36,6 +36,11 @@ public class BreakStatement extends Statement {
         this.keyword = keyword;
     }
 
+    /**
+     * Returns the token representing the 'break' keyword.
+     *
+     * @return the 'break' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }

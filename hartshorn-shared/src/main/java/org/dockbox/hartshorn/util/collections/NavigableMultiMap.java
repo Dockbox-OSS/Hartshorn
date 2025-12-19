@@ -17,147 +17,88 @@
 package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.NavigableMap;
-import java.util.TreeMap;
 
 /**
- * A {@link MultiMap} implementation that uses {@link TreeMap} as its backing map. As the backing
- * map is a {@link NavigableMap}, this implementation provides methods to retrieve entries based
- * on their relation to other entries in the map, such as {@link #firstEntry()}, {@link
- * #lastEntry()}, etc.
+ * A navigable variant of the {@link MultiMap} interface, providing additional methods to access
+ * entries based on their order. This is the {@link MultiMap} equivalent of {@link NavigableMap}.
  *
- * @param <K> the type of the keys
- * @param <V> the type of the values
+ * @param <K> the key type
+ * @param <V> the value type
  *
- * @see TreeMap
  * @see MultiMap
- * @see StandardMultiMap
- *
- * @since 0.5.0
- *
- * @author Guus Lieben
+ * @see NavigableMap
+ * @since 0.7.0
  */
-public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
-
-    private final Comparator<? super K> comparator;
-
-    protected NavigableMultiMap(Comparator<? super K> comparator) {
-        this.comparator = comparator;
-    }
-
-    protected NavigableMultiMap(Comparator<? super K> comparator, MultiMap<K, V> map) {
-        super(map);
-        this.comparator = comparator;
-    }
+public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
 
     /**
      * Returns the first entry in the map, or an empty collection if the map is empty.
      *
      * @return the first entry in the map, or an empty collection if the map is empty
      */
-    public Collection<V> firstEntry() {
-        if (this.isEmpty()) {
-            return List.of();
-        }
-        return this.map().firstEntry().getValue();
-    }
+    Collection<V> firstEntry();
 
     /**
      * Returns the last entry in the map, or an empty collection if the map is empty.
      *
      * @return the last entry in the map, or an empty collection if the map is empty
      */
-    public Collection<V> lastEntry() {
-        if (this.isEmpty()) {
-            return List.of();
-        }
-        return this.map().lastEntry().getValue();
-    }
+    Collection<V> lastEntry();
 
     /**
-     * Returns the collection associated with the greatest key less than or equal to the given key, or
-     * an empty collection if there is no such key.
+     * Returns the collection associated with the greatest key less than or equal to the given key,
+     * or an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the greatest key less than or equal to the given key
      */
-    public Collection<V> floorEntry(K key) {
-        Entry<K, Collection<V>> entry = this.map().floorEntry(key);
-        return entry == null ? List.of() : entry.getValue();
-    }
+    Collection<V> floorEntry(K key);
 
     /**
-     * Returns the collection associated with the least key greater than or equal to the given key, or
-     * an empty collection if there is no such key.
+     * Returns the collection associated with the least key greater than or equal to the given key,
+     * or an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the least key greater than or equal to the given key
      */
-    public Collection<V> ceilingEntry(K key) {
-        Entry<K, Collection<V>> entry = this.map().ceilingEntry(key);
-        return entry == null ? List.of() : entry.getValue();
-    }
+    Collection<V> ceilingEntry(K key);
 
     /**
      * Returns the collection associated with the greatest key strictly less than the given key, or
      * an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the greatest key strictly less than the given key
      */
-    public Collection<V> lowerEntry(K key) {
-        Entry<K, Collection<V>> entry = this.map().lowerEntry(key);
-        return entry == null ? List.of() : entry.getValue();
-    }
+    Collection<V> lowerEntry(K key);
 
     /**
      * Returns the collection associated with the least key strictly greater than the given key, or
      * an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the least key strictly greater than the given key
      */
-    public Collection<V> higherEntry(K key) {
-        Entry<K, Collection<V>> entry = this.map().higherEntry(key);
-        return entry == null ? List.of() : entry.getValue();
-    }
+    Collection<V> higherEntry(K key);
 
     /**
-     * Removes and returns the collection associated with the least key in this map, or an empty collection if
-     * the map is empty.
+     * Removes and returns the collection associated with the least key in this map, or an empty
+     * collection if the map is empty.
      *
      * @return the collection associated with the least key in this map
      */
-    public Collection<V> pollFirstEntry() {
-        if (this.isEmpty()) {
-            return List.of();
-        }
-        return this.map().pollFirstEntry().getValue();
-    }
+    Collection<V> pollFirstEntry();
 
     /**
-     * Removes and returns the collection associated with the greatest key in this map, or an empty collection if
-     * the map is empty.
+     * Removes and returns the collection associated with the greatest key in this map, or an empty
+     * collection if the map is empty.
      *
      * @return the collection associated with the greatest key in this map
      */
-    public Collection<V> pollLastEntry() {
-        if (this.isEmpty()) {
-            return List.of();
-        }
-        return this.map().pollLastEntry().getValue();
-    }
-
-    @Override
-    protected NavigableMap<K, Collection<V>> map() {
-        return (NavigableMap<K, Collection<V>>) super.map();
-    }
-
-    @Override
-    protected NavigableMap<K, Collection<V>> createEmptyMap() {
-        return new TreeMap<>(this.comparator);
-    }
+    Collection<V> pollLastEntry();
 }

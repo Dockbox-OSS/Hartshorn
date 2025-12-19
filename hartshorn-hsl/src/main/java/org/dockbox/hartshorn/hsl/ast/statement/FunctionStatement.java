@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * A statement representing a function declaration, which defines a function with a specified
- * type, name, parameters, and a body.
+ * A statement representing a function declaration, which defines a function with a specified type,
+ * name, parameters, and a body.
  *
  * <p>For example, a function statement can be used to define a function like this:</p>
  * <pre>{@code
@@ -34,7 +34,7 @@ import java.util.List;
  * }</pre>
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class FunctionStatement extends ParametricExecutableBodyStatement implements NamedNode {
@@ -42,15 +42,22 @@ public class FunctionStatement extends ParametricExecutableBodyStatement impleme
     private final Token functionType;
     private final Token name;
 
-    public FunctionStatement(Token functionType,
-                             Token name,
-                             List<Parameter> params,
-                             BlockStatement body) {
+    public FunctionStatement(
+        Token functionType,
+        Token name,
+        List<Parameter> params,
+        BlockStatement body
+    ) {
         super(name, params, body);
         this.functionType = functionType;
         this.name = name;
     }
 
+    /**
+     * Returns the token representing the type of the function.
+     *
+     * @return the function type token
+     */
     public Token functionType() {
         return this.functionType;
     }

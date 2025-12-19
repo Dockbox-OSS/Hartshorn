@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link ExpressionCondition} to allow for customization of the runtime.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
-public class ExpressionConditionContext extends DefaultFallbackCompatibleContext implements ScriptConditionContext {
+public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
+    implements ScriptConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     private final Map<String, TypeView<?>> imports = new ConcurrentHashMap<>();
@@ -65,6 +66,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Add all given customizers to the context. This will not override any existing customizers.
+     *
      * @param customizers The customizers to add.
      */
     @Override
@@ -74,6 +76,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Adds the given customizer to the context.
+     *
      * @param customizer The customizer to add.
      */
     @Override
@@ -82,8 +85,9 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the given module to the context under the given alias. This will override
-     * existing modules if the alias already exists in the context.
+     * Adds the given module to the context under the given alias. This will override existing
+     * modules if the alias already exists in the context.
+     *
      * @param name The alias to use for the module.
      * @param module The module to add.
      */
@@ -93,8 +97,9 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the given modules to the context under the given aliases. This will override
-     * existing modules if the alias already exists in the context.
+     * Adds the given modules to the context under the given aliases. This will override existing
+     * modules if the alias already exists in the context.
+     *
      * @param modules The modules to add, identified by their alias.
      */
     @Override
@@ -103,8 +108,9 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the variable as a global variable under the given alias. This will override
-     * existing variables if the alias already exists in the context.
+     * Adds the variable as a global variable under the given alias. This will override existing
+     * variables if the alias already exists in the context.
+     *
      * @param name The alias to use for the variable.
      * @param value The variable value to add.
      */
@@ -114,8 +120,9 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the given variables to the context under the given aliases. This will override
-     * existing variables if the alias already exists in the context.
+     * Adds the given variables to the context under the given aliases. This will override existing
+     * variables if the alias already exists in the context.
+     *
      * @param values The variables to add, identified by their alias.
      */
     @Override
@@ -124,15 +131,17 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the given class as an import under the given aliases to the context. This allows
-     * it to be used in the executing runtime. This will override existing imports if the
-     * alias already exists in the context.
+     * Adds the given class as an import under the given aliases to the context. This allows it to
+     * be used in the executing runtime. This will override existing imports if the alias already
+     * exists in the context.
+     *
      * @param name The alias to use for the import.
      * @param type The class to import.
      */
     @Override
     public void imports(String name, Class<?> type) {
-        this.imports.put(name, this.applicationContext.environment().introspector().introspect(type));
+        this.imports.put(name,
+            this.applicationContext.environment().introspector().introspect(type));
     }
 
     @Override
@@ -141,9 +150,9 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     }
 
     /**
-     * Adds the given class as an import to the context. The class will be made available using
-     * its simple name (e.g. {@code org.example.User} will be accessible using {@code User}). This
-     * will override existing imports if there is another import with the same name or alias.
+     * Adds the given class as an import to the context. The class will be made available using its
+     * simple name (e.g. {@code org.example.User} will be accessible using {@code User}). This will
+     * override existing imports if there is another import with the same name or alias.
      *
      * @param type The class to import.
      */
@@ -160,6 +169,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
     /**
      * Adds the given imports to the context under the given aliases. This will override existing
      * imports if there is another import with the same name or alias.
+     *
      * @param imports The classes to import, identified by their alias.
      */
     @Override
@@ -169,6 +179,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets all global variables stored in this context, identified by their alias.
+     *
      * @return The global variables.
      */
     @Override
@@ -178,6 +189,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets all imports stored in this context, identified by their alias.
+     *
      * @return The imports.
      */
     @Override
@@ -187,6 +199,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets all customizers stored in this context.
+     *
      * @return The customizers.
      */
     @Override
@@ -196,6 +209,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets all modules stored in this context, identified by their alias.
+     *
      * @return The modules.
      */
     @Override
@@ -205,6 +219,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets the interpreter options for this context, overriding any existing settings.
+     *
      * @param executionOptions The interpreter options.
      */
     @Override
@@ -214,6 +229,7 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
 
     /**
      * Gets the interpreter options for this context.
+     *
      * @return The interpreter options.
      */
     @Override

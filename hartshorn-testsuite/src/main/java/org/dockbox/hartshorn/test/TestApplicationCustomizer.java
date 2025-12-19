@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 
 /**
- * An interface for customizing the application context in a test environment. This interface is practically a
- * composed {@link org.dockbox.hartshorn.util.configure.Customizer} for the various predictable components of the
- * application context.
+ * An interface for customizing the application context in a test environment. This interface is
+ * practically a composed {@link org.dockbox.hartshorn.util.configure.Customizer} for the various
+ * predictable components of the application context.
  *
  * @since 0.7.0
  *
@@ -33,8 +33,8 @@ import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 public interface TestApplicationCustomizer {
 
     /**
-     * Customizes the application builder. The application builder allows for early configuration of the
-     * application context, by consuming the main class and arguments.
+     * Customizes the application builder. The application builder allows for early configuration of
+     * the application context, by consuming the main class and arguments.
      *
      * @param configurer the configurer to customize the application builder
      */
@@ -43,9 +43,9 @@ public interface TestApplicationCustomizer {
     }
 
     /**
-     * Customizes the application environment. The application environment allows for configuration of the
-     * application's environment, such as properties and profiles, as well as commonly used low-level
-     * components.
+     * Customizes the application environment. The application environment allows for configuration
+     * of the application's environment, such as properties and profiles, as well as commonly used
+     * low-level components.
      *
      * @param configurer the configurer to customize the application environment
      */
@@ -54,8 +54,8 @@ public interface TestApplicationCustomizer {
     }
 
     /**
-     * Customizes the application factory. The application factory is responsible for creating the required
-     * base application components to discover and process components.
+     * Customizes the application factory. The application factory is responsible for creating the
+     * required base application components to discover and process components.
      *
      * @param configurer the configurer to customize the application factory
      */
@@ -64,9 +64,9 @@ public interface TestApplicationCustomizer {
     }
 
     /**
-     * Customizes the application context. The application context is the main entry point for the application,
-     * and allows for configuration of the application context itself, such as component bindings and the default
-     * component provider.
+     * Customizes the application context. The application context is the main entry point for the
+     * application, and allows for configuration of the application context itself, such as
+     * component bindings and the default component provider.
      *
      * @param configurer the configurer to customize the application context
      */

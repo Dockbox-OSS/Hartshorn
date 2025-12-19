@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A {@link MultiMap} implementation that uses {@link ConcurrentHashMap} as its backing map, and
- * {@link ConcurrentHashMap#newKeySet()} as the factory for new collections. This implementation
- * is thread-safe.
+ * {@link ConcurrentHashMap#newKeySet()} as the factory for new collections. This implementation is
+ * thread-safe.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

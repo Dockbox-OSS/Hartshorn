@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * An abstract class representing a function definition. This may represent any functionality that can be
- * executed, such as a method or constructor.
+ * An abstract class representing a function definition. This may represent any functionality that
+ * can be executed, such as a method or constructor.
  *
  * @see FunctionStatement
  * @see ConstructorStatement

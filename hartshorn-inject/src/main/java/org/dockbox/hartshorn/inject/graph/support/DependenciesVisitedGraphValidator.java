@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
- * A validator that checks whether all dependencies in the graph have been visited. If not, it will throw an exception.
- * This validator is intended to be used after the configuration phase, so it can check that all dependencies have been
- * configured correctly.
+ * A validator that checks whether all dependencies in the graph have been visited. If not, it will
+ * throw an exception. This validator is intended to be used after the configuration phase, so it
+ * can check that all dependencies have been configured correctly.
  *
  * @since 0.5.0
  *
@@ -37,13 +37,21 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 public class DependenciesVisitedGraphValidator implements DependencyGraphValidator {
 
     @Override
-    public void validateAfterConfiguration(DependencyGraph dependencyGraph, Introspector introspector, Set<GraphNode<DependencyContext<?>>> visited,
-        ComponentProviderOrchestrator orchestrator) throws GraphException {
-        DependencyPresenceValidationVisitor validationVisitor = new DependencyPresenceValidationVisitor(visited);
+    public void validateAfterConfiguration(
+        DependencyGraph dependencyGraph,
+        Introspector introspector,
+        Set<GraphNode<DependencyContext<?>>> visited,
+        ComponentProviderOrchestrator orchestrator
+    ) throws GraphException {
+        DependencyPresenceValidationVisitor validationVisitor =
+            new DependencyPresenceValidationVisitor(visited);
         validationVisitor.iterate(dependencyGraph);
-        Set<GraphNode<DependencyContext<?>>> missingDependencies = validationVisitor.missingDependencies();
+        Set<GraphNode<DependencyContext<?>>> missingDependencies =
+            validationVisitor.missingDependencies();
         if (!missingDependencies.isEmpty()) {
-            throw new ComponentInitializationException("Failed to resolve dependencies: %s".formatted(missingDependencies));
+            throw new ComponentInitializationException(
+                "Failed to resolve dependencies: %s".formatted(missingDependencies)
+            );
         }
     }
 }

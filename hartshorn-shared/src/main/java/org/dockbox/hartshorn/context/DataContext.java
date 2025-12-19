@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * A context that allows for storing and retrieving custom data entries associated with
- * specific types.
+ * A context that allows for storing and retrieving custom data entries associated with specific
+ * types.
  *
  * @since 0.7.0
  *
@@ -55,6 +55,7 @@ public abstract class DataContext extends DefaultContext {
      * Checks if this context contains a custom data entry for the given type.
      *
      * @param type the class type to check for
+     *
      * @return {@code true} if the type exists in the data map, {@code false} otherwise
      */
     public boolean containsKey(Class<?> type) {
@@ -66,6 +67,7 @@ public abstract class DataContext extends DefaultContext {
      *
      * @param type the class type for which to retrieve the value
      * @param <R> the type of the value
+     *
      * @return the value associated with the type, or {@code null} if not found
      */
     public <R> R get(Class<R> type) {
@@ -78,16 +80,19 @@ public abstract class DataContext extends DefaultContext {
      * @param type the class type under which to store the value
      * @param value the value to store
      * @param <R> the type of the value
+     *
      * @return the previous value associated with the type, or {@code null} if there was no mapping
      */
     public <R> R put(Class<R> type, R value) {
         return type.cast(this.data.put(type, value));
     }
+
     /**
      * Removes the value associated with the specified key from the context's data map.
      *
      * @param key the key of the value to remove
      * @param <R> the type of the value
+     *
      * @return the removed value, or {@code null} if there was no mapping for the key
      */
     public <R> R remove(Class<R> key) {
@@ -111,7 +116,8 @@ public abstract class DataContext extends DefaultContext {
     }
 
     /**
-     * Returns the value associated with the specified type, or a default value if the type is not present.
+     * Returns the value associated with the specified type, or a default value if the type is not
+     * present.
      *
      * @param type the class type for which to retrieve the value
      * @param defaultValue the default value to return if the type is not present
@@ -142,6 +148,7 @@ public abstract class DataContext extends DefaultContext {
      * @param type the class type of the value to remove
      * @param value the value to remove
      * @param <R> the type of the value
+     *
      * @return {@code true} if the value was removed, {@code false} otherwise
      */
     public <R> boolean remove(Class<R> type, R value) {
@@ -155,6 +162,7 @@ public abstract class DataContext extends DefaultContext {
      * @param oldValue the current value to be replaced
      * @param newValue the new value to set
      * @param <R> the type of the value
+     *
      * @return {@code true} if the value was replaced, {@code false} otherwise
      */
     public <R> boolean replace(Class<R> type, R oldValue, R newValue) {
@@ -170,7 +178,12 @@ public abstract class DataContext extends DefaultContext {
      *
      * @return the computed value associated with the type
      */
-    public <R> R computeIfAbsent(Class<R> type, Function<? super Class<R>, R> mappingFunction) {
-        return type.cast(this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type)));
+    public <R> R computeIfAbsent(
+        Class<R> type,
+        Function<? super Class<R>, R> mappingFunction
+    ) {
+        return type.cast(
+            this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type))
+        );
     }
 }

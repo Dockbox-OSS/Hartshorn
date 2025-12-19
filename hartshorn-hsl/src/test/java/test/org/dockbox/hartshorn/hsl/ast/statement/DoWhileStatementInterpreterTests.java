@@ -35,14 +35,14 @@ public class DoWhileStatementInterpreterTests {
     @Test
     void doWhileWithFalseExpressionExecutesOnce(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        do {
-                            checkpoint("inside-do-while")
-                        } while (false)
-                        """)
-                .statementParser(new DoWhileStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser())
-                .build();
+                do {
+                    checkpoint("inside-do-while")
+                } while (false)
+                """)
+            .statementParser(new DoWhileStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new LiteralExpressionParser())
+            .build();
 
         helper.interpret();
         Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-do-while"));
@@ -50,20 +50,22 @@ public class DoWhileStatementInterpreterTests {
     }
 
     @Test
-    void doWhileWithConditionalExpressionExecutesUntilFalse(@Inject ApplicationContext applicationContext) {
+    void doWhileWithConditionalExpressionExecutesUntilFalse(
+        @Inject ApplicationContext applicationContext
+    ) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
-                        do {
-                            counter = checkpoint("inside-do-while")
-                        } while (counter < 3)
-                        """)
-                .statementParser(new DoWhileStatementParser())
-                .statementParser(new BlockStatementParser())
-                .expressionParser(new AssignExpressionParser())
-                .expressionParser(new BinaryComparisonExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser())
-                .defineLocal("counter", 0)
-                .build();
+                do {
+                    counter = checkpoint("inside-do-while")
+                } while (counter < 3)
+                """)
+            .statementParser(new DoWhileStatementParser())
+            .statementParser(new BlockStatementParser())
+            .expressionParser(new AssignExpressionParser())
+            .expressionParser(new BinaryComparisonExpressionParser())
+            .expressionParser(new LiteralExpressionParser())
+            .expressionParser(new IdentifierExpressionParser())
+            .defineLocal("counter", 0)
+            .build();
 
         helper.interpret();
         Assertions.assertEquals(3, helper.checkpoints().checkpointAccessCount("inside-do-while"));

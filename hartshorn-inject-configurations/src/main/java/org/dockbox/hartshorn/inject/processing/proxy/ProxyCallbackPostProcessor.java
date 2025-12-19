@@ -31,16 +31,16 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Collection;
 
 /**
- * A {@link ComponentPostProcessor} that allows for the wrapping of methods in a proxy. This is useful for
- * implementing cross-cutting concerns such as logging, security, and performance monitoring. Method wrappers
- * are generated based on the created {@link ProxyCallback}s, and are then applied to the {@link AdvisorRegistry}
- * of the proxy factory.
+ * A {@link ComponentPostProcessor} that allows for the wrapping of methods in a proxy. This is
+ * useful for implementing cross-cutting concerns such as logging, security, and performance
+ * monitoring. Method wrappers are generated based on the created {@link ProxyCallback}s, and are
+ * then applied to the {@link AdvisorRegistry} of the proxy factory.
  *
  * @see ProxyCallback
  * @see ProxyFactory
- *
+ * 
  * @since 0.4.9
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor {
@@ -51,9 +51,14 @@ public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor 
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         ComponentKey<T> key = processingContext.key();
-        Collection<MethodView<T, ?>> methods = this.modifiableMethods(application, key, instance, processingContext);
+        Collection<MethodView<T, ?>> methods =
+            this.modifiableMethods(application, key, instance, processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
@@ -63,9 +68,12 @@ public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor 
         instance = this.processProxy(application, instance, processingContext, factory);
 
         for (MethodView<T, ?> method : methods) {
-            ProxyCallback<T> before = this.doBefore(application, method, key, instance, processingContext);
-            ProxyCallback<T> after = this.doAfter(application, method, key, instance, processingContext);
-            ProxyCallback<T> afterThrowing = this.doAfterThrowing(application, method, key, instance, processingContext);
+            ProxyCallback<T> before =
+                this.doBefore(application, method, key, instance, processingContext);
+            ProxyCallback<T> after =
+                this.doAfter(application, method, key, instance, processingContext);
+            ProxyCallback<T> afterThrowing =
+                this.doAfterThrowing(application, method, key, instance, processingContext);
             MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
@@ -74,85 +82,160 @@ public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor 
         }
     }
 
-    protected <T> T processProxy(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext, ProxyFactory<T> proxyFactory) {
+    /**
+     * Processes the non-proxy component instance before method callbacks are applied.
+     *
+     * @param application the application in which the component is being processed
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
+     * @param processingContext the processing context
+     * @param proxyFactory the proxy factory used to create the proxy instance
+     * @param <T> the type of the component that is being processed
+     *
+     * @return the processed instance
+     */
+    protected <T> T processProxy(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext,
+        ProxyFactory<T> proxyFactory
+    ) {
         // Left for subclasses to override if necessary
         return instance;
     }
 
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    /**
+     * Returns the methods of the component that can be modified by this post-processor. This method
+     * filters the methods of the component based on the
+     * {@link #preconditions(InjectionCapableApplication application, MethodView, ComponentKey,
+     * Object, ComponentProcessingContext) configured preconditions}.
+     *
+     * @param application the application in which the component is being processed
+     * @param key the component key of the component that is being processed
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
+     * @param processingContext the processing context
+     * @param <T> the type of the component that is being processed
+     *
+     * @return the methods of the component that can be modified
+     */
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
+        InjectionCapableApplication application,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         TypeView<T> typeView = instance == null
-                ? application.environment().introspector().introspect(key.type())
-                : application.environment().introspector().introspect(instance);
+            ? application.environment().introspector().introspect(key.type())
+            : application.environment().introspector().introspect(instance);
 
-        return typeView.methods().all()
-                .stream().filter(method -> this.preconditions(application, method, key, instance, processingContext))
-                .toList();
+        return typeView.methods()
+            .all()
+            .stream()
+            .filter(method -> this.preconditions(application,
+                method,
+                key,
+                instance,
+                processingContext))
+            .toList();
     }
 
     /**
-     * Returns whether the method should be wrapped. This method is called for each method of the component that is
-     * being processed. If this method returns {@code false}, the method will not be wrapped in a proxy, and the proxy
-     * callback methods will never be called.
+     * Returns whether the method should be wrapped. This method is called for each method of the
+     * component that is being processed. If this method returns {@code false}, the method will not
+     * be wrapped in a proxy, and the proxy callback methods will never be called.
      *
      * @param application the application in which the component is being processed
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
-     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
      * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
      * @return {@code true} if the method should be wrapped, {@code false} otherwise
      */
-    public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
+    public abstract <T> boolean preconditions(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
-     * Returns the proxy callback that should be called before the method is invoked. This method is called for each
-     * compatible method of the component that is being processed. If this method returns {@code null}, no proxy callback
-     * will be called before the method is invoked.
+     * Returns the proxy callback that should be called before the method is invoked. This method is
+     * called for each compatible method of the component that is being processed. If this method
+     * returns {@code null}, no proxy callback will be called before the method is invoked.
      *
      * @param application the application in which the component is being processed
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
-     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
      * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
-     * @return the proxy callback that should be called before the method is invoked, or {@code null} if no proxy callback should be called
+     * @return the proxy callback that should be called before the method is invoked, or
+     * {@code null} if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doBefore(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
+    public abstract <T> ProxyCallback<T> doBefore(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
-     * Returns the proxy callback that should be called after the method is invoked. This method is called for each
-     * compatible method of the component that is being processed. If this method returns {@code null}, no proxy callback
-     * will be called after the method is invoked.
+     * Returns the proxy callback that should be called after the method is invoked. This method is
+     * called for each compatible method of the component that is being processed. If this method
+     * returns {@code null}, no proxy callback will be called after the method is invoked.
      *
      * @param application the application in which the component is being processed
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
-     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
      * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
-     * @return the proxy callback that should be called after the method is invoked, or {@code null} if no proxy callback should be called
+     * @return the proxy callback that should be called after the method is invoked, or {@code null}
+     * if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doAfter(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
+    public abstract <T> ProxyCallback<T> doAfter(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
-     * Returns the proxy callback that should be called after the method has thrown an exception. This method is called for each
-     * compatible method of the component that is being processed. If this method returns {@code null}, no proxy callback
-     * will be called after the method has thrown an exception.
+     * Returns the proxy callback that should be called after the method has thrown an exception.
+     * This method is called for each compatible method of the component that is being processed. If
+     * this method returns {@code null}, no proxy callback will be called after the method has
+     * thrown an exception.
      *
      * @param application the application in which the component is being processed
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
-     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param instance the instance of the component that is being processed, or {@code null} if the
+     * component is not yet instantiated
      * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
-     * @return the proxy callback that should be called after the method has thrown an exception, or {@code null} if no proxy callback should be called
+     * @return the proxy callback that should be called after the method has thrown an exception, or
+     * {@code null} if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doAfterThrowing(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
+    public abstract <T> ProxyCallback<T> doAfterThrowing(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    );
 }

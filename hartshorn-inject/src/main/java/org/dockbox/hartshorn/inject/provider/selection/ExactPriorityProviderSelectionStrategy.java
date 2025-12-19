@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
- * A strategy for selecting a specific provider from a {@link BindingHierarchy}, based on the
- * exact priority of the provider. If no provider is found, {@code null} is returned.
+ * A strategy for selecting a specific provider from a {@link BindingHierarchy}, based on the exact
+ * priority of the provider. If no provider is found, {@code null} is returned.
  *
  * @see ProviderSelectionStrategy
- *
+ * 
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ExactPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {

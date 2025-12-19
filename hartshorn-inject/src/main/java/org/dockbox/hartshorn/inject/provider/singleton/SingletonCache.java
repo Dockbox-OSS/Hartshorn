@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A singleton cache is used to store singleton instances of components. This is used to
- * prevent the creation of multiple instances of the same component, and improve tracking
- * of the components that are currently active.
+ * A singleton cache is used to store singleton instances of components. This is used to prevent the
+ * creation of multiple instances of the same component, and improve tracking of the components that
+ * are currently active.
  *
  * @since 0.4.11
  *
@@ -40,9 +40,9 @@ public interface SingletonCache {
     void lock(ComponentKey<?> key);
 
     /**
-     * Stores the given instance in the cache, using the given key. If an instance is already
-     * stored for the given key, the implementation may decide whether to replace the existing
-     * instance, or to throw an exception.
+     * Stores the given instance in the cache, using the given key. If an instance is already stored
+     * for the given key, the implementation may decide whether to replace the existing instance, or
+     * to throw an exception.
      *
      * @param key The key to store the instance under.
      * @param instance The instance to store.
@@ -53,12 +53,13 @@ public interface SingletonCache {
     <T> void put(ComponentKey<T> key, T instance) throws IllegalModificationException;
 
     /**
-     * Returns the instance stored in the cache for the given key. If no instance is stored
-     * for the given key, an empty {@link Option} is returned.
+     * Returns the instance stored in the cache for the given key. If no instance is stored for the
+     * given key, an empty {@link Option} is returned.
      *
      * @param key The key to retrieve the instance for.
-     * @return The instance stored in the cache for the given key, or an empty {@link Option}
      * @param <T> The type of the instance.
+     *
+     * @return The instance stored in the cache for the given key, or an empty {@link Option}
      */
     <T> Option<T> get(ComponentKey<T> key);
 
@@ -66,8 +67,9 @@ public interface SingletonCache {
      * Returns {@code true} if an instance is stored in the cache for the given key.
      *
      * @param key The key to check.
-     * @return {@code true} if an instance is stored in the cache for the given key.
      * @param <T> The type of the instance.
+     *
+     * @return {@code true} if an instance is stored in the cache for the given key.
      */
     <T> boolean contains(ComponentKey<T> key);
 }

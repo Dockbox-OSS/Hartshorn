@@ -22,10 +22,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import java.util.List;
 
 /**
- * An expression representing an array literal, which is a collection of expressions enclosed
- * within open and close tokens, typically square brackets. Each expression within the array
- * literal represents an element of the array, and can be of any type, including other arrays
- * or objects.
+ * An expression representing an array literal, which is a collection of expressions enclosed within
+ * open and close tokens, typically square brackets. Each expression within the array literal
+ * represents an element of the array, and can be of any type, including other arrays or objects.
  *
  * <p>For example, the expression <code>[1, 2, 3]</code> represents an array literal containing
  * three numeric elements.
@@ -47,14 +46,29 @@ public class ArrayLiteralExpression extends Expression {
         this.elements = elements;
     }
 
+    /**
+     * Returns the list of expressions that make up the elements of the array literal.
+     *
+     * @return the list of expressions representing the elements of the array literal
+     */
     public List<Expression> elements() {
         return this.elements;
     }
 
+    /**
+     * Returns the token representing the opening of the array literal (typically a square bracket).
+     *
+     * @return the opening token of the array literal
+     */
     public Token open() {
         return this.open;
     }
 
+    /**
+     * Returns the token representing the closing of the array literal (typically a square bracket).
+     *
+     * @return the closing token of the array literal
+     */
     public Token close() {
         return this.close;
     }

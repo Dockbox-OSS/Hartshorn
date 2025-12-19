@@ -24,26 +24,36 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors for methods
- * annotated with a specific annotation.
+ * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors
+ * for methods annotated with a specific annotation.
  *
- * @param <M> the type of the annotation that is used to identify methods for which interceptors should be applied
+ * @param <M> the type of the annotation that is used to identify methods for which interceptors
+ * should be applied
  *
  * @since 0.4.10
  *
  * @author Guus Lieben
  */
-public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends MethodInterceptorPostProcessor {
+public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation>
+    extends MethodInterceptorPostProcessor {
+
+    /**
+     * Returns the annotation class that is used to identify methods for which interceptors should
+     * be applied.
+     *
+     * @return the annotation class
+     */
+    public abstract Class<M> annotation();
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
         return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
     }
 
-    public abstract Class<M> annotation();
-
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
+        ComponentProcessingContext<T> processingContext
+    ) {
         return processingContext.type().methods().annotatedWith(this.annotation());
     }
 }

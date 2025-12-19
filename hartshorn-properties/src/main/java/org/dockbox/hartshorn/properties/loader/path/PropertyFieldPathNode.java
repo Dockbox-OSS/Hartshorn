@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.dockbox.hartshorn.properties.loader.path;
  * @param name the name of the field
  * @param parent the parent node
  */
-public record PropertyFieldPathNode(String name, PropertyPathNode parent) implements PropertyPathNode {
+public record PropertyFieldPathNode(String name, PropertyPathNode parent)
+    implements PropertyPathNode {
 
 }

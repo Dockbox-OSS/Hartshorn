@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A component post-constructor that invokes methods annotated with {@link OnInitialized} on the component instance
- * after it has been constructed.
+ * A component post-constructor that invokes methods annotated with {@link OnInitialized} on the
+ * component instance after it has been constructed.
  *
  * @since 0.4.12
  *
@@ -51,7 +51,10 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     private final ComponentExecutableInvocationAdapter contextAdapter;
     private final Set<Class<? extends Annotation>> annotations;
 
-    protected AnnotatedMethodComponentPostConstructor(SingleElementContext<? extends InjectionCapableApplication> initializerContext, Configurer configurer) {
+    protected AnnotatedMethodComponentPostConstructor(
+        SingleElementContext<? extends InjectionCapableApplication> initializerContext,
+        Configurer configurer
+    ) {
         this.introspector = initializerContext.input().environment().introspector();
         this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext);
         this.annotations = Set.copyOf(configurer.annotations.initialize(initializerContext));
@@ -60,7 +63,8 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     @Override
     public <T> T doPostConstruct(T instance, Scope scope) throws ApplicationException {
         TypeView<T> typeView = this.introspector.introspect(instance);
-        List<MethodView<T, ?>> annotatedMethods = typeView.methods().annotatedWithAny(this.annotations);
+        List<MethodView<T, ?>> annotatedMethods =
+            typeView.methods().annotatedWithAny(this.annotations);
 
         for (MethodView<T, ?> annotatedMethod : annotatedMethods) {
             Object[] arguments = this.contextAdapter
@@ -79,15 +83,27 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         return instance;
     }
 
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> create(Customizer<Configurer> customizer) {
+    /**
+     * Creates a new {@link ContextualInitializer} for the
+     * {@link AnnotatedMethodComponentPostConstructor}, which can be customized using the provided
+     * {@link Customizer}.
+     *
+     * @param customizer The customizer to configure the post-constructor
+     *
+     * @return The contextual initializer for the post-constructor
+     */
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            AnnotatedMethodComponentPostConstructor postConstructor = new AnnotatedMethodComponentPostConstructor(context, configurer);
+            AnnotatedMethodComponentPostConstructor postConstructor =
+                new AnnotatedMethodComponentPostConstructor(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentPostConstructor.class).singleton(postConstructor);
-                binder.bind(ComponentExecutableInvocationAdapter.class).singleton(postConstructor.contextAdapter);
+                binder.bind(ComponentExecutableInvocationAdapter.class)
+                    .singleton(postConstructor.contextAdapter);
             });
             return postConstructor;
         };
@@ -102,26 +118,49 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(
-                OnInitialized.class);
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>> annotations =
+            LazyStreamableConfigurer.of(OnInitialized.class);
 
-        private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter = ContextualInitializer.of(
-            InjectorExecutableInvocationAdapter::new);
+        private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter =
+            ContextualInitializer.of(InjectorExecutableInvocationAdapter::new);
+        // checkstyle:on LineLength
 
-        public Configurer viewContextAdapter(ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter) {
-            return this.viewContextAdapter(ContextualInitializer.of(lazyComponentExecutableInvocationAdapter));
+        /**
+         * Configures the context adapter to use for invoking the annotated methods.
+         *
+         * @param lazyComponentExecutableInvocationAdapter The lazy context adapter to use
+         *
+         * @return The current configurer, for chaining
+         */
+        public Configurer viewContextAdapter(
+            ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter
+        ) {
+            return this.viewContextAdapter(ContextualInitializer.of(
+                lazyComponentExecutableInvocationAdapter));
         }
 
-        public Configurer viewContextAdapter(ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter) {
+        /**
+         * Configures the context adapter to use for invoking the annotated methods.
+         *
+         * @param viewContextAdapter The context adapter to use
+         *
+         * @return The current configurer, for chaining
+         */
+        public Configurer viewContextAdapter(
+            ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter>
+                viewContextAdapter
+        ) {
             this.viewContextAdapter = viewContextAdapter;
             return this;
         }
 
         /**
-         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
-         * {@link OnInitialized}.
+         * Configures the annotations to be used for component post-construction callbacks. By
+         * default, this only contains {@link OnInitialized}.
          *
          * @param annotations The annotations to use for post-construction callbacks
+         *
          * @return The current configurer, for chaining
          */
         @SafeVarargs
@@ -131,10 +170,11 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         }
 
         /**
-         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
-         * {@link OnInitialized}.
+         * Configures the annotations to be used for component post-construction callbacks. By
+         * default, this only contains {@link OnInitialized}.
          *
          * @param annotations The annotations to use for post-construction callbacks
+         *
          * @return The current configurer, for chaining
          */
         public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
@@ -143,38 +183,43 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         }
 
         /**
-         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
-         * {@link OnInitialized}.
+         * Configures the annotations to be used for component post-construction callbacks. By
+         * default, this only contains {@link OnInitialized}.
          *
          * @param customizer The customizer to configure the annotations
+         *
          * @return The current configurer, for chaining
          */
+        // checkstyle:off LineLength
         public Configurer annotations(Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
         }
+        // checkstyle:on LineLength
 
         /**
-         * Adds support for {@code javax.annotation.PostConstruct} if it is present on the classpath. Disabled by default,
-         * but can be enabled for backwards compatibility.
+         * Adds support for {@code javax.annotation.PostConstruct} if it is present on the
+         * classpath. Disabled by default, but can be enabled for backwards compatibility.
          *
          * @return the current configurer, for chaining
          */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.forName("javax.annotation.PostConstruct", Annotation.class).peek(collection::add);
+                TypeUtils.forName("javax.annotation.PostConstruct", Annotation.class)
+                    .peek(collection::add);
             });
         }
 
         /**
-         * Adds support for {@code jakarta.annotation.PostConstruct} if it is present on the classpath. Disabled by default,
-         * but can be enabled for backwards compatibility.
+         * Adds support for {@code jakarta.annotation.PostConstruct} if it is present on the
+         * classpath. Disabled by default, but can be enabled for backwards compatibility.
          *
          * @return the current configurer, for chaining
          */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct", Annotation.class).peek(collection::add);
+                TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct", Annotation.class)
+                    .peek(collection::add);
             });
         }
     }

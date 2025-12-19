@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * A {@link ProxyValidator} that collects multiple {@link ProxyConstraint}s and applies them all when validating a
- * type. This class is thread-safe.
+ * A {@link ProxyValidator} that collects multiple {@link ProxyConstraint}s and applies them all
+ * when validating a type. This class is thread-safe.
  *
  * @since 0.5.0
+ *
  * @author Guus Lieben
  */
 public class CollectorProxyValidator implements ProxyValidator {
@@ -48,8 +49,8 @@ public class CollectorProxyValidator implements ProxyValidator {
     @Override
     public Set<ProxyConstraintViolation> validate(TypeView<?> type) {
         return this.constraints.stream()
-                .flatMap(constraint -> constraint.validate(type).stream())
-                .collect(Collectors.toUnmodifiableSet());
+            .flatMap(constraint -> constraint.validate(type).stream())
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     /**

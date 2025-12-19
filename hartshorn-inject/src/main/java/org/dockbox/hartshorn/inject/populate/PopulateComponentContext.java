@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A context that is used during the population of a component. This includes the instance that is being populated, the
- * type of the instance, the application context and the original instance if the instance was proxied.
+ * A context that is used during the population of a component. This includes the instance that is
+ * being populated, the type of the instance, the application context and the original instance if
+ * the instance was proxied.
  *
  * @param <T> the type of the component
  *
@@ -41,11 +42,12 @@ public final class PopulateComponentContext<T> extends DefaultContext {
     private final InjectionCapableApplication application;
 
     public PopulateComponentContext(
-            T instance,
-            T originalInstance,
-            TypeView<T> type,
-            Scope scope,
-            InjectionCapableApplication application) {
+        T instance,
+        T originalInstance,
+        TypeView<T> type,
+        Scope scope,
+        InjectionCapableApplication application
+    ) {
         this.instance = instance;
         this.originalInstance = originalInstance;
         this.type = type;
@@ -54,8 +56,8 @@ public final class PopulateComponentContext<T> extends DefaultContext {
     }
 
     /**
-     * Returns the instance that is being populated. This instance is not necessarily the same as the original instance
-     * if the instance was proxied.
+     * Returns the instance that is being populated. This instance is not necessarily the same as
+     * the original instance if the instance was proxied.
      *
      * @return the instance that is being populated
      */
@@ -64,10 +66,11 @@ public final class PopulateComponentContext<T> extends DefaultContext {
     }
 
     /**
-     * Returns the original instance if the instance was proxied. If the instance was not proxied, this method returns
-     * the same instance as {@link #instance()}.
+     * Returns the original instance if the instance was proxied. If the instance was not proxied,
+     * this method returns the same instance as {@link #instance()}.
      *
-     * @return the original instance if the instance was proxied, the same instance as {@link #instance()} otherwise
+     * @return the original instance if the instance was proxied, the same instance as
+     * {@link #instance()} otherwise
      */
     public T originalInstance() {
         return this.originalInstance;
@@ -82,10 +85,20 @@ public final class PopulateComponentContext<T> extends DefaultContext {
         return this.type;
     }
 
+    /**
+     * Returns the scope in which the component is being populated.
+     *
+     * @return the scope in which the component is being populated
+     */
     public Scope scope() {
         return this.scope;
     }
 
+    /**
+     * Returns the application context that owns the component being populated.
+     *
+     * @return the application context
+     */
     public InjectionCapableApplication application() {
         return this.application;
     }

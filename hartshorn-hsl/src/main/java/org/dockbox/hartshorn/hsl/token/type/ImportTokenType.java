@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
  * Represents the different types of import tokens that can be used in the HSL language.
  *
  * @see TokenType
- *
+ * 
  * @since 0.6.0
- *
+ * 
  * @author Guus Lieben
  */
 public enum ImportTokenType implements EnumTokenType {
@@ -38,9 +38,9 @@ public enum ImportTokenType implements EnumTokenType {
 
     ImportTokenType() {
         this.metaData = TokenMetaData.builder(this)
-                .keyword(true)
-                .standaloneStatement(true)
-                .build();
+            .keyword(true)
+            .standaloneStatement(true)
+            .build();
     }
 
     @Override
