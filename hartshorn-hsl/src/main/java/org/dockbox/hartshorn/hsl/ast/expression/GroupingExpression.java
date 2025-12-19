@@ -41,6 +41,11 @@ public class GroupingExpression extends Expression {
         this.expression = expression;
     }
 
+    /**
+     * Returns the expression contained within the grouping.
+     *
+     * @return the grouped expression
+     */
     public Expression expression() {
         return this.expression;
     }

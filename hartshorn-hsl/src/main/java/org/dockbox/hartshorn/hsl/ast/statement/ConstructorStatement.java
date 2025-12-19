@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.util.introspect.Parameter;
-
-import java.util.List;
 
 /**
  * A constructor statement, which defines a special method used to initialize new objects of a
@@ -57,10 +55,22 @@ public class ConstructorStatement extends ParametricExecutableBodyStatement {
         this.keyword = keyword;
     }
 
+    /**
+     * Returns the token representing the <code>constructor</code> keyword.
+     *
+     * @return the <code>constructor</code> keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }
 
+    /**
+     * Returns a token that identifies this constructor initializer. This is the equivalent of
+     * {@link #keyword()}, but with the type explicitly set to {@link FunctionTokenType#CONSTRUCTOR}
+     * to allow for a stricter lexical meaning when defining or referencing constructors.
+     *
+     * @return the initializer identifier token
+     */
     public Token initializerIdentifier() {
         return Token.of(this.type())
             .literal(this.keyword().line())
@@ -68,6 +78,11 @@ public class ConstructorStatement extends ParametricExecutableBodyStatement {
             .build();
     }
 
+    /**
+     * Returns the token type representing a constructor.
+     *
+     * @return the constructor token type
+     */
     protected TokenType type() {
         return FunctionTokenType.CONSTRUCTOR;
     }

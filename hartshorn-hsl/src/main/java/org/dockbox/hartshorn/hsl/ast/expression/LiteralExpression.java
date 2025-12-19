@@ -35,6 +35,11 @@ public class LiteralExpression extends Expression {
         this.value = value;
     }
 
+    /**
+     * Returns the literal value represented by this expression. May be null.
+     *
+     * @return the literal value
+     */
     public Object value() {
         return this.value;
     }

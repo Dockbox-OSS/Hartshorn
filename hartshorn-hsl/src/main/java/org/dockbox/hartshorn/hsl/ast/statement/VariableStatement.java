@@ -56,6 +56,12 @@ public class VariableStatement extends FinalizableStatement implements NamedNode
         return this.name;
     }
 
+    /**
+     * Returns the initializer expression for this variable. If no initializer was provided,
+     * this method may return <code>null</code>.
+     *
+     * @return the initializer expression, or <code>null</code> if none was provided
+     */
     public Expression initializer() {
         return this.initializer;
     }

@@ -37,10 +37,20 @@ public abstract class ParametricExecutableStatement extends Function {
         this.params = params;
     }
 
+    /**
+     * Returns the list of parameters for this executable statement.
+     *
+     * @return the list of parameters
+     */
     public List<Parameter> parameters() {
         return this.params;
     }
 
+    /**
+     * Returns the list of statements that make up the body of this executable statement.
+     *
+     * @return the list of statements
+     */
     public abstract List<Statement> statements();
 
     /**

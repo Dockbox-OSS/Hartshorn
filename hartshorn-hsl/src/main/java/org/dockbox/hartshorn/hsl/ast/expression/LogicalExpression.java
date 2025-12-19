@@ -46,14 +46,29 @@ public class LogicalExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left operand expression of the logical operation.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the operator token of the logical operation.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the right operand expression of the logical operation.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

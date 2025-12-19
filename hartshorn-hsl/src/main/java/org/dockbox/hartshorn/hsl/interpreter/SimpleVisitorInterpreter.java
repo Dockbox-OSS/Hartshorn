@@ -80,6 +80,11 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
         this.state = new InterpreterState(this);
     }
 
+    /**
+     * The visitor used by this interpreter to traverse the AST.
+     *
+     * @return the interpreter visitor
+     */
     public InterpreterVisitor visitor() {
         return this.visitor;
     }

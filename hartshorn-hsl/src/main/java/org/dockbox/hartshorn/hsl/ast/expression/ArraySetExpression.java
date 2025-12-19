@@ -47,10 +47,20 @@ public class ArraySetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the index in the array where the value should be set.
+     *
+     * @return The index expression.
+     */
     public Expression index() {
         return this.index;
     }
 
+    /**
+     * Returns the expression representing the value to be set in the array.
+     *
+     * @return The value expression.
+     */
     public Expression value() {
         return this.value;
     }

@@ -57,14 +57,29 @@ public class ReturnStatement extends Statement {
         this.returnType = returnType;
     }
 
+    /**
+     * Returns the token representing the 'return' or 'yield' keyword.
+     *
+     * @return the 'return' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }
 
+    /**
+     * Returns the expression representing the value being returned.
+     *
+     * @return the expression representing the return value
+     */
     public Expression expression() {
         return this.expression;
     }
 
+    /**
+     * Returns the type of return statement.
+     *
+     * @return the return type
+     */
     public ReturnType returnType() {
         return this.returnType;
     }

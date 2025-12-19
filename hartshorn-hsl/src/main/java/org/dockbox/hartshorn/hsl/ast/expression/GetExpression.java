@@ -46,6 +46,11 @@ public class GetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the object from which the property is being retrieved.
+     *
+     * @return the object expression
+     */
     public Expression object() {
         return this.object;
     }

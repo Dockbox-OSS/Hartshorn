@@ -46,6 +46,11 @@ public class ArrayGetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the index used to access the array element.
+     *
+     * @return the index expression
+     */
     public Expression index() {
         return this.index;
     }

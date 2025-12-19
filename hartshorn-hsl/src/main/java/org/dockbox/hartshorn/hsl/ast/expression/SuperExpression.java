@@ -38,10 +38,20 @@ public class SuperExpression extends Expression {
         this.method = method;
     }
 
+    /**
+     * Returns the token representing the 'super' keyword.
+     *
+     * @return the 'super' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }
 
+    /**
+     * Returns the token representing the method or property being accessed on the superclass.
+     *
+     * @return the method or property token
+     */
     public Token method() {
         return this.method;
     }

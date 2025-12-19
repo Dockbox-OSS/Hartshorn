@@ -47,10 +47,20 @@ public class PostfixExpression extends Expression {
         this.leftExpression = leftExpression;
     }
 
+    /**
+     * Returns the operator token of this postfix expression.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the expression to which the postfix operator is applied.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExpression;
     }

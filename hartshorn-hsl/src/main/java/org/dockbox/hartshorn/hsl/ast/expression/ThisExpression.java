@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * An expression representing the `this` keyword, which refers to the current instance of a class or
- * object.
+ * An expression representing the {@code this} keyword, which refers to the current instance of a
+ * class or object.
  *
  * @since 0.4.12
  * 
@@ -36,6 +36,11 @@ public class ThisExpression extends Expression {
         this.keyword = keyword;
     }
 
+    /**
+     * Returns the token representing the {@code this} keyword.
+     *
+     * @return the {@code this} keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }

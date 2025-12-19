@@ -38,6 +38,11 @@ public class BlockStatement extends Statement {
         this.statementList = statementList;
     }
 
+    /**
+     * Returns the list of statements that make up the block of code.
+     *
+     * @return the list of statements in the block
+     */
     public List<Statement> statements() {
         return this.statementList;
     }

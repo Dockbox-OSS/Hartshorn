@@ -143,6 +143,14 @@ public final class InterpreterUtilities {
             .build();
     }
 
+    /**
+     * Checks if the given collection is iterable. If it is not, a {@link ScriptEvaluationError} is
+     * thrown with a message indicating that a non-iterable collection was provided.
+     *
+     * @param at the AST node to report the error at
+     * @param collection the collection to check
+     * @return the collection cast to an {@link Iterable} if it is valid
+     */
     public static Iterable<?> checkIterable(ASTNode at, Object collection) {
         collection = InterpreterUtilities.unwrap(collection);
 

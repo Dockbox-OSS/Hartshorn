@@ -47,10 +47,20 @@ public class PrefixExpression extends Expression {
         this.rightExpression = rightExpression;
     }
 
+    /**
+     * Returns the token representing the prefix operator applied to the expression.
+     *
+     * @return the prefix operator token
+     */
     public Token prefixOperatorName() {
         return this.prefixFunName;
     }
 
+    /**
+     * Returns the expression to which the prefix operator is applied.
+     *
+     * @return the right operand expression
+     */
     public Expression rightExpression() {
         return this.rightExpression;
     }

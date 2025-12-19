@@ -88,46 +88,107 @@ public class ArrayComprehensionExpression extends Expression {
         this.elseExpression = elseExpression;
     }
 
+    /**
+     * Returns the collection expression over which the comprehension iterates.
+     *
+     * @return the collection expression
+     */
     public Expression collection() {
         return this.collection;
     }
 
+    /**
+     * Returns the main expression that defines how each element in the collection is transformed.
+     * This may be conditionally executed based on the presence of a filtering condition.
+     *
+     * @return the transformation expression
+     */
     public Expression expression() {
         return this.expression;
     }
 
+    /**
+     * Returns the selector token representing the variable used to reference the current element
+     * in the collection during iteration.
+     *
+     * @return the selector token
+     */
     public Token selector() {
         return this.selector;
     }
 
+    /**
+     * Returns the 'for' token used in the comprehension syntax.
+     *
+     * @return the 'for' token
+     */
     public Token forToken() {
         return this.forToken;
     }
 
+    /**
+     * Returns the 'in' token used in the comprehension syntax.
+     *
+     * @return the 'in' token
+     */
     public Token inToken() {
         return this.inToken;
     }
 
+    /**
+     * Returns the opening token of the comprehension (typically a '[').
+     *
+     * @return the opening token
+     */
     public Token open() {
         return this.open;
     }
 
+    /**
+     * Returns the closing token of the comprehension (typically a ']').
+     *
+     * @return the closing token
+     */
     public Token close() {
         return this.close;
     }
 
+    /**
+     * Returns the 'if' token used in the comprehension syntax, if a filtering condition is present.
+     * If no condition is specified, this may be null.
+     *
+     * @return the 'if' token
+     */
     public Token ifToken() {
         return this.ifToken;
     }
 
+    /**
+     * Returns the filtering condition expression that determines whether the transformation
+     * expression is applied to each element. If no condition is specified, this may be null.
+     *
+     * @return the filtering condition expression
+     */
     public Expression condition() {
         return this.condition;
     }
 
+    /**
+     * Returns the 'else' token used in the comprehension syntax, if a default expression is
+     * provided. If no default is specified, this may be null.
+     *
+     * @return the 'else' token
+     */
     public Token elseToken() {
         return this.elseToken;
     }
 
+    /**
+     * Returns the default expression that is used when the filtering condition is not met.
+     * If no default is specified, this may be null.
+     *
+     * @return the default expression
+     */
     public Expression elseExpression() {
         return this.elseExpression;
     }

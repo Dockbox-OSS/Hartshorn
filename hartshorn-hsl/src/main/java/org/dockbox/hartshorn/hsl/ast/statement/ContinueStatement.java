@@ -36,6 +36,11 @@ public class ContinueStatement extends Statement {
         this.keyword = keyword;
     }
 
+    /**
+     * Returns the token representing the 'continue' keyword.
+     *
+     * @return the 'continue' keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }

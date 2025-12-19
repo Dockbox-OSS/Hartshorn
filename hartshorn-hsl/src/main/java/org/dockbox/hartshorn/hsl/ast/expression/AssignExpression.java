@@ -47,6 +47,11 @@ public class AssignExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the value being assigned.
+     *
+     * @return the expression representing the value being assigned
+     */
     public Expression value() {
         return this.value;
     }

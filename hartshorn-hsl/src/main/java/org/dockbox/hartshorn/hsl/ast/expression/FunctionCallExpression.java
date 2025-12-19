@@ -50,18 +50,40 @@ public class FunctionCallExpression extends Expression {
         this.arguments = arguments;
     }
 
+    /**
+     * Returns the expression representing the function being called.
+     *
+     * @return the callee expression
+     */
     public Expression callee() {
         return this.callee;
     }
 
+    /**
+     * Returns the token representing the opening parenthesis for the arguments of the function
+     * call.
+     *
+     * @return the opening parenthesis token
+     */
     public Token openParenthesis() {
         return this.openParenthesis;
     }
 
+    /**
+     * Returns the token representing the closing parenthesis for the arguments of the function
+     * call.
+     *
+     * @return the closing parenthesis token
+     */
     public Token closingParenthesis() {
         return this.closingParenthesis;
     }
 
+    /**
+     * Returns the list of expressions representing the arguments passed to the function call.
+     *
+     * @return the list of argument expressions
+     */
     public List<Expression> arguments() {
         return this.arguments;
     }

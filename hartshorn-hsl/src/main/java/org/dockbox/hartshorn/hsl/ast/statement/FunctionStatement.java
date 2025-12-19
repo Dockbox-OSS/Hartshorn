@@ -53,6 +53,11 @@ public class FunctionStatement extends ParametricExecutableBodyStatement impleme
         this.name = name;
     }
 
+    /**
+     * Returns the token representing the type of the function.
+     *
+     * @return the function type token
+     */
     public Token functionType() {
         return this.functionType;
     }

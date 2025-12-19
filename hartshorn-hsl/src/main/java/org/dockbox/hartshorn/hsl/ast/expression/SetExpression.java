@@ -43,6 +43,11 @@ public class SetExpression extends Expression implements NamedNode {
         this.value = value;
     }
 
+    /**
+     * Returns the expression representing the object whose property is being set.
+     *
+     * @return the object expression
+     */
     public Expression object() {
         return this.object;
     }
@@ -52,6 +57,11 @@ public class SetExpression extends Expression implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the expression representing the value being assigned to the property.
+     *
+     * @return the expression representing the value being assigned
+     */
     public Expression value() {
         return this.value;
     }

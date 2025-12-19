@@ -36,6 +36,11 @@ public class ExpressionStatement extends Statement {
         this.expression = expression;
     }
 
+    /**
+     * Returns the expression contained within this statement.
+     *
+     * @return the expression
+     */
     public Expression expression() {
         return this.expression;
     }

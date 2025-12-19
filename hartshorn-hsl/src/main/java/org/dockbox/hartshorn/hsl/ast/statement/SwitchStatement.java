@@ -61,14 +61,29 @@ public class SwitchStatement extends Statement {
         this.defaultCase = defaultCase;
     }
 
+    /**
+     * Returns the expression being evaluated in this switch statement.
+     *
+     * @return the switch expression
+     */
     public Expression expression() {
         return this.expression;
     }
 
+    /**
+     * Returns the list of cases defined in this switch statement.
+     *
+     * @return the list of switch cases
+     */
     public List<SwitchCase> cases() {
         return this.cases;
     }
 
+    /**
+     * Returns the default case of this switch statement, if defined.
+     *
+     * @return the default switch case, or null if not defined
+     */
     public SwitchCase defaultCase() {
         return this.defaultCase;
     }

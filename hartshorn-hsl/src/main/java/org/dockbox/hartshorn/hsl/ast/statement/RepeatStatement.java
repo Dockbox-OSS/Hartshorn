@@ -39,6 +39,11 @@ public class RepeatStatement extends BodyStatement {
         this.value = value;
     }
 
+    /**
+     * Returns the expression that determines the number of times the loop will repeat.
+     *
+     * @return the repetition count expression
+     */
     public Expression value() {
         return this.value;
     }

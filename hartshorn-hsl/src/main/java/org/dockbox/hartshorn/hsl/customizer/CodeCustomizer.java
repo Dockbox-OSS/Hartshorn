@@ -45,6 +45,13 @@ public interface CodeCustomizer {
      */
     void call(ScriptContext context);
 
+    /**
+     * Create a new code customizer for the given phase and action.
+     *
+     * @param phase the phase during which the customizer should be run.
+     * @param action the action to perform during customization.
+     * @return a new code customizer.
+     */
     static CodeCustomizer of(Phase phase, Consumer<ScriptContext> action) {
         return new CodeCustomizer() {
             @Override

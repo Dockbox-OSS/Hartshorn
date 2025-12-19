@@ -48,14 +48,32 @@ public class InfixExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the left expression of the infix operation, which is typically the first of two
+     * arguments to the infix function.
+     *
+     * @return the left expression
+     */
     public Expression leftExpression() {
         return this.leftExp;
     }
 
+    /**
+     * Returns the infix operator token of the infix operation, which represents the function or
+     * method being invoked between the two expressions.
+     *
+     * @return the infix operator token
+     */
     public Token infixOperatorName() {
         return this.infixOperator;
     }
 
+    /**
+     * Returns the right expression of the infix operation, which is typically the second of two
+     * arguments to the infix function.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

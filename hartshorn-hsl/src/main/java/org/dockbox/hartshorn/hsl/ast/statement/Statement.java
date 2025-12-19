@@ -32,5 +32,13 @@ public abstract class Statement extends ASTNode {
         super(at);
     }
 
+    /**
+     * Accepts a visitor that implements the {@link StatementVisitor} interface. For standard
+     * statements, this method should call the appropriate visit method on the visitor.
+     *
+     * @param visitor the visitor to accept
+     * @param <R> the return type of the visitor
+     * @return the result of the visitor's operation
+     */
     public abstract <R> R accept(StatementVisitor<R> visitor);
 }

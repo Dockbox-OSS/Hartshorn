@@ -58,14 +58,29 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
         this.initializer = initializer;
     }
 
+    /**
+     * Returns the initializer expression for this field, or null if no initializer was provided.
+     *
+     * @return the initializer expression, or null
+     */
     public Expression initializer() {
         return this.initializer;
     }
 
+    /**
+     * Returns the getter method associated with this field, or null if no getter is defined.
+     *
+     * @return the getter method, or null
+     */
     public FieldGetStatement getter() {
         return this.getter;
     }
 
+    /**
+     * Returns the setter method associated with this field, or null if no setter is defined.
+     *
+     * @return the setter method, or null
+     */
     public FieldSetStatement setter() {
         return this.setter;
     }
@@ -85,6 +100,14 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
         return visitor.visit(this);
     }
 
+    /**
+     * Associates a getter method with this field. If the provided getter does not belong to this
+     * field, or if a getter is already defined, an error is thrown.
+     *
+     * @param statement the getter method to associate with this field
+     * @throws ScriptEvaluationError if the getter does not belong to this field or if a getter is
+     * already defined
+     */
     public void withGetter(FieldGetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
@@ -105,6 +128,14 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
         this.getter = statement;
     }
 
+    /**
+     * Associates a setter method with this field. If the provided setter does not belong to this
+     * field, or if a setter is already defined, an error is thrown.
+     *
+     * @param statement the setter method to associate with this field
+     * @throws ScriptEvaluationError if the setter does not belong to this field or if a setter is
+     * already defined
+     */
     public void withSetter(FieldSetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)

@@ -90,18 +90,38 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
         }
     }
 
+    /**
+     * Registers one or more statement modules to this customizer.
+     *
+     * @param modules the statement modules to register
+     */
     public void statementModules(StatementModule<?>... modules) {
         this.statementModules.addAll(Set.of(modules));
     }
 
+    /**
+     * Retrieves the registered statement modules.
+     *
+     * @return the registered statement modules
+     */
     public Set<StatementModule<?>> statementModules() {
         return this.statementModules;
     }
 
+    /**
+     * Registers one or more expression modules to this customizer.
+     *
+     * @param modules the expression modules to register
+     */
     public void expressionModules(ExpressionModule<?>... modules) {
         this.expressionModules.addAll(Set.of(modules));
     }
 
+    /**
+     * Retrieves the registered expression modules.
+     *
+     * @return the registered expression modules
+     */
     public Set<ExpressionModule<?>> expressionModules() {
         return this.expressionModules;
     }

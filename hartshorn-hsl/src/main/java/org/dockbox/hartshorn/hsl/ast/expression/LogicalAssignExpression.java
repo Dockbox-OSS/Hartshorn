@@ -42,10 +42,23 @@ public class LogicalAssignExpression extends AssignExpression {
         this.operator = operator;
     }
 
+    /**
+     * Returns the assignment operator token used in this logical assignment expression.
+     *
+     * @return the assignment operator token
+     */
     public Token assignmentOperator() {
         return this.operator;
     }
 
+    /**
+     * Returns the logical operator type associated with this logical assignment expression. This is
+     * the logical operator without the assignment component. For example, if the assignment
+     * operator is <code>&&=</code>, this method would return the logical operator type for
+     * <code>&&</code>.
+     *
+     * @return the logical operator type
+     */
     public TokenType logicalOperator() {
         return this.operator.type().assignsWith();
     }

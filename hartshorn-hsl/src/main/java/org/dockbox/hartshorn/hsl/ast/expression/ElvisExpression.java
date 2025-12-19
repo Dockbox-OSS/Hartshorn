@@ -46,14 +46,32 @@ public class ElvisExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the condition expression that is evaluated to determine which value to return. If
+     * the condition evaluates to a truthy value, the condition expression's value is returned;
+     * otherwise, the {@link #rightExpression() right expression's value} is returned.
+     *
+     * @return the condition expression
+     */
     public Expression condition() {
         return this.condition;
     }
 
+    /**
+     * Returns the token representing the Elvis operator.
+     *
+     * @return the Elvis operator token
+     */
     public Token elvisOperator() {
         return this.elvisOpe;
     }
 
+    /**
+     * Returns the right expression that provides the default value when the condition evaluates
+     * to null or false (not truthy).
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

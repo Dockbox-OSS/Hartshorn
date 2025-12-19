@@ -44,6 +44,11 @@ public class WhileStatement extends BodyStatement {
         this.condition = condition;
     }
 
+    /**
+     * The condition that is evaluated before each iteration of the loop.
+     *
+     * @return the loop condition
+     */
     public Expression condition() {
         return this.condition;
     }

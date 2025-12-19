@@ -39,10 +39,20 @@ public class UnaryExpression extends Expression {
         this.rightExp = rightExp;
     }
 
+    /**
+     * Returns the operator token of this unary expression.
+     *
+     * @return the operator token
+     */
     public Token operator() {
         return this.operator;
     }
 
+    /**
+     * Returns the expression to which the unary operator is applied.
+     *
+     * @return the right expression
+     */
     public Expression rightExpression() {
         return this.rightExp;
     }

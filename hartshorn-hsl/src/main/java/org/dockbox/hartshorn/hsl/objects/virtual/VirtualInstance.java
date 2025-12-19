@@ -52,6 +52,11 @@ public class VirtualInstance implements InstanceReference {
         this.virtualClass = virtualClass;
     }
 
+    /**
+     * The virtual type of this instance.
+     *
+     * @return the virtual class
+     */
     public VirtualClass virtualClass() {
         return this.virtualClass;
     }

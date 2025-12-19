@@ -41,6 +41,17 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractNativeLibraryStatementInterpreter {
 
+    /**
+     * Registers a native module function in the interpreter's global scope. If multiple functions
+     * with the same name are found, it either throws an error or registers an ambiguous function
+     * handler based on the interpreter's execution options.
+     *
+     * @param moduleName the name of the target module in which the function is defined
+     * @param functionName the name of the function to register
+     * @param interpreter the interpreter instance
+     * @param supportedFunctions the list of native function statements that match the function name
+     * @param module the native module containing the functions
+     */
     protected void registerModuleFunction(
         String moduleName,
         String functionName,

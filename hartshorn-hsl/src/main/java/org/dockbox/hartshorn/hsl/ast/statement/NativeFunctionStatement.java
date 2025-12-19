@@ -77,14 +77,29 @@ public class NativeFunctionStatement extends Function implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the token representing the module name where this native function is implemented.
+     *
+     * @return the module name token
+     */
     public Token moduleName() {
         return this.moduleName;
     }
 
+    /**
+     * Returns the list of parameters for this native function.
+     *
+     * @return the list of parameters
+     */
     public List<Parameter> params() {
         return this.params;
     }
 
+    /**
+     * Returns the method view representing the native function implementation.
+     *
+     * @return the method view
+     */
     public MethodView<?, ?> method() {
         return this.method;
     }

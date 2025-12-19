@@ -97,22 +97,48 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
         return this.name;
     }
 
+    /**
+     * Returns the superclass of the class, if any.
+     *
+     * @return the superclass variable expression, or null if there is no superclass
+     */
     public VariableExpression superClass() {
         return this.superClass;
     }
 
+    /**
+     * Returns the constructor of the class, if any.
+     *
+     * @return the constructor statement, or null if there is no explicit constructor
+     */
     public ConstructorStatement constructor() {
         return this.constructor;
     }
 
+    /**
+     * Returns the list of methods defined in the class.
+     *
+     * @return the list of function statements representing the methods
+     */
     public List<FunctionStatement> methods() {
         return this.methods;
     }
 
+    /**
+     * Returns the list of fields defined in the class.
+     *
+     * @return the list of field statements representing the fields
+     */
     public List<FieldStatement> fields() {
         return this.fields;
     }
 
+    /**
+     * Indicates whether the class is dynamic, allowing additional properties to be added at
+     * runtime.
+     *
+     * @return true if the class is dynamic, false otherwise
+     */
     public boolean isDynamic() {
         return this.isDynamic;
     }
