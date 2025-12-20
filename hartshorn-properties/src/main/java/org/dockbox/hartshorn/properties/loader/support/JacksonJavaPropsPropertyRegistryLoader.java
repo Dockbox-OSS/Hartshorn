@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
-
+import java.util.Set;
 import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.util.configure.Customizer;
-
-import java.util.Set;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.javaprop.JavaPropsMapper;
 
 /**
  * A {@link JacksonPropertyRegistryLoader} that loads properties from Java properties files. This

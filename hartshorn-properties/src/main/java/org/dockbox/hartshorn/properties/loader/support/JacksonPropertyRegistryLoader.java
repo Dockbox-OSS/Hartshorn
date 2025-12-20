@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ValueNode;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
@@ -183,7 +183,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         ObjectNode objectNode
     ) {
         List<ConfiguredProperty> properties = new ArrayList<>();
-        EntryStream.of(CollectionUtilities.iterableOf(objectNode.fields()))
+        EntryStream.of(objectNode.properties())
             .forEach((name, value) -> {
                 PropertyPathNode nextPath = path.property(name);
                 properties.addAll(this.loadProperties(nextPath, value));
@@ -202,7 +202,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
      * @throws IOException if an error occurs while reading the file
      */
     protected JsonNode loadGraph(URI path) throws IOException {
-        return this.objectMapper().readTree(path.toURL());
+        return this.objectMapper().readTree(path.toURL().openStream());
     }
 
     /**

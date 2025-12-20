@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.serialize;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.ReportSerializer;
@@ -46,7 +46,7 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
             return this.objectMapper()
                     .writerWithDefaultPrettyPrinter()
                     .writeValueAsString(node);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new ReportSerializationException(e);
         }
     }

@@ -20,7 +20,7 @@
 
   <properties>
     <updates.skip>false</updates.skip>
-    <plugin.versions.version>2.19.1</plugin.versions.version>
+    <plugin.versions.version>2.20.1</plugin.versions.version>
   </properties>
 
   <build>
@@ -40,8 +40,7 @@
         <artifactId>versions-maven-plugin</artifactId>
         <configuration>
           <skip>${updates.skip}</skip>
-          <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*
-          </ignoredVersions>
+          <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
           <generateBackupPoms>false</generateBackupPoms>
 
           <!--

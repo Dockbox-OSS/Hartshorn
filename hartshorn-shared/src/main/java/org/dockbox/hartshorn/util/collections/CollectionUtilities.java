@@ -282,6 +282,22 @@ public final class CollectionUtilities {
     }
 
     /**
+     * Iterates over the given iterable and applies the given consumer to each element. A counter
+     * is used to keep track of the index of the element in the iterable. The counter starts at 0
+     * and is incremented for each element in the iterable.
+     *
+     * @param iterable The iterable to iterate over
+     * @param consumer The consumer to apply to each element
+     * @param <T> The type of the elements in the iterable
+     */
+    public static <T> void indexed(Iterable<T> iterable, BiConsumer<Integer, T> consumer) {
+        int index = 0;
+        for (T element : iterable) {
+            consumer.accept(index++, element);
+        }
+    }
+
+    /**
      * Returns an {@link Iterable} that wraps the given {@link Iterator}, to allow the iterator to
      * be used in e.g. for-each loops.
      *
