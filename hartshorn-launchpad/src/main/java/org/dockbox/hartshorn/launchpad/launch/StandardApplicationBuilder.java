@@ -110,9 +110,13 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         Class<?> mainClass = configurer.mainClass.initialize();
-        if (!this.isValidActivator(mainClass)) {
+        String violation = this.getActivatorClassViolation(mainClass);
+        if (violation != null) {
             throw new InvalidActivationSourceException(
-                "Main class (%s) must be a valid activator".formatted(mainClass.getName())
+                "Main class (%s) is not a valid activator: %s".formatted(
+                    mainClass.getName(),
+                    violation
+                )
             );
         }
 
@@ -139,31 +143,33 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      *
      * @param mainClass The class to validate.
      *
-     * @return {@code true} if the provided class is a valid activator, {@code false} otherwise.
+     * @return a message describing the violation, or <code>null</code> if the class is a valid
+     * activator.
      *
      * @see #RESERVED_PACKAGES
      */
-    private boolean isValidActivator(Class<?> mainClass) {
+    private String getActivatorClassViolation(Class<?> mainClass) {
         boolean isConcrete = !(mainClass.isPrimitive()
             || Modifier.isAbstract(mainClass.getModifiers())
             || mainClass.isInterface()
             || mainClass.isArray());
         if (!isConcrete) {
-            return false;
+            return "Main class must be a concrete class.";
         }
 
         if (mainClass.isLocalClass() || mainClass.isMemberClass()) {
-            return false;
+            return "Main class must not be a local or member class.";
         }
 
         String packageName = mainClass.getPackageName();
         for (String reservedPackage : RESERVED_PACKAGES) {
             if (packageName.startsWith(reservedPackage)) {
-                return false;
+                return "Main class must not be part of reserved package '%s'."
+                    .formatted(reservedPackage);
             }
         }
 
-        return true;
+        return null;
     }
 
     @Override
@@ -354,7 +360,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          *
          * @return This {@link Configurer} instance.
          *
-         * @see #isValidActivator(Class)
+         * @see #getActivatorClassViolation(Class)
          */
         public Configurer mainClass(Class<?> mainClass) {
             return this.mainClass(Initializer.of(mainClass));

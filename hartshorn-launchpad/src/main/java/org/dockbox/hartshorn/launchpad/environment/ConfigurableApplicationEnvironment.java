@@ -184,13 +184,9 @@ public final class ConfigurableApplicationEnvironment
         );
 
         Class<?> mainClass = bootstrapContext.mainClass();
-        // Potentially started from an unnamed class, in which case there will be no constructors.
-        // In such scenarios we do not support the main 'class' as an application component.
-        if (mainClass.getConstructors().length > 0) {
-            TypeView<?> mainType = this.introspector().introspect(mainClass);
-            this.componentRegistry()
-                .addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
-        }
+        TypeView<?> mainType = this.introspector().introspect(mainClass);
+        this.componentRegistry()
+            .addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
 
         this.resourceLookup = this.configure(
             environmentInitializerContext,
