@@ -246,7 +246,19 @@ public abstract class DelegatingApplicationContext
     @Override
     public void close() {
         if (this.isClosed()) {
-            throw new ContextClosedException(ApplicationContext.class);
+            ApplicationReentryPolicy reentryPolicy = this.environment().propertyRegistry()
+                    .value("hartshorn.container.close.reentry-policy")
+                    .map(ApplicationReentryPolicy::valueOf)
+                    .orElse(ApplicationReentryPolicy.FAIL);
+            switch (reentryPolicy) {
+                case IGNORE -> {
+                    return;
+                }
+                case FAIL -> throw new ContextClosedException(ApplicationContext.class);
+                case null, default -> {
+                    assert false : "Unsupported reentry policy: " + reentryPolicy;
+                }
+            }
         }
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {

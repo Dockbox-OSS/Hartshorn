@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test.junit;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.cleanup.ClearMockitoCachesCallback;
 import org.dockbox.hartshorn.test.junit.cleanup.HartshornCleanupCallback;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
@@ -64,6 +65,28 @@ public class HartshornJUnitCleanupCallback
         for (HartshornCleanupCallback callback : HartshornJUnitNamespace.collectCleanupCallbacks(
             context)) {
             callback.closeAfterLifecycle(context);
+        }
+        // Always last, in case the application is used by the callbacks
+        this.tryCloseApplication(context);
+    }
+
+    private void tryCloseApplication(ExtensionContext context) throws Exception {
+        Option<ApplicationContext> closeableApplication = HartshornJUnitNamespace
+                .applicationIfPresent(context)
+                .ofType(ApplicationContext.class);
+
+        if (closeableApplication.present()) {
+            ApplicationContext closeable = closeableApplication.get();
+
+            // Don't auto-close if Jupiter is already enabled to do so for us.
+            // If not explicitly set, defaults to true.
+            boolean autoClosingEnabled = context.getConfigurationParameter(
+                    "junit.jupiter.extensions.store.close.autocloseable.enabled"
+            ).map(Boolean::parseBoolean).orElse(true);
+
+            if (!autoClosingEnabled && !closeable.isClosed()) {
+                closeable.close();
+            }
         }
     }
 }
