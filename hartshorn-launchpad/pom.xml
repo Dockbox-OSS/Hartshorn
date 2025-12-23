@@ -71,5 +71,10 @@
       <artifactId>jackson-dataformat-yaml</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-properties</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

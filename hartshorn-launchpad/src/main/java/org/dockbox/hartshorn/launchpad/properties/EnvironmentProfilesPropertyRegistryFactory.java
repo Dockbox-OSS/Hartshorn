@@ -272,7 +272,11 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
             .segment(name)
             .segment(".")
             .segment(CollectionUtilities.merge(
+                // TODO: Make conditional on class presence. If dataformat-yaml is absent, this
+                //  will fail at runtime.
                 JacksonYamlPropertyRegistryLoader.DEFAULT_EXTENSIONS,
+                // TODO: Make conditional on class presence. If dataformat-javaprops is absent,
+                //  this will fail at runtime.
                 JacksonJavaPropsPropertyRegistryLoader.DEFAULT_EXTENSIONS
             ))
             .build()
