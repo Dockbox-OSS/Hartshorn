@@ -68,6 +68,21 @@
       <artifactId>javax.annotation-api</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-properties</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
