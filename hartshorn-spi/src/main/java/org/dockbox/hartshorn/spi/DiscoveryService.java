@@ -292,11 +292,10 @@ public final class DiscoveryService {
     private <T> Set<T> tryLoadFromSPI(Class<T> type) throws NoAvailableImplementationException {
         for (ClassLoader classLoader : this.classLoaders) {
             ServiceLoader<T> serviceLoader = this.getServiceLoader(type, classLoader);
-            Set<? extends ServiceLoader.Provider<T>> providers =
-                serviceLoader.stream().collect(Collectors.toSet());
-            return providers.stream()
-                .map(ServiceLoader.Provider::get)
-                .collect(Collectors.toSet());
+            return serviceLoader
+                    .stream()
+                    .map(ServiceLoader.Provider::get)
+                    .collect(Collectors.toSet());
         }
         throw new NoAvailableImplementationException("No implementation found for type "
             + type.getName());

@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.dataformat.yaml.YAMLMapper;
 import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import java.util.Set;
 
@@ -46,8 +46,8 @@ public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLo
     }
 
     public JacksonYamlPropertyRegistryLoader(
-        PropertyPathFormatter formatter,
-        Customizer<YAMLMapper.Builder> customizer
+            PropertyPathFormatter formatter,
+            Customizer<YAMLMapper.Builder> customizer
     ) {
         super(formatter);
         this.customizer = customizer;
@@ -61,7 +61,7 @@ public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLo
     }
 
     @Override
-    protected Set<String> supportedExtensions() {
+    public Set<String> supportedExtensions() {
         return DEFAULT_EXTENSIONS;
     }
 }

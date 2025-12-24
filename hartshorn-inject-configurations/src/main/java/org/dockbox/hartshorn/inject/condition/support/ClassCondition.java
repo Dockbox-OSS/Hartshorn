@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.condition.support;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A condition that matches when a class is present on the classpath. Due to the nature of this
@@ -37,10 +38,7 @@ public class ClassCondition implements Condition {
     public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresClass.class).map(condition -> {
             for (String name : condition.value()) {
-                try {
-                    Class.forName(name);
-                }
-                catch (ClassNotFoundException e) {
+                if (!TypeUtils.exists(name)) {
                     return ConditionResult.notFound("class", name);
                 }
             }

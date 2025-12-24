@@ -35,11 +35,10 @@ import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
+import org.dockbox.hartshorn.properties.loader.FilePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
 import org.dockbox.hartshorn.properties.loader.support.CompositePredicatePropertyRegistryLoader;
-import org.dockbox.hartshorn.properties.loader.support.JacksonJavaPropsPropertyRegistryLoader;
-import org.dockbox.hartshorn.properties.loader.support.JacksonYamlPropertyRegistryLoader;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
@@ -176,8 +175,8 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
     private Set<PropertyRegistryPathLoader> resolveRegistryLoaders() {
         Set<PropertyRegistryPathLoader> propertyRegistryLoaders;
         try {
-            propertyRegistryLoaders =
-                DiscoveryService.instance().discoverAll(PropertyRegistryPathLoader.class);
+            propertyRegistryLoaders = DiscoveryService.instance()
+                    .discoverAll(PropertyRegistryPathLoader.class);
         }
         catch (ServiceDiscoveryException e) {
             throw new ComponentInitializationException(
@@ -266,21 +265,39 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
      * @return a set of possible sources
      */
     protected static SequencedSet<String> getSources(String name) {
+        Set<PropertyRegistryPathLoader> loaders = getActivePathLoaders();
+        Set<String> extensions = loaders.stream()
+                .filter(FilePropertyRegistryLoader.class::isInstance)
+                .map(FilePropertyRegistryLoader.class::cast)
+                .flatMap(loader -> loader.supportedExtensions().stream())
+                .collect(Collectors.toSet());
+
+        if (extensions.isEmpty()) {
+            return new LinkedHashSet<>();
+        }
         return new LinkedHashSet<>(StringUtilities.matrix()
             .segment(FileSystemLookupStrategy.NAME, ClassPathResourceLookupStrategy.NAME)
             .segment(StrategyResourceLookup.STRATEGY_SEPARATOR)
             .segment(name)
             .segment(".")
-            .segment(CollectionUtilities.merge(
-                // TODO: Make conditional on class presence. If dataformat-yaml is absent, this
-                //  will fail at runtime.
-                JacksonYamlPropertyRegistryLoader.DEFAULT_EXTENSIONS,
-                // TODO: Make conditional on class presence. If dataformat-javaprops is absent,
-                //  this will fail at runtime.
-                JacksonJavaPropsPropertyRegistryLoader.DEFAULT_EXTENSIONS
-            ))
+            .segment(extensions)
             .build()
         );
+    }
+
+    /**
+     * Attempts to load available {@link PropertyRegistryPathLoader} from the discovery service. If
+     * discovery fails for any reason whatsoever, an empty {@link Set} is returned instead.
+     *
+     * @return available {@link PropertyRegistryPathLoader}, or an empty {@link Set}.
+     */
+    protected static Set<PropertyRegistryPathLoader> getActivePathLoaders() {
+        try {
+            return DiscoveryService.instance()
+                    .discoverAll(PropertyRegistryPathLoader.class);
+        } catch (ServiceDiscoveryException e) {
+            return Set.of();
+        }
     }
 
     /**

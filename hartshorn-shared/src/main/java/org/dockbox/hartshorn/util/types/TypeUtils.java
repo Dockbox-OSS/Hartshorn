@@ -565,4 +565,19 @@ public class TypeUtils {
         }
         return getRootCause(cause);
     }
+
+    /**
+     * Returns whether a class with the given name is available on the current classpath.
+     *
+     * @param className the fully qualified name of the class, e.g. {@code java.lang.String}
+     * @return {@code true} if the class exists, or else {@code false}
+     */
+    public static boolean exists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }
