@@ -302,7 +302,8 @@ public abstract class ProxyTests {
                 Throwable error = context.error();
                 assertThat(error)
                         .asInstanceOf(InstanceOfAssertFactories.type(IllegalStateException.class))
-                        .extracting(Throwable::getMessage);
+                        .extracting(Throwable::getMessage)
+                        .isEqualTo("not done");
                 assertThat(count.getAndIncrement()).isOne();
             }
         });
@@ -525,6 +526,7 @@ public abstract class ProxyTests {
     }
 
     @Test
+    @SuppressWarnings("SelfAssertion")
     void concreteProxySelfEquality() throws Exception {
         ProxyFactory<EqualProxy> factory =
             this.orchestratorLoader().create(this.introspector()).factory(EqualProxy.class);
@@ -537,6 +539,7 @@ public abstract class ProxyTests {
     }
 
     @Test
+    @SuppressWarnings("SelfAssertion")
     void serviceSelfEquality() throws Exception {
         AbstractEqualProxy service = this.orchestratorLoader()
             .create(this.introspector())
@@ -548,6 +551,7 @@ public abstract class ProxyTests {
     }
 
     @Test
+    @SuppressWarnings("SelfAssertion")
     void interfaceProxySelfEquality() throws Exception {
         ProxyFactory<EqualInterfaceProxy> factory = this.orchestratorLoader()
             .create(this.introspector())
