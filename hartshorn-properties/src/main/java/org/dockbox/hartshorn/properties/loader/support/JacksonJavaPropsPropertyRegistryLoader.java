@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
-
 import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.javaprop.JavaPropsMapper;
 
 import java.util.Set;
 
@@ -62,7 +61,7 @@ public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegis
     }
 
     @Override
-    protected Set<String> supportedExtensions() {
+    public Set<String> supportedExtensions() {
         return DEFAULT_EXTENSIONS;
     }
 }

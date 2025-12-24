@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
+import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents(LifecycleObserverTests.ObserverConfiguration.class)
+@TestProperties("hartshorn.container.close.reentry-policy=IGNORE")
 public class LifecycleObserverTests {
 
     @Configuration

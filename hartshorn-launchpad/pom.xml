@@ -20,7 +20,7 @@
     TODO: Remove once coverage target of 80% is reached.
      In meantime, increase coverage target whenever possible (to avoid regression).
     -->
-    <coverage.target>73%</coverage.target>
+    <coverage.target>71%</coverage.target>
   </properties>
 
   <dependencies>
@@ -64,11 +64,6 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -56,6 +56,12 @@
       <artifactId>groovy-all</artifactId>
       <type>pom</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>groovy-test-junit5</artifactId>
+          <groupId>org.apache.groovy</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

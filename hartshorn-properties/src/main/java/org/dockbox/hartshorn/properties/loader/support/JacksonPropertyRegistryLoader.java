@@ -16,14 +16,10 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
+import org.dockbox.hartshorn.properties.loader.FilePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathNode;
@@ -31,12 +27,16 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyRootPathNode;
 import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.stream.EntryStream;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ValueNode;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that loads properties using a Jackson
@@ -50,7 +50,8 @@ import java.util.Set;
  * 
  * @author Guus Lieben
  */
-public abstract class JacksonPropertyRegistryLoader implements PredicatePropertyRegistryLoader {
+public abstract class JacksonPropertyRegistryLoader
+        implements PredicatePropertyRegistryLoader, FilePropertyRegistryLoader {
 
     private final PropertyPathFormatter formatter;
     private ObjectMapper objectMapper;
@@ -183,7 +184,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         ObjectNode objectNode
     ) {
         List<ConfiguredProperty> properties = new ArrayList<>();
-        EntryStream.of(CollectionUtilities.iterableOf(objectNode.fields()))
+        EntryStream.of(objectNode.properties())
             .forEach((name, value) -> {
                 PropertyPathNode nextPath = path.property(name);
                 properties.addAll(this.loadProperties(nextPath, value));
@@ -202,7 +203,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
      * @throws IOException if an error occurs while reading the file
      */
     protected JsonNode loadGraph(URI path) throws IOException {
-        return this.objectMapper().readTree(path.toURL());
+        return this.objectMapper().readTree(path.toURL().openStream());
     }
 
     /**
@@ -218,14 +219,6 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         }
         return this.objectMapper;
     }
-
-    /**
-     * Returns a set of file extensions that this loader supports. The file extension of the file
-     * that is being loaded must be one of the extensions in this set.
-     *
-     * @return a set of file extensions that this loader supports
-     */
-    protected abstract Set<String> supportedExtensions();
 
     @Override
     public boolean isCompatible(URI path) {

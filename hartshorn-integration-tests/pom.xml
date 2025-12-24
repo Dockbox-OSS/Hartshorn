@@ -39,6 +39,12 @@
       <artifactId>groovy-all</artifactId>
       <type>pom</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>groovy-test-junit5</artifactId>
+          <groupId>org.apache.groovy</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- API Compatibility -->
@@ -60,6 +66,21 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-properties</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -90,6 +111,7 @@
               <goal>compileTests</goal>
             </goals>
             <configuration>
+              <targetBytecode>25</targetBytecode>
               <testSources>
                 <testSource>
                   <directory>${project.basedir}/src/integration-test/groovy</directory>

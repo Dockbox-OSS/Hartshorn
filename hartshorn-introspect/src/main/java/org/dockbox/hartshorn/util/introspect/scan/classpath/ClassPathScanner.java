@@ -382,7 +382,7 @@ public final class ClassPathScanner {
      * @return The scanner instance
      */
     public synchronized ClassPathScanner filterPrefix(String prefix) {
-        if (prefix != null) {
+        if (prefix != null && !prefix.trim().isEmpty()) {
             this.prefixFilters.add(prefix);
         }
         return this;

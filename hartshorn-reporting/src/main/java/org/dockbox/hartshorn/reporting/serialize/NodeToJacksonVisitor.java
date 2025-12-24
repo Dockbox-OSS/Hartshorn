@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.NodeVisitor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * A {@link NodeVisitor} which converts a {@link Node} to a {@link JsonNode}. This is useful for

@@ -77,7 +77,14 @@ public class HartshornJUnitCleanupCallback
 
         if (closeableApplication.present()) {
             ApplicationContext closeable = closeableApplication.get();
-            if (!closeable.isClosed()) {
+
+            // Don't auto-close if Jupiter is already enabled to do so for us.
+            // If not explicitly set, defaults to true.
+            boolean autoClosingEnabled = context.getConfigurationParameter(
+                    "junit.jupiter.extensions.store.close.autocloseable.enabled"
+            ).map(Boolean::parseBoolean).orElse(true);
+
+            if (!autoClosingEnabled && !closeable.isClosed()) {
                 closeable.close();
             }
         }

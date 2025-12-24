@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
@@ -261,6 +262,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
     ) {
         Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
         prefixes.stream()
+            .filter(Predicate.not(String::isEmpty))
             .map(ClassPathScannerTypeReferenceCollector::new)
             .forEach(collectorContext::register);
 
@@ -288,8 +290,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         Set<Annotation> activators
     ) {
         Set<String> prefixes = new HashSet<>();
-        prefixes.addAll(this.configurer.scanPackages.initialize(this.initializerContext.transform(
-            bootstrapContext)));
+        prefixes.addAll(this.configurer.scanPackages.initialize(
+            this.initializerContext.transform(bootstrapContext)
+        ));
 
         // Application may prefer to use alternative packages for scanning. This is configured by
         // the application bootstrap context.

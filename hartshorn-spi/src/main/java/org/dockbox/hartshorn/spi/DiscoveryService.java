@@ -25,11 +25,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A service that allows for the discovery of implementations of a given type. This service is a
@@ -290,16 +290,23 @@ public final class DiscoveryService {
     }
 
     private <T> Set<T> tryLoadFromSPI(Class<T> type) throws NoAvailableImplementationException {
+        Set<T> instances = new HashSet<>();
         for (ClassLoader classLoader : this.classLoaders) {
             ServiceLoader<T> serviceLoader = this.getServiceLoader(type, classLoader);
-            Set<? extends ServiceLoader.Provider<T>> providers =
-                serviceLoader.stream().collect(Collectors.toSet());
-            return providers.stream()
-                .map(ServiceLoader.Provider::get)
-                .collect(Collectors.toSet());
+            Iterator<T> it = serviceLoader.iterator();
+            while (true) {
+                try {
+                    if (!it.hasNext()) {
+                        break;
+                    }
+                    instances.add(it.next());
+                } catch (NoClassDefFoundError ignored) {
+                    // Ignored, class is either not compatible, or is missing dependencies. In both
+                    // cases we don't want to make further attempts to load it further.
+                }
+            }
         }
-        throw new NoAvailableImplementationException("No implementation found for type "
-            + type.getName());
+        return instances;
     }
 
     private <T> ServiceLoader<T> getServiceLoader(Class<T> type, ClassLoader classLoader)
