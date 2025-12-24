@@ -17,19 +17,20 @@
 package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ConverterTests {
 
     @Test
-    void testConverterChainingFollowsCorrectOrder() {
+    void converterChainingFollowsCorrectOrder() {
         Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
             .andThen(Double::longValue)
             .andThen(Long::intValue)
             .andThen(Integer::byteValue);
 
         byte result = converter.convert("1.0");
-        Assertions.assertEquals((byte) 1, result);
+        assertThat(result).isOne();
     }
 }

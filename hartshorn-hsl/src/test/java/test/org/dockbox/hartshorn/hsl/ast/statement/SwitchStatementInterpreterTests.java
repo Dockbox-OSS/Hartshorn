@@ -26,13 +26,15 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class SwitchStatementInterpreterTests {
+class SwitchStatementInterpreterTests {
 
     @Test
     void defaultCaseMatchesIfNoCasesPresent(@Inject ApplicationContext applicationContext) {
@@ -52,7 +54,7 @@ public class SwitchStatementInterpreterTests {
 
         helper.interpret();
 
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("default-case"));
+        assertThat(helper.checkpoints().checkpointAccessed("default-case")).isTrue();
     }
 
     @Test
@@ -76,8 +78,8 @@ public class SwitchStatementInterpreterTests {
 
         helper.interpret();
 
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("matching-case"));
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("default-case"));
+        assertThat(helper.checkpoints().checkpointAccessed("matching-case")).isTrue();
+        assertThat(helper.checkpoints().checkpointAccessed("default-case")).isFalse();
     }
 
     @Test
@@ -92,10 +94,7 @@ public class SwitchStatementInterpreterTests {
             .defineLocal("value", "some-value")
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(
             error,
             DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT

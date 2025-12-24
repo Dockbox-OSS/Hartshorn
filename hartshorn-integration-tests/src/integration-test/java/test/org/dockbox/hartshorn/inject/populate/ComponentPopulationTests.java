@@ -35,7 +35,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.inject.provider.SampleImplementation;
 import test.org.dockbox.hartshorn.inject.provider.SampleInterface;
@@ -43,14 +42,17 @@ import test.org.dockbox.hartshorn.inject.provider.SampleInterface;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ComponentPopulationTests {
+class ComponentPopulationTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testContextFieldPopulation() {
+    void contextFieldPopulation() {
         SampleContext sampleContext = new SampleContext();
         this.applicationContext.addContext(sampleContext);
 
@@ -60,12 +62,13 @@ public class ComponentPopulationTests {
 
         PopulationTestComponent component = this.createAndPopulateComponent(strategy,
             type -> createFieldInjectionPoint("context", type));
-        Assertions.assertNotNull(component.context);
-        Assertions.assertSame(sampleContext, component.context);
+        assertThat(component.context)
+                .isNotNull()
+                .isSameAs(sampleContext);
     }
 
     @Test
-    void testInjectFieldPopulation() {
+    void injectFieldPopulation() {
         ComponentPopulationStrategy strategy =
             InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
@@ -73,12 +76,13 @@ public class ComponentPopulationTests {
         PopulationTestComponent component =
             this.createAndPopulateComponent(strategy,
                 type -> createFieldInjectionPoint("applicationContext", type));
-        Assertions.assertNotNull(component.applicationContext);
-        Assertions.assertSame(this.applicationContext, component.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
     }
 
     @Test
-    void testInjectMethodPopulation() {
+    void injectMethodPopulation() {
         ComponentPopulationStrategy strategy =
             InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
@@ -87,12 +91,13 @@ public class ComponentPopulationTests {
             type -> createMethodInjectionPoint("setApplicationContext",
                 List.of(ApplicationContext.class),
                 type));
-        Assertions.assertNotNull(component.applicationContext);
-        Assertions.assertSame(this.applicationContext, component.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
     }
 
     @Test
-    void testInjectMixedMethodPopulation() {
+    void injectMixedMethodPopulation() {
         SampleContext sampleContext = new SampleContext();
         this.applicationContext.addContext(sampleContext);
 
@@ -104,22 +109,24 @@ public class ComponentPopulationTests {
             type -> createMethodInjectionPoint("setContexts",
                 List.of(ApplicationContext.class, SampleContext.class),
                 type));
-        Assertions.assertNotNull(component.applicationContext);
-        Assertions.assertSame(this.applicationContext, component.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
 
-        Assertions.assertNotNull(component.context);
-        Assertions.assertSame(sampleContext, component.context);
+        assertThat(component.context)
+                .isNotNull()
+                .isSameAs(sampleContext);
     }
 
     @Test
     @TestComponents(SampleConfiguration.class)
-    public void testTypesCanBePopulated(@Inject ComponentPopulator populator) {
+    void typesCanBePopulated(@Inject ComponentPopulator populator) {
         PopulatedType populatedType = new PopulatedType();
-        Assertions.assertNull(populatedType.sampleInterface());
+        assertThat(populatedType.sampleInterface()).isNull();
 
         populator.populate(populatedType, this.applicationContext.scope());
-        Assertions.assertNotNull(populatedType.sampleInterface());
-        Assertions.assertEquals(SampleImplementation.NAME, populatedType.sampleInterface().name());
+        assertThat(populatedType.sampleInterface()).isNotNull();
+        assertThat(populatedType.sampleInterface().name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Configuration
@@ -146,7 +153,8 @@ public class ComponentPopulationTests {
 
         ComponentInjectionPoint<PopulationTestComponent> injectionPoint =
             injectionPointProvider.apply(typeView);
-        Assertions.assertDoesNotThrow(() -> strategy.populate(componentContext, injectionPoint));
+        assertThatCode(() -> strategy.populate(componentContext, injectionPoint))
+                .doesNotThrowAnyException();
 
         return component;
     }

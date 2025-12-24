@@ -25,16 +25,18 @@ import org.dockbox.hartshorn.inject.graph.support.AmbiguousAliasException;
 import org.dockbox.hartshorn.inject.graph.support.OverlappingAliasDependencyGraphValidator;
 import org.dockbox.hartshorn.inject.provider.AliasCapableComponentProviderOrchestrator;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Set;
 
-public class OverlappingAliasDependencyGraphValidatorTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class OverlappingAliasDependencyGraphValidatorTests {
 
     @Test
-    void testOverlappingAliasWithSamePriorityFails() {
+    void overlappingAliasWithSamePriorityFails() {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
@@ -50,17 +52,14 @@ public class OverlappingAliasDependencyGraphValidatorTests {
             Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
         Mockito.when(orchestrator.aliasNormalizer())
             .thenReturn(new DefaultBindingAliasNormalizer());
-        AmbiguousAliasException exception = Assertions.assertThrows(
-            AmbiguousAliasException.class,
-            () -> validator.validateBeforeConfiguration(graph, null, orchestrator)
-        );
+        AmbiguousAliasException exception = assertThatExceptionOfType(AmbiguousAliasException.class).isThrownBy(() -> validator.validateBeforeConfiguration(graph, null, orchestrator)).actual();
 
-        Assertions.assertEquals(2, exception.contexts().size());
-        Assertions.assertEquals(ComponentKey.of(CharSequence.class), exception.componentKey());
+        assertThat(exception.contexts()).hasSize(2);
+        assertThat(exception.componentKey()).isEqualTo(ComponentKey.of(CharSequence.class));
     }
 
     @Test
-    void testOverlappingAliasWithDifferentPrioritiesPasses() {
+    void overlappingAliasWithDifferentPrioritiesPasses() throws Exception {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
@@ -79,9 +78,7 @@ public class OverlappingAliasDependencyGraphValidatorTests {
             Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
         Mockito.when(orchestrator.aliasNormalizer())
             .thenReturn(new DefaultBindingAliasNormalizer());
-        Assertions.assertDoesNotThrow(() -> validator.validateBeforeConfiguration(graph,
-            null,
-            orchestrator));
+        validator.validateBeforeConfiguration(graph, null, orchestrator);
     }
 
     private static <T extends CharSequence> AliasableDependencyContext<T> createMockCharSequenceDependencyContext(

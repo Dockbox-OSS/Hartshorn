@@ -19,7 +19,8 @@ package test.org.dockbox.hartshorn.util.introspect.support.basic;
 import java.util.Locale;
 
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
-import org.junit.jupiter.api.Assertions;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleElementAnnotation;
 
 /**
@@ -78,12 +79,12 @@ public class ConcreteTestType extends ParentTestType {
     }
 
     public String publicMethod(String argument) {
-        Assertions.assertEquals("value", argument);
+        assertThat(argument).isEqualTo("value");
         return argument.toUpperCase(Locale.ROOT);
     }
 
     public String privateMethod(String argument) {
-        Assertions.assertEquals("value", argument);
+        assertThat(argument).isEqualTo("value");
         return argument.toUpperCase(Locale.ROOT);
     }
 

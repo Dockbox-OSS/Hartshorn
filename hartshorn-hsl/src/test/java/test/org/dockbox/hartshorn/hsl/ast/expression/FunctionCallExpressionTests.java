@@ -24,19 +24,20 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class FunctionCallExpressionTests {
+class FunctionCallExpressionTests {
 
     @Test
     void functionWithoutArgumentsCanBeCalled(@Inject ApplicationContext applicationContext) {
         CallableNode node = (at, interpreter, instance, args) -> {
-            Assertions.assertNull(instance);
-            Assertions.assertTrue(args.isEmpty());
+            assertThat(instance).isNull();
+            assertThat(args).isEmpty();
             return "Hello world!";
         };
 
@@ -47,15 +48,15 @@ public class FunctionCallExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals("Hello world!", value);
+        assertThat(value).isEqualTo("Hello world!");
     }
 
     @Test
     void functionWithArgumentsCanBeCalled(@Inject ApplicationContext applicationContext) {
         CallableNode node = (at, interpreter, instance, args) -> {
-            Assertions.assertNull(instance);
-            Assertions.assertEquals(1, args.size());
-            Assertions.assertEquals("Guus", args.getFirst());
+            assertThat(instance).isNull();
+            assertThat(args).hasSize(1);
+            assertThat(args).first().isEqualTo("Guus");
 
             return "Hello " + args.getFirst() + "!";
         };
@@ -70,7 +71,7 @@ public class FunctionCallExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals("Hello Guus!", value);
+        assertThat(value).isEqualTo("Hello Guus!");
     }
 
     @Test
@@ -79,10 +80,10 @@ public class FunctionCallExpressionTests {
         Mockito.when(objectReference.externalObject()).thenReturn("Guus");
 
         CallableNode node = (at, interpreter, instance, args) -> {
-            Assertions.assertNull(instance);
-            Assertions.assertEquals(1, args.size());
+            assertThat(instance).isNull();
+            assertThat(args).hasSize(1);
             // Thus, not an ExternalObjectReference anymore
-            Assertions.assertEquals("Guus", args.getFirst());
+            assertThat(args).first().isEqualTo("Guus");
 
             return "Hello world!";
         };
@@ -95,6 +96,6 @@ public class FunctionCallExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals("Hello world!", value);
+        assertThat(value).isEqualTo("Hello world!");
     }
 }

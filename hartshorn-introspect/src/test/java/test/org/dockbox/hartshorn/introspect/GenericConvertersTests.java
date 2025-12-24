@@ -23,27 +23,31 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-public class GenericConvertersTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class GenericConvertersTests {
 
     @Test
-    void testGenericConverterWithSingleTypePair() {
+    void genericConverterWithSingleTypePair() {
         GenericConverter converter =
             new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
         ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
         GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
-        Assertions.assertNotNull(locatedConverter);
-        Assertions.assertSame(converter, locatedConverter);
+        assertThat(locatedConverter)
+                .isNotNull()
+                .isSameAs(converter);
     }
 
     @Test
-    void testGenericConverterWithMultipleTypePairs() {
+    void genericConverterWithMultipleTypePairs() {
         GenericConverter converter = new SimpleGenericConverter(Set.of(
             ConvertibleTypePair.of(Object.class, String.class),
             ConvertibleTypePair.of(Object.class, Integer.class)
@@ -53,17 +57,19 @@ public class GenericConvertersTests {
 
         GenericConverter locatedStringConverter =
             converters.getConverter(new Object(), String.class);
-        Assertions.assertNotNull(locatedStringConverter);
-        Assertions.assertSame(converter, locatedStringConverter);
+        assertThat(locatedStringConverter)
+                .isNotNull()
+                .isSameAs(converter);
 
         GenericConverter locatedIntegerConverter =
             converters.getConverter(new Object(), Integer.class);
-        Assertions.assertNotNull(locatedIntegerConverter);
-        Assertions.assertSame(converter, locatedIntegerConverter);
+        assertThat(locatedIntegerConverter)
+                .isNotNull()
+                .isSameAs(converter);
     }
 
     @Test
-    void testGenericConverterWithMultipleTypePairsAndMultipleConverters() {
+    void genericConverterWithMultipleTypePairsAndMultipleConverters() {
         GenericConverter converter1 = new SimpleGenericConverter(Set.of(
             ConvertibleTypePair.of(Object.class, String.class),
             ConvertibleTypePair.of(Object.class, Integer.class)
@@ -79,11 +85,12 @@ public class GenericConvertersTests {
         converters.addConverter(converter1);
         converters.addConverter(converter2);
 
-        Assertions.assertThrows(AmbiguousConverterException.class,
-            () -> converters.getConverter(new Object(), String.class));
-        Assertions.assertThrows(AmbiguousConverterException.class,
-            () -> converters.getConverter(new Object(), Integer.class));
-        Assertions.assertDoesNotThrow(() -> converters.getConverter(new Object(), Long.class));
+        assertThatExceptionOfType(AmbiguousConverterException.class)
+                .isThrownBy(() -> converters.getConverter(new Object(), String.class));
+        assertThatExceptionOfType(AmbiguousConverterException.class)
+                .isThrownBy(() -> converters.getConverter(new Object(), Integer.class));
+        assertThatCode(() -> converters.getConverter(new Object(), Long.class))
+                .doesNotThrowAnyException();
     }
 
     private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes)

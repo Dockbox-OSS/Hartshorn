@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
@@ -23,12 +24,13 @@ import org.dockbox.hartshorn.hsl.parser.expression.RangeExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class RangeExpressionTests {
+class RangeExpressionTests {
 
     @Test
     void rangeYieldsLeftRightInclusiveArray(@Inject ApplicationContext applicationContext) {
@@ -38,11 +40,10 @@ public class RangeExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertArrayEquals(
-            new Double[] {1d, 2d, 3d, 4d, 5d},
-            array.values()
-        );
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.values()).containsExactly(new Double[]{1d, 2d, 3d, 4d, 5d});
     }
 
     @Test
@@ -53,11 +54,10 @@ public class RangeExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertArrayEquals(
-            new Double[] {2d},
-            array.values()
-        );
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.values()).containsExactly(new Double[]{2d});
     }
 
     @Test
@@ -71,10 +71,9 @@ public class RangeExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertArrayEquals(
-            new Double[] {1d, 2d, 3d, 4d, 5d},
-            array.values()
-        );
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.values()).containsExactly(new Double[]{1d, 2d, 3d, 4d, 5d});
     }
 }

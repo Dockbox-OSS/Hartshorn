@@ -16,63 +16,63 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.types.GenericType;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
+import org.dockbox.hartshorn.util.types.GenericType;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class GenericTypeTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class GenericTypeTests {
 
     @Test
-    void testGenericTypeOfSimpleTypeIsCorrect() {
+    void genericTypeOfSimpleTypeIsCorrect() {
         GenericType<String> genericType = new GenericType<>() {
         };
         Type type = genericType.type();
-        Assertions.assertTrue(type instanceof Class<?>);
-        Assertions.assertEquals(String.class, type);
+        assertThat(type).isEqualTo(String.class);
 
         Option<Class<String>> classOption = genericType.asClass();
-        Assertions.assertTrue(classOption.present());
-        Assertions.assertSame(String.class, classOption.get());
+        assertThat(classOption.present()).isTrue();
+        assertThat(classOption.get()).isSameAs(String.class);
     }
 
     @Test
-    void testGenericTypeOfParameterizedTypeIsCorrect() {
+    void genericTypeOfParameterizedTypeIsCorrect() {
         GenericType<List<String>> genericType = new GenericType<>() {
         };
         Type type = genericType.type();
-        Assertions.assertTrue(type instanceof ParameterizedType);
+        assertThat(type).isInstanceOf(ParameterizedType.class);
 
         ParameterizedType parameterizedType = (ParameterizedType) type;
         Type[] typeArguments = parameterizedType.getActualTypeArguments();
-        Assertions.assertEquals(1, typeArguments.length);
-        Assertions.assertEquals(String.class, typeArguments[0]);
+        assertThat(typeArguments.length).isOne();
+        assertThat(typeArguments[0]).isEqualTo(String.class);
 
         Option<Class<List<String>>> classOption = genericType.asClass();
         // ParameterizedType should not yield a class
-        Assertions.assertTrue(classOption.absent());
+        assertThat(classOption.absent()).isTrue();
     }
 
     @Test
-    void testWildcardTypeYieldsObject() {
+    void wildcardTypeYieldsObject() {
         GenericType<?> genericType = new GenericType<>() {
         };
         Type type = genericType.type();
-        Assertions.assertTrue(type instanceof Class<?>);
-        Assertions.assertEquals(Object.class, type);
+        assertThat(type).isEqualTo(Object.class);
 
         Option<? extends Class<?>> classOption = genericType.asClass();
-        Assertions.assertTrue(classOption.present());
-        Assertions.assertEquals(Object.class, classOption.get());
+        assertThat(classOption.present()).isTrue();
+        assertThat(classOption.get()).isEqualTo(Object.class);
     }
 
     @Test
-    void testRawGenericTypeFails() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new GenericType() {
+    void rawGenericTypeFails() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new GenericType() {
         });
     }
 }

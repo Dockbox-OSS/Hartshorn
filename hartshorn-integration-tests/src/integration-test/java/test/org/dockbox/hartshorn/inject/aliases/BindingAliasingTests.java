@@ -25,14 +25,17 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class BindingAliasingTests {
+class BindingAliasingTests {
 
     @Test
-    void testAliasBindingsCanBeResolved(@Inject ApplicationContext applicationContext) {
+    void aliasBindingsCanBeResolved(@Inject ApplicationContext applicationContext) {
         applicationContext.bind(String.class)
             .alias(CharSequence.class)
             .singleton("Hello world");
@@ -40,29 +43,29 @@ public class BindingAliasingTests {
         String helloWorldString = applicationContext.get(String.class);
         CharSequence helloWorldCharSequence = applicationContext.get(CharSequence.class);
 
-        Assertions.assertSame(helloWorldString, helloWorldCharSequence);
+        assertThat(helloWorldCharSequence).isSameAs(helloWorldString);
     }
 
     @Test
     @TestComponents(BindingAliasingConfiguration.class)
-    void testAliasBindingsFromConfigurationCanBeResolved(@Inject ComponentProvider provider) {
+    void aliasBindingsFromConfigurationCanBeResolved(@Inject ComponentProvider provider) {
         String helloWorldString = provider.get(String.class);
         CharSequence helloWorldCharSequence = provider.get(CharSequence.class);
 
-        Assertions.assertSame(helloWorldString, helloWorldCharSequence);
+        assertThat(helloWorldCharSequence).isSameAs(helloWorldString);
     }
 
     @Test
     @TestComponents(OverlappingDefaultAndAliasBindingConfiguration.class)
-    void testOverlappingDefaultAndAliasBindingsFromConfigurationCanResolve(
+    void overlappingDefaultAndAliasBindingsFromConfigurationCanResolve(
         @Inject ComponentProvider provider
     ) {
-        Assertions.assertDoesNotThrow(() -> provider.get(String.class));
-        Assertions.assertDoesNotThrow(() -> provider.get(CharSequence.class));
+        assertThatCode(() -> provider.get(String.class)).doesNotThrowAnyException();
+        assertThatCode(() -> provider.get(CharSequence.class)).doesNotThrowAnyException();
     }
 
     @Test
-    void testOverlappingPriorityAliasBindingsFails(@Inject ApplicationContext applicationContext) {
+    void overlappingPriorityAliasBindingsFails(@Inject ApplicationContext applicationContext) {
         applicationContext.bind(String.class)
             .alias(CharSequence.class)
             .priority(1)
@@ -72,8 +75,7 @@ public class BindingAliasingTests {
             .priority(1)
             .singleton(new StringBuilder("Hello world"));
 
-        Assertions.assertThrows(AmbiguousComponentException.class,
-            () -> applicationContext.get(CharSequence.class));
+        assertThatExceptionOfType(AmbiguousComponentException.class).isThrownBy(() -> applicationContext.get(CharSequence.class));
     }
 
     @Configuration

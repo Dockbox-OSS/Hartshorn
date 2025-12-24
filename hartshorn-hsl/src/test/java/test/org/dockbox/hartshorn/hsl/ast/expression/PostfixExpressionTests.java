@@ -24,13 +24,15 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class PostfixExpressionTests {
+class PostfixExpressionTests {
 
     @Test
     void postFixIncrementYieldsOriginalValueAndIncrementsVariable(
@@ -44,10 +46,10 @@ public class PostfixExpressionTests {
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
-        Assertions.assertEquals(5, expressionResult);
+        assertThat(expressionResult).isEqualTo(5);
 
         Object variableValue = helper.findVariable("a");
-        Assertions.assertEquals(6d, variableValue);
+        assertThat(variableValue).isEqualTo(6d);
     }
 
     @Test
@@ -59,10 +61,7 @@ public class PostfixExpressionTests {
             .defineLocal("a", actual)
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpretValue
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
@@ -81,10 +80,10 @@ public class PostfixExpressionTests {
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
-        Assertions.assertEquals(5, expressionResult);
+        assertThat(expressionResult).isEqualTo(5);
 
         Object variableValue = helper.findVariable("a");
-        Assertions.assertEquals(4d, variableValue);
+        assertThat(variableValue).isEqualTo(4d);
     }
 
     @Test
@@ -96,10 +95,7 @@ public class PostfixExpressionTests {
             .defineLocal("a", actual)
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpretValue
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)

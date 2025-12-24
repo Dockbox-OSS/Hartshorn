@@ -19,19 +19,20 @@ package test.org.dockbox.hartshorn.inject.callbacks;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class OnInitializedCallbackTests {
+class OnInitializedCallbackTests {
 
     @Test
     @TestComponents(TypeWithPostConstructableInjectField.class)
-    void testPostConstructInjectDoesNotInjectTwice(
+    void postConstructInjectDoesNotInjectTwice(
         @Inject TypeWithPostConstructableInjectField instance
     ) {
-        Assertions.assertNotNull(instance);
-        Assertions.assertNotNull(instance.postConstructableObject());
-        Assertions.assertEquals(1, instance.postConstructableObject().getTimesConstructed());
+        assertThat(instance).isNotNull();
+        assertThat(instance.postConstructableObject()).isNotNull();
+        assertThat(instance.postConstructableObject().getTimesConstructed()).isOne();
     }
 }

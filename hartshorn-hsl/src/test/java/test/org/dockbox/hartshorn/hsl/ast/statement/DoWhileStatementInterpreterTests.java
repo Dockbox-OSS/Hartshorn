@@ -25,12 +25,13 @@ import org.dockbox.hartshorn.hsl.parser.statement.DoWhileStatementParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class DoWhileStatementInterpreterTests {
+class DoWhileStatementInterpreterTests {
 
     @Test
     void doWhileWithFalseExpressionExecutesOnce(@Inject ApplicationContext applicationContext) {
@@ -45,8 +46,8 @@ public class DoWhileStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-do-while"));
-        Assertions.assertEquals(1, helper.checkpoints().checkpointAccessCount("inside-do-while"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-do-while")).isTrue();
+        assertThat(helper.checkpoints().checkpointAccessCount("inside-do-while")).isOne();
     }
 
     @Test
@@ -68,6 +69,6 @@ public class DoWhileStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertEquals(3, helper.checkpoints().checkpointAccessCount("inside-do-while"));
+        assertThat(helper.checkpoints().checkpointAccessCount("inside-do-while")).isEqualTo(3);
     }
 }

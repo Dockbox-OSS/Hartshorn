@@ -21,12 +21,13 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ElvisExpressionTests {
+class ElvisExpressionTests {
 
     @Test
     void elvisWithTruthyValueReturnsLeft(@Inject ApplicationContext applicationContext) {
@@ -36,7 +37,7 @@ public class ElvisExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals(42d, value);
+        assertThat(value).isEqualTo(42d);
     }
 
     @Test
@@ -47,6 +48,6 @@ public class ElvisExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals(24d, value);
+        assertThat(value).isEqualTo(24d);
     }
 }

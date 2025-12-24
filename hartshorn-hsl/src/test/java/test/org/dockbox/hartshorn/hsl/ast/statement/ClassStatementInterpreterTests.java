@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
@@ -31,12 +32,13 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ClassStatementInterpreterTests {
+class ClassStatementInterpreterTests {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -58,19 +60,20 @@ public class ClassStatementInterpreterTests {
         helper.interpret();
 
         Object classVariable = helper.findVariable("Person");
-        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
-        Assertions.assertNull(virtualClass.superClass());
-        Assertions.assertFalse(virtualClass.isDynamic());
+        VirtualClass virtualClass = assertThat(classVariable)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualClass.class))
+                .actual();
+        assertThat(virtualClass.superClass()).isNull();
+        assertThat(virtualClass.isDynamic()).isFalse();
 
         VirtualProperty name = virtualClass.property("name");
-        Assertions.assertNotNull(name);
+        assertThat(name).isNotNull();
 
         Object instance = helper.captures().capturedValue();
-        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-            VirtualInstance.class,
-            instance
-        );
-        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
+        VirtualInstance virtualInstance = assertThat(instance)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualInstance.class))
+                .actual();
+        assertThat(virtualInstance.virtualClass()).isEqualTo(virtualClass);
     }
 
     @Test
@@ -90,19 +93,20 @@ public class ClassStatementInterpreterTests {
         helper.interpret();
 
         Object classVariable = helper.findVariable("Person");
-        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
-        Assertions.assertNull(virtualClass.superClass());
-        Assertions.assertTrue(virtualClass.isDynamic());
+        VirtualClass virtualClass = assertThat(classVariable)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualClass.class))
+                .actual();
+        assertThat(virtualClass.superClass()).isNull();
+        assertThat(virtualClass.isDynamic()).isTrue();
 
         VirtualProperty name = virtualClass.property("name");
-        Assertions.assertNotNull(name);
+        assertThat(name).isNotNull();
 
         Object instance = helper.captures().capturedValue();
-        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-            VirtualInstance.class,
-            instance
-        );
-        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
+        VirtualInstance virtualInstance = assertThat(instance)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualInstance.class))
+                .actual();
+        assertThat(virtualInstance.virtualClass()).isEqualTo(virtualClass);
     }
 
     @Test
@@ -125,31 +129,33 @@ public class ClassStatementInterpreterTests {
         helper.interpret();
 
         Object classVariable = helper.findVariable("Person");
-        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
-        Assertions.assertFalse(virtualClass.isDynamic());
+        VirtualClass virtualClass = assertThat(classVariable)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualClass.class))
+                .actual();
+        assertThat(virtualClass.isDynamic()).isFalse();
 
         VirtualProperty name = virtualClass.property("name");
-        Assertions.assertNotNull(name);
+        assertThat(name).isNotNull();
 
         ClassReference superClass = virtualClass.superClass();
-        Assertions.assertNotNull(superClass);
-        Assertions.assertEquals("LivingThing", superClass.name());
+        assertThat(superClass).isNotNull();
+        assertThat(superClass.name()).isEqualTo("LivingThing");
 
-        VirtualClass virtualSuperClass =
-            Assertions.assertInstanceOf(VirtualClass.class, superClass);
+        VirtualClass virtualSuperClass = assertThat(superClass)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualClass.class))
+                .actual();
         VirtualProperty age = virtualSuperClass.property("age");
-        Assertions.assertNotNull(age);
+        assertThat(age).isNotNull();
 
         VirtualProperty childAge = virtualClass.property("age");
         // No override, so definition remains in super class
-        Assertions.assertNull(childAge);
+        assertThat(childAge).isNull();
 
         Object instance = helper.captures().capturedValue();
-        VirtualInstance virtualInstance = Assertions.assertInstanceOf(
-            VirtualInstance.class,
-            instance
-        );
-        Assertions.assertEquals(virtualClass, virtualInstance.virtualClass());
+        VirtualInstance virtualInstance = assertThat(instance)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualInstance.class))
+                .actual();
+        assertThat(virtualInstance.virtualClass()).isEqualTo(virtualClass);
     }
 
     static class ExternalThing {
@@ -176,26 +182,28 @@ public class ClassStatementInterpreterTests {
         helper.interpret();
 
         Object classVariable = helper.findVariable("Person");
-        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
-        Assertions.assertFalse(virtualClass.isDynamic());
+        VirtualClass virtualClass = assertThat(classVariable)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualClass.class))
+                .actual();
+        assertThat(virtualClass.isDynamic()).isFalse();
 
         VirtualProperty name = virtualClass.property("name");
-        Assertions.assertNotNull(name);
+        assertThat(name).isNotNull();
 
         ClassReference superClass = virtualClass.superClass();
-        ExternalClass<?> externalClass =
-            Assertions.assertInstanceOf(ExternalClass.class, superClass);
-        Assertions.assertEquals("ExternalThing", externalClass.name());
-        Assertions.assertTrue(externalClass.type().is(ExternalThing.class));
+        ExternalClass<?> externalClass = assertThat(superClass)
+                .asInstanceOf(InstanceOfAssertFactories.type(ExternalClass.class))
+                .actual();
+        assertThat(externalClass.name()).isEqualTo("ExternalThing");
+        assertThat(externalClass.type().is(ExternalThing.class)).isTrue();
 
         Object instance = helper.captures().capturedValue();
-        CompositeInstance<?> compositeInstance = Assertions.assertInstanceOf(
-            CompositeInstance.class,
-            instance
-        );
-        Assertions.assertEquals(virtualClass, compositeInstance.virtualClass());
+        CompositeInstance<?> compositeInstance = assertThat(instance)
+                .asInstanceOf(InstanceOfAssertFactories.type(CompositeInstance.class))
+                .actual();
+        assertThat(compositeInstance.virtualClass()).isEqualTo(virtualClass);
 
         Object externalObject = compositeInstance.externalObject();
-        Assertions.assertInstanceOf(ExternalThing.class, externalObject);
+        assertThat(externalObject).isInstanceOf(ExternalThing.class);
     }
 }

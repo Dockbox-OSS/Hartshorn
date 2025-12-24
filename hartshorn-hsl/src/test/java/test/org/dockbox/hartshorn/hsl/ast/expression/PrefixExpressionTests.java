@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
@@ -27,13 +28,15 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
-public class PrefixExpressionTests {
+class PrefixExpressionTests {
 
     @Test
     void prefixExpressionWithDefinitionAndImplementationPasses(
@@ -49,14 +52,13 @@ public class PrefixExpressionTests {
                 parser.addContext(functionParserContext);
             })
             // Prefix function implementation
-            .defineLocal("not", (CallableNode) (at, interpreter, instance, arguments) -> {
-                return !((Boolean) arguments.getFirst());
-            })
+            .defineLocal("not", (CallableNode) (at, interpreter, instance, arguments) -> !((Boolean) arguments.getFirst()))
             .build();
 
         Object value = helper.interpretValue();
-        boolean result = Assertions.assertInstanceOf(Boolean.class, value);
-        Assertions.assertFalse(result);
+        assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.BOOLEAN)
+                .isFalse();
     }
 
     @Test
@@ -72,11 +74,8 @@ public class PrefixExpressionTests {
             })
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
-        Assertions.assertEquals(Phase.PARSING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        assertThat(error.phase()).isEqualTo(Phase.PARSING);
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 
@@ -94,13 +93,10 @@ public class PrefixExpressionTests {
             })
             .build();
 
-        Assertions.assertDoesNotThrow(helper::parse);
+        helper.parse();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpretValue
-        );
-        Assertions.assertEquals(Phase.INTERPRETING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
+        assertThat(error.phase()).isEqualTo(Phase.INTERPRETING);
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "not")
@@ -121,11 +117,8 @@ public class PrefixExpressionTests {
             })
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
-        Assertions.assertEquals(Phase.PARSING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        assertThat(error.phase()).isEqualTo(Phase.PARSING);
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 }

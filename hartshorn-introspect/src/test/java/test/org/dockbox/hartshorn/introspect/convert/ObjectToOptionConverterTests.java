@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,36 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionConverter;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SuppressWarnings("rawtypes")
-public class ObjectToOptionConverterTests {
+class ObjectToOptionConverterTests {
 
     @Test
-    void testNonNullElementConvertsToPresentOption() {
+    void nonNullElementConvertsToPresentOption() {
         String element = "test";
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Option);
-        Assertions.assertTrue(((Option) converted).present());
-        Assertions.assertEquals(element, ((Option) converted).get());
+        assertThat(converted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
+                .matches(Option::present)
+                .extracting(Option::get)
+                .isEqualTo(element);
     }
 
     @Test
-    void testNullElementConvertsToEmptyOption() {
+    void nullElementConvertsToEmptyOption() {
         Object element = null;
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Option);
-        Assertions.assertFalse(((Option) converted).present());
+        assertThat(converted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
+                .matches(Option::absent);
     }
 }

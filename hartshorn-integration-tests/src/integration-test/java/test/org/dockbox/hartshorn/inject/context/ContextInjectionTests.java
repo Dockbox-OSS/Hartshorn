@@ -20,11 +20,12 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ContextInjectionTests {
+class ContextInjectionTests {
 
     @Inject
     private ComponentPopulator componentPopulator;
@@ -33,26 +34,26 @@ public class ContextInjectionTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void testContextFieldsAreInjected() {
+    void contextFieldsAreInjected() {
         String contextName = "InjectedContext";
         this.applicationContext.addContext(new SampleContext(contextName));
 
         ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
             this.applicationContext.scope());
 
-        Assertions.assertNotNull(instance.context());
-        Assertions.assertEquals(contextName, instance.context().name());
+        assertThat(instance.context()).isNotNull();
+        assertThat(instance.context().name()).isEqualTo(contextName);
     }
 
     @Test
-    void testNamedContextFieldsAreInjected() {
+    void namedContextFieldsAreInjected() {
         String contextName = "InjectedContext";
         this.applicationContext.addContext("another", new SampleContext(contextName));
 
         ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
             this.applicationContext.scope());
 
-        Assertions.assertNotNull(instance.anotherContext());
-        Assertions.assertEquals(contextName, instance.anotherContext().name());
+        assertThat(instance.anotherContext()).isNotNull();
+        assertThat(instance.anotherContext().name()).isEqualTo(contextName);
     }
 }

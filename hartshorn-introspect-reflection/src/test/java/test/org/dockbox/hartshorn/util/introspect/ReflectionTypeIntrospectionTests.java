@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotat
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.junit.jupiter.api.BeforeEach;
 
-public class ReflectionTypeIntrospectionTests extends TypeIntrospectionTests {
+class ReflectionTypeIntrospectionTests extends TypeIntrospectionTests {
 
     private Introspector introspector;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         // Re-use the same introspector while inside a single test, so caching can be tested
         this.introspector = new ReflectionIntrospector(new NativeProxyLookup(),
             new VirtualHierarchyAnnotationLookup());

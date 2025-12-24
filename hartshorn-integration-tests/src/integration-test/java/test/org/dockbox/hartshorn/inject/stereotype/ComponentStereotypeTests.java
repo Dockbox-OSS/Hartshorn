@@ -21,11 +21,13 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ComponentStereotypeTests {
+class ComponentStereotypeTests {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -35,29 +37,27 @@ public class ComponentStereotypeTests {
     void servicesAreSingletonsByDefault() {
         EmptyComponent emptyComponent = this.applicationContext.get(EmptyComponent.class);
         EmptyComponent emptyComponent2 = this.applicationContext.get(EmptyComponent.class);
-        Assertions.assertSame(emptyComponent, emptyComponent2);
+        assertThat(emptyComponent2).isSameAs(emptyComponent);
     }
 
     @Test
-    void testNonComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class,
-            () -> this.applicationContext.get(NonComponentType.class));
+    void nonComponentsAreNotProxied() {
+        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(NonComponentType.class));
     }
 
     @Test
     @TestComponents(ComponentType.class)
-    void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
+    void permittedComponentsAreProxiedWhenRegularProvisionFails() {
         ComponentType instance = this.applicationContext.get(ComponentType.class);
-        Assertions.assertNotNull(instance);
-        Assertions.assertTrue(this.applicationContext.environment()
+        assertThat(instance).isNotNull();
+        assertThat(this.applicationContext.environment()
             .proxyOrchestrator()
-            .isProxy(instance));
+            .isProxy(instance)).isTrue();
     }
 
     @Test
     @TestComponents(NonProxyComponentType.class)
-    void testNonPermittedComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class,
-            () -> this.applicationContext.get(NonProxyComponentType.class));
+    void nonPermittedComponentsAreNotProxied() {
+        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(NonProxyComponentType.class));
     }
 }

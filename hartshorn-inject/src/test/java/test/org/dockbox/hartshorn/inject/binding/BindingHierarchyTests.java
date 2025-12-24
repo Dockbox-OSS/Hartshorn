@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.inject.binding;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -25,44 +26,49 @@ import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map.Entry;
 
-public class BindingHierarchyTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class BindingHierarchyTests {
 
     private HierarchicalBinder binder() {
         return new TestHierarchicalBinder();
     }
 
     @Test
-    void testIteratorIsSorted() {
+    void iteratorIsSorted() {
         BindingHierarchy<Contract> hierarchy =
             new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class));
-        hierarchy.add(0,
-            PrototypeConstructorInstantiationStrategy.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1,
-            PrototypeConstructorInstantiationStrategy.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2,
-            PrototypeConstructorInstantiationStrategy.forSingleton(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, PrototypeConstructorInstantiationStrategy.forSingleton(
+                ComponentKey.of(ImplementationA.class)
+        ));
+        hierarchy.add(1, PrototypeConstructorInstantiationStrategy.forSingleton(
+                ComponentKey.of(ImplementationB.class)
+        ));
+        hierarchy.add(2, PrototypeConstructorInstantiationStrategy.forSingleton(
+                ComponentKey.of(ImplementationC.class)
+        ));
 
         int next = 2;
         for (Entry<Integer, InstantiationStrategy<Contract>> entry : hierarchy) {
             Integer priority = entry.getKey();
-            Assertions.assertEquals(next, priority.intValue());
+            assertThat(priority.intValue()).isEqualTo(next);
             next--;
         }
     }
 
     @Test
-    void testPriorityBindingsAreRetainedAndAccessible() {
+    void priorityBindingsAreRetainedAndAccessible() {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
         HierarchicalBinder binder = this.binder();
 
         BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key);
-        secondHierarchy.add(2,
-            PrototypeConstructorInstantiationStrategy.forSingleton(ComponentKey.of(ImplementationC.class)));
+        secondHierarchy.add(2, PrototypeConstructorInstantiationStrategy.forSingleton(
+                ComponentKey.of(ImplementationC.class)
+        ));
 
         binder.hierarchy(key)
             .add(0,
@@ -74,42 +80,57 @@ public class BindingHierarchyTests {
             .merge(secondHierarchy);
 
         BindingHierarchy<Contract> hierarchy = binder.hierarchy(key);
-        Assertions.assertNotNull(hierarchy);
+        assertThat(hierarchy).isNotNull();
 
-        Assertions.assertEquals(3, hierarchy.size());
+        assertThat(hierarchy.size()).isEqualTo(3);
 
         Option<InstantiationStrategy<Contract>> priorityZero = hierarchy.get(0);
-        Assertions.assertTrue(priorityZero.present());
-        Assertions.assertTrue(priorityZero.get() instanceof PrototypeConstructorInstantiationStrategy);
-        Assertions.assertSame(((PrototypeConstructorInstantiationStrategy<Contract>) priorityZero.get()).type(),
-            ImplementationA.class);
+        assertThat(priorityZero)
+                .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
+                .matches(Option::present)
+                .extracting(Option::get)
+                .asInstanceOf(InstanceOfAssertFactories.type(
+                        PrototypeConstructorInstantiationStrategy.class
+                ))
+                .extracting(PrototypeConstructorInstantiationStrategy::type)
+                .isSameAs(ImplementationA.class);
 
         Option<InstantiationStrategy<Contract>> priorityOne = hierarchy.get(1);
-        Assertions.assertTrue(priorityOne.present());
-        Assertions.assertTrue(priorityOne.get() instanceof PrototypeConstructorInstantiationStrategy);
-        Assertions.assertSame(((PrototypeConstructorInstantiationStrategy<Contract>) priorityOne.get()).type(),
-            ImplementationB.class);
+        assertThat(priorityOne)
+                .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
+                .matches(Option::present)
+                .extracting(Option::get)
+                .asInstanceOf(InstanceOfAssertFactories.type(
+                        PrototypeConstructorInstantiationStrategy.class
+                ))
+                .extracting(PrototypeConstructorInstantiationStrategy::type)
+                .isSameAs(ImplementationB.class);
 
         Option<InstantiationStrategy<Contract>> priorityTwo = hierarchy.get(2);
-        Assertions.assertTrue(priorityTwo.present());
-        Assertions.assertTrue(priorityTwo.get() instanceof PrototypeConstructorInstantiationStrategy);
-        Assertions.assertSame(((PrototypeConstructorInstantiationStrategy<Contract>) priorityTwo.get()).type(),
-            ImplementationC.class);
+        assertThat(priorityTwo)
+                .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
+                .matches(Option::present)
+                .extracting(Option::get)
+                .asInstanceOf(InstanceOfAssertFactories.type(
+                        PrototypeConstructorInstantiationStrategy.class
+                ))
+                .extracting(PrototypeConstructorInstantiationStrategy::type)
+                .isSameAs(ImplementationC.class);
     }
 
     @Test
-    void testContextCreatesHierarchy() {
+    void contextCreatesHierarchy() {
         HierarchicalBinder binder = this.binder();
         binder.bind(LocalContract.class).to(LocalObject.class);
 
         BindingHierarchy<LocalContract> hierarchy =
             binder.hierarchy(ComponentKey.of(LocalContract.class));
-        Assertions.assertNotNull(hierarchy);
-        Assertions.assertEquals(1, hierarchy.size());
+        assertThat(hierarchy).isNotNull();
+        assertThat(hierarchy.size()).isOne();
 
         Option<InstantiationStrategy<LocalContract>> provider =
             hierarchy.get(Priority.DEFAULT_PRIORITY);
-        Assertions.assertTrue(provider.present());
+        assertThat(provider.present()).isTrue();
 
         InstantiationStrategy<LocalContract> contractStrategy = provider.get();
         if (contractStrategy instanceof CompositeInstantiationStrategy<LocalContract> composite) {
@@ -117,9 +138,12 @@ public class BindingHierarchyTests {
             contractStrategy = composite.provider();
         }
 
-        Assertions.assertTrue(contractStrategy instanceof PrototypeConstructorInstantiationStrategy);
-        Assertions.assertSame(((PrototypeConstructorInstantiationStrategy<LocalContract>) contractStrategy).type(),
-            LocalObject.class);
+        assertThat(contractStrategy)
+                .asInstanceOf(InstanceOfAssertFactories.type(
+                        PrototypeConstructorInstantiationStrategy.class
+                ))
+                .extracting(PrototypeConstructorInstantiationStrategy::type)
+                .isSameAs(LocalObject.class);
     }
 
     interface LocalContract {

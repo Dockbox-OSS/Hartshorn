@@ -21,14 +21,15 @@ import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class SingletonCacheTests {
+class SingletonCacheTests {
 
     @Inject
     private ComponentProvider componentProvider;
@@ -41,24 +42,24 @@ public class SingletonCacheTests {
 
     @Test
     @DisplayName("Lazy singletons should be cached in the scoped singleton cache after request")
-    void testLazySingletonIsCachedAfterRequest() {
+    void lazySingletonIsCachedAfterRequest() {
         // Given
         ComponentKey<String> key = ComponentKey.of(String.class);
         this.binder.bind(key).lazySingleton(scope -> "Hello, World!");
 
         // Then
-        Assertions.assertFalse(this.cache.contains(key));
+        assertThat(this.cache.contains(key)).isFalse();
 
         // When
         this.componentProvider.get(key);
 
         // Then
-        Assertions.assertTrue(this.cache.contains(key));
+        assertThat(this.cache.contains(key)).isTrue();
     }
 
     @Test
     @DisplayName("Unprocessable non-lazy singletons should be cached in the scoped singleton cache after binding")
-    void testNonLazySingletonWithoutProcessingIsCachedAfterBinding() {
+    void nonLazySingletonWithoutProcessingIsCachedAfterBinding() {
         // Given
         ComponentKey<String> key = ComponentKey.of(String.class);
         this.binder.bind(key)
@@ -66,23 +67,23 @@ public class SingletonCacheTests {
             .singleton("Hello, World!");
 
         // Then
-        Assertions.assertTrue(this.cache.contains(key));
+        assertThat(this.cache.contains(key)).isTrue();
     }
 
     @Test
     @DisplayName("Singletons should not be cached in the scoped singleton cache if they require processing")
-    void testSingletonIsNotCachedIfProcessingIsRequired() {
+    void singletonIsNotCachedIfProcessingIsRequired() {
         // Given
         ComponentKey<String> key = ComponentKey.of(String.class);
         this.binder.bind(key).singleton("Hello, World!");
 
         // Then
-        Assertions.assertFalse(this.cache.contains(key));
+        assertThat(this.cache.contains(key)).isFalse();
 
         // When
         this.componentProvider.get(key);
 
         // Then
-        Assertions.assertTrue(this.cache.contains(key));
+        assertThat(this.cache.contains(key)).isTrue();
     }
 }

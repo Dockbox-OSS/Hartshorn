@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -31,8 +30,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ResourceLookupTests {
+class ResourceLookupTests {
 
     @Inject
     private ResourceLookup resourceLookup;
@@ -41,32 +42,34 @@ public class ResourceLookupTests {
     private FileSystemProvider fileSystemProvider;
 
     @Test
-    void testClasspathLookup() {
+    void classpathLookup() {
         this.testResourceLookup("classpath:sample.txt");
     }
 
     @Test
-    void testFilesystemLookup() throws IOException {
+    void filesystemLookup() throws Exception {
         this.createLocalFile();
         this.testResourceLookup("fs:sample.txt");
     }
 
     @Test
-    void testUnnamedResourceLookup() throws IOException {
+    void unnamedResourceLookup() throws Exception {
         this.createLocalFile();
         this.testResourceLookup("sample.txt");
     }
 
     private void testResourceLookup(String path) {
         Set<URI> lookup = this.resourceLookup.lookup(path);
-        Assertions.assertFalse(lookup.isEmpty());
-        Assertions.assertEquals(1, lookup.size());
+        assertThat(lookup)
+                .isNotEmpty()
+                .hasSize(1);
 
         URI uri = CollectionUtilities.first(lookup);
         File file = new File(uri);
 
-        Assertions.assertEquals("sample.txt", file.getName());
-        Assertions.assertTrue(file.exists());
+        assertThat(file)
+                .hasName("sample.txt")
+                .exists();
     }
 
     private void createLocalFile() throws IOException {

@@ -24,15 +24,16 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import org.dockbox.hartshorn.properties.loader.path.StandardPropertyPathStyle;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-public class ProfileNameResolverTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ProfileNameResolverTests {
 
     @Test
-    void testFromPropertyProfileNameResolver_SupportsListValue() {
+    void fromPropertyProfileNameResolverSupportsListValue() {
         PropertyRegistry registry = new MapPropertyRegistry();
         PropertyPathStyle style = StandardPropertyPathStyle.INSTANCE;
 
@@ -49,13 +50,14 @@ public class ProfileNameResolverTests {
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
         Set<String> profileNames = resolver.resolveProfileNames(registry);
 
-        Assertions.assertEquals(2, profileNames.size());
-        Assertions.assertTrue(profileNames.contains("development"));
-        Assertions.assertTrue(profileNames.contains("testing"));
+        assertThat(profileNames)
+                .hasSize(2)
+                .contains("development")
+                .contains("testing");
     }
 
     @Test
-    void testFromPropertyProfileNameResolver_SupportsCommaSeparatedValue() {
+    void fromPropertyProfileNameResolverSupportsCommaSeparatedValue() {
         PropertyRegistry registry = new MapPropertyRegistry();
 
         ConfiguredProperty profiles = new SingleConfiguredProperty(
@@ -65,17 +67,17 @@ public class ProfileNameResolverTests {
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
         Set<String> profileNames = resolver.resolveProfileNames(registry);
 
-        Assertions.assertEquals(2, profileNames.size());
-        Assertions.assertTrue(profileNames.contains("development"));
-        Assertions.assertTrue(profileNames.contains("testing"));
+        assertThat(profileNames)
+                .hasSize(2)
+                .contains("development")
+                .contains("testing");
     }
 
     @Test
-    void testFromPropertyProfileNameResolver_SupportsAbsentProperty() {
+    void fromPropertyProfileNameResolverSupportsAbsentProperty() {
         PropertyRegistry registry = new MapPropertyRegistry();
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
-        Set<String> profileNames =
-            Assertions.assertDoesNotThrow(() -> resolver.resolveProfileNames(registry));
-        Assertions.assertTrue(profileNames.isEmpty());
+        Set<String> profileNames = resolver.resolveProfileNames(registry);
+        assertThat(profileNames).isEmpty();
     }
 }

@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -30,13 +31,15 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class FunctionStatementInterpreterTests {
+class FunctionStatementInterpreterTests {
 
     @Test
     void regularFunctionWithoutExplicitReturnDeclarationIsDefined(
@@ -50,16 +53,17 @@ public class FunctionStatementInterpreterTests {
         helper.interpret();
 
         Object greet = helper.findVariable("greet");
-        VirtualFunction greetFunction = Assertions.assertInstanceOf(VirtualFunction.class, greet);
-        Assertions.assertEquals(ReturnStatement.ReturnType.RETURN, greetFunction.returnType());
+        VirtualFunction greetFunction = assertThat(greet)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualFunction.class))
+                .actual();
+        assertThat(greetFunction.returnType()).isEqualTo(ReturnStatement.ReturnType.RETURN);
 
-        FunctionStatement functionStatement = Assertions.assertInstanceOf(
-            FunctionStatement.class,
-            greetFunction.declaration()
-        );
-        Assertions.assertEquals("greet", functionStatement.name().lexeme());
-        Assertions.assertEquals(1, functionStatement.parameters().size());
-        Assertions.assertEquals("name", functionStatement.parameters().getFirst().name().lexeme());
+        FunctionStatement functionStatement = assertThat(greetFunction.declaration())
+                .asInstanceOf(InstanceOfAssertFactories.type(FunctionStatement.class))
+                .actual();
+        assertThat(functionStatement.name().lexeme()).isEqualTo("greet");
+        assertThat(functionStatement.parameters()).hasSize(1);
+        assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("name");
     }
 
     @Test
@@ -79,16 +83,17 @@ public class FunctionStatementInterpreterTests {
         helper.interpret();
 
         Object greet = helper.findVariable("greet");
-        VirtualFunction greetFunction = Assertions.assertInstanceOf(VirtualFunction.class, greet);
-        Assertions.assertEquals(ReturnStatement.ReturnType.RETURN, greetFunction.returnType());
+        VirtualFunction greetFunction = assertThat(greet)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualFunction.class))
+                .actual();
+        assertThat(greetFunction.returnType()).isEqualTo(ReturnStatement.ReturnType.RETURN);
 
-        FunctionStatement functionStatement = Assertions.assertInstanceOf(
-            FunctionStatement.class,
-            greetFunction.declaration()
-        );
-        Assertions.assertEquals("greet", functionStatement.name().lexeme());
-        Assertions.assertEquals(1, functionStatement.parameters().size());
-        Assertions.assertEquals("name", functionStatement.parameters().getFirst().name().lexeme());
+        FunctionStatement functionStatement = assertThat(greetFunction.declaration())
+                .asInstanceOf(InstanceOfAssertFactories.type(FunctionStatement.class))
+                .actual();
+        assertThat(functionStatement.name().lexeme()).isEqualTo("greet");
+        assertThat(functionStatement.parameters()).hasSize(1);
+        assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("name");
     }
 
     @Test
@@ -104,21 +109,22 @@ public class FunctionStatementInterpreterTests {
         helper.interpret();
 
         Object greet = helper.findVariable("greet");
-        VirtualFunction greetFunction = Assertions.assertInstanceOf(VirtualFunction.class, greet);
-        Assertions.assertEquals(ReturnStatement.ReturnType.RETURN, greetFunction.returnType());
-        FunctionStatement functionStatement = Assertions.assertInstanceOf(
-            FunctionStatement.class,
-            greetFunction.declaration()
-        );
-        Assertions.assertEquals("greet", functionStatement.name().lexeme());
-        Assertions.assertEquals(1, functionStatement.parameters().size());
-        Assertions.assertEquals("name", functionStatement.parameters().getFirst().name().lexeme());
+        VirtualFunction greetFunction = assertThat(greet)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualFunction.class))
+                .actual();
+        assertThat(greetFunction.returnType()).isEqualTo(ReturnStatement.ReturnType.RETURN);
+        FunctionStatement functionStatement = assertThat(greetFunction.declaration())
+                .asInstanceOf(InstanceOfAssertFactories.type(FunctionStatement.class))
+                .actual();
+        assertThat(functionStatement.name().lexeme()).isEqualTo("greet");
+        assertThat(functionStatement.parameters()).hasSize(1);
+        assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("name");
 
         Option<FunctionParserContext> functionParserContext = helper.context().parser()
             .firstContext(FunctionParserContext.class);
-        Assertions.assertTrue(functionParserContext.present());
+        assertThat(functionParserContext.present()).isTrue();
         FunctionParserContext context = functionParserContext.get();
-        Assertions.assertTrue(context.prefixFunctions().contains("greet"));
+        assertThat(context.prefixFunctions()).contains("greet");
     }
 
     @Test
@@ -133,10 +139,7 @@ public class FunctionStatementInterpreterTests {
             .statementParser(new BlockStatementParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X);
     }
 
@@ -152,10 +155,7 @@ public class FunctionStatementInterpreterTests {
             .statementParser(new BlockStatementParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(error,
             DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
     }
@@ -172,23 +172,23 @@ public class FunctionStatementInterpreterTests {
         helper.interpret();
 
         Object combine = helper.findVariable("combine");
-        VirtualFunction combineFunction =
-            Assertions.assertInstanceOf(VirtualFunction.class, combine);
-        Assertions.assertEquals(ReturnStatement.ReturnType.RETURN, combineFunction.returnType());
-        FunctionStatement functionStatement = Assertions.assertInstanceOf(
-            FunctionStatement.class,
-            combineFunction.declaration()
-        );
-        Assertions.assertEquals("combine", functionStatement.name().lexeme());
-        Assertions.assertEquals(2, functionStatement.parameters().size());
-        Assertions.assertEquals("a", functionStatement.parameters().getFirst().name().lexeme());
-        Assertions.assertEquals("b", functionStatement.parameters().getLast().name().lexeme());
+        VirtualFunction combineFunction = assertThat(combine)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualFunction.class))
+                .actual();
+        assertThat(combineFunction.returnType()).isEqualTo(ReturnStatement.ReturnType.RETURN);
+        FunctionStatement functionStatement = assertThat(combineFunction.declaration())
+                .asInstanceOf(InstanceOfAssertFactories.type(FunctionStatement.class))
+                .actual();
+        assertThat(functionStatement.name().lexeme()).isEqualTo("combine");
+        assertThat(functionStatement.parameters()).hasSize(2);
+        assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("a");
+        assertThat(functionStatement.parameters().getLast().name().lexeme()).isEqualTo("b");
 
         Option<FunctionParserContext> functionParserContext = helper.context().parser()
             .firstContext(FunctionParserContext.class);
-        Assertions.assertTrue(functionParserContext.present());
+        assertThat(functionParserContext.present()).isTrue();
         FunctionParserContext context = functionParserContext.get();
-        Assertions.assertTrue(context.infixFunctions().contains("combine"));
+        assertThat(context.infixFunctions()).contains("combine");
     }
 
     @Test
@@ -203,10 +203,7 @@ public class FunctionStatementInterpreterTests {
             .statementParser(new BlockStatementParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X);
     }
 
@@ -222,10 +219,7 @@ public class FunctionStatementInterpreterTests {
             .statementParser(new BlockStatementParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(error,
             DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
     }

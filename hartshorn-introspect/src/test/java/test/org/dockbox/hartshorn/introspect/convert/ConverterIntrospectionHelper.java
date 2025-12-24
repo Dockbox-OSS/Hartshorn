@@ -16,12 +16,6 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
@@ -29,8 +23,17 @@ import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
+
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ConverterIntrospectionHelper {
 
@@ -40,7 +43,7 @@ public class ConverterIntrospectionHelper {
     ) {
         return createIntrospectorForCollection(type,
             supplier,
-            capacity -> Assertions.fail("Unexpected call to capacity constructor"));
+                _ -> fail("Unexpected call to capacity constructor"));
     }
 
     public static <T extends Collection<?>> Introspector createIntrospectorForCollection(
@@ -74,16 +77,14 @@ public class ConverterIntrospectionHelper {
     ) {
         try {
             Constructor<T> defaultConstructor = type.getConstructor();
-            Assertions.assertNotNull(defaultConstructor);
+            assertThat(defaultConstructor).isNotNull();
 
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(defaultConstructor));
-            try {
-                Mockito.when(constructorView.create()).thenAnswer(invocation -> supplier.get());
-            }
-            catch (Throwable throwable) {
-                Assertions.fail("On-going stub yielded an unexpected exception", throwable);
-            }
+            assertThatCode(() -> {
+                Mockito.when(constructorView.create()).thenAnswer(_ -> supplier.get());
+            }).withFailMessage("On-going stub yielded an unexpected exception")
+                    .doesNotThrowAnyException();
 
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.of(constructorView));
         }
@@ -99,17 +100,15 @@ public class ConverterIntrospectionHelper {
     ) {
         try {
             Constructor<T> capacityConstructor = type.getConstructor(int.class);
-            Assertions.assertNotNull(capacityConstructor);
+            assertThat(capacityConstructor).isNotNull();
 
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(capacityConstructor));
-            try {
+            assertThatCode(() -> {
                 Mockito.when(constructorView.create(Mockito.anyInt()))
                     .thenAnswer(invocation -> supplier.apply((int) invocation.getArguments()[0]));
-            }
-            catch (Throwable throwable) {
-                Assertions.fail("On-going stub yielded an unexpected exception", throwable);
-            }
+            }).withFailMessage("On-going stub yielded an unexpected exception")
+                    .doesNotThrowAnyException();
 
             Mockito.when(constructors.withParameters(int.class))
                 .thenReturn(Option.of(constructorView));

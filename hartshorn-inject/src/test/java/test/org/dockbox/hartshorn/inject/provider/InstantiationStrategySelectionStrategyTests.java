@@ -30,14 +30,16 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
 import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MinimumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InstantiationStrategySelectionStrategyTests {
 
@@ -73,75 +75,76 @@ public class InstantiationStrategySelectionStrategyTests {
 
     @ParameterizedTest
     @MethodSource("strategies")
-    void testStrategySelectsNullIfEmpty() {
+    void strategySelectsNullIfEmpty() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
         ProviderSelectionStrategy strategy = new MaximumPriorityProviderSelectionStrategy(0);
         InstantiationStrategy<?> provider = strategy.selectProvider(hierarchy);
-        Assertions.assertNull(provider);
+        assertThat(provider).isNull();
     }
 
     @Test
-    void testMaximumPriorityStrategySelectsMaximumExclusive() {
+    void maximumPriorityStrategySelectsMaximumExclusive() throws Exception {
         ProviderSelectionStrategy strategy = new MaximumPriorityProviderSelectionStrategy(1);
         this.assertValueWithStrategy(PRIORITY_ZERO_VALUE, strategy);
     }
 
     @Test
-    void testMaximumPriorityStrategySelectsNullIfOutOfRange() {
+    void maximumPriorityStrategySelectsNullIfOutOfRange() throws Exception {
         ProviderSelectionStrategy strategy = new MaximumPriorityProviderSelectionStrategy(-2);
         this.assertValueWithStrategy(null, strategy);
     }
 
     @Test
-    void testExactPriorityStrategySelectsExact() {
+    void exactPriorityStrategySelectsExact() throws Exception {
         ProviderSelectionStrategy strategy = new ExactPriorityProviderSelectionStrategy(0);
         this.assertValueWithStrategy(PRIORITY_ZERO_VALUE, strategy);
     }
 
     @Test
-    void testExactPriorityStrategySelectsNullIfOutOfRange() {
+    void exactPriorityStrategySelectsNullIfOutOfRange() throws Exception {
         ProviderSelectionStrategy strategy = new ExactPriorityProviderSelectionStrategy(-2);
         this.assertValueWithStrategy(null, strategy);
     }
 
     @Test
-    void testMinimumPriorityStrategySelectsMinimumInclusive() {
+    void minimumPriorityStrategySelectsMinimumInclusive() throws Exception {
         ProviderSelectionStrategy strategy = new MinimumPriorityProviderSelectionStrategy(1);
         this.assertValueWithStrategy(PRIORITY_ONE_VALUE, strategy);
     }
 
     @Test
-    void testMinimumPriorityStrategySelectsNullIfOutOfRange() {
+    void minimumPriorityStrategySelectsNullIfOutOfRange() throws Exception {
         ProviderSelectionStrategy strategy = new MinimumPriorityProviderSelectionStrategy(3);
         this.assertValueWithStrategy(null, strategy);
     }
 
     @Test
-    void testHighestPriorityStrategySelectsHighest() {
+    void highestPriorityStrategySelectsHighest() throws Exception {
         ProviderSelectionStrategy strategy = new HighestPriorityProviderSelectionStrategy();
         this.assertValueWithStrategy(PRIORITY_TWO_VALUE, strategy);
     }
 
-    protected void assertValueWithStrategy(String expected, ProviderSelectionStrategy strategy) {
+    protected void assertValueWithStrategy(String expected, ProviderSelectionStrategy strategy) throws ApplicationException {
         BindingHierarchy<?> hierarchy = this.createHierarchy();
 
         InstantiationStrategy<?> provider = strategy.selectProvider(hierarchy);
         if (expected == null) {
-            Assertions.assertNull(provider);
-            return;
+            assertThat(provider).isNull();
         }
         else {
-            Assertions.assertNotNull(provider);
+            assertThat(provider).isNotNull();
 
             // Don't need to provide application, all bindings are contextless singletons
-            Option<? extends ObjectContainer<?>> value = Assertions.assertDoesNotThrow(() -> {
-                return provider.provide(null, ComponentRequestContext.createForComponent(), null);
-            });
-            Assertions.assertTrue(value.present());
+            Option<? extends ObjectContainer<?>> value = provider.provide(
+                    null,
+                    ComponentRequestContext.createForComponent(),
+                    null
+            );
+            assertThat(value.present()).isTrue();
 
             ObjectContainer<?> container = value.get();
             Object instance = container.instance();
-            Assertions.assertEquals(expected, instance);
+            assertThat(instance).isEqualTo(expected);
         }
     }
 }

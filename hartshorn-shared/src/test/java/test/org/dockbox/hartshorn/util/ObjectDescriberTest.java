@@ -18,25 +18,26 @@ package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.describe.ObjectDescriptionStyle;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjectDescriberTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ObjectDescriberTest {
 
     @Test
-    void testStyle() {
+    void style() {
         String description = ObjectDescriber.of(new Object(), new TestObjectDescriptionStyle())
             .field("field1", "value1")
             .field("field2", "value2")
             .describe();
 
         String[] descriptionElements = description.split("\\+");
-        Assertions.assertEquals(5, descriptionElements.length);
-        Assertions.assertEquals(TestObjectDescriptionStyle.START, descriptionElements[0]);
-        Assertions.assertEquals("FIELD:field1:value1", descriptionElements[1]);
-        Assertions.assertEquals(TestObjectDescriptionStyle.FIELD_SEPARATOR, descriptionElements[2]);
-        Assertions.assertEquals("FIELD:field2:value2", descriptionElements[3]);
-        Assertions.assertEquals(TestObjectDescriptionStyle.END, descriptionElements[4]);
+        assertThat(descriptionElements.length).isEqualTo(5);
+        assertThat(descriptionElements[0]).isEqualTo(TestObjectDescriptionStyle.START);
+        assertThat(descriptionElements[1]).isEqualTo("FIELD:field1:value1");
+        assertThat(descriptionElements[2]).isEqualTo(TestObjectDescriptionStyle.FIELD_SEPARATOR);
+        assertThat(descriptionElements[3]).isEqualTo("FIELD:field2:value2");
+        assertThat(descriptionElements[4]).isEqualTo(TestObjectDescriptionStyle.END);
     }
 
     private static class TestObjectDescriptionStyle implements ObjectDescriptionStyle {

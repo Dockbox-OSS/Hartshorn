@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -41,6 +40,9 @@ import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class AssignExpressionTests {
@@ -57,7 +59,7 @@ public class AssignExpressionTests {
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(
+    void assignmentToDefinedVariable(
         Function<Interpreter, VariableScope> variableScopeFunction
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
@@ -72,11 +74,11 @@ public class AssignExpressionTests {
         Object interpreted = helper
             .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
             .interpretValue();
-        Assertions.assertEquals("newValue", interpreted);
+        assertThat(interpreted).isEqualTo("newValue");
 
         VariableScope scope = variableScopeFunction.apply(helper.interpreter());
         Object variableValue = scope.get(Token.of(LiteralTokenType.IDENTIFIER, "variable").build());
-        Assertions.assertEquals("newValue", variableValue);
+        assertThat(variableValue).isEqualTo("newValue");
     }
 
     @Test
@@ -84,7 +86,7 @@ public class AssignExpressionTests {
         PropertyContainer container = Mockito.mock(PropertyContainer.class);
         Mockito.doAnswer(invocation -> {
             Object value = invocation.getArgument(2);
-            Assertions.assertEquals(42d, value);
+            assertThat(value).isEqualTo(42d);
             return null;
         }).when(container).set(
             Mockito.any(Interpreter.class),
@@ -103,7 +105,7 @@ public class AssignExpressionTests {
                 .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals(42d, value);
+        assertThat(value).isEqualTo(42d);
 
         Mockito.verify(container).set(
             Mockito.eq(helper.interpreter()),
@@ -114,7 +116,7 @@ public class AssignExpressionTests {
     }
 
     @Test
-    void testAssignmentToUndefinedVariable() {
+    void assignmentToUndefinedVariable() {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 variable = "newValue"
                 """)
@@ -123,7 +125,7 @@ public class AssignExpressionTests {
             .expressionParser(new IdentifierExpressionParser())
             .build();
 
-        Assertions.assertThrows(ScriptEvaluationError.class, () -> helper
+        assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(() -> helper
             .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
             .interpretValue());
     }

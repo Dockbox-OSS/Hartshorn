@@ -23,43 +23,44 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(
     includeBasePackages = false,
     componentPostProcessors = SimpleContextConfiguringComponentProcessor.class
 )
-public class ContextConfiguringComponentProcessorTests {
+class ContextConfiguringComponentProcessorTests {
 
     @Test
     @TestComponents(EmptyComponent.class)
-    void testNonContextComponentIsProcessed(
+    void nonContextComponentIsProcessed(
         @Inject EmptyComponent emptyComponent,
         @Inject ProxyOrchestrator proxyOrchestrator
     ) {
-        Assertions.assertNotNull(emptyComponent);
-        Assertions.assertTrue(proxyOrchestrator.isProxy(emptyComponent));
+        assertThat(emptyComponent).isNotNull();
+        assertThat(proxyOrchestrator.isProxy(emptyComponent)).isTrue();
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
         Option<SimpleContext> context =
             component.manager().firstContext(ContextKey.of(SimpleContext.class));
-        Assertions.assertTrue(context.present());
-        Assertions.assertEquals("Foo", context.get().value());
+        assertThat(context.present()).isTrue();
+        assertThat(context.get().value()).isEqualTo("Foo");
     }
 
     @Test
     @TestComponents(ContextComponent.class)
-    void testContextComponentIsProcessed(
+    void contextComponentIsProcessed(
         @Inject ContextComponent contextComponent,
         @Inject ProxyOrchestrator proxyOrchestrator
     ) {
-        Assertions.assertNotNull(contextComponent);
-        Assertions.assertFalse(proxyOrchestrator.isProxy(contextComponent));
+        assertThat(contextComponent).isNotNull();
+        assertThat(proxyOrchestrator.isProxy(contextComponent)).isFalse();
 
         Option<SimpleContext> context =
             contextComponent.firstContext(ContextKey.of(SimpleContext.class));
-        Assertions.assertTrue(context.present());
-        Assertions.assertEquals("Foo", context.get().value());
+        assertThat(context.present()).isTrue();
+        assertThat(context.get().value()).isEqualTo("Foo");
     }
 }

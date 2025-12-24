@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
@@ -28,7 +29,6 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,6 +36,8 @@ import test.org.dockbox.hartshorn.hsl.support.CaptureModule;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class FieldStatementInterpreterTests {
@@ -94,7 +96,9 @@ public class FieldStatementInterpreterTests {
 
     private static void assertFieldInitialized(HSLTestHelper helper, Object expected) {
         Object value = helper.captures().capturedValue();
-        VirtualInstance instance = Assertions.assertInstanceOf(VirtualInstance.class, value);
+        VirtualInstance instance = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(VirtualInstance.class))
+                .actual();
         Token ageToken = Token.of(LiteralTokenType.IDENTIFIER)
             .lexeme("age")
             .build();
@@ -104,6 +108,6 @@ public class FieldStatementInterpreterTests {
             // Class scope, to ensure private fields are accessible
             instance.virtualClass().variableScope()
         );
-        Assertions.assertEquals(expected, age);
+        assertThat(age).isEqualTo(expected);
     }
 }

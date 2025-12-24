@@ -21,13 +21,14 @@ import org.dockbox.hartshorn.hsl.parser.expression.UnaryExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class UnaryExpressionTests {
@@ -54,7 +55,7 @@ public class UnaryExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals(expected, value);
+        assertThat(value).isEqualTo(expected);
     }
 
     public static Stream<Arguments> logicalCases() {

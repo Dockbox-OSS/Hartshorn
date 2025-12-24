@@ -24,15 +24,17 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ArrayGetExpressionTests {
+class ArrayGetExpressionTests {
 
     @Test
-    void testArrayGetExpressionCanGetIfInRange(@Inject ApplicationContext applicationContext) {
+    void arrayGetExpressionCanGetIfInRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[0]")
             .expressionParser(new LiteralExpressionParser())
@@ -44,11 +46,11 @@ public class ArrayGetExpressionTests {
             ArrayGetExpression.class,
             new ArrayGetExpressionInterpreter()
         ).interpretValue();
-        Assertions.assertSame(realArray[0], interpretedValue);
+        assertThat(interpretedValue).isSameAs(realArray[0]);
     }
 
     @Test
-    void testArrayGetExpressionThrowsIfOutOfRange(@Inject ApplicationContext applicationContext) {
+    void arrayGetExpressionThrowsIfOutOfRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[1]")
             .expressionParser(new LiteralExpressionParser())
@@ -56,11 +58,10 @@ public class ArrayGetExpressionTests {
             .defineLocal("array", new Array(realArray))
             .build();
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+        assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class).isThrownBy(() ->
             helper.evaluateWith(
                 ArrayGetExpression.class,
                 new ArrayGetExpressionInterpreter()
-            ).interpretValue();
-        });
+            ).interpretValue());
     }
 }

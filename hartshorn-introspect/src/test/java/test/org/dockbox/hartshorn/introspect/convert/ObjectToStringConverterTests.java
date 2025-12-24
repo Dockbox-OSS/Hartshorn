@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,49 +18,42 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToStringConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjectToStringConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ObjectToStringConverterTests {
 
     @Test
-    void testNullCanBeConverted() {
+    void nullCanBeConverted() {
         Object element = null;
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof String);
-        Assertions.assertEquals("null", converted);
+        assertThat(converted).isEqualTo("null");
     }
 
     @Test
-    void testStringElementCanBeConvertedAndNotEscaped() {
+    void stringElementCanBeConvertedAndNotEscaped() {
         String element = "test";
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof String);
-        Assertions.assertEquals(element, converted);
+        assertThat(converted).isEqualTo(element);
     }
 
     @Test
-    void testNonNullElementCanBeConverted() {
+    void nonNullElementCanBeConverted() {
         Object element = new Object();
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof String);
-        Assertions.assertEquals(element.toString(), converted);
+        assertThat(converted).isEqualTo(element.toString());
     }
 
     @Test
-    void testToStringIsUsedForObjects() {
+    void toStringIsUsedForObjects() {
         Object element = new TestClass("test");
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof String);
-        Assertions.assertEquals("{toStringResult:test}", converted);
+        assertThat(converted).isEqualTo("{toStringResult:test}");
     }
 
     private record TestClass(String test) {

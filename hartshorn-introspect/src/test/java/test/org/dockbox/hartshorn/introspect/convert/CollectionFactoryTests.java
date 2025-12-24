@@ -32,77 +32,79 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import org.dockbox.hartshorn.util.introspect.Introspector;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.util.introspect.convert.support.collections.CollectionFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")
-public class CollectionFactoryTests {
+class CollectionFactoryTests {
 
     @Test
-    public void testCreateCollectionWithArrayList() {
+    void createCollectionWithArrayList() {
         List<Integer> list =
             this.createDefaultFactory().createCollection(List.class, Integer.class);
-        Assertions.assertInstanceOf(ArrayList.class, list);
-        Assertions.assertEquals(list.size(), 0);
+        assertThat(list).isInstanceOf(ArrayList.class);
+        assertThat(list).isEmpty();
     }
 
     @Test
-    public void testCreateCollectionWithHashSet() {
+    void createCollectionWithHashSet() {
         Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class);
-        Assertions.assertInstanceOf(HashSet.class, set);
-        Assertions.assertEquals(set.size(), 0);
+        assertThat(set).isInstanceOf(HashSet.class);
+        assertThat(set).isEmpty();
     }
 
     @Test
-    public void testCreateCollectionWithTreeSet() {
+    void createCollectionWithTreeSet() {
         SortedSet<Double> sortedSet =
             this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
-        Assertions.assertInstanceOf(TreeSet.class, sortedSet);
-        Assertions.assertEquals(sortedSet.size(), 0);
+        assertThat(sortedSet).isInstanceOf(TreeSet.class);
+        assertThat(sortedSet).isEmpty();
     }
 
     @Test
-    public void testCreateCollectionWithLinkedList() {
+    void createCollectionWithLinkedList() {
         Queue<Boolean> queue =
             this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
-        Assertions.assertInstanceOf(LinkedList.class, queue);
-        Assertions.assertEquals(queue.size(), 0);
+        assertThat(queue).isInstanceOf(LinkedList.class);
+        assertThat(queue).isEmpty();
     }
 
     @Test
-    public void testCreateCollectionWithEnumSet() {
+    void createCollectionWithEnumSet() {
         CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
         EnumSet<Color> enumSet = factory.createCollection(EnumSet.class, Color.class, 2);
-        Assertions.assertInstanceOf(EnumSet.class, enumSet);
-        Assertions.assertEquals(enumSet.size(), 0);
+        assertThat(enumSet).isInstanceOf(EnumSet.class);
+        assertThat(enumSet).isEmpty();
     }
 
     @Test
-    public void testInitialCapacityIsConfigured() {
+    void initialCapacityIsConfigured() {
         int initialCapacity = 23;
         CollectionFactory factory = this.createFactory(Vector.class, Vector::new, Vector::new);
         Vector<String> enumSet =
             factory.createCollection(Vector.class, String.class, initialCapacity);
-        Assertions.assertInstanceOf(Vector.class, enumSet);
-        Assertions.assertEquals(enumSet.size(), 0);
-        Assertions.assertEquals(enumSet.capacity(), initialCapacity);
+        assertThat(enumSet).isInstanceOf(Vector.class);
+        assertThat(enumSet).isEmpty();
+        assertThat(initialCapacity).isEqualTo(enumSet.capacity());
     }
 
     @Test
-    public void testCreateCollectionWithUnsupportedInterface() {
+    void createCollectionWithUnsupportedInterface() {
         CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> factory.createCollection(BeanContext.class, Integer.class, 0));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> factory.createCollection(BeanContext.class, Integer.class, 0));
     }
 
     @Test
-    public void testCreateCollectionWithConcreteImplementation() {
+    void createCollectionWithConcreteImplementation() {
         CollectionFactory factory = this.createFactory(LinkedList.class, LinkedList::new);
         List<Integer> list = factory.createCollection(LinkedList.class, Integer.class, 0);
-        Assertions.assertInstanceOf(LinkedList.class, list);
-        Assertions.assertEquals(list.size(), 0);
+        assertThat(list).isInstanceOf(LinkedList.class);
+        assertThat(list).isEmpty();
     }
 
     private <T extends Collection<?>> CollectionFactory createFactory(

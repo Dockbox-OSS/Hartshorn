@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,34 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionalConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SuppressWarnings("rawtypes")
-public class ObjectToOptionalConverterTests {
+class ObjectToOptionalConverterTests {
 
     @Test
-    void testNonNullElementConvertsToPresentOptional() {
+    void nonNullElementConvertsToPresentOptional() {
         String element = "test";
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Optional);
-        Assertions.assertTrue(((Optional) converted).isPresent());
-        Assertions.assertEquals(element, ((Optional) converted).get());
+        assertThat(converted)
+            .asInstanceOf(InstanceOfAssertFactories.optional(String.class)).hasValue(element);
     }
 
     @Test
-    void testNullElementConvertsToEmptyOptional() {
+    void nullElementConvertsToEmptyOptional() {
         Object element = null;
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Optional);
-        Assertions.assertFalse(((Optional) converted).isPresent());
+        assertThat(converted)
+                .asInstanceOf(InstanceOfAssertFactories.optional(String.class))
+                .isEmpty();
     }
 }

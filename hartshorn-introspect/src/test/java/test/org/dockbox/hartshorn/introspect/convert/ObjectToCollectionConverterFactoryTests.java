@@ -16,41 +16,44 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import java.util.Collection;
-import java.util.Set;
-
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToCollectionConverterFactory;
-import org.junit.jupiter.api.Assertions;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("rawtypes")
-public class ObjectToCollectionConverterFactoryTests {
+import java.util.Collection;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ObjectToCollectionConverterFactoryTests {
 
     @Test
-    void testNonNullElementCanBeConverted() {
+    void nonNullElementCanBeConverted() {
         String element = "test";
         Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Set);
-        Assertions.assertEquals(1, ((Collection) converted).size());
-        Assertions.assertEquals(element, CollectionUtilities.first((Iterable) converted));
+        assertThat(converted).isInstanceOf(Set.class)
+                .asInstanceOf(InstanceOfAssertFactories.set(String.class))
+                .hasSize(1)
+                .first()
+                .isEqualTo(element);
     }
 
     @Test
-    void testPrimitiveCanBeConverted() {
+    void primitiveCanBeConverted() {
         int element = 1;
         Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Set);
-        Assertions.assertEquals(1, ((Collection) converted).size());
-        Assertions.assertEquals(element, CollectionUtilities.first((Iterable) converted));
+        assertThat(converted)
+                .isInstanceOf(Set.class)
+                .asInstanceOf(InstanceOfAssertFactories.set(int.class))
+                .hasSize(1)
+                .first()
+                .isEqualTo(element);
     }
 
     private static Converter<Object, Set<String>> createConverter() {

@@ -25,15 +25,17 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ArraySetExpressionTests {
+class ArraySetExpressionTests {
 
     @Test
-    void testSetWithinArrayRange(@Inject ApplicationContext applicationContext) {
+    void setWithinArrayRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
@@ -48,13 +50,13 @@ public class ArraySetExpressionTests {
         Object interpreted = helper
             .evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
             .interpretValue();
-        Assertions.assertEquals("value", interpreted);
-        Assertions.assertEquals("value", hslArray.value(0));
-        Assertions.assertEquals("value", realArray[0]);
+        assertThat(interpreted).isEqualTo("value");
+        assertThat(hslArray.value(0)).isEqualTo("value");
+        assertThat(realArray[0]).isEqualTo("value");
     }
 
     @Test
-    void testSetOutsideRangeThrowsOutOfBounds(@Inject ApplicationContext applicationContext) {
+    void setOutsideRangeThrowsOutOfBounds(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
@@ -66,11 +68,10 @@ public class ArraySetExpressionTests {
             .defineLocal("array", hslArray)
             .build();
 
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+        assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
             helper.evaluateWith(
                 ArraySetExpression.class,
                 new ArraySetExpressionInterpreter()
-            ).interpretValue();
-        });
+            ).interpretValue());
     }
 }

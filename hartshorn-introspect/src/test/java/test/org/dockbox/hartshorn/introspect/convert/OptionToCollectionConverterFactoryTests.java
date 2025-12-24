@@ -20,37 +20,39 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToCollectionConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OptionToCollectionConverterFactoryTests {
+class OptionToCollectionConverterFactoryTests {
 
     @Test
-    void testEmptyOptionalConvertsToEmptyCollection() {
+    void emptyOptionalConvertsToEmptyCollection() {
         Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Option.empty();
 
         Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted.isEmpty());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isEmpty();
     }
 
     @Test
-    void testPresentOptionalConvertsToCollectionWithElement() {
+    void presentOptionalConvertsToCollectionWithElement() {
         Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Option.of("test");
 
         Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted.isEmpty());
-        Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", CollectionUtilities.first(converted));
+        assertThat(converted)
+                .isNotEmpty()
+                .hasSize(1);
+        assertThat(CollectionUtilities.first(converted)).isEqualTo("test");
     }
 
     @SuppressWarnings("NonApiType")

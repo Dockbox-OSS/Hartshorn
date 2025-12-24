@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayComprehensionExpressionInterpreter;
@@ -26,7 +27,6 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,6 +34,8 @@ import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ArrayComprehensionExpressionTests {
@@ -66,9 +68,11 @@ public class ArrayComprehensionExpressionTests {
             ArrayComprehensionExpression.class,
             new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, interpreted);
-        Assertions.assertEquals(1, array.length());
-        Assertions.assertEquals("test", array.value(0));
+        Array array = assertThat(interpreted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isOne();
+        assertThat(array.value(0)).isEqualTo("test");
     }
 
     @ParameterizedTest
@@ -88,9 +92,11 @@ public class ArrayComprehensionExpressionTests {
             ArrayComprehensionExpression.class,
             new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, interpreted);
-        Assertions.assertEquals(1, array.length());
-        Assertions.assertEquals("test2", array.value(0));
+        Array array = assertThat(interpreted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isOne();
+        assertThat(array.value(0)).isEqualTo("test2");
     }
 
     @ParameterizedTest
@@ -109,8 +115,10 @@ public class ArrayComprehensionExpressionTests {
             ArrayComprehensionExpression.class,
             new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, interpreted);
-        Assertions.assertEquals(0, array.length());
+        Array array = assertThat(interpreted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isZero();
     }
 
     @ParameterizedTest
@@ -129,8 +137,10 @@ public class ArrayComprehensionExpressionTests {
             ArrayComprehensionExpression.class,
             new ArrayComprehensionExpressionInterpreter()
         ).interpretValue();
-        Array array = Assertions.assertInstanceOf(Array.class, interpreted);
-        Assertions.assertEquals(1, array.length());
-        Assertions.assertEquals("other", array.value(0));
+        Array array = assertThat(interpreted)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isOne();
+        assertThat(array.value(0)).isEqualTo("other");
     }
 }

@@ -29,13 +29,15 @@ import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ReturnStatementInterpreterTests {
+class ReturnStatementInterpreterTests {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -45,15 +47,14 @@ public class ReturnStatementInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return 42")
             .statementParser(new ReturnStatementParser())
             .expressionParser(new LiteralExpressionParser())
-            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context ->
                 // Cannot return from top-level code, so we mark the current context
                 // as being inside a function
-                context.resolver().currentFunction(FunctionType.INLINE_FUNCTION);
-            }))
+                context.resolver().currentFunction(FunctionType.INLINE_FUNCTION)))
             .build();
 
-        Return returnCapture = Assertions.assertThrows(Return.class, helper::interpret);
-        Assertions.assertEquals(42d, returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(helper::interpret).actual();
+        assertThat(returnCapture.value()).isEqualTo(42d);
     }
 
     @Test
@@ -61,122 +62,85 @@ public class ReturnStatementInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return 3.14")
             .statementParser(new ReturnStatementParser())
             .expressionParser(new LiteralExpressionParser())
-            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context ->
                 // Cannot return from top-level code, so we mark the current context
                 // as being inside a generator function
-                context.resolver().currentFunction(FunctionType.FIELD_MEMBER);
-            }))
+                context.resolver().currentFunction(FunctionType.FIELD_MEMBER)))
             .build();
 
-        Return returnCapture = Assertions.assertThrows(Return.class, helper::interpret);
-        Assertions.assertEquals(3.14d, returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(helper::interpret).actual();
+        assertThat(returnCapture.value()).isEqualTo(3.14d);
     }
 
     @Test
     void topLevelCodeCannotReturn() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.RETURN, FunctionType.NONE)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.RETURN, FunctionType.NONE)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOP_LEVEL_RETURN);
     }
 
     @Test
     void topLevelCodeCannotYield() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.NONE)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.NONE)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOP_LEVEL_RETURN);
     }
 
     @Test
     void inlineFunctionCanReturnWithExpression() {
-        Return returnCapture = Assertions.assertThrows(
-            Return.class,
-            this.getBasicReturn(ControlTokenType.RETURN, FunctionType.INLINE_FUNCTION)::interpret
-        );
-        Assertions.assertEquals(0d, returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(this.getBasicReturn(ControlTokenType.RETURN, FunctionType.INLINE_FUNCTION)::interpret).actual();
+        assertThat(returnCapture.value()).isEqualTo(0d);
     }
 
     @Test
     void inlineFunctionCannotYield() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INLINE_FUNCTION)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INLINE_FUNCTION)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FUNCTION_YIELD);
     }
 
     @Test
     void classFunctionCanReturnWithExpression() {
-        Return returnCapture = Assertions.assertThrows(
-            Return.class,
-            this.getBasicReturn(ControlTokenType.RETURN, FunctionType.CLASS_FUNCTION)::interpret
-        );
-        Assertions.assertEquals(0d, returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(this.getBasicReturn(ControlTokenType.RETURN, FunctionType.CLASS_FUNCTION)::interpret).actual();
+        assertThat(returnCapture.value()).isEqualTo(0d);
     }
 
     @Test
     void classFunctionCannotYield() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.CLASS_FUNCTION)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.CLASS_FUNCTION)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FUNCTION_YIELD);
     }
 
     @Test
-    void testFunctionCannotReturn() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.RETURN, FunctionType.TEST)::interpret
-        );
+    void functionCannotReturn() {
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.RETURN, FunctionType.TEST)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BLOCK_RETURN);
     }
 
     @Test
-    void testFunctionCanYieldWithExpression() {
-        Yield yieldCapture = Assertions.assertThrows(
-            Yield.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.TEST)::interpret
-        );
-        Assertions.assertEquals(0d, yieldCapture.value());
+    void functionCanYieldWithExpression() {
+        Yield yieldCapture = assertThatExceptionOfType(Yield.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.TEST)::interpret).actual();
+        assertThat(yieldCapture.value()).isEqualTo(0d);
     }
 
     @Test
     void fieldMemberCannotReturn() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.FIELD_MEMBER)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.FIELD_MEMBER)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.FIELD_MEMBER_YIELD);
     }
 
     @Test
     void fieldMemberCannotReturnWithExpression() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INITIALIZER_RETURN);
     }
 
     @Test
     void initializerCanReturnWithExpression() {
-        Return returnCapture = Assertions.assertThrows(
-            Return.class,
-            this.getBasicReturn(ControlTokenType.RETURN, FunctionType.FIELD_MEMBER)::interpret
-        );
-        Assertions.assertEquals(0d, returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(this.getBasicReturn(ControlTokenType.RETURN, FunctionType.FIELD_MEMBER)::interpret).actual();
+        assertThat(returnCapture.value()).isEqualTo(0d);
     }
 
     @Test
     void initializerCannotYieldWithExpression() {
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(this.getBasicReturn(ControlTokenType.YIELD, FunctionType.INITIALIZER)::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INITIALIZER_RETURN);
     }
 
@@ -185,15 +149,11 @@ public class ReturnStatementInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "return;")
             .statementParser(new ReturnStatementParser())
             .expressionParser(new LiteralExpressionParser())
-            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                context.resolver().currentFunction(FunctionType.INITIALIZER);
-            }))
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context ->
+                context.resolver().currentFunction(FunctionType.INITIALIZER)))
             .build();
-        Return returnCapture = Assertions.assertThrows(
-            Return.class,
-            helper::interpret
-        );
-        Assertions.assertNull(returnCapture.value());
+        Return returnCapture = assertThatExceptionOfType(Return.class).isThrownBy(helper::interpret).actual();
+        assertThat(returnCapture.value()).isNull();
     }
 
     @Test
@@ -201,15 +161,11 @@ public class ReturnStatementInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, "yield;")
             .statementParser(new ReturnStatementParser())
             .expressionParser(new LiteralExpressionParser())
-            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                context.resolver().currentFunction(FunctionType.INITIALIZER);
-            }))
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context ->
+                context.resolver().currentFunction(FunctionType.INITIALIZER)))
             .build();
-        Yield yieldCapture = Assertions.assertThrows(
-            Yield.class,
-            helper::interpret
-        );
-        Assertions.assertNull(yieldCapture.value());
+        Yield yieldCapture = assertThatExceptionOfType(Yield.class).isThrownBy(helper::interpret).actual();
+        assertThat(yieldCapture.value()).isNull();
     }
 
     private HSLTestHelper getBasicReturn(ControlTokenType returnType, FunctionType functionType) {
@@ -217,9 +173,8 @@ public class ReturnStatementInterpreterTests {
                 "%s 0".formatted(returnType.representation()))
             .statementParser(new ReturnStatementParser())
             .expressionParser(new LiteralExpressionParser())
-            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
-                context.resolver().currentFunction(functionType);
-            }))
+            .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context ->
+                context.resolver().currentFunction(functionType)))
             .build();
     }
 }

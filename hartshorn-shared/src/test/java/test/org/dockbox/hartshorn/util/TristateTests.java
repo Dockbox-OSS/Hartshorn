@@ -17,21 +17,22 @@
 package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.Tristate;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TristateTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class TristateTests {
 
     @Test
-    void testBooleanValues() {
-        Assertions.assertTrue(Tristate.TRUE.booleanValue());
-        Assertions.assertFalse(Tristate.FALSE.booleanValue());
-        Assertions.assertFalse(Tristate.UNDEFINED.booleanValue());
+    void booleanValues() {
+        assertThat(Tristate.TRUE.booleanValue()).isTrue();
+        assertThat(Tristate.FALSE.booleanValue()).isFalse();
+        assertThat(Tristate.UNDEFINED.booleanValue()).isFalse();
     }
 
     @Test
-    void testValueOf() {
-        Assertions.assertEquals(Tristate.TRUE, Tristate.valueOf(true));
-        Assertions.assertEquals(Tristate.FALSE, Tristate.valueOf(false));
+    void valueOf() {
+        assertThat(Tristate.valueOf(true)).isEqualTo(Tristate.TRUE);
+        assertThat(Tristate.valueOf(false)).isEqualTo(Tristate.FALSE);
     }
 }
