@@ -16,12 +16,12 @@
 
 package test.org.dockbox.hartshorn.inject.binding.defaults;
 
+import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
@@ -41,8 +41,8 @@ class DefaultBindingsTests {
     void loggerUsesContainerNameIfEnabled(@Inject Logger loggerParameter) {
         assertThat(loggerParameter).isNotNull();
         // Name should match the consuming class' name, and not the name of the configuration that uses it
-        ComponentContainer<?> container =
-            this.componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
+        ComponentContainer<?> container = this.componentRegistry.container(this.getClass())
+                .orElseGet(Assertions::fail);
         String expectedName = container.name();
         assertThat(loggerParameter.getName()).isEqualTo(expectedName);
 

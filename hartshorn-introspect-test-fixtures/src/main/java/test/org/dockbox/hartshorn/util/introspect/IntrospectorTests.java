@@ -16,19 +16,8 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
+import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
@@ -39,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,6 +40,15 @@ import test.org.dockbox.hartshorn.util.introspect.support.basic.ConcreteTestType
 import test.org.dockbox.hartshorn.util.introspect.support.basic.ParentTestType;
 import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
 import test.org.dockbox.hartshorn.util.introspect.support.bridge.BridgeElement;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the {@link Introspector} interface. Unlike {@link TypeIntrospectionTests}, this class

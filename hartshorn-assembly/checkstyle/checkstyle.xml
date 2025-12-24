@@ -27,10 +27,9 @@
     </module>
     <module name="UnusedImports"/>
     <module name="IllegalImport">
-      <!-- Should use Checker framework annotations -->
+      <!-- Should use Checker framework annotations, and AssertJ for test assertions -->
       <property name="illegalPkgs" value="org.jetbrains.annotations"/>
-      <property name="illegalClasses"
-          value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
+      <property name="illegalClasses" value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable,org.junit.jupiter.api.Assertions"/>
     </module>
 
     <!-- General Javadoc rules -->
