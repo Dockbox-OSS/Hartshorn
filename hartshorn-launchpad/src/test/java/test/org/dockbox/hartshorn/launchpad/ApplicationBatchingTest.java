@@ -23,52 +23,58 @@ import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnviro
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Execution(ExecutionMode.CONCURRENT)
-public class ApplicationBatchingTest {
+class ApplicationBatchingTest {
 
     /**
-     * Test that multiple applications can be created and be active at the same time without interfering with each other.
+     * Test that multiple applications can be created and be active at the same time without
+     * interfering with each other.
      */
     @Disabled("Only for manual testing")
     @RepeatedTest(1)
-    void testApplicationContextBatching(RepetitionInfo repetitionInfo) {
+    void applicationContextBatching(RepetitionInfo repetitionInfo) {
         int currentRepetition = repetitionInfo.getCurrentRepetition();
-        ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder -> {
+        ApplicationContext applicationContext = HartshornApplication.create(
+                ApplicationBatchingTest.class,
+                builder -> {
                     builder.applicationName("ApplicationBatchingTest-" + currentRepetition);
                     builder.arguments("iteration=" + currentRepetition);
-                    builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                    builder.applicationContextFactory(StandardApplicationContextFactory.create(
+                            constructor -> {
                                 constructor.includeBasePackages(false);
-                                constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
-                                constructor.environment(
-                                        ConfigurableApplicationEnvironment.create(environment -> {
+                                constructor.standaloneComponents(components -> {
+                                    components.add(SimpleComponent.class);
+                                });
+                                constructor.environment(ConfigurableApplicationEnvironment.create(
+                                        environment -> {
                                             environment.enableBatchMode();
                                             environment.disableBanner();
                                         })
                                 );
                             })
                     );
-                }));
+                });
 
-        Assertions.assertNotNull(applicationContext);
+        assertThat(applicationContext).isNotNull();
         Option<ValueProperty> iterationProperty = applicationContext.environment()
                 .propertyRegistry()
                 .get("iteration");
-        Assertions.assertTrue(iterationProperty.present());
+        assertThat(iterationProperty.present()).isTrue();
         Option<String> iterationValue = iterationProperty.get().value();
-        Assertions.assertTrue(iterationValue.present());
-        Assertions.assertEquals(String.valueOf(currentRepetition), iterationValue.get());
+        assertThat(iterationValue.present()).isTrue();
+        assertThat(iterationValue.get()).isEqualTo(String.valueOf(currentRepetition));
 
         SimpleComponent component = applicationContext.get(SimpleComponent.class);
-        Assertions.assertNotNull(component);
-        Assertions.assertSame(applicationContext, component.applicationContext());
+        assertThat(component).isNotNull();
+        assertThat(component.applicationContext()).isSameAs(applicationContext);
     }
 
     public record SimpleComponent(ApplicationContext applicationContext) {

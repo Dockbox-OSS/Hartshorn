@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,30 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToOptionConverter;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-public class OptionalToOptionConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class OptionalToOptionConverterTests {
 
     @Test
-    void testPresentOptionalConvertsToPresentOption() {
+    void presentOptionalConvertsToPresentOption() {
         Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
         Optional<String> option = Optional.of("test");
         Option<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted.present());
-        Assertions.assertEquals("test", converted.get());
+        assertThat(converted).isNotNull();
+        assertThat(converted.present()).isTrue();
+        assertThat(converted.get()).isEqualTo("test");
     }
 
     @Test
-    void testEmptyOptionalConvertsToEmptyOption() {
+    void emptyOptionalConvertsToEmptyOption() {
         Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
         Optional<String> option = Optional.empty();
         Option<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted.present());
+        assertThat(converted).isNotNull();
+        assertThat(converted.present()).isFalse();
     }
 }

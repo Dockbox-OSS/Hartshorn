@@ -27,25 +27,24 @@ import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ProfileAggregationTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ProfileAggregationTests {
 
     @Test
-    void testAggregationWithoutProfiles() {
+    void aggregationWithoutProfiles() {
         ProfilePropertyRegistryAggregator aggregator =
             new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
-        ProfilePropertyRegistry profilePropertyRegistry = Assertions.assertDoesNotThrow(
-            () -> aggregator.aggregate(profileRegistry)
-        );
-        Assertions.assertTrue(profilePropertyRegistry.keys().isEmpty());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry().profiles().isEmpty());
+        ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+        assertThat(profilePropertyRegistry.keys()).isEmpty();
+        assertThat(profilePropertyRegistry.profileRegistry().profiles()).isEmpty();
     }
 
     @Test
-    void testAggregationWithSingleProfile() {
+    void aggregationWithSingleProfile() {
         ProfilePropertyRegistryAggregator aggregator =
             new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
@@ -54,20 +53,18 @@ public class ProfileAggregationTests {
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
-        ProfilePropertyRegistry profilePropertyRegistry = Assertions.assertDoesNotThrow(
-            () -> aggregator.aggregate(profileRegistry)
-        );
-        Assertions.assertEquals(1, profilePropertyRegistry.keys().size());
-        Assertions.assertTrue(profilePropertyRegistry.contains("key"));
+        ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+        assertThat(profilePropertyRegistry.keys()).hasSize(1);
+        assertThat(profilePropertyRegistry.contains("key")).isTrue();
 
-        Assertions.assertEquals(1, profilePropertyRegistry.profileRegistry().profiles().size());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+        assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(1);
+        assertThat(profilePropertyRegistry.profileRegistry()
             .profile("profile1")
-            .present());
+            .present()).isTrue();
     }
 
     @Test
-    void testAggregationWithMultipleProfiles_UsesCorrectPriority() {
+    void aggregationWithMultipleProfilesUsesCorrectPriority() {
         ProfilePropertyRegistryAggregator aggregator =
             new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
@@ -82,23 +79,21 @@ public class ProfileAggregationTests {
         profile2.propertyRegistry().register(new SingleConfiguredProperty("key", "value2"));
         profileRegistry.register(1, profile2);
 
-        ProfilePropertyRegistry profilePropertyRegistry = Assertions.assertDoesNotThrow(
-            () -> aggregator.aggregate(profileRegistry)
-        );
-        Assertions.assertEquals(1, profilePropertyRegistry.keys().size());
-        Assertions.assertTrue(profilePropertyRegistry.contains("key"));
+        ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+        assertThat(profilePropertyRegistry.keys()).hasSize(1);
+        assertThat(profilePropertyRegistry.contains("key")).isTrue();
 
         Option<ValueProperty> valueProperty = profilePropertyRegistry.get("key");
-        Assertions.assertTrue(valueProperty.present());
+        assertThat(valueProperty.present()).isTrue();
         // profile2 has a higher priority, thus after aggregation the value from profile2 should be used
-        Assertions.assertTrue(valueProperty.get().value().contains("value2"));
+        assertThat(valueProperty.get().value().contains("value2")).isTrue();
 
-        Assertions.assertEquals(2, profilePropertyRegistry.profileRegistry().profiles().size());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+        assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(2);
+        assertThat(profilePropertyRegistry.profileRegistry()
             .profile("profile1")
-            .present());
-        Assertions.assertTrue(profilePropertyRegistry.profileRegistry()
+            .present()).isTrue();
+        assertThat(profilePropertyRegistry.profileRegistry()
             .profile("profile2")
-            .present());
+            .present()).isTrue();
     }
 }

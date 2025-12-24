@@ -22,270 +22,271 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.junit.jupiter.api.Test;
 
-public class OptionTests {
+class OptionTests {
 
     @Test
-    void testOfNonNull() {
+    void ofNonNull() {
         Option<String> option = Option.of("test");
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertEquals("test", option.get());
+        assertThat(option.present()).isTrue();
+        assertThat(option.absent()).isFalse();
+        assertThat(option.get()).isEqualTo("test");
     }
 
     @Test
-    void testOfNull() {
+    void ofNull() {
         Option<String> option = Option.of((String) null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        assertThat(option.present()).isFalse();
+        assertThat(option.absent()).isTrue();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(option::get);
     }
 
     @Test
-    void testOfOptional() {
+    void ofOptional() {
         Option<String> option = Option.of(Optional.of("test"));
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertEquals("test", option.get());
+        assertThat(option.present()).isTrue();
+        assertThat(option.absent()).isFalse();
+        assertThat(option.get()).isEqualTo("test");
     }
 
     @Test
-    void testOfOptionalEmpty() {
+    void ofOptionalEmpty() {
         Option<String> option = Option.of(Optional.empty());
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        assertThat(option.present()).isFalse();
+        assertThat(option.absent()).isTrue();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(option::get);
     }
 
     @Test
-    void testOfSupplier() {
+    void ofSupplier() {
         Option<String> option = Option.of(() -> "test");
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertEquals("test", option.get());
+        assertThat(option.present()).isTrue();
+        assertThat(option.absent()).isFalse();
+        assertThat(option.get()).isEqualTo("test");
     }
 
     @Test
-    void testOfSupplierNull() {
+    void ofSupplierNull() {
         Option<String> option = Option.of(() -> null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        assertThat(option.present()).isFalse();
+        assertThat(option.absent()).isTrue();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(option::get);
     }
 
     @Test
-    void testEmpty() {
+    void empty() {
         Option<String> option = Option.empty();
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        assertThat(option.present()).isFalse();
+        assertThat(option.absent()).isTrue();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(option::get);
     }
 
     @Test
-    void testPeekWhenPresent() {
+    void peekWhenPresent() {
         Option<String> option = Option.of("test");
         AtomicBoolean called = new AtomicBoolean(false);
         option.peek(value -> {
-            Assertions.assertEquals("test", value);
+            assertThat(value).isEqualTo("test");
             called.set(true);
         });
-        Assertions.assertTrue(called.get());
+        assertThat(called.get()).isTrue();
     }
 
     @Test
-    void testPeekWhenAbsent() {
+    void peekWhenAbsent() {
         Option<String> option = Option.empty();
         AtomicBoolean called = new AtomicBoolean(false);
         option.peek(value -> {
-            Assertions.fail("Should not be called");
+            fail("Should not be called");
             called.set(true);
         });
-        Assertions.assertFalse(called.get());
+        assertThat(called.get()).isFalse();
     }
 
     @Test
-    void testOnEmptyWhenPresent() {
+    void onEmptyWhenPresent() {
         Option<String> option = Option.of("test");
         AtomicBoolean called = new AtomicBoolean(false);
         option.onEmpty(() -> {
-            Assertions.fail("Should not be called");
+            fail("Should not be called");
             called.set(true);
         });
-        Assertions.assertFalse(called.get());
+        assertThat(called.get()).isFalse();
     }
 
     @Test
-    void testOnEmptyWhenAbsent() {
+    void onEmptyWhenAbsent() {
         Option<String> option = Option.empty();
         AtomicBoolean called = new AtomicBoolean(false);
         option.onEmpty(() -> called.set(true));
-        Assertions.assertTrue(called.get());
+        assertThat(called.get()).isTrue();
     }
 
     @Test
-    void testOrNullWhenPresent() {
+    void orNullWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals("test", option.orNull());
+        assertThat(option.orNull()).isEqualTo("test");
     }
 
     @Test
-    void testOrNullWhenAbsent() {
+    void orNullWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertNull(option.orNull());
+        assertThat(option.orNull()).isNull();
     }
 
     @Test
-    void testOrElseWhenPresent() {
+    void orElseWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals("test", option.orElse("test2"));
+        assertThat(option.orElse("test2")).isEqualTo("test");
     }
 
     @Test
-    void testOrElseWhenAbsent() {
+    void orElseWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertEquals("test2", option.orElse("test2"));
+        assertThat(option.orElse("test2")).isEqualTo("test2");
     }
 
     @Test
-    void testOrElseGetWhenPresent() {
+    void orElseGetWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals("test", option.orElseGet(() -> "test2"));
+        assertThat(option.orElseGet(() -> "test2")).isEqualTo("test");
     }
 
     @Test
-    void testOrElseGetWhenAbsent() {
+    void orElseGetWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertEquals("test2", option.orElseGet(() -> "test2"));
+        assertThat(option.orElseGet(() -> "test2")).isEqualTo("test2");
     }
 
     @Test
-    void testOrElseThrowWhenPresent() {
+    void orElseThrowWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals("test", option.orElseThrow(IllegalArgumentException::new));
+        assertThat(option.orElseThrow(IllegalArgumentException::new)).isEqualTo("test");
     }
 
     @Test
-    void testOrElseThrowWhenAbsent() {
+    void orElseThrowWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> option.orElseThrow(IllegalArgumentException::new));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> option.orElseThrow(IllegalArgumentException::new));
     }
 
     @Test
-    void testOrComputeWhenPresent() {
+    void orComputeWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals("test", option.orCompute(() -> "test2").get());
+        assertThat(option.orCompute(() -> "test2").get()).isEqualTo("test");
     }
 
     @Test
-    void testOrComputeWhenAbsent() {
+    void orComputeWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertEquals("test2", option.orCompute(() -> "test2").get());
+        assertThat(option.orCompute(() -> "test2").get()).isEqualTo("test2");
     }
 
     @Test
-    void testToOptionalWhenPresent() {
+    void toOptionalWhenPresent() {
         Option<String> option = Option.of("test");
         Optional<String> optional = option.optional();
-        Assertions.assertTrue(optional.isPresent());
-        Assertions.assertEquals("test", optional.get());
+        assertThat(optional).hasValue("test");
     }
 
     @Test
-    void testToOptionalWhenAbsent() {
+    void toOptionalWhenAbsent() {
         Option<String> option = Option.empty();
         Optional<String> optional = option.optional();
-        Assertions.assertFalse(optional.isPresent());
+        assertThat(optional).isEmpty();
     }
 
     @Test
-    void testToStreamWhenPresent() {
+    void toStreamWhenPresent() {
         Option<String> option = Option.of("test");
-        Assertions.assertEquals(1, option.stream().count());
+        assertThat(option.stream().count()).isOne();
         Optional<String> optional = option.stream().findFirst();
-        Assertions.assertTrue(optional.isPresent());
-        Assertions.assertEquals("test", optional.get());
+        assertThat(optional).hasValue("test");
     }
 
     @Test
-    void testToStreamWhenAbsent() {
+    void toStreamWhenAbsent() {
         Option<String> option = Option.empty();
         Stream<String> stream = option.stream();
-        Assertions.assertEquals(0, stream.count());
+        assertThat(stream.count()).isZero();
     }
 
     @Test
-    void testMapWhenPresent() {
+    void mapWhenPresent() {
         Option<String> option = Option.of("test");
         Option<Integer> mapped = option.map(String::length);
-        Assertions.assertTrue(mapped.present());
-        Assertions.assertEquals(4, mapped.get());
+        assertThat(mapped.present()).isTrue();
+        assertThat(mapped.get()).isEqualTo(4);
     }
 
     @Test
-    void testMapWhenAbsent() {
+    void mapWhenAbsent() {
         Option<String> option = Option.empty();
         Option<Integer> mapped = option.map(String::length);
-        Assertions.assertTrue(mapped.absent());
+        assertThat(mapped.absent()).isTrue();
     }
 
     @Test
-    void testFlatMapWhenPresent() {
+    void flatMapWhenPresent() {
         Option<String> option = Option.of("test");
         Option<Integer> mapped = option.flatMap(value -> Option.of(value.length()));
-        Assertions.assertTrue(mapped.present());
-        Assertions.assertEquals(4, mapped.get());
+        assertThat(mapped.present()).isTrue();
+        assertThat(mapped.get()).isEqualTo(4);
     }
 
     @Test
-    void testFlatMapWhenAbsent() {
+    void flatMapWhenAbsent() {
         Option<String> option = Option.empty();
         Option<Integer> mapped = option.flatMap(value -> Option.of(value.length()));
-        Assertions.assertTrue(mapped.absent());
+        assertThat(mapped.absent()).isTrue();
     }
 
     @Test
-    void testFilterWhenPresentAndMatches() {
+    void filterWhenPresentAndMatches() {
         Option<String> option = Option.of("test");
         Option<String> filtered = option.filter(value -> value.length() == 4);
-        Assertions.assertTrue(filtered.present());
-        Assertions.assertEquals("test", filtered.get());
+        assertThat(filtered.present()).isTrue();
+        assertThat(filtered.get()).isEqualTo("test");
     }
 
     @Test
-    void testFilterWhenPresentAndDoesNotMatch() {
+    void filterWhenPresentAndDoesNotMatch() {
         Option<String> option = Option.of("test");
         Option<String> filtered = option.filter(value -> value.length() == 5);
-        Assertions.assertTrue(filtered.absent());
+        assertThat(filtered.absent()).isTrue();
     }
 
     @Test
-    void testFilterWhenAbsent() {
+    void filterWhenAbsent() {
         Option<String> option = Option.empty();
         Option<String> filtered = option.filter(value -> {
-            Assertions.fail("Should not be called");
+            fail("Should not be called");
             return true;
         });
-        Assertions.assertTrue(filtered.absent());
+        assertThat(filtered.absent()).isTrue();
     }
 
     @Test
-    void testContainsWhenPresentAndMatches() {
+    void containsWhenPresentAndMatches() {
         Option<String> option = Option.of("test");
-        Assertions.assertTrue(option.contains("test"));
+        assertThat(option.contains("test")).isTrue();
     }
 
     @Test
-    void testContainsWhenPresentAndDoesNotMatch() {
+    void containsWhenPresentAndDoesNotMatch() {
         Option<String> option = Option.of("test");
-        Assertions.assertFalse(option.contains("test2"));
+        assertThat(option.contains("test2")).isFalse();
     }
 
     @Test
-    void testContainsWhenAbsent() {
+    void containsWhenAbsent() {
         Option<String> option = Option.empty();
-        Assertions.assertFalse(option.contains("test"));
+        assertThat(option.contains("test")).isFalse();
     }
 }

@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.UtilityClassNativeModule;
@@ -28,14 +29,15 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class NativeFunctionStatementInterpreterTests {
+class NativeFunctionStatementInterpreterTests {
 
     @Test
     void nativeFunctionImportsIndividualMethodFromModule(
@@ -53,15 +55,16 @@ public class NativeFunctionStatementInterpreterTests {
         helper.interpret();
 
         Object logFunction = helper.findVariable("log");
-        NativeLibrary nativeLogFunction =
-            Assertions.assertInstanceOf(NativeLibrary.class, logFunction);
+        NativeLibrary nativeLogFunction = assertThat(logFunction)
+                .asInstanceOf(InstanceOfAssertFactories.type(NativeLibrary.class))
+                .actual();
         MethodView<?, ?> originalMethod = nativeLogFunction.declaration().method();
-        Assertions.assertTrue(originalMethod.declaredBy().is(Math.class));
-        Assertions.assertEquals("log", originalMethod.name());
-        Assertions.assertTrue(originalMethod.parameters().matches(double.class));
+        assertThat(originalMethod.declaredBy().is(Math.class)).isTrue();
+        assertThat(originalMethod.name()).isEqualTo("log");
+        assertThat(originalMethod.parameters().matches(double.class)).isTrue();
 
         // Should not import other functions from the module
-        Assertions.assertNull(helper.findVariable("max"));
+        assertThat(helper.findVariable("max")).isNull();
     }
 
     @Test
@@ -81,17 +84,16 @@ public class NativeFunctionStatementInterpreterTests {
         helper.interpret();
 
         Object maxFunction = helper.findVariable("max");
-        AmbiguousNativeLibraryFunction ambiguousMaxFunction = Assertions.assertInstanceOf(
-            AmbiguousNativeLibraryFunction.class,
-            maxFunction
-        );
+        AmbiguousNativeLibraryFunction ambiguousMaxFunction = assertThat(maxFunction)
+                .asInstanceOf(InstanceOfAssertFactories.type(AmbiguousNativeLibraryFunction.class))
+                .actual();
         Set<NativeLibrary> overloadFunctions = ambiguousMaxFunction.libraries();
         // Math.max has 4 overloads: (int, int), (long, long), (float, float), (double, double)
-        Assertions.assertEquals(4, overloadFunctions.size());
+        assertThat(overloadFunctions).hasSize(4);
         for (NativeLibrary overloadFunction : overloadFunctions) {
             MethodView<?, ?> overloadMethod = overloadFunction.declaration().method();
-            Assertions.assertTrue(overloadMethod.declaredBy().is(Math.class));
-            Assertions.assertEquals("max", overloadMethod.name());
+            assertThat(overloadMethod.declaredBy().is(Math.class)).isTrue();
+            assertThat(overloadMethod.name()).isEqualTo("max");
         }
     }
 }

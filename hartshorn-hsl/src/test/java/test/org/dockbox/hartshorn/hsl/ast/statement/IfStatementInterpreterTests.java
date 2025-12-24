@@ -22,18 +22,19 @@ import org.dockbox.hartshorn.hsl.parser.statement.IfStatementParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class IfStatementInterpreterTests {
+class IfStatementInterpreterTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testIfStatementEvaluatesIfConditionIsTrue() {
+    void ifStatementEvaluatesIfConditionIsTrue() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
                 if (true) {
                     checkpoint("inside-true");
@@ -45,11 +46,11 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isTrue();
     }
 
     @Test
-    void testIfStatementEvaluatesIfConditionIsTruthy() {
+    void ifStatementEvaluatesIfConditionIsTruthy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
                 if ("truthy-value") {
                     checkpoint("inside-true");
@@ -61,11 +62,11 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isTrue();
     }
 
     @Test
-    void testIfStatementDoesNotEvaluateIfConditionIsFalse() {
+    void ifStatementDoesNotEvaluateIfConditionIsFalse() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
                 if (false) {
                     checkpoint("inside-true");
@@ -77,11 +78,11 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isFalse();
     }
 
     @Test
-    void testIfStatementDoesNotEvaluateIfConditionIsFalsy() {
+    void ifStatementDoesNotEvaluateIfConditionIsFalsy() {
         HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
                 if (null) {
                     checkpoint("inside-true");
@@ -93,7 +94,7 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isFalse();
     }
 
     @Test
@@ -112,8 +113,8 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-false"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isTrue();
+        assertThat(helper.checkpoints().checkpointAccessed("inside-false")).isFalse();
     }
 
     @Test
@@ -132,8 +133,8 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-true"));
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-false"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isTrue();
+        assertThat(helper.checkpoints().checkpointAccessed("inside-false")).isFalse();
     }
 
     @Test
@@ -152,8 +153,8 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-false"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isFalse();
+        assertThat(helper.checkpoints().checkpointAccessed("inside-false")).isTrue();
     }
 
     @Test
@@ -172,7 +173,7 @@ public class IfStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-true"));
-        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-false"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-true")).isFalse();
+        assertThat(helper.checkpoints().checkpointAccessed("inside-false")).isTrue();
     }
 }

@@ -22,31 +22,34 @@ import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapterKey;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ScopeKeyTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class ScopeKeyTests {
 
     @Test
-    void testScopeKeyTypeKeepsParameters() {
+    void scopeKeyTypeKeepsParameters() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
             .parameters(parameterType)
             .build();
 
         ScopeKey scopeKey = DirectScopeKey.of(parameterizedType);
-        Assertions.assertEquals(parameterizedType, scopeKey.scopeType());
+        assertThat(scopeKey.scopeType()).isEqualTo(parameterizedType);
     }
 
     @Test
-    void testRawScopeKeysEqual() {
+    void rawScopeKeysEqual() {
         ScopeKey scopeKey1 = DirectScopeKey.of(Scope.class);
         ScopeKey scopeKey2 = DirectScopeKey.of(Scope.class);
-        Assertions.assertEquals(scopeKey1, scopeKey2);
+        assertThat(scopeKey2).isEqualTo(scopeKey1);
     }
 
     @Test
-    void testParameterizedScopeKeysEqual() {
+    void parameterizedScopeKeysEqual() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
             .parameters(parameterType)
@@ -54,46 +57,43 @@ public class ScopeKeyTests {
 
         ScopeKey scopeKey1 = DirectScopeKey.of(parameterizedType);
         ScopeKey scopeKey2 = DirectScopeKey.of(parameterizedType);
-        Assertions.assertEquals(scopeKey1, scopeKey2);
+        assertThat(scopeKey2).isEqualTo(scopeKey1);
     }
 
     @Test
-    void testCreateFromParameterizedTypeRequiresScopeType() {
+    void createFromParameterizedTypeRequiresScopeType() {
         ParameterizableType parameterType = ParameterizableType.create(String.class);
         ParameterizableType parameterizedType = ParameterizableType.builder(ScopeAdapter.class)
             .parameters(parameterType)
             .build();
 
-        Assertions.assertDoesNotThrow(() -> DirectScopeKey.of(parameterizedType));
+        assertThatCode(() -> DirectScopeKey.of(parameterizedType)).doesNotThrowAnyException();
         // String not a scope type
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> DirectScopeKey.of(parameterType));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> DirectScopeKey.of(parameterType));
     }
 
     @Test
-    void testScopeAdapterKeyParameterizableTypeRequiresScopeAdapter() {
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> ScopeAdapterKey.of(ParameterizableType.create(String.class)));
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> ScopeAdapterKey.of(ParameterizableType.create(Scope.class)));
-        Assertions.assertDoesNotThrow(() -> {
+    void scopeAdapterKeyParameterizableTypeRequiresScopeAdapter() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> ScopeAdapterKey.of(ParameterizableType.create(String.class)));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> ScopeAdapterKey.of(ParameterizableType.create(Scope.class)));
+        assertThatCode(() -> {
             ParameterizableType type = ParameterizableType.builder(ScopeAdapter.class)
                 .parameters(ParameterizableType.create(String.class))
                 .build();
             ScopeAdapterKey scopeAdapterKey = ScopeAdapterKey.of(type);
-            Assertions.assertNotNull(scopeAdapterKey);
-        });
+            assertThat(scopeAdapterKey).isNotNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test
-    void testScopeAdapterKeysOfSameTypeEqual() {
+    void scopeAdapterKeysOfSameTypeEqual() {
         ScopeAdapter<Object> adapter1 = ScopeAdapter.of(new Object());
         ScopeAdapterKey key1 = ScopeAdapterKey.of(adapter1);
 
         ScopeAdapter<Object> adapter2 = ScopeAdapter.of(new Object());
         ScopeAdapterKey key2 = ScopeAdapterKey.of(adapter2);
 
-        Assertions.assertNotEquals(adapter1, adapter2);
-        Assertions.assertEquals(key1, key2);
+        assertThat(adapter2).isNotEqualTo(adapter1);
+        assertThat(key2).isEqualTo(key1);
     }
 }

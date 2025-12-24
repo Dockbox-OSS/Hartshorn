@@ -21,30 +21,31 @@ import org.dockbox.hartshorn.launchpad.InvalidActivationSourceException;
 import test.org.dockbox.hartshorn.launchpad.activators.AbstractActivator;
 import test.org.dockbox.hartshorn.launchpad.activators.InterfaceActivator;
 import test.org.dockbox.hartshorn.launchpad.activators.ValidActivator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class HartshornApplicationTests {
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class HartshornApplicationTests {
 
     @Test
-    void testCreationFailsWithAbstractActivator() {
-        Assertions.assertThrows(InvalidActivationSourceException.class,
-            () -> HartshornApplication.create(AbstractActivator.class));
+    void creationFailsWithAbstractActivator() {
+        assertThatExceptionOfType(InvalidActivationSourceException.class).isThrownBy(() -> HartshornApplication.create(AbstractActivator.class));
     }
 
     @Test
-    void testCreationFailsWithInterfaceActivator() {
-        Assertions.assertThrows(InvalidActivationSourceException.class,
-            () -> HartshornApplication.create(InterfaceActivator.class));
+    void creationFailsWithInterfaceActivator() {
+        assertThatExceptionOfType(InvalidActivationSourceException.class).isThrownBy(() -> HartshornApplication.create(InterfaceActivator.class));
     }
 
     @Test
-    void testCreationSucceedsWithValidActivator() {
-        Assertions.assertDoesNotThrow(() -> HartshornApplication.create(ValidActivator.class));
+    void creationSucceedsWithValidActivator() {
+        assertThatCode(() -> HartshornApplication.create(ValidActivator.class))
+                .doesNotThrowAnyException();
     }
 
     @Test
-    void testCreationSucceedsWithValidDeducedActivator() {
-        Assertions.assertDoesNotThrow(() -> ValidActivator.main());
+    void creationSucceedsWithValidDeducedActivator() {
+        assertThatCode(() -> ValidActivator.main()).doesNotThrowAnyException();
     }
 }

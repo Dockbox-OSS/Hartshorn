@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.proxy.delegate;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
@@ -23,60 +24,63 @@ import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ApplicationContextCarrierDelegationTests {
+class ApplicationContextCarrierDelegationTests {
 
     @Test
     @TestComponents(ContextCarrierComponent.class)
-    void testContextCarrierDelegation(@Inject ContextCarrierComponent component) throws NoSuchMethodException {
+    void contextCarrierDelegation(@Inject ContextCarrierComponent component) throws Exception {
         Option<ApplicationContextCarrier> delegate = findTypeDelegate(component);
-        Assertions.assertTrue(delegate.present());
+        assertThat(delegate.present()).isTrue();
 
         Option<?> methodDelegate = findMethodDelegate(component);
-        Assertions.assertTrue(methodDelegate.absent());
+        assertThat(methodDelegate.absent()).isTrue();
 
-        Assertions.assertNotNull(component.applicationContext());
+        assertThat(component.applicationContext()).isNotNull();
     }
 
     @Test
     @TestComponents(OverrideContextCarrierComponentInterface.class)
-    void testDefaultCarrierDelegation(@Inject OverrideContextCarrierComponentInterface component) throws NoSuchMethodException {
+    void defaultCarrierDelegation(@Inject OverrideContextCarrierComponentInterface component) throws Exception {
         Option<ApplicationContextCarrier> delegate = findTypeDelegate(component);
-        Assertions.assertTrue(delegate.absent());
+        assertThat(delegate.absent()).isTrue();
 
         Option<?> methodDelegate = findMethodDelegate(component);
-        Assertions.assertTrue(methodDelegate.absent());
+        assertThat(methodDelegate.absent()).isTrue();
 
         // Default method, should return null (see OverrideContextCarrierComponentInterface)
-        Assertions.assertNull(component.applicationContext());
+        assertThat(component.applicationContext()).isNull();
     }
 
     @Test
     @TestComponents(ContextCarrierComponentInterface.class)
-    void testCarrierDelegation(
+    void carrierDelegation(
         @Inject ContextCarrierComponentInterface component,
         @Inject ApplicationContext applicationContext
-    ) throws NoSuchMethodException {
-        Assertions.assertTrue(component instanceof Proxy<?>);
+    ) throws Exception {
+        assertThat(component).isInstanceOf(Proxy.class);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
         Option<?> methodDelegate = ((Proxy<?>) component).manager()
             .advisor()
             .resolver()
             .method(method)
             .delegate();
-        Assertions.assertTrue(methodDelegate.present());
+        assertThat(methodDelegate.present()).isTrue();
 
-        Assertions.assertNotNull(component.applicationContext());
-        Assertions.assertSame(component.applicationContext(), applicationContext);
+        assertThat(component.applicationContext()).isNotNull();
+        assertThat(applicationContext).isSameAs(component.applicationContext());
     }
 
     private static Option<ApplicationContextCarrier> findTypeDelegate(Object object) {
-        Proxy<?> proxy = Assertions.assertInstanceOf(Proxy.class, object);
+        Proxy<?> proxy = assertThat(object)
+                .asInstanceOf(InstanceOfAssertFactories.type(Proxy.class))
+                .actual();
         return proxy.manager()
                 .advisor()
                 .resolver()
@@ -85,7 +89,9 @@ public class ApplicationContextCarrierDelegationTests {
     }
 
     private static Option<?> findMethodDelegate(Object object) throws NoSuchMethodException {
-        Proxy<?> proxy = Assertions.assertInstanceOf(Proxy.class, object);
+        Proxy<?> proxy = assertThat(object)
+                .asInstanceOf(InstanceOfAssertFactories.type(Proxy.class))
+                .actual();
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
 
         return proxy.manager()

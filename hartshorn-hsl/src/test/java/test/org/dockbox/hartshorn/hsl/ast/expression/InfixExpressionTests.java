@@ -28,13 +28,15 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class InfixExpressionTests {
+class InfixExpressionTests {
 
     @Test
     void infixExpressionWithDefinitionAndImplementationPasses(
@@ -52,7 +54,7 @@ public class InfixExpressionTests {
                 parser.addContext(functionParserContext);
             })
             // Infix function implementation
-            .defineLocal("or", (CallableNode) (at, interpreter, instance, arguments) -> {
+            .defineLocal("or", (CallableNode) (_, _, _, arguments) -> {
                 Object left = arguments.getFirst();
                 Object right = arguments.getLast();
                 return InterpreterUtilities.isTruthy(left) ? left : right;
@@ -60,8 +62,7 @@ public class InfixExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        String result = Assertions.assertInstanceOf(String.class, value);
-        Assertions.assertEquals("pizza", result);
+        assertThat(value).isEqualTo("pizza");
     }
 
     @Test
@@ -81,11 +82,8 @@ public class InfixExpressionTests {
             })
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
-        Assertions.assertEquals(Phase.PARSING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        assertThat(error.phase()).isEqualTo(Phase.PARSING);
     }
 
     @Test
@@ -104,13 +102,10 @@ public class InfixExpressionTests {
             })
             .build();
 
-        Assertions.assertDoesNotThrow(helper::parse);
+        helper.parse();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpretValue
-        );
-        Assertions.assertEquals(Phase.INTERPRETING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
+        assertThat(error.phase()).isEqualTo(Phase.INTERPRETING);
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "or")
@@ -131,11 +126,8 @@ public class InfixExpressionTests {
             })
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
-        Assertions.assertEquals(Phase.PARSING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        assertThat(error.phase()).isEqualTo(Phase.PARSING);
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 
@@ -153,11 +145,8 @@ public class InfixExpressionTests {
             })
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
-        Assertions.assertEquals(Phase.PARSING, error.phase());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        assertThat(error.phase()).isEqualTo(Phase.PARSING);
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EXPECTED_EXPRESSION);
     }
 }

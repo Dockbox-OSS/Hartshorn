@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,30 +20,32 @@ import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class WildcardIntrospectorTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+class WildcardIntrospectorTests {
 
     @Test
-    void testWildcardIsParentChildAndEqual() {
+    void wildcardIsParentChildAndEqual() {
         TypeView<Object> view = new WildcardTypeView();
 
-        Assertions.assertTrue(view.isParentOf(Object.class));
-        Assertions.assertTrue(view.is(Object.class));
-        Assertions.assertFalse(view.isChildOf(Object.class));
+        assertThat(view.isParentOf(Object.class)).isTrue();
+        assertThat(view.is(Object.class)).isTrue();
+        assertThat(view.isChildOf(Object.class)).isFalse();
 
-        Assertions.assertTrue(view.isParentOf(String.class));
-        Assertions.assertTrue(view.is(String.class));
-        Assertions.assertFalse(view.isChildOf(String.class));
+        assertThat(view.isParentOf(String.class)).isTrue();
+        assertThat(view.is(String.class)).isTrue();
+        assertThat(view.isChildOf(String.class)).isFalse();
 
-        Assertions.assertTrue(view.isParentOf(WildcardIntrospectorTests.class));
-        Assertions.assertTrue(view.is(WildcardIntrospectorTests.class));
-        Assertions.assertFalse(view.isChildOf(WildcardIntrospectorTests.class));
+        assertThat(view.isParentOf(WildcardIntrospectorTests.class)).isTrue();
+        assertThat(view.is(WildcardIntrospectorTests.class)).isTrue();
+        assertThat(view.isChildOf(WildcardIntrospectorTests.class)).isFalse();
     }
 
     @Test
-    void testNameAndQualifiedNameAreNonValidClassNameCharacter() {
+    void nameAndQualifiedNameAreNonValidClassNameCharacter() {
         TypeView<Object> view = new WildcardTypeView();
 
         // Expected to be '*', but not enforced. This is just a test to ensure that the name and qualified
@@ -51,95 +53,95 @@ public class WildcardIntrospectorTests {
         String regex = "[a-zA-Z_$][a-zA-Z\\d_$]*";
 
         boolean isUsableClassName = view.name().matches(regex);
-        Assertions.assertFalse(isUsableClassName);
+        assertThat(isUsableClassName).isFalse();
 
         boolean isUsableQualifiedClassName = view.qualifiedName().matches(regex);
-        Assertions.assertFalse(isUsableQualifiedClassName);
+        assertThat(isUsableQualifiedClassName).isFalse();
     }
 
     @Test
-    void testWildcardHasNoElementType() {
+    void wildcardHasNoElementType() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertFalse(view.elementType().present());
+        assertThat(view.elementType().present()).isFalse();
     }
 
     @Test
-    void testWildcardHasEnumConstants() {
+    void wildcardHasEnumConstants() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertTrue(view.enumConstants().isEmpty());
+        assertThat(view.enumConstants()).isEmpty();
     }
 
     @Test
-    void testWildcardHasNullDefault() {
+    void wildcardHasNullDefault() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertNull(view.defaultOrNull());
+        assertThat(view.defaultOrNull()).isNull();
     }
 
     @Test
-    void testWildcardCastsAnyObject() {
+    void wildcardCastsAnyObject() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertDoesNotThrow(() -> view.cast(new Object()));
-        Assertions.assertDoesNotThrow(() -> view.cast(this));
-        Assertions.assertDoesNotThrow(() -> view.cast("test"));
+        assertThatCode(() -> view.cast(new Object())).doesNotThrowAnyException();
+        assertThatCode(() -> view.cast(this)).doesNotThrowAnyException();
+        assertThatCode(() -> view.cast("test")).doesNotThrowAnyException();
     }
 
     @Test
-    void testWildcardHasNoModifiers() {
+    void wildcardHasNoModifiers() {
         TypeView<Object> view = new WildcardTypeView();
         for (AccessModifier modifier : AccessModifier.values()) {
-            Assertions.assertFalse(view.modifiers().has(modifier));
+            assertThat(view.modifiers().has(modifier)).isFalse();
         }
     }
 
     @Test
-    void testWildcardIsWildcard() {
+    void wildcardIsWildcard() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertTrue(view.isWildcard());
+        assertThat(view.isWildcard()).isTrue();
     }
 
     @Test
-    void testWildcardConstructors() {
+    void wildcardConstructors() {
         TypeView<Object> view = new WildcardTypeView();
         TypeConstructorsIntrospector<Object> constructors = view.constructors();
-        Assertions.assertEquals(0, constructors.count());
-        Assertions.assertTrue(constructors.all().isEmpty());
-        Assertions.assertTrue(constructors.defaultConstructor().absent());
+        assertThat(constructors.count()).isZero();
+        assertThat(constructors.all()).isEmpty();
+        assertThat(constructors.defaultConstructor().absent()).isTrue();
     }
 
     @Test
-    void testWildcardHasNoFields() {
+    void wildcardHasNoFields() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertTrue(view.fields().all().isEmpty());
+        assertThat(view.fields().all()).isEmpty();
     }
 
     @Test
-    void testWildcardHasNoMethods() {
+    void wildcardHasNoMethods() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertTrue(view.methods().all().isEmpty());
+        assertThat(view.methods().all()).isEmpty();
     }
 
     @Test
-    void testWildcardIsOwnSuperClass() {
+    void wildcardIsOwnSuperClass() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertSame(view, view.superClass());
+        assertThat(view.superClass()).isSameAs(view);
     }
 
     @Test
-    void testWildcardIsNoExplicitType() {
+    void wildcardIsNoExplicitType() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertFalse(view.isVoid());
-        Assertions.assertFalse(view.isAnonymous());
-        Assertions.assertFalse(view.isPrimitive());
-        Assertions.assertFalse(view.isEnum());
-        Assertions.assertFalse(view.isAnnotation());
-        Assertions.assertFalse(view.isInterface());
-        Assertions.assertFalse(view.isRecord());
+        assertThat(view.isVoid()).isFalse();
+        assertThat(view.isAnonymous()).isFalse();
+        assertThat(view.isPrimitive()).isFalse();
+        assertThat(view.isEnum()).isFalse();
+        assertThat(view.isAnnotation()).isFalse();
+        assertThat(view.isInterface()).isFalse();
+        assertThat(view.isRecord()).isFalse();
     }
 
     @Test
-    void testWildcardPackageIsEmpty() {
+    void wildcardPackageIsEmpty() {
         TypeView<Object> view = new WildcardTypeView();
-        Assertions.assertEquals("", view.packageInfo().name());
-        Assertions.assertEquals("", view.packageInfo().qualifiedName());
+        assertThat(view.packageInfo().name()).isEmpty();
+        assertThat(view.packageInfo().qualifiedName()).isEmpty();
     }
 }

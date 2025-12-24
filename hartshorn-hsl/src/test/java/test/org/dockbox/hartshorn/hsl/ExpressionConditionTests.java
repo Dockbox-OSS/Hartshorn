@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -38,6 +37,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -58,27 +59,27 @@ public class ExpressionConditionTests {
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testBulkValidations(String expression, boolean matches) {
+    void bulkValidations(String expression, boolean matches) {
         ConditionResult result = this.match(expression);
-        Assertions.assertEquals(matches, result.matches());
+        assertThat(result.matches()).isEqualTo(matches);
     }
 
     @Test
-    void testApplicationContextIsOptInAvailable() {
+    void applicationContextIsOptInAvailable() {
         ExpressionConditionContext context =
             new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
         String expression =
             "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass()
                 .getName());
         ConditionResult result = this.match(expression, context);
-        Assertions.assertTrue(result.matches());
+        assertThat(result.matches()).isTrue();
     }
 
     @Test
-    void testApplicationContextIsAvailableDefault() {
+    void applicationContextIsAvailableDefault() {
         String expression = "null != applicationContext";
         ConditionResult result = this.match(expression);
-        Assertions.assertTrue(result.matches());
+        assertThat(result.matches()).isTrue();
     }
 
     ConditionResult match(String expression, ContextView... contexts) {

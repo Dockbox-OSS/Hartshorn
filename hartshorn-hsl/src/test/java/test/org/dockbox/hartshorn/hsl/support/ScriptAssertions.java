@@ -21,9 +21,11 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 public class ScriptAssertions {
 
@@ -32,7 +34,7 @@ public class ScriptAssertions {
         FormattedDiagnostic diagnosticMessage
     ) {
         ScriptEvaluationError error =
-            Assertions.assertThrows(ScriptEvaluationError.class, executableScript::evaluate);
+            assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(executableScript::evaluate).actual();
         assertEvaluationError(error, diagnosticMessage);
     }
 
@@ -41,12 +43,12 @@ public class ScriptAssertions {
         FormattedDiagnostic diagnosticMessage
     ) {
         if (diagnosticMessage.message().phase() != null) {
-            Assertions.assertEquals(diagnosticMessage.message().phase(), error.phase());
+            assertThat(error.phase()).isEqualTo(diagnosticMessage.message().phase());
         }
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String expectedMessageStart = diagnosticMessage.format();
         String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
-        Assertions.assertEquals(expectedMessageStart, actualMessageStart);
+        assertThat(actualMessageStart).isEqualTo(expectedMessageStart);
     }
 
     public static void assertEvaluationError(
@@ -54,17 +56,14 @@ public class ScriptAssertions {
         DiagnosticMessage diagnosticMessage
     ) {
         if (diagnosticMessage.phase() != null) {
-            Assertions.assertEquals(diagnosticMessage.phase(), error.phase());
+            assertThat(error.phase()).isEqualTo(diagnosticMessage.phase());
         }
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
         String rawMessage = diagnosticMessage.format();
-        Assertions.assertTrue(
-            StringUtilities.matchesFormatted(rawMessage, actualMessageStart),
-            "Expected message to match:\n" +
-                rawMessage + "\nbut was:\n" +
-                actualMessageStart
-        );
+        assertThat(StringUtilities.matchesFormatted(rawMessage, actualMessageStart)).as("Expected message to match:\n" +
+            rawMessage + "\nbut was:\n" +
+            actualMessageStart).isTrue();
     }
 
     public static void assertEvaluationFailedAtPosition(
@@ -72,7 +71,7 @@ public class ScriptAssertions {
         int line,
         int column
     ) {
-        Assertions.assertEquals(line, error.line());
-        Assertions.assertEquals(column, error.column());
+        assertThat(error.line()).isEqualTo(line);
+        assertThat(error.column()).isEqualTo(column);
     }
 }

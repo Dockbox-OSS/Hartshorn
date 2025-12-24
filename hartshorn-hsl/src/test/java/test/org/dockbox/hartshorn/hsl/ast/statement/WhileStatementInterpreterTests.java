@@ -25,15 +25,16 @@ import org.dockbox.hartshorn.hsl.parser.statement.WhileStatementParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class WhileStatementInterpreterTests {
+class WhileStatementInterpreterTests {
 
     @Test
     void whileWithFalseExpressionNeverExecutes(@Inject ApplicationContext applicationContext) {
@@ -48,7 +49,7 @@ public class WhileStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertFalse(helper.checkpoints().checkpointAccessed("inside-while"));
+        assertThat(helper.checkpoints().checkpointAccessed("inside-while")).isFalse();
     }
 
     @Test
@@ -71,6 +72,6 @@ public class WhileStatementInterpreterTests {
             .build();
 
         helper.interpret();
-        Assertions.assertEquals(3, helper.checkpoints().checkpointAccessCount("inside-while"));
+        assertThat(helper.checkpoints().checkpointAccessCount("inside-while")).isEqualTo(3);
     }
 }

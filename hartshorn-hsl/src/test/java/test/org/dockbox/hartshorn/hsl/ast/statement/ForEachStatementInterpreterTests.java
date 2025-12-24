@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +36,9 @@ import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ForEachStatementInterpreterTests {
@@ -72,10 +74,10 @@ public class ForEachStatementInterpreterTests {
         helper.interpret();
 
         CheckpointModule checkpoints = helper.checkpoints();
-        Assertions.assertEquals(3, checkpoints.checkpoints().size());
-        Assertions.assertTrue(checkpoints.checkpointAccessed("a"));
-        Assertions.assertTrue(checkpoints.checkpointAccessed("b"));
-        Assertions.assertTrue(checkpoints.checkpointAccessed("c"));
+        assertThat(checkpoints.checkpoints()).hasSize(3);
+        assertThat(checkpoints.checkpointAccessed("a")).isTrue();
+        assertThat(checkpoints.checkpointAccessed("b")).isTrue();
+        assertThat(checkpoints.checkpointAccessed("c")).isTrue();
     }
 
     @Test
@@ -92,10 +94,7 @@ public class ForEachStatementInterpreterTests {
             .defineGlobal("items", "not an iterable")
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.NON_ITERABLE_COLLECTION);
     }
 
@@ -116,6 +115,6 @@ public class ForEachStatementInterpreterTests {
         helper.interpret();
 
         CheckpointModule checkpoints = helper.checkpoints();
-        Assertions.assertEquals(0, checkpoints.checkpoints().size());
+        assertThat(checkpoints.checkpoints()).isEmpty();
     }
 }

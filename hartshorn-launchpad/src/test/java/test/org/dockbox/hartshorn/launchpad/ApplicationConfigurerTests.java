@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.launchpad;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.annotations.Component;
@@ -49,13 +50,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
-public class ApplicationConfigurerTests {
+class ApplicationConfigurerTests {
 
     private static ApplicationContext createApplication(Customizer<HartshornApplicationConfigurer> customizer) {
         return HartshornApplication.createApplication(ApplicationConfigurerTests.class)
@@ -66,81 +64,88 @@ public class ApplicationConfigurerTests {
 
     @Test
     @DisplayName("Customizer should be able to modify arguments provided to the application")
-    void testArgumentsCustomizer() {
+    void argumentsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.arguments(arguments -> {
                 arguments.add("sample.x.y=z");
             });
         });
         PropertyRegistry propertyRegistry = applicationContext.environment().propertyRegistry();
-        assertTrue(propertyRegistry.contains("sample.x.y"));
+        assertThat(propertyRegistry.contains("sample.x.y")).isTrue();
         String value = propertyRegistry.value("sample.x.y")
             .orElseThrow(() -> new AssertionError("Property not found"));
-        assertEquals("z", value);
+        assertThat(value).isEqualTo("z");
     }
 
     @Test
     @DisplayName("Customizer should be able to modify module activators")
-    void testModuleActivatorsCustomizer() {
+    void moduleActivatorsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.activators(activators -> {
                 activators.add(TypeUtils.annotation(UseSampleActivator.class));
             });
         });
-        assertTrue(applicationContext.activators().hasActivator(UseSampleActivator.class));
+        assertThat(applicationContext.activators().hasActivator(UseSampleActivator.class)).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to modify default pre-processors")
-    void testPreProcessorsCustomizer() {
+    void preProcessorsCustomizer() {
         SamplePreProcessor processor = new SamplePreProcessor();
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.componentPreProcessors(preProcessors -> {
                 preProcessors.add(processor);
             });
         });
-        ProcessableApplicationContext processableApplicationContext =
-            assertInstanceOf(ProcessableApplicationContext.class, applicationContext);
-        MultiMap<Integer, ComponentPreProcessor> processors =
-            processableApplicationContext.defaultProvider()
-                .processorRegistry().preProcessors();
-        assertTrue(processors.containsValue(processor));
+        ProcessableApplicationContext processableApplicationContext = assertThat(applicationContext)
+                .asInstanceOf(InstanceOfAssertFactories.type(ProcessableApplicationContext.class))
+                .actual();
+        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext
+                .defaultProvider()
+                .processorRegistry()
+                .preProcessors();
+        assertThat(processors.containsValue(processor)).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to modify default post-processors")
-    void testPostProcessorsCustomizer() {
+    void postProcessorsCustomizer() {
         SamplePostProcessor processor = new SamplePostProcessor();
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.componentPostProcessors(postProcessors -> {
                 postProcessors.add(processor);
             });
         });
-        DelegatingApplicationContext processableApplicationContext =
-            assertInstanceOf(DelegatingApplicationContext.class, applicationContext);
+        DelegatingApplicationContext processableApplicationContext = assertThat(applicationContext)
+                .asInstanceOf(InstanceOfAssertFactories.type(DelegatingApplicationContext.class))
+                .actual();
         ComponentProvider componentProvider = processableApplicationContext.componentProvider();
         PostProcessingComponentProvider postProcessingComponentProvider =
-            assertInstanceOf(PostProcessingComponentProvider.class, componentProvider);
+                assertThat(componentProvider)
+                        .asInstanceOf(InstanceOfAssertFactories.type(
+                                PostProcessingComponentProvider.class
+                        ))
+                        .actual();
         MultiMap<Integer, ComponentPostProcessor> processors =
             postProcessingComponentProvider.processorRegistry().postProcessors();
-        assertTrue(processors.containsValue(processor));
+        assertThat(processors.containsValue(processor)).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to modify standalone components")
-    void testStandaloneComponentsCustomizer() {
+    void standaloneComponentsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.standaloneComponents(components -> {
                 components.add(DummyUnmanagedComponent.class);
             });
         });
         ComponentRegistry componentRegistry = applicationContext.get(ComponentRegistry.class);
-        assertTrue(componentRegistry.container(DummyUnmanagedComponent.class).present());
+        assertThat(componentRegistry.container(DummyUnmanagedComponent.class).present()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to modify scanned packages")
-    void testScannedPackagesCustomizer() {
+    void scannedPackagesCustomizer() {
         final String dummyPackage = "test.dummy.package";
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.scanPackages(packages -> {
@@ -149,7 +154,7 @@ public class ApplicationConfigurerTests {
         });
         Option<TypeReferenceCollectorContext> collectorContextCandidate =
             applicationContext.firstContext(TypeReferenceCollectorContext.class);
-        assertTrue(collectorContextCandidate.present());
+        assertThat(collectorContextCandidate.present()).isTrue();
 
         TypeReferenceCollectorContext collectorContext = collectorContextCandidate.get();
         Set<String> packages = collectorContext.collectors().stream()
@@ -157,12 +162,12 @@ public class ApplicationConfigurerTests {
             .map(ClasspathTypeReferenceCollector.class::cast)
             .map(ClasspathTypeReferenceCollector::packageName)
             .collect(Collectors.toSet());
-        assertTrue(packages.contains(dummyPackage));
+        assertThat(packages).contains(dummyPackage);
     }
 
     @Test
     @DisplayName("Customizer should be able to enable banner printing")
-    void testBannerPrintingCustomizer() {
+    void bannerPrintingCustomizer() {
         Logger logger = LoggerFactory.getLogger(ApplicationConfigurerTests.class);
         OutputCaptureAppender appender = OutputCaptureAppender.registerForLogger(logger);
         createApplication(applicationConfigurer -> {
@@ -182,7 +187,7 @@ public class ApplicationConfigurerTests {
 
     @Test
     @DisplayName("Customizer should be able to disable banner printing")
-    void testBannerPrintingDisabledCustomizer() {
+    void bannerPrintingDisabledCustomizer() {
         Logger logger = LoggerFactory.getLogger(ApplicationConfigurerTests.class);
         OutputCaptureAppender appender = OutputCaptureAppender.registerForLogger(logger);
         createApplication(applicationConfigurer -> {
@@ -201,92 +206,101 @@ public class ApplicationConfigurerTests {
 
     @Test
     @DisplayName("Customizer should be able to enable batch mode")
-    void testBatchModeCustomizer() {
+    void batchModeCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::enableBatchMode);
-        assertTrue(applicationContext.environment().isBatchMode());
+        assertThat(applicationContext.environment().isBatchMode()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable batch mode")
-    void testBatchModeDisabledCustomizer() {
+    void batchModeDisabledCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::disableBatchMode);
-        assertFalse(applicationContext.environment().isBatchMode());
+        assertThat(applicationContext.environment().isBatchMode()).isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to enable strict mode")
-    void testStrictModeCustomizer() {
+    void strictModeCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::enableStrictMode);
-        assertTrue(applicationContext.environment().isStrictMode());
+        assertThat(applicationContext.environment().isStrictMode()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable strict mode")
-    void testStrictModeDisabledCustomizer() {
+    void strictModeDisabledCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::disableStrictMode);
-        assertFalse(applicationContext.environment().isStrictMode());
+        assertThat(applicationContext.environment().isStrictMode()).isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to enable stacktraces")
-    void testShowStacktracesCustomizer() {
+    void showStacktracesCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::showStacktraces);
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertInstanceOf(ConfigurableApplicationEnvironment.class,
-                applicationContext.environment());
+            assertThat(applicationContext.environment())
+                    .asInstanceOf(InstanceOfAssertFactories.type(ConfigurableApplicationEnvironment.class))
+                    .actual();
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class,
-                configurableApplicationEnvironment.exceptionHandler());
-        assertTrue(exceptionHandler.printStackTraces());
+            assertThat(configurableApplicationEnvironment.exceptionHandler())
+                    .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
+                    .actual();
+        assertThat(exceptionHandler.printStackTraces()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable stacktraces")
-    void testHideStacktracesCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::hideStacktraces);
+    void hideStacktracesCustomizer() {
+        ApplicationContext applicationContext = createApplication(
+                HartshornApplicationConfigurer::hideStacktraces
+        );
+
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertInstanceOf(ConfigurableApplicationEnvironment.class,
-                applicationContext.environment());
+            assertThat(applicationContext.environment())
+                    .asInstanceOf(InstanceOfAssertFactories.type(
+                            ConfigurableApplicationEnvironment.class
+                    ))
+                    .actual();
+
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class,
-                configurableApplicationEnvironment.exceptionHandler());
-        assertFalse(exceptionHandler.printStackTraces());
+            assertThat(configurableApplicationEnvironment.exceptionHandler())
+                    .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
+                    .actual();
+        assertThat(exceptionHandler.printStackTraces()).isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to indicate build environment")
-    void testBuildEnvironmentCustomizer() {
+    void buildEnvironmentCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.isBuildEnvironment(true);
         });
-        assertTrue(applicationContext.environment().isBuildEnvironment());
+        assertThat(applicationContext.environment().isBuildEnvironment()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to indicate non-build environment")
-    void testNonBuildEnvironmentCustomizer() {
+    void nonBuildEnvironmentCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.isBuildEnvironment(false);
         });
-        assertFalse(applicationContext.environment().isBuildEnvironment());
+        assertThat(applicationContext.environment().isBuildEnvironment()).isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to modify default bindings")
-    void testDefaultBindingsCustomizer() {
+    void defaultBindingsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.defaultBindings(bindings -> {
                 bindings.bind(String.class).singleton("test");
             });
         });
         String value = applicationContext.get(String.class);
-        assertEquals("test", value);
+        assertThat(value).isEqualTo("test");
     }
 
     @ModuleActivator

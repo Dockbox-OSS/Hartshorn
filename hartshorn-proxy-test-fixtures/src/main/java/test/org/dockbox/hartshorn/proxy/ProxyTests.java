@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.proxy;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -32,17 +33,10 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
 import test.org.dockbox.hartshorn.proxy.support.basic.ConcreteProxyWithNonDefaultConstructor;
 import test.org.dockbox.hartshorn.proxy.support.basic.DescribedProxy;
 import test.org.dockbox.hartshorn.proxy.support.equals.AbstractEqualProxy;
@@ -60,6 +54,15 @@ import test.org.dockbox.hartshorn.proxy.support.standard.FinalMethodProxyTarget;
 import test.org.dockbox.hartshorn.proxy.support.standard.RecordProxy;
 import test.org.dockbox.hartshorn.proxy.support.standard.SealedProxy;
 
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 /**
  * Tests for the default behavior of proxies of various types.
  *
@@ -75,30 +78,30 @@ public abstract class ProxyTests {
     protected abstract Introspector introspector();
 
     @Test
-    void testConcreteMethodsCanBeProxied() throws ApplicationException, NoSuchMethodException {
+    void concreteMethodsCanBeProxied() throws Exception {
         Method name = ConcreteProxyTarget.class.getMethod("name");
         ProxyFactory<ConcreteProxyTarget> handler = this.orchestratorLoader()
             .create(this.introspector())
             .factory(ConcreteProxyTarget.class);
-        handler.advisors().method(name).intercept(context -> "Hartshorn");
+        handler.advisors().method(name).intercept(_ -> "Hartshorn");
         ConcreteProxyTarget proxy = handler.proxy().get();
 
-        Assertions.assertNotNull(proxy);
-        Assertions.assertNotNull(proxy.name());
-        Assertions.assertEquals("Hartshorn", proxy.name());
+        assertThat(proxy).isNotNull();
+        assertThat(proxy.name()).isNotNull();
+        assertThat(proxy.name()).isEqualTo("Hartshorn");
     }
 
     @Test
-    void testFinalMethodsCanNotBeProxied() throws NoSuchMethodException {
+    void finalMethodsCanNotBeProxied() throws Exception {
         Method name = FinalMethodProxyTarget.class.getMethod("name");
         ProxyFactory<FinalMethodProxyTarget> handler = this.orchestratorLoader()
             .create(this.introspector())
             .factory(FinalMethodProxyTarget.class);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> handler.advisors()
-            .method(name)
-            .intercept(context -> "Hartshorn")
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> handler
+                .advisors()
+                .method(name)
+                .intercept(_ -> "Hartshorn"));
     }
 
     public static Stream<Arguments> proxyTypes() {
@@ -110,106 +113,118 @@ public abstract class ProxyTests {
     }
 
     @Test
-    void testRecordProxyCannotBeCreated() {
+    void recordProxyCannotBeCreated() {
         // Records are and cannot be proxied
-        ProxyFactory<RecordProxy> handler =
-            this.orchestratorLoader().create(this.introspector()).factory(RecordProxy.class);
-        Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
+        ProxyFactory<RecordProxy> handler = this.orchestratorLoader()
+                .create(this.introspector())
+                .factory(RecordProxy.class);
+        assertThatExceptionOfType(ProxyConstraintViolationException.class)
+                .isThrownBy(handler::proxy);
     }
 
     @Test
-    void testSealedClassProxyCannotBeCreated() {
+    void sealedClassProxyCannotBeCreated() {
         // Sealed classes only allow for a limited number of subclasses and should not be proxied
-        ProxyFactory<SealedProxy> handler =
-            this.orchestratorLoader().create(this.introspector()).factory(SealedProxy.class);
-        Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
+        ProxyFactory<SealedProxy> handler = this.orchestratorLoader()
+                .create(this.introspector())
+                .factory(SealedProxy.class);
+        assertThatExceptionOfType(ProxyConstraintViolationException.class)
+                .isThrownBy(handler::proxy);
     }
 
     @Test
-    void testFinalClassProxyCannotBeCreated() {
+    void finalClassProxyCannotBeCreated() {
         // Final classes cannot be extended and should not be proxied
         ProxyFactory<FinalClassProxyTarget> handler = this.orchestratorLoader()
             .create(this.introspector())
             .factory(FinalClassProxyTarget.class);
-        Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
+        assertThatExceptionOfType(ProxyConstraintViolationException.class)
+                .isThrownBy(handler::proxy);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testEmptyProxyCanCreate(Class<? extends InterfaceProxy> proxyParent)
-        throws ApplicationException {
+    void emptyProxyCanCreate(Class<? extends InterfaceProxy> proxyParent)
+        throws Exception {
         ProxyFactory<? extends InterfaceProxy> handler =
             this.orchestratorLoader().create(this.introspector()).factory(proxyParent);
         InterfaceProxy proxy = handler.proxy().get();
-        Assertions.assertNotNull(proxy);
+        assertThat(proxy).isNotNull();
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeDelegatedToOriginalInstance(Class<InterfaceProxy> proxyType)
-        throws ApplicationException {
+    void methodsCanBeDelegatedToOriginalInstance(Class<InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         factory.advisors().type().delegate(new ConcreteProxy());
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertEquals("concrete", proxyInstance.name());
+        assertThat(proxyInstance.name()).isEqualTo("concrete");
     }
 
     @Test
-    void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
+    void concreteProxyWithNonDefaultConstructorUsesConstructor() throws Exception {
         StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor> factory =
             this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(ConcreteProxyWithNonDefaultConstructor.class);
 
-        TypeView<ConcreteProxyWithNonDefaultConstructor> typeView =
-            this.introspector().introspect(ConcreteProxyWithNonDefaultConstructor.class);
-        ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor =
-            typeView.constructors().all().get(0);
-        Option<ConcreteProxyWithNonDefaultConstructor> proxy =
-            Assertions.assertDoesNotThrow(() -> factory.proxy(constructor,
-                new Object[] {"Hello world"}));
-        Assertions.assertTrue(proxy.present());
+        TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.introspector()
+                .introspect(ConcreteProxyWithNonDefaultConstructor.class);
+        ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView
+                .constructors()
+                .all()
+                .getFirst();
+        Option<ConcreteProxyWithNonDefaultConstructor> proxy = factory.proxy(
+                constructor,
+                new Object[]{"Hello world"}
+        );
+        assertThat(proxy.present()).isTrue();
 
         ConcreteProxyWithNonDefaultConstructor proxyInstance = proxy.get();
-        Assertions.assertEquals("Hello world", proxyInstance.message());
+        assertThat(proxyInstance.message()).isEqualTo("Hello world");
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeIntercepted(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException, NoSuchMethodException {
-        ProxyFactory<? extends InterfaceProxy> factory =
-            this.orchestratorLoader().create(this.introspector()).factory(proxyType);
-        factory.advisors().method(proxyType.getMethod("name")).intercept(context -> "Hartshorn");
+    void methodsCanBeIntercepted(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
+        ProxyFactory<? extends InterfaceProxy> factory = this.orchestratorLoader()
+                .create(this.introspector())
+                .factory(proxyType);
+
+        factory.advisors()
+                .method(proxyType.getMethod("name"))
+                .intercept(_ -> "Hartshorn");
         Option<? extends InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertEquals("Hartshorn", proxyInstance.name());
+        assertThat(proxyInstance.name()).isEqualTo("Hartshorn");
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeDelegated(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException, NoSuchMethodException {
+    void methodsCanBeDelegated(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         factory.advisors().method(proxyType.getMethod("name")).delegate(new ConcreteProxy());
         Option<? extends InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertEquals("concrete", proxyInstance.name());
+        assertThat(proxyInstance.name()).isEqualTo("concrete");
     }
 
     @Test
-    void testTypesCanBeDelegated() throws ApplicationException {
+    void typesCanBeDelegated() throws Exception {
         // Use a custom interface for this type of delegation, as the other proxy types override
         // methods from their parent
         ProxyFactory<NamedAgedProxy> factory =
@@ -217,103 +232,105 @@ public abstract class ProxyTests {
         factory.advisors().type(AgedProxy.class).delegate(() -> 12);
         factory.advisors().type(NamedProxy.class).delegate(() -> "NamedProxy");
         Option<NamedAgedProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         NamedAgedProxy proxyInstance = proxy.get();
-        Assertions.assertEquals(12, proxyInstance.age());
-        Assertions.assertEquals("NamedProxy", proxyInstance.name());
+        assertThat(proxyInstance.age()).isEqualTo(12);
+        assertThat(proxyInstance.name()).isEqualTo("NamedProxy");
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testWrapperInterceptionIsCorrect(Class<? extends InterfaceProxy> proxyType)
-        throws NoSuchMethodException, ApplicationException {
+    void wrapperInterceptionIsCorrect(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         AtomicInteger count = new AtomicInteger();
-        factory.advisors().method(proxyType.getMethod("name")).intercept(context -> "done");
+        factory.advisors().method(proxyType.getMethod("name")).intercept(_ -> "done");
         factory.advisors().method(proxyType.getMethod("name")).wrapAround(new MethodWrapper<>() {
             @Override
             public void acceptBefore(ProxyCallbackContext<InterfaceProxy> context) {
-                Assertions.assertEquals(0, count.getAndIncrement());
+                assertThat(count.getAndIncrement()).isZero();
             }
 
             @Override
             public void acceptAfter(ProxyCallbackContext<InterfaceProxy> context) {
-                Assertions.assertEquals(1, count.getAndIncrement());
+                assertThat(count.getAndIncrement()).isOne();
             }
 
             @Override
             public void acceptError(ProxyCallbackContext<InterfaceProxy> context) {
                 // Not thrown
-                Assertions.fail();
+                fail();
             }
         });
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertEquals("done", proxyInstance.name());
-        Assertions.assertEquals(2, count.get());
+        assertThat(proxyInstance.name()).isEqualTo("done");
+        assertThat(count.get()).isEqualTo(2);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testErrorWrapperInterceptionIsCorrect(Class<? extends InterfaceProxy> proxyType)
-        throws NoSuchMethodException, ApplicationException {
+    void errorWrapperInterceptionIsCorrect(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         AtomicInteger count = new AtomicInteger();
-        factory.advisors().method(proxyType.getMethod("name")).intercept(context -> {
+        factory.advisors().method(proxyType.getMethod("name")).intercept(_ -> {
             throw new IllegalStateException("not done");
         });
         factory.advisors().method(proxyType.getMethod("name")).wrapAround(new MethodWrapper<>() {
             @Override
             public void acceptBefore(ProxyCallbackContext<InterfaceProxy> context) {
-                Assertions.assertEquals(0, count.getAndIncrement());
+                assertThat(count.getAndIncrement()).isZero();
             }
 
             @Override
             public void acceptAfter(ProxyCallbackContext<InterfaceProxy> context) {
-                Assertions.fail();
+                fail();
             }
 
             @Override
             public void acceptError(ProxyCallbackContext<InterfaceProxy> context) {
                 Throwable error = context.error();
-                Assertions.assertNotNull(error);
-                Assertions.assertTrue(error instanceof IllegalStateException);
-                Assertions.assertEquals("not done", error.getMessage());
-                Assertions.assertEquals(1, count.getAndIncrement());
+                assertThat(error)
+                        .asInstanceOf(InstanceOfAssertFactories.type(IllegalStateException.class))
+                        .extracting(Throwable::getMessage)
+                        .isEqualTo("not done");
+                assertThat(count.getAndIncrement()).isOne();
             }
         });
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        IllegalStateException error =
-            Assertions.assertThrows(IllegalStateException.class, proxyInstance::name);
-        Assertions.assertEquals("not done", error.getMessage());
-        Assertions.assertEquals(2, count.get());
+        IllegalStateException error = assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(proxyInstance::name)
+                .actual();
+        assertThat(error.getMessage()).isEqualTo("not done");
+        assertThat(count.get()).isEqualTo(2);
     }
 
     @Test
-    void testProxyManagerTracksInterceptorsAndDelegates()
-        throws NoSuchMethodException, ApplicationException {
+    void proxyManagerTracksInterceptorsAndDelegates()
+        throws Exception {
         ProxyFactory<NamedAgedProxy> factory =
             this.orchestratorLoader().create(this.introspector()).factory(NamedAgedProxy.class);
 
         AgedProxy aged = () -> 12;
         factory.advisors().type(AgedProxy.class).delegate(aged);
 
-        MethodInterceptor<NamedAgedProxy, Object> named = context -> "NamedProxy";
+        MethodInterceptor<NamedAgedProxy, Object> named = _ -> "NamedProxy";
         factory.advisors().method(NamedProxy.class.getMethod("name")).intercept(named);
         Option<NamedAgedProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         Proxy<?> proxyInstance = (Proxy<?>) proxy.get();
         ProxyManager<?> manager = proxyInstance.manager();
@@ -322,113 +339,116 @@ public abstract class ProxyTests {
             .resolver()
             .type(AgedProxy.class)
             .delegate();
-        Assertions.assertTrue(agedDelegate.present());
-        Assertions.assertSame(agedDelegate.get(), aged);
+        assertThat(agedDelegate.present()).isTrue();
+        assertThat(aged).isSameAs(agedDelegate.get());
 
         Option<?> namedInterceptor = manager.advisor()
             .resolver()
             .method(NamedProxy.class.getMethod("name"))
             .interceptor();
-        Assertions.assertTrue(namedInterceptor.present());
-        Assertions.assertSame(namedInterceptor.get(), named);
+        assertThat(namedInterceptor.present()).isTrue();
+        assertThat(named).isSameAs(namedInterceptor.get());
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxyCanHaveExtraInterfaces(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException {
+    void proxyCanHaveExtraInterfaces(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         factory.implement(DescribedProxy.class);
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertTrue(proxyInstance instanceof DescribedProxy);
+        assertThat(proxyInstance).isInstanceOf(DescribedProxy.class);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxiesAlwaysImplementProxyType(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException {
+    void proxiesAlwaysImplementProxyType(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
         InterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertTrue(proxyInstance instanceof Proxy);
+        assertThat(proxyInstance).isInstanceOf(Proxy.class);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxiesExposeManager(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException {
+    void proxiesExposeManager(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         Proxy<?> proxyInstance = (Proxy<?>) proxy.get();
-        Assertions.assertNotNull(proxyInstance.manager());
+        assertThat(proxyInstance.manager()).isNotNull();
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxyManagerExposesTargetAndProxyType(Class<? extends InterfaceProxy> proxyType)
-        throws ApplicationException {
+    void proxyManagerExposesTargetAndProxyType(Class<? extends InterfaceProxy> proxyType)
+        throws Exception {
         ProxyFactory<InterfaceProxy> factory =
             (ProxyFactory<InterfaceProxy>) this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(proxyType);
         Option<InterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         ProxyManager<InterfaceProxy> manager = ((Proxy<InterfaceProxy>) proxy.get()).manager();
-        Assertions.assertNotNull(manager.proxyClass());
-        Assertions.assertNotNull(manager.targetClass());
+        assertThat(manager.proxyClass()).isNotNull();
+        assertThat(manager.targetClass()).isNotNull();
 
-        Assertions.assertNotEquals(proxyType, manager.proxyClass());
-        Assertions.assertSame(proxyType, manager.targetClass());
+        assertThat(manager.proxyClass()).isNotEqualTo(proxyType);
+        assertThat(manager.targetClass()).isSameAs(proxyType);
 
-        Assertions.assertTrue(manager.orchestrator().isProxy(manager.proxyClass()));
+        assertThat(manager.orchestrator().isProxy(manager.proxyClass())).isTrue();
     }
 
     @Test
-    void testInterfaceProxyDoesNotEqual() throws ApplicationException {
+    void interfaceProxyDoesNotEqual() throws Exception {
         DemoServiceA serviceA1 = this.createProxy(DemoServiceA.class);
         DemoServiceA serviceA2 = this.createProxy(DemoServiceA.class);
 
-        Assertions.assertNotSame(serviceA1, serviceA2);
-        Assertions.assertNotEquals(serviceA1, serviceA2);
+        assertThat(serviceA2)
+                .isNotSameAs(serviceA1)
+                .isNotEqualTo(serviceA1);
     }
 
     @Test
-    void testAbstractClassProxyDoesNotEqual() throws ApplicationException {
+    void abstractClassProxyDoesNotEqual() throws Exception {
         DemoServiceB serviceC1 = this.createProxy(DemoServiceB.class);
         DemoServiceB serviceC2 = this.createProxy(DemoServiceB.class);
 
-        Assertions.assertNotSame(serviceC1, serviceC2);
-        Assertions.assertNotEquals(serviceC1, serviceC2);
+        assertThat(serviceC2)
+                .isNotSameAs(serviceC1)
+                .isNotEqualTo(serviceC1);
     }
 
     @Test
-    void testConcreteClassProxyWithoutDelegateDoesNotEqual() throws ApplicationException {
+    void concreteClassProxyWithoutDelegateDoesNotEqual() throws Exception {
         DemoServiceC serviceB1 = this.createProxy(DemoServiceC.class);
         DemoServiceC serviceB2 = this.createProxy(DemoServiceC.class);
 
-        Assertions.assertNotSame(serviceB1, serviceB2);
-        Assertions.assertNotEquals(serviceB1, serviceB2);
+        assertThat(serviceB2)
+                .isNotSameAs(serviceB1)
+                .isNotEqualTo(serviceB1);
     }
 
     @Test
-    public void testConcreteClassProxyWithNonEqualsImplementedDelegateDoesNotEqual()
-        throws ApplicationException {
+    public void concreteClassProxyWithNonEqualsImplementedDelegateDoesNotEqual()
+        throws Exception {
         CheckedSupplier<DemoServiceC> supplier =
             () -> this.orchestratorLoader().create(this.introspector())
                 .factory(DemoServiceC.class)
@@ -439,12 +459,13 @@ public abstract class ProxyTests {
         DemoServiceC serviceC3 = supplier.get();
         DemoServiceC serviceC4 = supplier.get();
 
-        Assertions.assertNotSame(serviceC3, serviceC4);
-        Assertions.assertNotEquals(serviceC3, serviceC4);
+        assertThat(serviceC4)
+                .isNotSameAs(serviceC3)
+                .isNotEqualTo(serviceC3);
     }
 
     @Test
-    void testConcreteClassProxyWithDelegateDoesNotEqual() throws ApplicationException {
+    void concreteClassProxyWithDelegateDoesNotEqual() throws Exception {
         CheckedSupplier<DemoServiceD> supplier =
             () -> this.orchestratorLoader().create(this.introspector())
                 .factory(DemoServiceD.class)
@@ -455,8 +476,9 @@ public abstract class ProxyTests {
         DemoServiceD serviceD1 = supplier.get();
         DemoServiceD serviceD2 = supplier.get();
 
-        Assertions.assertNotSame(serviceD1, serviceD2);
-        Assertions.assertEquals(serviceD1, serviceD2);
+        assertThat(serviceD2)
+                .isNotSameAs(serviceD1)
+                .isEqualTo(serviceD1);
     }
 
     private <T> T createProxy(Class<T> type) throws ApplicationException {
@@ -504,72 +526,75 @@ public abstract class ProxyTests {
     }
 
     @Test
-    void testConcreteProxySelfEquality() throws ApplicationException {
+    @SuppressWarnings("SelfAssertion")
+    void concreteProxySelfEquality() throws Exception {
         ProxyFactory<EqualProxy> factory =
             this.orchestratorLoader().create(this.introspector()).factory(EqualProxy.class);
         Option<EqualProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         EqualProxy proxyInstance = proxy.get();
-        Assertions.assertEquals(proxyInstance, proxyInstance);
-        Assertions.assertTrue(proxyInstance.test(proxyInstance));
+        assertThat(proxyInstance).isEqualTo(proxyInstance);
+        assertThat(proxyInstance.test(proxyInstance)).isTrue();
     }
 
     @Test
-    void testServiceSelfEquality() throws ApplicationException {
+    @SuppressWarnings("SelfAssertion")
+    void serviceSelfEquality() throws Exception {
         AbstractEqualProxy service = this.orchestratorLoader()
             .create(this.introspector())
             .factory(AbstractEqualProxy.class)
             .proxy()
             .get();
-        Assertions.assertEquals(service, service);
-        Assertions.assertTrue(service.test(service));
+        assertThat(service).isEqualTo(service);
+        assertThat(service.test(service)).isTrue();
     }
 
     @Test
-    void testInterfaceProxySelfEquality() throws ApplicationException {
+    @SuppressWarnings("SelfAssertion")
+    void interfaceProxySelfEquality() throws Exception {
         ProxyFactory<EqualInterfaceProxy> factory = this.orchestratorLoader()
             .create(this.introspector())
             .factory(EqualInterfaceProxy.class);
         Option<EqualInterfaceProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
+        assertThat(proxy.present()).isTrue();
 
         EqualInterfaceProxy proxyInstance = proxy.get();
-        Assertions.assertEquals(proxyInstance, proxyInstance);
-        Assertions.assertTrue(proxyInstance.test(proxyInstance));
+        assertThat(proxyInstance).isEqualTo(proxyInstance);
+        assertThat(proxyInstance.test(proxyInstance)).isTrue();
     }
 
     @Test
-    void testLambdaCanBeProxied() throws NoSuchMethodException, ApplicationException {
+    void lambdaCanBeProxied() throws Exception {
         Class<Supplier<String>> supplierClass = (Class<Supplier<String>>) (Class<?>) Supplier.class;
         StateAwareProxyFactory<Supplier<String>> factory =
             this.orchestratorLoader().create(this.introspector()).factory(supplierClass);
-        factory.advisors().method(Supplier.class.getMethod("get")).intercept(context -> "foo");
+        factory.advisors().method(Supplier.class.getMethod("get")).intercept(_ -> "foo");
         Option<Supplier<String>> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
-        Assertions.assertEquals("foo", proxy.get().get());
+        assertThat(proxy.present()).isTrue();
+        assertThat(proxy.get().get()).isEqualTo("foo");
     }
 
     @Test
-    void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
+    void isProxyIsTrueIfTypeIsProxy() throws Exception {
         Introspector introspector = this.introspector();
         ProxyOrchestrator orchestrator = this.orchestratorLoader().create(introspector);
         ProxyFactory<?> factory = orchestrator.factory(Object.class);
         Object proxy = factory.proxy().get();
 
         boolean instanceIsProxy = orchestrator.isProxy(proxy);
-        Assertions.assertTrue(instanceIsProxy);
+        assertThat(instanceIsProxy).isTrue();
 
         boolean typeIsProxy = orchestrator.isProxy(proxy.getClass());
-        Assertions.assertTrue(typeIsProxy);
+        assertThat(typeIsProxy).isTrue();
     }
 
     @Test
-    void testIsProxyIsFalseIfTypeIsNormal() {
+    void isProxyIsFalseIfTypeIsNormal() {
         Introspector introspector = this.introspector();
         ProxyOrchestrator orchestrator = this.orchestratorLoader().create(introspector);
         TypeView<?> view = introspector.introspect(Object.class);
         boolean isProxy = orchestrator.isProxy(view);
-        Assertions.assertFalse(isProxy);
+        assertThat(isProxy).isFalse();
     }
 }

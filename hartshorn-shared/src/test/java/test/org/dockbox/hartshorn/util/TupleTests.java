@@ -17,38 +17,41 @@
 package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.Tuple;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map.Entry;
 
-public class TupleTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class TupleTests {
 
     @Test
-    public void testFirstValueIsStored() {
+    void firstValueIsStored() {
         Entry<?, ?> tuple = Tuple.of(1, "two");
-        Assertions.assertEquals(1, tuple.getKey());
-        Assertions.assertInstanceOf(Integer.class, tuple.getKey());
+        assertThat(tuple.getKey()).isEqualTo(1);
+        assertThat(tuple.getKey()).isInstanceOf(Integer.class);
     }
 
     @Test
-    public void testSecondValueIsStored() {
+    void secondValueIsStored() {
         Entry<?, ?> tuple = Tuple.of(1, "two");
-        Assertions.assertEquals("two", tuple.getValue());
-        Assertions.assertInstanceOf(String.class, tuple.getValue());
+        assertThat(tuple.getValue()).isEqualTo("two");
+        assertThat(tuple.getValue()).isInstanceOf(String.class);
     }
 
     @Test
-    public void testEqualsUsesValues() {
+    void equalsUsesValues() {
         Entry<?, ?> tuple = Tuple.of(1, "two");
         Entry<?, ?> second = Tuple.of(1, "two");
-        Assertions.assertNotSame(tuple, second);
-        Assertions.assertEquals(tuple, second);
+        assertThat(second)
+                .isNotSameAs(tuple)
+                .isEqualTo(tuple);
     }
 
     @Test
-    void testTupleIsImmutable() {
+    void tupleIsImmutable() {
         Entry<Integer, String> tuple = Tuple.of(1, "two");
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> tuple.setValue("three"));
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> tuple.setValue("three"));
     }
 }

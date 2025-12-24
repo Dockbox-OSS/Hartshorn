@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.support;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
@@ -45,7 +46,6 @@ import org.dockbox.hartshorn.hsl.runtime.SimpleScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.mockito.internal.util.MockUtil;
 
@@ -55,6 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * A helper class for testing HSL language features such as parsing and interpretation. This class
@@ -177,13 +180,12 @@ public class HSLTestHelper {
     public Expression expression() {
         List<Statement> statements = this.parse();
         if (statements.size() != 1) {
-            Assertions.fail("Expected exactly one statement but got " + statements.size());
+            fail("Expected exactly one statement but got " + statements.size());
         }
         Statement statement = statements.getFirst();
-        CaptureModule.CaptureStatement captureStatement = Assertions.assertInstanceOf(
-            CaptureModule.CaptureStatement.class,
-            statement
-        );
+        CaptureModule.CaptureStatement captureStatement = assertThat(statement)
+                .asInstanceOf(InstanceOfAssertFactories.type(CaptureModule.CaptureStatement.class))
+                .actual();
         return captureStatement.expression();
     }
 

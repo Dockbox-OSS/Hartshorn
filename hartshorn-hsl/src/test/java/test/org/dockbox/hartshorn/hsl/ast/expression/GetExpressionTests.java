@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
@@ -28,13 +29,14 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class GetExpressionTests {
+class GetExpressionTests {
 
     @Test
     void getExpressionReturnsPropertyContainerValue(@Inject ApplicationContext applicationContext) {
@@ -52,7 +54,7 @@ public class GetExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals("Hello, World!", value);
+        assertThat(value).isEqualTo("Hello, World!");
     }
 
     @Test
@@ -77,9 +79,10 @@ public class GetExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        // String, not ExternalObjectReference. Should unwrap automatically.
-        Assertions.assertInstanceOf(String.class, value);
-        Assertions.assertEquals("Hello, World!", value);
+        assertThat(value)
+                // String, not ExternalObjectReference. Should unwrap automatically.
+                .isInstanceOf(String.class)
+                .isEqualTo("Hello, World!");
     }
 
     @Test
@@ -110,9 +113,10 @@ public class GetExpressionTests {
             .build();
 
         Object value = helper.interpretValue();
-        ExternalFunction externalFunction =
-            Assertions.assertInstanceOf(ExternalFunction.class, value);
+        ExternalFunction externalFunction = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(ExternalFunction.class))
+                .actual();
         InstanceReference bound = externalFunction.bound();
-        Assertions.assertSame(instanceReference, bound);
+        assertThat(bound).isSameAs(instanceReference);
     }
 }

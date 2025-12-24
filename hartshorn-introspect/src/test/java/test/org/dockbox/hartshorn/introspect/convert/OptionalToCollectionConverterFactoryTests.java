@@ -21,35 +21,37 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToCollectionConverterFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OptionalToCollectionConverterFactoryTests {
+class OptionalToCollectionConverterFactoryTests {
 
     @Test
-    void testEmptyOptionalConvertsToEmptyCollection() {
+    void emptyOptionalConvertsToEmptyCollection() {
         Converter<Optional<?>, ArrayList> converter = createConverter();
         Optional<String> option = Optional.empty();
 
         Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted.isEmpty());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isEmpty();
     }
 
     @Test
-    void testPresentOptionalConvertsToCollectionWithElement() {
+    void presentOptionalConvertsToCollectionWithElement() {
         Converter<Optional<?>, ArrayList> converter = createConverter();
         Optional<String> option = Optional.of("test");
 
         Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted.isEmpty());
-        Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", CollectionUtilities.first(converted));
+        assertThat(converted)
+                .isNotEmpty()
+                .hasSize(1);
+        assertThat(CollectionUtilities.first(converted)).isEqualTo("test");
     }
 
     @SuppressWarnings("NonApiType")

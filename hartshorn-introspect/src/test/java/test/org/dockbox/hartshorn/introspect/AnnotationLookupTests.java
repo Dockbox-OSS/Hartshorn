@@ -18,14 +18,16 @@ package test.org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import test.org.dockbox.hartshorn.introspect.annotations.Base;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import test.org.dockbox.hartshorn.introspect.annotations.HttpMethod;
 import test.org.dockbox.hartshorn.introspect.annotations.Intercept;
 import test.org.dockbox.hartshorn.introspect.annotations.InterceptType;
@@ -44,7 +46,7 @@ import test.org.dockbox.hartshorn.introspect.components.TestClassWithSameBaseTyp
 import test.org.dockbox.hartshorn.introspect.components.TestClassWithSocketJS;
 import test.org.dockbox.hartshorn.introspect.components.TestClassWithSub;
 
-public class AnnotationLookupTests {
+class AnnotationLookupTests {
 
     /**
      * Default implementation of {@link AnnotationLookup}, provided as a method to allow overriding
@@ -57,116 +59,86 @@ public class AnnotationLookupTests {
     }
 
     @Test
-    public void testBaseAnnotationOnSub() {
-        Assertions.assertEquals("Sub",
-            this.annotationLookup().find(TestClassWithSub.class, Base.class).value());
+    void baseAnnotationOnSub() {
+        assertThat(this.annotationLookup().find(TestClassWithSub.class, Base.class).value()).isEqualTo("Sub");
     }
 
     @Test
-    public void testBaseAnnotationOnBase() {
-        Assertions.assertEquals("Base",
-            this.annotationLookup().find(TestClassWithBase.class, Base.class).value());
+    void baseAnnotationOnBase() {
+        assertThat(this.annotationLookup().find(TestClassWithBase.class, Base.class).value()).isEqualTo("Base");
     }
 
     @Test
-    public void testBaseAnnotationOnMid() {
-        Assertions.assertEquals("Mid",
-            this.annotationLookup().find(TestClassWithMid.class, Base.class).value());
+    void baseAnnotationOnMid() {
+        assertThat(this.annotationLookup().find(TestClassWithMid.class, Base.class).value()).isEqualTo("Mid");
     }
 
     @Test
-    public void testRouteAnnotationOnRouteClass() {
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup().find(TestClassWithRoute.class, Route.class).method());
-        Assertions.assertEquals("test",
-            this.annotationLookup().find(TestClassWithRoute.class, Route.class).path());
+    void routeAnnotationOnRouteClass() {
+        assertThat(this.annotationLookup().find(TestClassWithRoute.class, Route.class).method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithRoute.class, Route.class).path()).isEqualTo("test");
     }
 
     @Test
-    public void testRouteAnnotationOnGetExtendedClass() {
-        Assertions.assertEquals(HttpMethod.GET,
-            this.annotationLookup().find(TestClassWithGet.class, Route.class).method());
-        Assertions.assertEquals("get",
-            this.annotationLookup().find(TestClassWithGet.class, Route.class).path());
+    void routeAnnotationOnGetExtendedClass() {
+        assertThat(this.annotationLookup().find(TestClassWithGet.class, Route.class).method()).isEqualTo(HttpMethod.GET);
+        assertThat(this.annotationLookup().find(TestClassWithGet.class, Route.class).path()).isEqualTo("get");
     }
 
     @Test
-    public void testRouteAnnotationOnPostExtendedClass() {
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup().find(TestClassWithPost.class, Route.class).method());
-        Assertions.assertEquals("post",
-            this.annotationLookup().find(TestClassWithPost.class, Route.class).path());
+    void routeAnnotationOnPostExtendedClass() {
+        assertThat(this.annotationLookup().find(TestClassWithPost.class, Route.class).method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithPost.class, Route.class).path()).isEqualTo("post");
     }
 
     @Test
-    public void testRouteAnnotationOnSocketExtendedClass() {
-        Assertions.assertEquals("socketjs",
-            this.annotationLookup().find(TestClassWithSocketJS.class, Route.class).path());
+    void routeAnnotationOnSocketExtendedClass() {
+        assertThat(this.annotationLookup().find(TestClassWithSocketJS.class, Route.class).path()).isEqualTo("socketjs");
     }
 
     @Test
-    public void testInterceptedRouteAnnotations() {
-        Assertions.assertEquals("intercept",
-            this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).path());
-        Assertions.assertEquals("intercept",
-            this.annotationLookup().find(TestClassWithIntercept.class, Route.class).path());
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).method());
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup().find(TestClassWithIntercept.class, Route.class).method());
-        Assertions.assertEquals(InterceptType.AFTER_SUCCESS,
-            this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).type());
+    void interceptedRouteAnnotations() {
+        assertThat(this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).path()).isEqualTo("intercept");
+        assertThat(this.annotationLookup().find(TestClassWithIntercept.class, Route.class).path()).isEqualTo("intercept");
+        assertThat(this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithIntercept.class, Route.class).method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithIntercept.class, Intercept.class).type()).isEqualTo(InterceptType.AFTER_SUCCESS);
     }
 
     @Test
-    public void testDoubleInterceptedRouteAnnotations() {
-        Assertions.assertEquals("prehandler",
-            this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).path());
-        Assertions.assertEquals("prehandler",
-            this.annotationLookup().find(TestClassWithPreHandler.class, Route.class).path());
-        Assertions.assertEquals(HttpMethod.GET,
-            this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).method());
-        Assertions.assertEquals(HttpMethod.GET,
-            this.annotationLookup().find(TestClassWithPreHandler.class, Route.class).method());
-        Assertions.assertEquals(InterceptType.PRE_HANDLER,
-            this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).type());
+    void doubleInterceptedRouteAnnotations() {
+        assertThat(this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).path()).isEqualTo("prehandler");
+        assertThat(this.annotationLookup().find(TestClassWithPreHandler.class, Route.class).path()).isEqualTo("prehandler");
+        assertThat(this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).method()).isEqualTo(HttpMethod.GET);
+        assertThat(this.annotationLookup().find(TestClassWithPreHandler.class, Route.class).method()).isEqualTo(HttpMethod.GET);
+        assertThat(this.annotationLookup().find(TestClassWithPreHandler.class, Intercept.class).type()).isEqualTo(InterceptType.PRE_HANDLER);
     }
 
     @Test
-    public void testDoubleInheritedAndDefaultedRouteAnnotation() {
-        Assertions.assertEquals("aftersuccess",
-            this.annotationLookup().find(TestClassWithAfterSuccess.class, Intercept.class).path());
-        Assertions.assertEquals("aftersuccess",
-            this.annotationLookup().find(TestClassWithAfterSuccess.class, Route.class).path());
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup()
-                .find(TestClassWithAfterSuccess.class, Intercept.class)
-                .method());
-        Assertions.assertEquals(HttpMethod.POST,
-            this.annotationLookup().find(TestClassWithAfterSuccess.class, Route.class).method());
-        Assertions.assertEquals(InterceptType.AFTER_SUCCESS,
-            this.annotationLookup().find(TestClassWithAfterSuccess.class, Intercept.class).type());
+    void doubleInheritedAndDefaultedRouteAnnotation() {
+        assertThat(this.annotationLookup().find(TestClassWithAfterSuccess.class, Intercept.class).path()).isEqualTo("aftersuccess");
+        assertThat(this.annotationLookup().find(TestClassWithAfterSuccess.class, Route.class).path()).isEqualTo("aftersuccess");
+        assertThat(this.annotationLookup()
+            .find(TestClassWithAfterSuccess.class, Intercept.class)
+            .method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithAfterSuccess.class, Route.class).method()).isEqualTo(HttpMethod.POST);
+        assertThat(this.annotationLookup().find(TestClassWithAfterSuccess.class, Intercept.class).type()).isEqualTo(InterceptType.AFTER_SUCCESS);
     }
 
     @Test
-    public void reportErrorWhenMultipleAnnotationsWithSameBaseTypeFound() {
-        Exception exception = Assertions.assertThrows(Exception.class,
-            () -> this.annotationLookup().find(TestClassWithSameBaseType.class, Base.class));
-        Assertions.assertTrue(exception.getMessage()
-            .contains("Found more than one annotation on class"));
+    void reportErrorWhenMultipleAnnotationsWithSameBaseTypeFound() {
+        Exception exception = assertThatExceptionOfType(Exception.class).isThrownBy(() -> this.annotationLookup().find(TestClassWithSameBaseType.class, Base.class)).actual();
+        assertThat(exception.getMessage()).contains("Found more than one annotation on class");
 
         this.annotationLookup().find(TestClassWithSameBaseType.class, Sub.class);
     }
 
     @Test
-    public void jointAnnotationsAreStrictlyOrdered() {
+    void jointAnnotationsAreStrictlyOrdered() {
         List<Route> routes =
             this.annotationLookup().findAll(TestClassWithJointAnnotation2.class, Route.class);
-        Assertions.assertEquals(Arrays.asList(HttpMethod.POST, HttpMethod.GET),
-            routes.stream().map(Route::method).collect(Collectors.toList()));
-        Assertions.assertEquals(Arrays.asList("abc", ""),
-            routes.stream().map(Route::path).collect(Collectors.toList()));
-        Assertions.assertEquals(Arrays.asList("", "jointRegex"),
-            routes.stream().map(Route::regex).collect(Collectors.toList()));
+        assertThat(routes.stream().map(Route::method)).containsExactlyElementsOf(Arrays.asList(HttpMethod.POST, HttpMethod.GET));
+        assertThat(routes.stream().map(Route::path)).containsExactlyElementsOf(Arrays.asList("abc", ""));
+        assertThat(routes.stream().map(Route::regex)).containsExactlyElementsOf(Arrays.asList("", "jointRegex"));
     }
 }

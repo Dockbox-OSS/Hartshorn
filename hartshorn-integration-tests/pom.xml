@@ -44,6 +44,10 @@
           <artifactId>groovy-test-junit5</artifactId>
           <groupId>org.apache.groovy</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 

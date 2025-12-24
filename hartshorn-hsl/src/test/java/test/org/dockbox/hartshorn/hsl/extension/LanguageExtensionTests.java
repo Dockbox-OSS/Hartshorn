@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.extension;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
@@ -30,20 +31,21 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest
 @UseExpressionValidation
-public class LanguageExtensionTests {
+class LanguageExtensionTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testLanguageExtensionCanInject() {
+    void languageExtensionCanInject() {
         ExpressionScript script = ExpressionScript.of(
             this.applicationContext,
             "(@hello == \"hello\") && (@world == \"world\")"
@@ -54,19 +56,21 @@ public class LanguageExtensionTests {
         customizer.expressionModules(module);
         script.runtime().customizer(customizer);
 
-        Assertions.assertTrue(script.valid());
-        Assertions.assertTrue(module.resolverAccessed());
+        assertThat(script.valid()).isTrue();
+        assertThat(module.resolverAccessed()).isTrue();
 
         List<Statement> statements = ValidateExpressionRuntime.actualStatements(script);
-        Assertions.assertEquals(1, statements.size());
+        assertThat(statements).hasSize(1);
 
         Statement statement = statements.getFirst();
-        ReturnStatement returnStatement =
-            Assertions.assertInstanceOf(ReturnStatement.class, statement);
+        ReturnStatement returnStatement = assertThat(statement)
+                .asInstanceOf(InstanceOfAssertFactories.type(ReturnStatement.class))
+                .actual();
         Expression expression = returnStatement.expression();
 
-        LogicalExpression logicalExpression =
-            Assertions.assertInstanceOf(LogicalExpression.class, expression);
+        LogicalExpression logicalExpression = assertThat(expression)
+                .asInstanceOf(InstanceOfAssertFactories.type(LogicalExpression.class))
+                .actual();
         Expression helloExpression = logicalExpression.leftExpression();
         Expression worldExpression = logicalExpression.rightExpression();
 
@@ -75,15 +79,17 @@ public class LanguageExtensionTests {
     }
 
     private static void assertExpressionContainsAtName(Expression expression) {
-        GroupingExpression groupingExpression =
-            Assertions.assertInstanceOf(GroupingExpression.class, expression);
-        BinaryExpression binaryExpression =
-            Assertions.assertInstanceOf(BinaryExpression.class, groupingExpression.expression());
+        GroupingExpression groupingExpression = assertThat(expression)
+                .asInstanceOf(InstanceOfAssertFactories.type(GroupingExpression.class))
+                .actual();
+        BinaryExpression binaryExpression = assertThat(groupingExpression.expression())
+                .asInstanceOf(InstanceOfAssertFactories.type(BinaryExpression.class))
+                .actual();
 
         Expression leftExpression = binaryExpression.leftExpression();
         Expression rightExpression = binaryExpression.rightExpression();
 
-        Assertions.assertInstanceOf(AtNameExpression.class, leftExpression);
-        Assertions.assertInstanceOf(LiteralExpression.class, rightExpression);
+        assertThat(leftExpression).isInstanceOf(AtNameExpression.class);
+        assertThat(rightExpression).isInstanceOf(LiteralExpression.class);
     }
 }

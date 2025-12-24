@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.properties;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.profiles.support.ConfigurationProfileRegistryFactory;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
@@ -25,36 +26,37 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.test.annotations.TestProfiles;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestProfiles("ProfilePropertiesTests")
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ProfilePropertiesTests {
+class ProfilePropertiesTests {
 
     @Inject
     private PropertyRegistry propertyRegistry;
 
     @Test
-    void testPropertyRegistryHasProfilesInIntegrationTest() {
-        ProfilePropertyRegistry registry =
-            Assertions.assertInstanceOf(ProfilePropertyRegistry.class, propertyRegistry);
+    void propertyRegistryHasProfilesInIntegrationTest() {
+        ProfilePropertyRegistry registry = assertThat(propertyRegistry)
+                .asInstanceOf(InstanceOfAssertFactories.type(ProfilePropertyRegistry.class))
+                .actual();
         ProfileRegistry profileRegistry = registry.profileRegistry();
-        Assertions.assertEquals(2, profileRegistry.profiles().size());
+        assertThat(profileRegistry.profiles()).hasSize(2);
 
-        Assertions.assertTrue(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME)
-            .present());
-        Assertions.assertTrue(profileRegistry.profile("ProfilePropertiesTests").present());
+        assertThat(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME)
+            .present()).isTrue();
+        assertThat(profileRegistry.profile("ProfilePropertiesTests").present()).isTrue();
     }
 
     @Test
-    void testProfilePropertiesLoadInIntegrationTest() {
+    void profilePropertiesLoadInIntegrationTest() {
         Option<ValueProperty> propertyOption = this.propertyRegistry.get("test.property");
-        Assertions.assertTrue(propertyOption.present());
-        Assertions.assertTrue(propertyOption.flatMap(ValueProperty::value).present());
+        assertThat(propertyOption.present()).isTrue();
+        assertThat(propertyOption.flatMap(ValueProperty::value).present()).isTrue();
 
         ValueProperty property = propertyOption.get();
-        Assertions.assertEquals("This is a profile-specific property value.",
-            property.value().get());
+        assertThat(property.value().get()).isEqualTo("This is a profile-specific property value.");
     }
 }

@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +36,9 @@ import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class LogicalAssignExpressionTests {
@@ -64,12 +66,10 @@ public class LogicalAssignExpressionTests {
             .toList();
         DefaultTokenRegistry.createDefault()
             .tokenTypes(token -> token.assignsWith() != null)
-            .forEach(tokenType -> {
-                Assertions.assertTrue(coveredTokenTypes.contains(tokenType),
-                    "Token type %s is not covered by tests".formatted(
-                        tokenType.representation()
-                    ));
-            });
+            .forEach(tokenType ->
+            assertThat(coveredTokenTypes.contains(tokenType)).as("Token type %s is not covered by tests".formatted(
+                tokenType.representation()
+            )).isTrue());
     }
 
     @ParameterizedTest
@@ -79,17 +79,16 @@ public class LogicalAssignExpressionTests {
                 this.applicationContext,
                 "a %s 1".formatted(tokenType.representation())
             )
-            .parser(parser -> {
-                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
-            })
+            .parser(parser ->
+                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
             .expressionParser(new IdentifierExpressionParser())
             .expressionParser(new LiteralExpressionParser())
             .defineLocal("a", 0b101)
             .build();
 
         Object value = helper.interpretValue();
-        Assertions.assertEquals(result, value);
-        Assertions.assertEquals(result, helper.findVariable("a"));
+        assertThat(value).isEqualTo(result);
+        assertThat(helper.findVariable("a")).isEqualTo(result);
     }
 
     @ParameterizedTest
@@ -99,16 +98,12 @@ public class LogicalAssignExpressionTests {
                 this.applicationContext,
                 "1 %s 1".formatted(tokenType.representation())
             )
-            .parser(parser -> {
-                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
-            })
+            .parser(parser ->
+                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::expression
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET);
     }
 }

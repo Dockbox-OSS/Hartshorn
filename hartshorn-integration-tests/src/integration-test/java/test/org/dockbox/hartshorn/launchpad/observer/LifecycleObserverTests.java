@@ -31,13 +31,16 @@ import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.fail;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents(LifecycleObserverTests.ObserverConfiguration.class)
 @TestProperties("hartshorn.container.close.reentry-policy=IGNORE")
-public class LifecycleObserverTests {
+class LifecycleObserverTests {
 
     @Configuration
     public static class ObserverConfiguration {
@@ -53,48 +56,48 @@ public class LifecycleObserverTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void testServiceLifecycleObserverIsPresentAndObserving() {
+    void serviceLifecycleObserverIsPresentAndObserving() {
         TestLifecycleObserver observer = getObserver(TestLifecycleObserver.class);
 
-        Assertions.assertTrue(observer.started());
+        assertThat(observer.started()).isTrue();
 
-        Assertions.assertDoesNotThrow(applicationContext::close);
-        Assertions.assertTrue(observer.stopped());
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
+        assertThat(observer.stopped()).isTrue();
     }
 
     @Test
-    void testNonRegisteredObserverIsNotPresentOnStart() {
+    void nonRegisteredObserverIsNotPresentOnStart() {
         NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
-        Assertions.assertFalse(observer.started());
-        Assertions.assertFalse(observer.stopped());
+        assertThat(observer.started()).isFalse();
+        assertThat(observer.stopped()).isFalse();
 
         ApplicationEnvironment environment = applicationContext.environment();
-        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+        assertThat(environment).isInstanceOf(ObservableApplicationEnvironment.class);
 
         ((LifecycleObservable) environment).register(observer);
-        Assertions.assertDoesNotThrow(applicationContext::close);
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
 
         // Do not late-fire events
-        Assertions.assertFalse(observer.started());
-        Assertions.assertTrue(observer.stopped());
+        assertThat(observer.started()).isFalse();
+        assertThat(observer.stopped()).isTrue();
     }
 
     @Test
-    void testRegistrationFromClassIsValid() {
+    void registrationFromClassIsValid() {
         // Static as observer instance is lazily created by the observable, so we cannot
         // access it directly.
-        Assertions.assertFalse(StaticNonRegisteredObserver.started());
-        Assertions.assertFalse(StaticNonRegisteredObserver.stopped());
+        assertThat(StaticNonRegisteredObserver.started()).isFalse();
+        assertThat(StaticNonRegisteredObserver.stopped()).isFalse();
 
         ApplicationEnvironment environment = applicationContext.environment();
-        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+        assertThat(environment).isInstanceOf(ObservableApplicationEnvironment.class);
 
         ((LifecycleObservable) environment).register(StaticNonRegisteredObserver.class);
-        Assertions.assertDoesNotThrow(applicationContext::close);
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
 
         // Do not late-fire events
-        Assertions.assertFalse(StaticNonRegisteredObserver.started());
-        Assertions.assertTrue(StaticNonRegisteredObserver.stopped());
+        assertThat(StaticNonRegisteredObserver.started()).isFalse();
+        assertThat(StaticNonRegisteredObserver.stopped()).isTrue();
     }
 
     private <T extends LifecycleObserver> T getObserver(Class<T> type) {
@@ -105,6 +108,6 @@ public class LifecycleObserverTests {
                 .filter(type::isInstance)
                 .collect(CollectorUtilities.toOption())
                 .cast(type)
-                .orElseGet(() -> Assertions.fail("Expected %s to be present in observers".formatted(type.getSimpleName())));
+                .orElseGet(() -> fail("Expected %s to be present in observers".formatted(type.getSimpleName())));
     }
 }

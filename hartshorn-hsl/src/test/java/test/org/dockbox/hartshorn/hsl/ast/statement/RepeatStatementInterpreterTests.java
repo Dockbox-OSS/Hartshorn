@@ -29,13 +29,15 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class RepeatStatementInterpreterTests {
+class RepeatStatementInterpreterTests {
 
     @Test
     void repeatWithNonZeroValueRepeatsExactlyNTimes(@Inject ApplicationContext applicationContext) {
@@ -56,7 +58,7 @@ public class RepeatStatementInterpreterTests {
         helper.interpret();
 
         Object counter = helper.findVariable("counter");
-        Assertions.assertEquals(3d, counter);
+        assertThat(counter).isEqualTo(3d);
     }
 
     @Test
@@ -68,10 +70,7 @@ public class RepeatStatementInterpreterTests {
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, -1d)
@@ -86,10 +85,7 @@ public class RepeatStatementInterpreterTests {
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::interpret
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, (Object) null)

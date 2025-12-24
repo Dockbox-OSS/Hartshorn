@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ConcreteDiscoverableComponent;
@@ -32,36 +31,39 @@ import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.Discoverabl
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ComponentInterface;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.PackageScanningActivator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 @PackageScanningActivator
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ActivatorScanningTests {
+class ActivatorScanningTests {
 
     @Test
-    void testPrefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
+    void prefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
             if (collector instanceof ClasspathTypeReferenceCollector referenceCollector
                 && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
                 return;
             }
         }
-        Assertions.fail("No collector found for package %s".formatted(PackageScanningActivator.PACKAGE));
+        fail("No collector found for package %s".formatted(PackageScanningActivator.PACKAGE));
     }
 
     @Test
     @TestComponents(DiscoverableComponentConfiguration.class)
-    void testBindingsFromActivatorPrefixArePresent(@Inject DiscoverableComponent component) {
-        Assertions.assertNotNull(component);
-        Assertions.assertEquals("Demo", component.message());
-        Assertions.assertInstanceOf(ConcreteDiscoverableComponent.class, component);
+    void bindingsFromActivatorPrefixArePresent(@Inject DiscoverableComponent component) {
+        assertThat(component).isNotNull();
+        assertThat(component.message()).isEqualTo("Demo");
+        assertThat(component).isInstanceOf(ConcreteDiscoverableComponent.class);
     }
 
     @Test
     @TestComponents(ComponentInterface.class)
-    void testServicesFromActivatorPrefixArePresent(
+    void servicesFromActivatorPrefixArePresent(
         @Inject ComponentInterface service,
         @Inject ProxyOrchestrator proxyOrchestrator
     ) {
-        Assertions.assertNotNull(service);
-        Assertions.assertTrue(proxyOrchestrator.isProxy(service));
+        assertThat(service).isNotNull();
+        assertThat(proxyOrchestrator.isProxy(service)).isTrue();
     }
 }

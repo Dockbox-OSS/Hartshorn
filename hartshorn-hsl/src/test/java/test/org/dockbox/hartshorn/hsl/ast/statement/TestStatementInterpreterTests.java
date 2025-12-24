@@ -26,16 +26,18 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class TestStatementInterpreterTests {
+class TestStatementInterpreterTests {
 
     @Test
-    void testStatementWithYieldReturnsValue(@Inject ApplicationContext applicationContext) {
+    void statementWithYieldReturnsValue(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                 test("explicit yield") {
                     yield true;
@@ -50,12 +52,12 @@ public class TestStatementInterpreterTests {
         helper.interpret();
 
         Option<?> explicitYield = helper.context().result("explicit yield");
-        Assertions.assertTrue(explicitYield.present());
-        Assertions.assertEquals(true, explicitYield.get());
+        assertThat(explicitYield.present()).isTrue();
+        assertThat(explicitYield.get()).isEqualTo(true);
     }
 
     @Test
-    void testStatementWithIncorrectReturnFailsParser(
+    void statementWithIncorrectReturnFailsParser(
         @Inject ApplicationContext applicationContext
     ) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
@@ -69,16 +71,13 @@ public class TestStatementInterpreterTests {
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::parse
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
         ScriptAssertions.assertEvaluationError(error,
             DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
-    void testStatementWithoutYieldFailsParser(@Inject ApplicationContext applicationContext) {
+    void statementWithoutYieldFailsParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                 test("implicit yield") {
                     true;
@@ -90,16 +89,13 @@ public class TestStatementInterpreterTests {
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::parse
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
         ScriptAssertions.assertEvaluationError(error,
             DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
-    void testStatementStatementsFailsParser(@Inject ApplicationContext applicationContext) {
+    void statementStatementsFailsParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                 test("empty body") { }
                 """)
@@ -108,10 +104,7 @@ public class TestStatementInterpreterTests {
             .expressionParser(new LiteralExpressionParser())
             .build();
 
-        ScriptEvaluationError error = Assertions.assertThrows(
-            ScriptEvaluationError.class,
-            helper::parse
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EMPTY_TEST_BODY);
     }
 }

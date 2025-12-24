@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,38 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
-public class ExecutableScriptTests {
+class ExecutableScriptTests {
 
     @Inject
     private ApplicationContext context;
 
     @Test
-    void testHslScriptCanEvaluate() {
+    void hslScriptCanEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::evaluate);
+        ScriptContext scriptContext = script.evaluate();
         Object result = scriptContext.interpreter().global().values().get("a");
-        Assertions.assertNotNull(result);
+        assertThat(result).isNotNull();
     }
 
     @Test
-    void testHslScriptCanResolveWithoutEvaluate() {
+    void hslScriptCanResolveWithoutEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::resolve);
+        ScriptContext scriptContext = script.resolve();
         Object result = scriptContext.interpreter().global().values().get("a");
-        Assertions.assertNull(result);
+        assertThat(result).isNull();
     }
 }

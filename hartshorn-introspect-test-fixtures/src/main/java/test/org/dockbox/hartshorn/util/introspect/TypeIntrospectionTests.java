@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -38,6 +37,10 @@ import test.org.dockbox.hartshorn.util.introspect.support.typeparameters.Interfa
 
 import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Tests to verify {@link Introspector} implementations correctly expose basic type information.
@@ -103,312 +106,278 @@ public abstract class TypeIntrospectionTests {
     protected abstract Introspector introspector();
 
     @Test
-    void testTypesAreCached() {
+    void typesAreCached() {
         TypeView<TypeIntrospectionTests> tc1 = this.introspector()
                 .introspect(TypeIntrospectionTests.class);
         TypeView<TypeIntrospectionTests> tc2 = this.introspector()
                 .introspect(TypeIntrospectionTests.class);
-        Assertions.assertSame(tc1, tc2);
+        assertThat(tc2).isSameAs(tc1);
     }
 
     @Test
-    void testCachedItemsAreNotReusedForDifferentTypes() {
+    void cachedItemsAreNotReusedForDifferentTypes() {
         TypeView<TypeIntrospectionTests> tc1 = this.introspector()
                 .introspect(TypeIntrospectionTests.class);
         TypeView<Object> tc2 = this.introspector().introspect(Object.class);
-        Assertions.assertNotSame(tc1, tc2);
+        assertThat(tc2).isNotSameAs(tc1);
     }
 
     @ParameterizedTest
     @MethodSource("primitives")
-    public void testIsPrimitiveAcceptsPrimitives(Class<?> primitive) {
-        Assertions.assertTrue(this.introspector()
-                .introspect(primitive)
-                .isPrimitive()
-        );
+    public void isPrimitiveAcceptsPrimitives(Class<?> primitive) {
+        assertThat(this.introspector()
+            .introspect(primitive)
+            .isPrimitive()).isTrue();
     }
 
     @ParameterizedTest
     @MethodSource("wrappers")
-    public void testIsPrimitiveRejectsPrimitiveWrappers(Class<?> wrapper) {
-        Assertions.assertFalse(this.introspector()
-                .introspect(wrapper)
-                .isPrimitive()
-        );
+    public void isPrimitiveRejectsPrimitiveWrappers(Class<?> wrapper) {
+        assertThat(this.introspector()
+            .introspect(wrapper)
+            .isPrimitive()).isFalse();
     }
 
     @Test
-    public void testIsVoidAcceptsPrimitiveAndWrapper() {
-        Assertions.assertTrue(this.introspector()
-                .introspect(void.class)
-                .isVoid()
-        );
-        Assertions.assertTrue(this.introspector()
-                .introspect(Void.class)
-                .isVoid()
-        );
+    public void isVoidAcceptsPrimitiveAndWrapper() {
+        assertThat(this.introspector()
+            .introspect(void.class)
+            .isVoid()).isTrue();
+        assertThat(this.introspector()
+            .introspect(Void.class)
+            .isVoid()).isTrue();
     }
 
     @Test
-    public void testIsVoidRejectsNonPrimitiveAndNonWrapper() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(String.class)
-                .isVoid()
-        );
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object.class)
-                .isVoid()
-        );
+    public void isVoidRejectsNonPrimitiveAndNonWrapper() {
+        assertThat(this.introspector()
+            .introspect(String.class)
+            .isVoid()).isFalse();
+        assertThat(this.introspector()
+            .introspect(Object.class)
+            .isVoid()).isFalse();
     }
 
     @Test
-    public void testIsPrimitiveRejectsNonPrimitiveAndNonWrapper() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(String.class)
-                .isPrimitive()
-        );
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object.class)
-                .isPrimitive()
-        );
+    public void isPrimitiveRejectsNonPrimitiveAndNonWrapper() {
+        assertThat(this.introspector()
+            .introspect(String.class)
+            .isPrimitive()).isFalse();
+        assertThat(this.introspector()
+            .introspect(Object.class)
+            .isPrimitive()).isFalse();
     }
 
     @Test
-    public void testIsPrimitiveRejectsVoidWrapper() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Void.class)
-                .isPrimitive()
-        );
+    public void isPrimitiveRejectsVoidWrapper() {
+        assertThat(this.introspector()
+            .introspect(Void.class)
+            .isPrimitive()).isFalse();
     }
 
     @Test
-    public void testIsPrimitiveAcceptsVoidPrimitive() {
-        Assertions.assertTrue(this.introspector()
-                .introspect(void.class)
-                .isPrimitive()
-        );
+    public void isPrimitiveAcceptsVoidPrimitive() {
+        assertThat(this.introspector()
+            .introspect(void.class)
+            .isPrimitive()).isTrue();
     }
 
     @Test
-    public void testAnonymousTypesAreAnonymous() {
+    public void anonymousTypesAreAnonymous() {
         TypeView<Object> anonymous = this.introspector().introspect(new Object() {
         });
-        Assertions.assertTrue(anonymous.isAnonymous());
+        assertThat(anonymous.isAnonymous()).isTrue();
     }
 
     @Test
-    public void testNonAnonymousTypesAreNotAnonymous() {
+    public void nonAnonymousTypesAreNotAnonymous() {
         TypeView<Object> anonymous = this.introspector().introspect(Object.class);
-        Assertions.assertFalse(anonymous.isAnonymous());
+        assertThat(anonymous.isAnonymous()).isFalse();
     }
 
     @Test
-    void testAnonymousWrappersReturnCorrectType() {
+    void anonymousWrappersReturnCorrectType() {
         TypeView<Object> anonymous = this.introspector().introspect(new Object() {
         });
-        Assertions.assertNotEquals(Object.class, anonymous.type());
+        assertThat(anonymous.type()).isNotEqualTo(Object.class);
     }
 
     @Test
-    public void testEnumsAreEnum() {
-        Assertions.assertTrue(this.introspector()
-                .introspect(TestEnumType.class)
-                .isEnum()
-        );
+    public void enumsAreEnum() {
+        assertThat(this.introspector()
+            .introspect(TestEnumType.class)
+            .isEnum()).isTrue();
     }
 
     @Test
-    public void testNonEnumsAreNotEnum() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object.class)
-                .isEnum()
-        );
+    public void nonEnumsAreNotEnum() {
+        assertThat(this.introspector()
+            .introspect(Object.class)
+            .isEnum()).isFalse();
     }
 
     @Test
-    public void testEnumsAreNotAnonymous() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(TestEnumType.class)
-                .isAnonymous()
-        );
+    public void enumsAreNotAnonymous() {
+        assertThat(this.introspector()
+            .introspect(TestEnumType.class)
+            .isAnonymous()).isFalse();
     }
 
     @Test
     public void enumConstantsCanBeObtained() {
         TypeView<TestEnumType> enumContext = this.introspector().introspect(TestEnumType.class);
-        Assertions.assertEquals(TestEnumType.values().length, enumContext.enumConstants().size());
+        assertThat(enumContext.enumConstants()).hasSameSizeAs(TestEnumType.values());
     }
 
     @Test
-    public void testAnnotationsAreAnnotations() {
-        Assertions.assertTrue(this.introspector()
-                .introspect(TypeOnlyAnnotation.class)
-                .isAnnotation()
-        );
+    public void annotationsAreAnnotations() {
+        assertThat(this.introspector()
+            .introspect(TypeOnlyAnnotation.class)
+            .isAnnotation()).isTrue();
     }
 
     @Test
-    public void testNonAnnotationsAreNotAnnotations() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object.class)
-                .isAnnotation()
-        );
+    public void nonAnnotationsAreNotAnnotations() {
+        assertThat(this.introspector()
+            .introspect(Object.class)
+            .isAnnotation()).isFalse();
     }
 
     @Test
-    public void testAnnotationsAreNotAnonymous() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Annotation.class)
-                .isAnonymous()
-        );
+    public void annotationsAreNotAnonymous() {
+        assertThat(this.introspector()
+            .introspect(Annotation.class)
+            .isAnonymous()).isFalse();
     }
 
     @Test
-    public void testAnnotationsAreNotEnum() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Annotation.class)
-                .isEnum()
-        );
+    public void annotationsAreNotEnum() {
+        assertThat(this.introspector()
+            .introspect(Annotation.class)
+            .isEnum()).isFalse();
     }
 
     @Test
-    public void testAnnotationsAreNotPrimitive() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Annotation.class)
-                .isPrimitive()
-        );
+    public void annotationsAreNotPrimitive() {
+        assertThat(this.introspector()
+            .introspect(Annotation.class)
+            .isPrimitive()).isFalse();
     }
 
     @Test
-    public void testAnnotationsAreNotVoid() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Annotation.class)
-                .isVoid()
-        );
+    public void annotationsAreNotVoid() {
+        assertThat(this.introspector()
+            .introspect(Annotation.class)
+            .isVoid()).isFalse();
     }
 
     @Test
-    public void testAnnotationsAreNotArray() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Annotation.class)
-                .isArray()
-        );
+    public void annotationsAreNotArray() {
+        assertThat(this.introspector()
+            .introspect(Annotation.class)
+            .isArray()).isFalse();
     }
 
     @Test
-    void testArraysAreArrays() {
-        Assertions.assertTrue(this.introspector()
-                .introspect(Object[].class)
-                .isArray()
-        );
+    void arraysAreArrays() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isArray()).isTrue();
     }
 
     @Test
-    void testArraysAreNotAnonymous() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object[].class)
-                .isAnonymous()
-        );
+    void arraysAreNotAnonymous() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isAnonymous()).isFalse();
     }
 
     @Test
-    void testArraysAreNotEnum() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object[].class)
-                .isEnum()
-        );
+    void arraysAreNotEnum() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isEnum()).isFalse();
     }
 
     @Test
-    void testArraysAreNotPrimitive() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object[].class)
-                .isPrimitive()
-        );
+    void arraysAreNotPrimitive() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isPrimitive()).isFalse();
     }
 
     @Test
-    void testArraysAreNotVoid() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object[].class)
-                .isVoid()
-        );
+    void arraysAreNotVoid() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isVoid()).isFalse();
     }
 
     @Test
-    void testArraysAreNotAnnotation() {
-        Assertions.assertFalse(this.introspector()
-                .introspect(Object[].class)
-                .isAnnotation()
-        );
+    void arraysAreNotAnnotation() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .isAnnotation()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("primitiveDefaults")
-    void testPrimitiveDefaults(Class<?> primitive, Object defaultValue) {
-        Assertions.assertEquals(defaultValue, this.introspector()
-                .introspect(primitive)
-                .defaultOrNull()
-        );
+    void primitiveDefaults(Class<?> primitive, Object defaultValue) {
+        assertThat(this.introspector()
+            .introspect(primitive)
+            .defaultOrNull()).isEqualTo(defaultValue);
     }
 
     @Test
-    void testObjectDefaultsToNull() {
-        Assertions.assertNull(this.introspector()
-                .introspect(Object.class)
-                .defaultOrNull()
-        );
+    void objectDefaultsToNull() {
+        assertThat(this.introspector()
+            .introspect(Object.class)
+            .defaultOrNull()).isNull();
     }
 
     @Test
-    void testAnnotationDefaultsToNull() {
-        Assertions.assertNull(this.introspector()
-                .introspect(TypeOnlyAnnotation.class)
-                .defaultOrNull()
-        );
+    void annotationDefaultsToNull() {
+        assertThat(this.introspector()
+            .introspect(TypeOnlyAnnotation.class)
+            .defaultOrNull()).isNull();
     }
 
     @Test
-    void testEnumDefaultsToNull() {
-        Assertions.assertNull(this.introspector()
-                .introspect(TestEnumType.class)
-                .defaultOrNull()
-        );
+    void enumDefaultsToNull() {
+        assertThat(this.introspector()
+            .introspect(TestEnumType.class)
+            .defaultOrNull()).isNull();
     }
 
     @Test
-    void testArrayDefaultsToNull() {
-        Assertions.assertNull(this.introspector()
-                .introspect(Object[].class)
-                .defaultOrNull()
-        );
+    void arrayDefaultsToNull() {
+        assertThat(this.introspector()
+            .introspect(Object[].class)
+            .defaultOrNull()).isNull();
     }
 
     @ParameterizedTest
     @MethodSource("wrapperDefaults")
-    void testWrapperDefaults(Class<?> wrapper, Object defaultValue) {
-        Assertions.assertEquals(defaultValue, this.introspector()
-                .introspect(wrapper)
-                .defaultOrNull()
+    void wrapperDefaults(Class<?> wrapper, Object defaultValue) {
+        assertThat(this.introspector()
+            .introspect(wrapper)
+            .defaultOrNull()).isEqualTo(defaultValue);
+    }
+
+    @Test
+    void interfacesAreObtainable() {
+        assertThat(this.introspector()
+            .introspect(ImplementationWithTypeParameter.class)
+            .interfaces()).hasSize(1);
+        assertThat(this.introspector()
+            .introspect(ImplementationWithTypeParameter.class)
+            .interfaces()).first().isEqualTo(this.introspector()
+                .introspect(InterfaceWithTypeParameter.class)
         );
     }
 
     @Test
-    void testInterfacesAreObtainable() {
-        Assertions.assertEquals(1, this.introspector()
-                .introspect(ImplementationWithTypeParameter.class)
-                .interfaces()
-                .size()
-        );
-        Assertions.assertEquals(
-                this.introspector().introspect(InterfaceWithTypeParameter.class),
-                this.introspector().introspect(ImplementationWithTypeParameter.class)
-                        .interfaces().getFirst()
-        );
-    }
-
-    @Test
-    void testTypeParametersWithoutSourceAreFromSuperclass() {
+    void typeParametersWithoutSourceAreFromSuperclass() {
         TypeView<ImplementationWithTypeParameter> type = this.introspector()
                 .introspect(ImplementationWithTypeParameter.class);
         assertTypeParameterForType(type, AbstractTypeWithTypeParameter.class, Integer.class);
@@ -421,81 +390,81 @@ public abstract class TypeIntrospectionTests {
             Class<?> expectedClass
     ) {
         TypeParameterList typeParameters = type.typeParameters().outputFor(forClass);
-        Assertions.assertEquals(1, typeParameters.count());
+        assertThat(typeParameters.count()).isOne();
 
         TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
         Option<TypeView<?>> upperBound = typeParameterView.resolvedType();
-        Assertions.assertTrue(upperBound.present());
-        Assertions.assertSame(expectedClass, upperBound.get().type());
+        assertThat(upperBound.present()).isTrue();
+        assertThat(upperBound.get().type()).isSameAs(expectedClass);
     }
 
     @Test
-    void testAnnotatedTypeHasAnnotations() {
+    void annotatedTypeHasAnnotations() {
         TypeView<AnnotatedElement> type = this.introspector().introspect(AnnotatedElement.class);
-        Assertions.assertEquals(1, type.annotations().count());
-        Assertions.assertSame(
-                TypeOnlyAnnotation.class,
-                CollectionUtilities.first(type.annotations().all()).annotationType()
-        );
+        assertThat(type.annotations().count()).isOne();
+        assertThat(CollectionUtilities.first(type.annotations().all()).annotationType())
+                .isSameAs(TypeOnlyAnnotation.class);
     }
 
     @Test
-    void testAnnotatedTypeCanGetAnnotationFromAnnotation() {
-        Assertions.assertTrue(this.introspector().introspect(AnnotatedElement.class)
-                .annotations()
-                .has(TypeOnlyAnnotation.class));
+    void annotatedTypeCanGetAnnotationFromAnnotation() {
+        assertThat(this.introspector().introspect(AnnotatedElement.class)
+            .annotations()
+            .has(TypeOnlyAnnotation.class)).isTrue();
     }
 
     @Test
-    void testTypeViewCanReflect() {
-        Assertions.assertDoesNotThrow(() -> this.introspector().introspect(TypeView.class));
+    void typeViewCanReflect() {
+        assertThatCode(() -> this.introspector().introspect(TypeView.class))
+                .doesNotThrowAnyException();
     }
 
     @Test
-    void testStaticMethodCanInvokeStatic() throws Throwable {
+    void staticMethodCanInvokeStatic() throws Throwable {
         Option<MethodView<TypeIntrospectionTests, ?>> test = this.introspector().introspect(this)
                 .methods()
                 .named("testStatic");
-        Assertions.assertTrue(test.present());
+        assertThat(test.present()).isTrue();
         MethodView<TypeIntrospectionTests, ?> methodContext = test.get();
-        Assertions.assertTrue(methodContext.modifiers().isStatic());
+        assertThat(methodContext.modifiers().isStatic()).isTrue();
         Option<?> result = methodContext.invokeStatic();
         // Void methods return empty option
-        Assertions.assertTrue(result.absent());
+        assertThat(result.absent()).isTrue();
     }
 
     public static void testStatic() {
     }
 
     @Test
-    void testNonStaticMethodCannotInvokeStatic() {
+    void nonStaticMethodCannotInvokeStatic() {
         Option<MethodView<TypeIntrospectionTests, ?>> test = this.introspector().introspect(this)
                 .methods()
                 .named("testNonStatic");
-        Assertions.assertTrue(test.present());
+        assertThat(test.present()).isTrue();
         MethodView<TypeIntrospectionTests, ?> methodContext = test.get();
-        Assertions.assertFalse(methodContext.modifiers().isStatic());
-        Assertions.assertThrows(IllegalIntrospectionException.class, methodContext::invokeStatic);
+        assertThat(methodContext.modifiers().isStatic()).isFalse();
+        assertThatExceptionOfType(IllegalIntrospectionException.class)
+                .isThrownBy(methodContext::invokeStatic);
     }
 
     public void testNonStatic() {
     }
 
     @Test
-    void testMethodOnTypeLookupCanResolveWithChangedReturnType() {
+    void methodOnTypeLookupCanResolveWithChangedReturnType() {
         Option<MethodView<TypeWithOverrideMethodDeclaration, ?>> method = this.introspector()
                 .introspect(TypeWithOverrideMethodDeclaration.class)
                 .methods()
                 .named("methodWithArguments", String.class, Integer.class);
-        Assertions.assertTrue(method.present());
+        assertThat(method.present()).isTrue();
 
         MethodView<TypeWithOverrideMethodDeclaration, ?> methodView = method.get();
         Option<MethodView<TypeWithMethodDeclaration, ?>> onParent = methodView
                 .onType(TypeWithMethodDeclaration.class);
-        Assertions.assertTrue(onParent.present());
+        assertThat(onParent.present()).isTrue();
 
         MethodView<TypeWithMethodDeclaration, ?> parentMethodView = onParent.get();
-        Assertions.assertEquals(Number.class, parentMethodView.returnType().type());
+        assertThat(parentMethodView.returnType().type()).isEqualTo(Number.class);
     }
 
     static class TypeWithMethodDeclaration {

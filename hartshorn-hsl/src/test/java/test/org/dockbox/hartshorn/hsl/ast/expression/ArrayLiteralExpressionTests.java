@@ -16,21 +16,23 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexArrayExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ArrayLiteralExpressionTests {
+class ArrayLiteralExpressionTests {
 
     @Test
-    void testEmptyArrayLiteralYieldsEmptyArrayObject(
+    void emptyArrayLiteralYieldsEmptyArrayObject(
         @Inject ApplicationContext applicationContext
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[]")
@@ -38,12 +40,14 @@ public class ArrayLiteralExpressionTests {
             .build();
         Object value = helper.interpretValue();
 
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertEquals(0, array.length());
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isZero();
     }
 
     @Test
-    void testSingleValueArrayLiteralYieldsArrayObject(
+    void singleValueArrayLiteralYieldsArrayObject(
         @Inject ApplicationContext applicationContext
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[\"test\"]")
@@ -52,13 +56,15 @@ public class ArrayLiteralExpressionTests {
             .build();
         Object value = helper.interpretValue();
 
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertEquals(1, array.length());
-        Assertions.assertEquals("test", array.value(0));
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isOne();
+        assertThat(array.value(0)).isEqualTo("test");
     }
 
     @Test
-    void testMultipleValueArrayLiteralYieldsArrayObject(
+    void multipleValueArrayLiteralYieldsArrayObject(
         @Inject ApplicationContext applicationContext
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
@@ -69,9 +75,11 @@ public class ArrayLiteralExpressionTests {
             .build();
         Object value = helper.interpretValue();
 
-        Array array = Assertions.assertInstanceOf(Array.class, value);
-        Assertions.assertEquals(2, array.length());
-        Assertions.assertEquals("test", array.value(0));
-        Assertions.assertEquals("test2", array.value(1));
+        Array array = assertThat(value)
+                .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
+                .actual();
+        assertThat(array.length()).isEqualTo(2);
+        assertThat(array.value(0)).isEqualTo("test");
+        assertThat(array.value(1)).isEqualTo("test2");
     }
 }

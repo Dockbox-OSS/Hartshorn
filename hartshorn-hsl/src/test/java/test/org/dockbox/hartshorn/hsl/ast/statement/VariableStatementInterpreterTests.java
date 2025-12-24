@@ -21,12 +21,13 @@ import org.dockbox.hartshorn.hsl.parser.statement.VariableDeclarationParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class VariableStatementInterpreterTests {
+class VariableStatementInterpreterTests {
 
     @Test
     void variableDeclarationWithInitializer(@Inject ApplicationContext applicationContext) {
@@ -37,7 +38,7 @@ public class VariableStatementInterpreterTests {
 
         helper.interpret();
         Object x = helper.findVariable("x");
-        Assertions.assertEquals(10d, x);
+        assertThat(x).isEqualTo(10d);
     }
 
     @Test
@@ -49,6 +50,6 @@ public class VariableStatementInterpreterTests {
 
         helper.interpret();
         Object y = helper.findVariable("y");
-        Assertions.assertNull(y);
+        assertThat(y).isNull();
     }
 }

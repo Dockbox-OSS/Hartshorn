@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionDefaultValueProviderFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.beans.beancontext.BeanContext;
@@ -28,82 +27,90 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class CollectionDefaultValueProviderFactoryTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class CollectionDefaultValueProviderFactoryTests {
+
     @Test
-    void testConcreteListCanBeProvided() {
+    void concreteListCanBeProvided() {
         DefaultValueProvider<ArrayList> provider = createProvider(ArrayList.class, ArrayList::new);
 
         List<?> list = provider.defaultValue();
-        Assertions.assertNotNull(list);
-        Assertions.assertTrue(list instanceof ArrayList<?>);
-        Assertions.assertEquals(0, list.size());
+        assertThat(list)
+                .isInstanceOf(ArrayList.class)
+                .isEmpty();
     }
 
     @Test
-    void testConcreteSetCanBeProvided() {
+    void concreteSetCanBeProvided() {
         DefaultValueProvider<HashSet> provider = createProvider(HashSet.class, HashSet::new);
 
         Set<?> set = provider.defaultValue();
-        Assertions.assertNotNull(set);
-        Assertions.assertEquals(0, set.spliterator().getExactSizeIfKnown());
+        assertThat(set).isEmpty();
     }
 
     @Test
-    void testInterfaceListCanBeProvided() {
+    void interfaceListCanBeProvided() {
         DefaultValueProvider<List> provider = createProvider(List.class);
 
         List<?> list = provider.defaultValue();
-        Assertions.assertNotNull(list);
-        Assertions.assertEquals(0, list.size());
+        assertThat(list)
+                .isInstanceOf(ArrayList.class)
+                .isEmpty();
     }
 
     @Test
-    void testInterfaceCollectionCanBeProvided() {
+    void interfaceCollectionCanBeProvided() {
         DefaultValueProvider<Collection> provider = createProvider(Collection.class);
 
         Collection<?> collection = provider.defaultValue();
-        Assertions.assertNotNull(collection);
-        Assertions.assertEquals(0, collection.size());
+        assertThat(collection)
+                .isInstanceOf(ArrayList.class)
+                .isEmpty();
     }
 
     @Test
-    void testInterfaceSetCanBeProvided() {
+    void interfaceSetCanBeProvided() {
         DefaultValueProvider<Set> provider = createProvider(Set.class);
 
         Set<?> set = provider.defaultValue();
-        Assertions.assertNotNull(set);
-        Assertions.assertEquals(0, set.spliterator().getExactSizeIfKnown());
+        assertThat(set)
+                .isInstanceOf(HashSet.class)
+                .isEmpty();
     }
 
     @Test
-    void testInterfaceQueueCanBeProvided() {
+    void interfaceQueueCanBeProvided() {
         DefaultValueProvider<Queue> provider = createProvider(Queue.class);
 
         Queue<?> queue = provider.defaultValue();
-        Assertions.assertNotNull(queue);
-        Assertions.assertEquals(0, queue.size());
+        assertThat(queue)
+                .isInstanceOf(LinkedList.class)
+                .isEmpty();
     }
 
     @Test
-    void testInterfaceDequeCanBeProvided() {
+    void interfaceDequeCanBeProvided() {
         DefaultValueProvider<Deque> provider = createProvider(Deque.class);
 
         Deque<?> deque = provider.defaultValue();
-        Assertions.assertNotNull(deque);
-        Assertions.assertEquals(0, deque.size());
+        assertThat(deque)
+                .isInstanceOf(LinkedList.class)
+                .isEmpty();
     }
 
     @Test
-    void testUnsupportedCollectionTypeCannotBeProvided() {
+    void unsupportedCollectionTypeCannotBeProvided() {
         DefaultValueProvider<BeanContext> provider = createProvider(BeanContext.class);
 
         Collection<?> collection = provider.defaultValue();
-        Assertions.assertNull(collection);
+        assertThat(collection).isNull();
     }
 
     private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(Class<T> type) {
@@ -111,16 +118,17 @@ public class CollectionDefaultValueProviderFactoryTests {
     }
 
     private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(
-        Class<T> type,
-        Supplier<T> supplier
+            Class<T> type,
+            Supplier<T> supplier
     ) {
         Introspector introspector =
-            ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
+                ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
         DefaultValueProviderFactory<Collection<?>> factory =
-            new CollectionDefaultValueProviderFactory(introspector).withDefaults();
+                new CollectionDefaultValueProviderFactory(introspector).withDefaults();
 
         DefaultValueProvider<T> provider = factory.create(type);
-        Assertions.assertNotNull(provider);
+        assertThat(provider)
+                .isNotNull();
 
         return provider;
     }

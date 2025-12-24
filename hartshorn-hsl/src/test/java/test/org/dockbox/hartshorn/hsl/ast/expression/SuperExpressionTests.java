@@ -28,13 +28,14 @@ import org.dockbox.hartshorn.hsl.semantic.ClassType;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class SuperExpressionTests {
+class SuperExpressionTests {
 
     @Test
     void superMethodCanBeAccessedWithCurrentInstance(
@@ -78,7 +79,7 @@ public class SuperExpressionTests {
         Object value = helper.interpretOnly()
             .captures()
             .capturedValue();
-        Assertions.assertSame(methodReference, value);
-        Assertions.assertSame(instanceReference, methodReference.bound());
+        assertThat(value).isSameAs(methodReference);
+        assertThat(methodReference.bound()).isSameAs(instanceReference);
     }
 }
