@@ -37,74 +37,6 @@
     <plugin.openrewrite.version>6.26.0</plugin.openrewrite.version>
   </properties>
 
-  <profiles>
-    <profile>
-      <id>openrewrite</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.openrewrite.maven</groupId>
-            <artifactId>rewrite-maven-plugin</artifactId>
-            <configuration>
-              <activeRecipes>
-                <recipe>org.openrewrite.java.testing.assertj.JUnitToAssertj</recipe>
-              </activeRecipes>
-              <exclusions>
-                <!--
-                Groovy sources are passed to Rewrite by GMaven, even though Groovy isn't Java. Kotlin
-                and Scala sources are correctly ignored.
-                -->
-                <exclusion>*/**.groovy</exclusion>
-                <!--
-                Source files using switch expressions/pattern matching. This is currently not supported
-                by Rewrite, see https://github.com/openrewrite/rewrite/issues/4153 for more information.
-                -->
-                <exclusion>
-                  hartshorn-introspect-reflection/src/main/java/org/dockbox/hartshorn/util/introspect/reflect/ReflectionIntrospector.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-introspect-reflection/src/main/java/org/dockbox/hartshorn/util/introspect/reflect/view/ReflectionTypeParameterView.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-inject/src/main/java/org/dockbox/hartshorn/inject/introspect/InjectorApplicationViewAdapter.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-inject/src/main/java/org/dockbox/hartshorn/inject/provider/strategy/InstantiationStrategyComponentProviderStrategy.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-inject-configurations/src/main/java/org/dockbox/hartshorn/inject/processing/MultiMapComponentProcessorRegistry.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-launchpad/src/main/java/org/dockbox/hartshorn/launchpad/configuration/LaunchpadSharedComponentConfiguration.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-reporting/src/main/java/org/dockbox/hartshorn/reporting/serialize/NodeToJacksonVisitor.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-hsl/src/main/java/org/dockbox/hartshorn/hsl/parser/statement/ClassStatementParser.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-introspect/src/test/java/test/org/dockbox/hartshorn/introspect/convert/ConverterIntrospectionHelper.java
-                </exclusion>
-                <exclusion>
-                  hartshorn-introspect/src/test/java/test/org/dockbox/hartshorn/introspect/convert/CollectionDefaultValueProviderFactoryTests.java
-                </exclusion>
-              </exclusions>
-              <failOnDryRunResults>true</failOnDryRunResults>
-            </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.openrewrite.recipe</groupId>
-                <artifactId>rewrite-testing-frameworks</artifactId>
-                <version>2.20.0</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <build>
     <testResources>
       <testResource>
@@ -260,6 +192,25 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.openrewrite.maven</groupId>
+        <artifactId>rewrite-maven-plugin</artifactId>
+        <version>6.23.0</version>
+        <configuration>
+          <exportDatatables>true</exportDatatables>
+          <activeRecipes>
+            <recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+          </activeRecipes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-testing-frameworks</artifactId>
+            <version>3.21.3</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
