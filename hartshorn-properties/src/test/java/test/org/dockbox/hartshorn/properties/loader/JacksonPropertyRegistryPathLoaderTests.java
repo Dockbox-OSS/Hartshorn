@@ -43,7 +43,7 @@ class JacksonPropertyRegistryPathLoaderTests {
         loader.loadRegistry(registry, path.toUri());
 
         // Then: Should contain all expected keys
-        List<ConfiguredProperty> properties = registry.find(property -> true);
+        List<ConfiguredProperty> properties = registry.find(_ -> true);
         assertThat(properties).hasSize(12);
 
         // Then: Keys should be ordered
