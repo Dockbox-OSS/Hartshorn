@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.properties.loader.support;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.FilePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
+import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.io.IOException;
@@ -50,7 +51,9 @@ public class JacksonYamlSpiPropertyRegistryLoader
 
     @Override
     public boolean isCompatible(URI path) {
-        return CAN_LOAD;
+        return CAN_LOAD && JacksonYamlPropertyRegistryLoader.DEFAULT_EXTENSIONS.contains(
+                IOUtilities.getFileExtension(path)
+        );
     }
 
     @Override

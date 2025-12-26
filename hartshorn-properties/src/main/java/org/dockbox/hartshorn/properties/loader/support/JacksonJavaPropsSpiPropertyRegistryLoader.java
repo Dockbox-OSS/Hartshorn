@@ -19,11 +19,13 @@ package org.dockbox.hartshorn.properties.loader.support;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.FilePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
+import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+
 /**
  * An SPI wrapper for {@link JacksonJavaPropsPropertyRegistryLoader}, to safely allow for safe
  * runtime interactions, even if required dependencies are missing.
@@ -49,15 +51,16 @@ public class JacksonJavaPropsSpiPropertyRegistryLoader
 
     @Override
     public boolean isCompatible(URI path) {
-        return CAN_LOAD;
+        return CAN_LOAD && JacksonJavaPropsPropertyRegistryLoader.DEFAULT_EXTENSIONS.contains(
+                IOUtilities.getFileExtension(path)
+        );
     }
 
     @Override
     public void loadRegistry(PropertyRegistry registry, URI path) throws IOException {
         if (CAN_LOAD) {
             DelegateHolder.INSTANCE.loadRegistry(registry, path);
-        }
-        else {
+        } else {
             throw new IllegalStateException(
                     "Jackson JavaProps support is not available" +
                             " (missing jackson-dataformat-properties)"
