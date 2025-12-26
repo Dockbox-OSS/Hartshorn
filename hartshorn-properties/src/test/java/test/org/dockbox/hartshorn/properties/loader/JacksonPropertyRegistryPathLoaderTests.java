@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
-import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.support.JacksonYamlPropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,7 @@ class JacksonPropertyRegistryPathLoaderTests {
     @Test
     void complexYamlConfigurationCanBeLoaded() throws Exception {
         // Given
-        PropertyRegistryPathLoader loader =
-            new JacksonYamlPropertyRegistryLoader(new StylePropertyPathFormatter());
+        PropertyRegistryPathLoader loader = new JacksonYamlPropertyRegistryLoader();
         Path path = Path.of("src/test/resources/complex-configuration.yml");
 
         // When: Loading registry
@@ -45,7 +43,7 @@ class JacksonPropertyRegistryPathLoaderTests {
         loader.loadRegistry(registry, path.toUri());
 
         // Then: Should contain all expected keys
-        List<ConfiguredProperty> properties = registry.find(property -> true);
+        List<ConfiguredProperty> properties = registry.find(_ -> true);
         assertThat(properties).hasSize(12);
 
         // Then: Keys should be ordered

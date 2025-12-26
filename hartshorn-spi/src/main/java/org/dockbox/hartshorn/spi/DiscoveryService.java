@@ -25,7 +25,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
@@ -293,17 +292,8 @@ public final class DiscoveryService {
         Set<T> instances = new HashSet<>();
         for (ClassLoader classLoader : this.classLoaders) {
             ServiceLoader<T> serviceLoader = this.getServiceLoader(type, classLoader);
-            Iterator<T> it = serviceLoader.iterator();
-            while (true) {
-                try {
-                    if (!it.hasNext()) {
-                        break;
-                    }
-                    instances.add(it.next());
-                } catch (NoClassDefFoundError ignored) {
-                    // Ignored, class is either not compatible, or is missing dependencies. In both
-                    // cases we don't want to make further attempts to load it further.
-                }
+            for (T instance : serviceLoader) {
+                instances.add(instance);
             }
         }
         return instances;

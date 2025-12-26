@@ -1,2 +1,2 @@
-org.dockbox.hartshorn.properties.loader.support.JacksonYamlPropertyRegistryLoader
-org.dockbox.hartshorn.properties.loader.support.JacksonJavaPropsPropertyRegistryLoader
+org.dockbox.hartshorn.properties.loader.support.JacksonYamlSpiPropertyRegistryLoader
+org.dockbox.hartshorn.properties.loader.support.JacksonJavaPropsSpiPropertyRegistryLoader
