@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.populate;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.ContextKey;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @HartshornIntegrationTest(
     includeBasePackages = false,
@@ -43,10 +44,11 @@ class ContextConfiguringComponentProcessorTests {
         assertThat(proxyOrchestrator.isProxy(emptyComponent)).isTrue();
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        Option<SimpleContext> context =
-            component.manager().firstContext(ContextKey.of(SimpleContext.class));
-        assertThat(context.present()).isTrue();
-        assertThat(context.get().value()).isEqualTo("Foo");
+        Option<SimpleContext> context = component.manager()
+                .firstContext(ContextKey.of(SimpleContext.class));
+        assertThat(context).value()
+                .extracting(SimpleContext::value)
+                .isEqualTo("Foo");
     }
 
     @Test
@@ -58,9 +60,10 @@ class ContextConfiguringComponentProcessorTests {
         assertThat(contextComponent).isNotNull();
         assertThat(proxyOrchestrator.isProxy(contextComponent)).isFalse();
 
-        Option<SimpleContext> context =
-            contextComponent.firstContext(ContextKey.of(SimpleContext.class));
-        assertThat(context.present()).isTrue();
-        assertThat(context.get().value()).isEqualTo("Foo");
+        Option<SimpleContext> context = contextComponent
+                .firstContext(ContextKey.of(SimpleContext.class));
+        assertThat(context).value()
+                .extracting(SimpleContext::value)
+                .isEqualTo("Foo");
     }
 }

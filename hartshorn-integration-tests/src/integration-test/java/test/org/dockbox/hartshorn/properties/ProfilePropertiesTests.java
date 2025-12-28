@@ -23,12 +23,14 @@ import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.ValueProperty;
+import org.dockbox.hartshorn.test.HartshornAssertions;
 import org.dockbox.hartshorn.test.annotations.TestProfiles;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @TestProfiles("ProfilePropertiesTests")
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -45,18 +47,19 @@ class ProfilePropertiesTests {
         ProfileRegistry profileRegistry = registry.profileRegistry();
         assertThat(profileRegistry.profiles()).hasSize(2);
 
-        assertThat(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME)
-            .present()).isTrue();
-        assertThat(profileRegistry.profile("ProfilePropertiesTests").present()).isTrue();
+        assertThat(profileRegistry.profile(
+                ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME
+        )).present();
+        assertThat(profileRegistry.profile("ProfilePropertiesTests")).present();
     }
 
     @Test
     void profilePropertiesLoadInIntegrationTest() {
         Option<ValueProperty> propertyOption = this.propertyRegistry.get("test.property");
-        assertThat(propertyOption.present()).isTrue();
-        assertThat(propertyOption.flatMap(ValueProperty::value).present()).isTrue();
-
-        ValueProperty property = propertyOption.get();
-        assertThat(property.value().get()).isEqualTo("This is a profile-specific property value.");
+        assertThat(propertyOption)
+                .value()
+                .extracting(ValueProperty::value, HartshornAssertions.option(String.class))
+                .value()
+                .isEqualTo("This is a profile-specific property value.");
     }
 }
