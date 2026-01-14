@@ -41,7 +41,7 @@ class ClassPathScannerTests {
     void canScanWithPackageFilter() throws Exception {
         ClassPathScanner scanner = ClassPathScanner.create()
             .includeDefaultClassPath()
-            .filterPrefix("test.org.dockbox.hartshorn.introspect.types");
+            .includePrefix("test.org.dockbox.hartshorn.introspect.types");
 
         Set<String> classes = new HashSet<>();
         scanner.scan(resource -> classes.add(resource.resourceName()));

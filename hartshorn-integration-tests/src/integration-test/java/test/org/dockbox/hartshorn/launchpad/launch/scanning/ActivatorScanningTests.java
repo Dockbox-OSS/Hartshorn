@@ -42,7 +42,7 @@ class ActivatorScanningTests {
     void prefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
             if (collector instanceof ClasspathTypeReferenceCollector referenceCollector
-                && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
+                && referenceCollector.packageNames().contains(PackageScanningActivator.PACKAGE)) {
                 return;
             }
         }

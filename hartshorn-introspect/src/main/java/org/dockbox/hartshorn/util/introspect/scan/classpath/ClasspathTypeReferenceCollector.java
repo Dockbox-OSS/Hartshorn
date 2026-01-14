@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
+import java.util.HashSet;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -42,29 +43,32 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     private static final MultiMap<String, TypeReference> BATCH_CACHE =
         new ConcurrentSetMultiMap<>();
     // checkstyle:on LineLength
-    private final String packageName;
+    private final Set<String> packageNames;
 
-    protected ClasspathTypeReferenceCollector(String packageName) {
-        this.packageName = packageName;
+    protected ClasspathTypeReferenceCollector(Set<String> packageNames) {
+        this.packageNames = packageNames;
     }
 
     /**
-     * Returns the name of the package that is scanned by this instance.
+     * Returns the package names that this collector is configured to scan.
      *
-     * @return The name of the package that is being scanned.
+     * @return The package names that this collector is configured to scan.
      */
-    public String packageName() {
-        return this.packageName;
+    public Set<String> packageNames() {
+        return this.packageNames;
     }
 
     @Override
     public Set<TypeReference> collect() throws TypeCollectionException {
-        if (!BATCH_CACHE.containsKey(this.packageName)) {
-            Set<TypeReference> cache = this.createCache();
-            BATCH_CACHE.putAll(this.packageName, cache);
+        Set<TypeReference> localCache = new HashSet<>();
+        for (String packageName : this.packageNames) {
+            if (!BATCH_CACHE.containsKey(packageName)) {
+                Set<TypeReference> cache = this.createCache();
+                BATCH_CACHE.putAll(packageName, cache);
+            }
+            localCache.addAll(BATCH_CACHE.get(packageName));
         }
-        // Don't use local cache in batch mode, to avoid n*2 memory usage
-        return Set.copyOf(BATCH_CACHE.get(this.packageName));
+        return Set.copyOf(localCache);
     }
 
     /**
@@ -87,18 +91,18 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
         if (!(other instanceof ClasspathTypeReferenceCollector collector)) {
             return false;
         }
-        return this.packageName.equals(collector.packageName);
+        return this.packageNames.equals(collector.packageNames);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.packageName);
+        return Objects.hash(this.packageNames);
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("packageName", this.packageName)
+            .field("packageNames", this.packageNames())
             .describe();
     }
 }

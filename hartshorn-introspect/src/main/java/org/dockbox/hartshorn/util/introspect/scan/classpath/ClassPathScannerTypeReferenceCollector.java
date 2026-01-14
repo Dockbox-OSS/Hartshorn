@@ -35,8 +35,30 @@ import java.util.Set;
  */
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
-    public ClassPathScannerTypeReferenceCollector(String packageName) {
-        super(packageName);
+    private final Set<String> excludePackages = new HashSet<>();
+
+    public ClassPathScannerTypeReferenceCollector(Set<String> packageNames) {
+        super(packageNames);
+    }
+
+    /**
+     * Excludes the given package names from being scanned.
+     *
+     * @param packageNames The package names to exclude.
+     * @return This collector, for chaining.
+     */
+    public ClassPathScannerTypeReferenceCollector excludePackages(Set<String> packageNames) {
+        this.excludePackages.addAll(packageNames);
+        return this;
+    }
+
+    /**
+     * Returns the package names that are excluded from being scanned.
+     *
+     * @return The package names that are excluded from being scanned.
+     */
+    public Set<String> excludePackages() {
+        return this.excludePackages;
     }
 
     @Override
@@ -44,8 +66,15 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
         Set<TypeReference> typeReferences = new HashSet<>();
         ClassPathScanner classpathScanner = ClassPathScanner.create()
             .includeDefaultClassPath()
-            .filterPrefix(this.packageName())
             .classesOnly();
+
+        for (String packageName : this.packageNames()) {
+            classpathScanner.includePrefix(packageName);
+        }
+
+        for (String excludePackage : this.excludePackages()) {
+            classpathScanner.excludePrefix(excludePackage);
+        }
 
         try {
             classpathScanner.scan(resource -> {
@@ -56,7 +85,7 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
         }
         catch (ClassPathWalkingException e) {
             throw new TypeCollectionException(
-                "Failed to collect types in package " + this.packageName(),
+                "Failed to collect types in packages " + this.packageNames(),
                 e
             );
         }
@@ -65,6 +94,7 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("package").writeString(this.packageName());
+        collector.property("packages")
+            .writeStrings(this.packageNames().toArray(String[]::new));
     }
 }

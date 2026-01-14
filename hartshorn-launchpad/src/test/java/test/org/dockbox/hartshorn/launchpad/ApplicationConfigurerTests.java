@@ -160,7 +160,7 @@ class ApplicationConfigurerTests {
         Set<String> packages = collectorContext.collectors().stream()
             .filter(ClasspathTypeReferenceCollector.class::isInstance)
             .map(ClasspathTypeReferenceCollector.class::cast)
-            .map(ClasspathTypeReferenceCollector::packageName)
+            .flatMap(scanner -> scanner.packageNames().stream())
             .collect(Collectors.toSet());
         assertThat(packages).contains(dummyPackage);
     }
