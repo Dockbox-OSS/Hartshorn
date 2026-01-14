@@ -108,13 +108,13 @@ public @interface HartshornIntegrationTest {
      *
      * @return the additional packages to scan
      *
-     * @see StandardApplicationContextFactory.Configurer#scanPackages(Customizer)
+     * @see StandardApplicationContextFactory.Configurer#includePackages(Customizer)
      */
-    String[] scanPackages() default {};
+    String[] includePackages() default {};
 
     /**
      * Whether to include the base package of the main class explicitly, or to only use the prefixes
-     * provided to {@link #scanPackages()}. Defaults to {@code true}.
+     * provided to {@link #includePackages()}. Defaults to {@code true}.
      *
      * @return whether to include the base package of the main class
      *

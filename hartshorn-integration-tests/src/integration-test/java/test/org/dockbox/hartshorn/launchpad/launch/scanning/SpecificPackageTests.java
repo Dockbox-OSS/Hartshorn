@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ScanSpecificPackageActivator
 @HartshornIntegrationTest(
     includeBasePackages = false,
-    scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
+    includePackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
     componentPreProcessors = {CountingComponentPreProcessor.class}
 )
 class SpecificPackageTests {

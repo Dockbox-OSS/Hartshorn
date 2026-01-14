@@ -42,8 +42,9 @@ class TypeCollectorTests {
 
     @Test
     void classPathScannerTypeCollector() throws Exception {
-        TypeReferenceCollector collector =
-            new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(
+            Set.of("test.org.dockbox.hartshorn.introspect.types")
+        );
         Set<TypeReference> typeReferences = collector.collect();
 
         assertThat(typeReferences).hasSize(7);
@@ -70,8 +71,9 @@ class TypeCollectorTests {
 
     @Test
     void cachedTypeCollector() throws Exception {
-        TypeReferenceCollector collector =
-            new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(
+            Set.of("test.org.dockbox.hartshorn.introspect.types")
+        );
         TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
 
         Set<TypeReference> typeReferencesA = cachedCollector.collect();

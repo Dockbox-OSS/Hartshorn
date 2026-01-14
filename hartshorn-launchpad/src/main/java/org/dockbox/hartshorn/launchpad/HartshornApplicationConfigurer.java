@@ -181,7 +181,7 @@ public class HartshornApplicationConfigurer {
         Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer
     ) {
         this.applicationContextFactory = this.applicationContextFactory
-            .compose(configuration -> configuration.scanPackages(customizer));
+            .compose(configuration -> configuration.includePackages(customizer));
         return this;
     }
 

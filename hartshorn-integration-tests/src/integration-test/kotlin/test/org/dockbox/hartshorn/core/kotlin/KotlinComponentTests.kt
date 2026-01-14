@@ -38,7 +38,7 @@ import java.util.stream.Stream
  */
 @HartshornIntegrationTest(
   includeBasePackages = false,
-  scanPackages = ["test.org.dockbox.hartshorn.core.kotlin"]
+  includePackages = ["test.org.dockbox.hartshorn.core.kotlin"]
 )
 class KotlinComponentTests {
 

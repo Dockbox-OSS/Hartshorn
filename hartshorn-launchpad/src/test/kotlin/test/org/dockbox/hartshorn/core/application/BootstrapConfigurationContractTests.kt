@@ -106,7 +106,7 @@ class BootstrapConfigurationContractTests {
         customizer
       )
     }
-    assertCustomizer(instance) { configurer, customizer -> configurer.scanPackages(customizer) }
+    assertCustomizer(instance) { configurer, customizer -> configurer.includePackages(customizer) }
 
     assertDeferred(instance) { configurer, deferred: ApplicationEnvironment? ->
       configurer.environment(

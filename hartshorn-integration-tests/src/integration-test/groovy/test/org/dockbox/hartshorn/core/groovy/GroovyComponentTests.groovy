@@ -36,7 +36,7 @@ import java.util.stream.Stream
  *
  * @author Guus Lieben
  */
-@HartshornIntegrationTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.groovy"])
+@HartshornIntegrationTest(includeBasePackages = false, includePackages = ["test.org.dockbox.hartshorn.core.groovy"])
 class GroovyComponentTests {
 
   @Inject
