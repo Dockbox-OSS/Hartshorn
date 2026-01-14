@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class ActivatorScanningTests {
     void prefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
             if (collector instanceof ClasspathTypeReferenceCollector referenceCollector
-                && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
+                && referenceCollector.packageNames().contains(PackageScanningActivator.PACKAGE)) {
                 return;
             }
         }

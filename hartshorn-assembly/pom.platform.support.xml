@@ -325,7 +325,6 @@
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <skip>${license-check.skip}</skip>
           <headerDefinitions>
             <headerDefinition>
               ${maven.multiModuleProjectDirectory}/hartshorn-assembly/licenses/JavaBlockStyleHeader.xml
@@ -366,6 +365,9 @@
           </execution>
           <execution>
             <id>check</id>
+            <configuration>
+              <skip>${license-check.skip}</skip>
+            </configuration>
             <goals>
               <goal>check</goal>
             </goals>

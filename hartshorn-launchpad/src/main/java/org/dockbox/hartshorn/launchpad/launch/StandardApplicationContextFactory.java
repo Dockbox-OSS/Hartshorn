@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,11 +260,22 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         TypeReferenceCollectorContext collectorContext,
         Set<Annotation> activators
     ) {
-        Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
-        prefixes.stream()
+        Set<String> includePackages = this.collectPrefixesForRegistering(
+                bootstrapContext,
+                activators
+            ).stream()
             .filter(Predicate.not(String::isEmpty))
-            .map(ClassPathScannerTypeReferenceCollector::new)
-            .forEach(collectorContext::register);
+            .collect(Collectors.toSet());
+
+        Set<String> excludePackages = Set.copyOf(this.configurer.excludePackages.initialize(
+            this.initializerContext.transform(bootstrapContext)
+        ));
+
+        ClassPathScannerTypeReferenceCollector collector =
+            new ClassPathScannerTypeReferenceCollector(includePackages);
+        collector.excludePackages(excludePackages);
+
+        collectorContext.register(collector);
 
         Set<Class<?>> standaloneComponents = Set.copyOf(this.configurer.standaloneComponents
             .initialize(this.initializerContext.transform(bootstrapContext))
@@ -290,7 +301,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         Set<Annotation> activators
     ) {
         Set<String> prefixes = new HashSet<>();
-        prefixes.addAll(this.configurer.scanPackages.initialize(
+        prefixes.addAll(this.configurer.includePackages.initialize(
             this.initializerContext.transform(bootstrapContext)
         ));
 
@@ -393,7 +404,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             });
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> includePackages = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> excludePackages = LazyStreamableConfigurer.empty();
 
         private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment =
             ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
@@ -495,10 +507,26 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer scanPackages(
+        public Configurer includePackages(
             Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer
         ) {
-            this.scanPackages.customizer(customizer);
+            this.includePackages.customizer(customizer);
+            return this;
+        }
+
+        /**
+         * Configures the packages that should be excluded from scanning by the application. By
+         * default, this contains no excluded packages.
+         *
+         * @param customizer The customizer that is used to configure the packages that should be
+         * excluded from scanning
+         *
+         * @return The current configurator instance
+         */
+        public Configurer excludePackages(
+            Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer
+        ) {
+            this.excludePackages.customizer(customizer);
             return this;
         }
 

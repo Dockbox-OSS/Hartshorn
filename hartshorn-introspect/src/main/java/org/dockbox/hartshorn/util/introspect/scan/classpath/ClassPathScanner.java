@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,8 @@ public final class ClassPathScanner {
 
     private final Set<String> classNames = new HashSet<>();
     private final Set<URLClassLoader> classLoaders = new HashSet<>();
-    private final Set<String> prefixFilters = new HashSet<>();
+    private final Set<String> includePrefixes = new HashSet<>();
+    private final Set<String> excludePrefixes = new HashSet<>();
 
     private boolean resourcesOnly = false;
     private boolean classesOnly = true;
@@ -331,8 +332,15 @@ public final class ClassPathScanner {
     private boolean shouldProcessResource(boolean isClassResource, String checkedResourceName) {
         // If we're filtering by prefix, and the resource name doesn't start with any of the
         // prefixes, don't process it
-        for (String beginFilterName : this.prefixFilters) {
+        for (String beginFilterName : this.includePrefixes) {
             if (!checkedResourceName.startsWith(beginFilterName)) {
+                return false;
+            }
+        }
+
+        // If the resource name starts with any of the exclude prefixes, don't process it
+        for (String excludePrefix : this.excludePrefixes) {
+            if (checkedResourceName.startsWith(excludePrefix)) {
                 return false;
             }
         }
@@ -375,15 +383,30 @@ public final class ClassPathScanner {
 
     /**
      * Adds a prefix filter to the scanner. The scanner will only process files that start with any
-     * of the provided prefixes.
+     * of the provided prefixes, unless excluded by an exclude prefix.
      *
      * @param prefix The prefix to add
      *
      * @return The scanner instance
      */
-    public synchronized ClassPathScanner filterPrefix(String prefix) {
+    public synchronized ClassPathScanner includePrefix(String prefix) {
         if (prefix != null && !prefix.trim().isEmpty()) {
-            this.prefixFilters.add(prefix);
+            this.includePrefixes.add(prefix);
+        }
+        return this;
+    }
+
+    /**
+     * Adds an exclude prefix filter to the scanner. The scanner will not process files that start
+     * with any of the provided prefixes, even if they match an include prefix.
+     *
+     * @param prefix The prefix to add
+     *
+     * @return The scanner instance
+     */
+    public synchronized ClassPathScanner excludePrefix(String prefix) {
+        if (prefix != null && !prefix.trim().isEmpty()) {
+            this.excludePrefixes.add(prefix);
         }
         return this;
     }
@@ -394,8 +417,18 @@ public final class ClassPathScanner {
      *
      * @return The set of prefixes
      */
-    public synchronized Set<String> filteredPrefixes() {
-        return this.prefixFilters;
+    public synchronized Set<String> includedPrefixes() {
+        return this.includePrefixes;
+    }
+
+    /**
+     * Returns the set of exclude prefixes that are configured in the scanner. When scanning the
+     * classpath, the scanner will not process files that start with any of these prefixes.
+     *
+     * @return The set of exclude prefixes
+     */
+    public synchronized Set<String> excludePrefixes() {
+        return this.excludePrefixes;
     }
 
     /**

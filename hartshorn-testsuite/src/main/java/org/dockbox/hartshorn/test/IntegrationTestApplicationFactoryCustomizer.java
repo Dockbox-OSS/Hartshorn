@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.test;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
@@ -28,15 +35,6 @@ import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Customizer for the {@link StandardApplicationContextFactory} that configures the application
@@ -109,13 +107,19 @@ public record IntegrationTestApplicationFactoryCustomizer(
         StandardApplicationContextFactory.Configurer constructor,
         AnnotatedElement element
     ) {
-        Option<HartshornIntegrationTest> testDecorator =
-            Option.of(element.getAnnotation(HartshornIntegrationTest.class));
-        if (testDecorator.present()) {
-            this.registerProcessors(constructor, testDecorator.get());
-            constructor.scanPackages(config -> config.addAll(testDecorator.get().scanPackages()));
-            constructor.includeBasePackages(testDecorator.get().includeBasePackages());
+        HartshornIntegrationTest testDecorator = element
+            .getAnnotation(HartshornIntegrationTest.class);
+        if (testDecorator != null) {
+            this.registerProcessors(constructor, testDecorator);
+            constructor.includePackages(config -> {
+                config.addAll(testDecorator.includePackages());
+            });
+            constructor.excludePackages(config -> {
+                config.addAll(testDecorator.excludePackages());
+            });
+            constructor.includeBasePackages(testDecorator.includeBasePackages());
         }
+
         registerStandaloneComponents(constructor, element);
     }
 

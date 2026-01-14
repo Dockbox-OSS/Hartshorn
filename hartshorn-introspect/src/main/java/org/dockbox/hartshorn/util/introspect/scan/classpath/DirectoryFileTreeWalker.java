@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,9 +65,16 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
             .replace('/', '.')
             .replace('\\', '.');
 
-        for (String beginFilterName : this.classPathScanner.filteredPrefixes()) {
-            // If path starts with a filtered prefix, continue
-            // If the path is part of a filtered package, continue, may match later
+        for (String excludePrefix : this.classPathScanner.excludePrefixes()) {
+            // If path starts with an excluded prefix, skip
+            if (canonicalName.startsWith(excludePrefix)) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+        }
+
+        for (String beginFilterName : this.classPathScanner.includedPrefixes()) {
+            // If path starts with a included prefix, continue
+            // If the path is part of a included package, continue, may match later
             if (canonicalName.startsWith(beginFilterName)
                 || beginFilterName.startsWith(canonicalName)) {
                 return FileVisitResult.CONTINUE;
