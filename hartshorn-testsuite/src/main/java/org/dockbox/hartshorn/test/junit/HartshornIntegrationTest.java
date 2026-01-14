@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,17 @@ public @interface HartshornIntegrationTest {
      * @see StandardApplicationContextFactory.Configurer#includePackages(Customizer)
      */
     String[] includePackages() default {};
+
+    /**
+     * Packages to exclude from scanning when creating the {@link ApplicationContext} for the test
+     * class or method. These will be excluded in addition to any packages excluded by default by
+     * the test suite.
+     *
+     * @return the packages to exclude from scanning
+     *
+     * @see StandardApplicationContextFactory.Configurer#excludePackages(Customizer)
+     */
+    String[] excludePackages() default {};
 
     /**
      * Whether to include the base package of the main class explicitly, or to only use the prefixes
