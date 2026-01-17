@@ -1,0 +1,4 @@
+name: ${moduleId}
+title: ${name}
+nav:
+  - modules/ROOT/nav.adoc
