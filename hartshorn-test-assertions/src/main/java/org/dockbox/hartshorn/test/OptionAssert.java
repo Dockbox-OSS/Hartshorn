@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class OptionAssert<E> extends AbstractAssert<OptionAssert<E>, Option<E>> 
      * @see Option#absent()
      */
     public OptionAssert<E> absent() {
-        return this.matches(Option::absent);
+        return this.matches(Option::absent, "is absent");
     }
 
     /**
@@ -57,7 +57,7 @@ public class OptionAssert<E> extends AbstractAssert<OptionAssert<E>, Option<E>> 
      * @see Option#present()
      */
     public OptionAssert<E> present() {
-        return this.matches(Option::present);
+        return this.matches(Option::present, "is present");
     }
 
     /**
@@ -94,7 +94,8 @@ public class OptionAssert<E> extends AbstractAssert<OptionAssert<E>, Option<E>> 
      * @see Option#contains(Object)
      */
     public OptionAssert<E> contains(E expected) {
-        return this.matches(option -> option.contains(expected));
+        this.present().value().isEqualTo(expected);
+        return this;
     }
 
     /**
@@ -109,6 +110,7 @@ public class OptionAssert<E> extends AbstractAssert<OptionAssert<E>, Option<E>> 
      * @see Option#cast(Class)
      */
     public <U> OptionAssert<U> cast(Class<U> type) {
+        this.present().value().isInstanceOf(type);
         return this.extracting(option -> option.cast(type), OptionAssert::new);
     }
 
