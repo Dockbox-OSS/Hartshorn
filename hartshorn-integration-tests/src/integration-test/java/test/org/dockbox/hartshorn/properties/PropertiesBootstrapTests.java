@@ -16,17 +16,20 @@
 
 package test.org.dockbox.hartshorn.properties;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.launchpad.properties.PropertiesSource;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
+import org.dockbox.hartshorn.test.HartshornAssertions;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @PropertiesSource("classpath:it-additional-config.yml")
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -40,7 +43,9 @@ class PropertiesBootstrapTests {
             "hartshorn.test.additional-config",
             StandardValuePropertyParsers.BOOLEAN
         );
-        assertThat(isAdditionalConfigPresent.test(Boolean::booleanValue)).isTrue();
+        assertThat(isAdditionalConfigPresent)
+                .value(InstanceOfAssertFactories.BOOLEAN)
+                .isTrue();
     }
 
     @Test
@@ -54,10 +59,9 @@ class PropertiesBootstrapTests {
     void configurationPropertyWasLoadedAccessedByInjector(
         @PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property
     ) {
-        assertThat(property).isNotNull();
-
-        Option<String> value = property.value();
-        assertThat(value.present()).isTrue();
-        assertThat(value.get()).isEqualTo("true");
+        assertThat(property)
+                .extracting(ValueProperty::value, HartshornAssertions.option(String.class))
+                .value()
+                .isEqualTo("true");
     }
 }

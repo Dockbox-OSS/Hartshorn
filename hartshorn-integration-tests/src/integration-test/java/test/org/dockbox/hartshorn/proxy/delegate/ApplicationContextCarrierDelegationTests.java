@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ApplicationContextCarrierDelegationTests {
@@ -36,24 +37,16 @@ class ApplicationContextCarrierDelegationTests {
     @Test
     @TestComponents(ContextCarrierComponent.class)
     void contextCarrierDelegation(@Inject ContextCarrierComponent component) throws Exception {
-        Option<ApplicationContextCarrier> delegate = findTypeDelegate(component);
-        assertThat(delegate.present()).isTrue();
-
-        Option<?> methodDelegate = findMethodDelegate(component);
-        assertThat(methodDelegate.absent()).isTrue();
-
+        assertThat(findTypeDelegate(component)).present();
+        assertThat(findMethodDelegate(component)).absent();
         assertThat(component.applicationContext()).isNotNull();
     }
 
     @Test
     @TestComponents(OverrideContextCarrierComponentInterface.class)
     void defaultCarrierDelegation(@Inject OverrideContextCarrierComponentInterface component) throws Exception {
-        Option<ApplicationContextCarrier> delegate = findTypeDelegate(component);
-        assertThat(delegate.absent()).isTrue();
-
-        Option<?> methodDelegate = findMethodDelegate(component);
-        assertThat(methodDelegate.absent()).isTrue();
-
+        assertThat(findTypeDelegate(component)).absent();
+        assertThat(findMethodDelegate(component)).absent();
         // Default method, should return null (see OverrideContextCarrierComponentInterface)
         assertThat(component.applicationContext()).isNull();
     }
@@ -71,8 +64,7 @@ class ApplicationContextCarrierDelegationTests {
             .resolver()
             .method(method)
             .delegate();
-        assertThat(methodDelegate.present()).isTrue();
-
+        assertThat(methodDelegate).present();
         assertThat(component.applicationContext()).isNotNull();
         assertThat(applicationContext).isSameAs(component.applicationContext());
     }

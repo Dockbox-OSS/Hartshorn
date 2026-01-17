@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class CollectionScopeTests {
@@ -62,7 +63,7 @@ class CollectionScopeTests {
         int highestPriority = hierarchy.highestPriority();
         Option<InstantiationStrategy<ComponentCollection<String>>> candidateProvider =
             hierarchy.get(highestPriority);
-        assertThat(candidateProvider.present()).isTrue();
+        assertThat(candidateProvider).present();
 
         InstantiationStrategy<ComponentCollection<String>> strategy = candidateProvider.get();
         assertThat(strategy)

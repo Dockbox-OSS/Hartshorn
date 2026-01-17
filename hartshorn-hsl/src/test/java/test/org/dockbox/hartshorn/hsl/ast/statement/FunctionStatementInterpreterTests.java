@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.parser.statement.ReturnStatementParser;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.HartshornAssertions;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
@@ -120,11 +121,16 @@ class FunctionStatementInterpreterTests {
         assertThat(functionStatement.parameters()).hasSize(1);
         assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("name");
 
-        Option<FunctionParserContext> functionParserContext = helper.context().parser()
-            .firstContext(FunctionParserContext.class);
-        assertThat(functionParserContext.present()).isTrue();
-        FunctionParserContext context = functionParserContext.get();
-        assertThat(context.prefixFunctions()).contains("greet");
+        Option<FunctionParserContext> functionParserContext = helper.context()
+                .parser()
+                .firstContext(FunctionParserContext.class);
+
+        HartshornAssertions.assertThat(functionParserContext)
+                .value()
+                .extracting(
+                        FunctionParserContext::prefixFunctions,
+                        InstanceOfAssertFactories.collection(String.class)
+                ).contains("greet");
     }
 
     @Test

@@ -109,6 +109,10 @@
     </dependency>
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-test-assertions</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-testsuite</artifactId>
     </dependency>
   </dependencies>
