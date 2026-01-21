@@ -121,6 +121,16 @@
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-web</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-web-jetty</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-test-assertions</artifactId>
         <version>${revision}</version>
         <scope>test</scope>

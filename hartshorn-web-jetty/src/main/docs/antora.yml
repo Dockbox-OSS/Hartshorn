@@ -1,0 +1,4 @@
+name: web-jetty
+title: Hartshorn Web (Jetty)
+nav:
+  - modules/ROOT/nav.adoc

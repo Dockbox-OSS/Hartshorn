@@ -17,6 +17,7 @@
     <module>application-proxies</module>
     <module>application-reporting</module>
     <module>application-scopes</module>
+    <module>application-web</module>
     <module>basic-hello-world-java</module>
     <module>basic-hello-world-kotlin</module>
   </modules>

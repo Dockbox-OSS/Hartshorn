@@ -1,0 +1,4 @@
+name: web
+title: Hartshorn Web
+nav:
+  - modules/ROOT/nav.adoc

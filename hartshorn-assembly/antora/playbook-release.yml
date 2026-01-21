@@ -43,3 +43,5 @@ content:
         - hartshorn-introspect-reflection/src/main/docs
         - hartshorn-reporting/src/main/docs
         - hartshorn-hsl/src/main/docs
+        - hartshorn-web/src/main/docs
+        - hartshorn-web-jetty/src/main/docs
