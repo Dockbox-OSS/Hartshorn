@@ -6,5 +6,7 @@ public interface WebRequest {
 
     HttpMethod method();
 
+    HttpMessageHeaders headers();
+
     String path();
 }

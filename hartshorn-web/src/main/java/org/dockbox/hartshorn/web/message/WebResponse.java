@@ -9,7 +9,7 @@ public interface WebResponse {
     // TODO: Use pre-defined status codes
     void status(int status);
 
-    HttpMessageHeaders headers();
+    MutableHttpMessageHeaders headers();
 
     boolean committed();
 }

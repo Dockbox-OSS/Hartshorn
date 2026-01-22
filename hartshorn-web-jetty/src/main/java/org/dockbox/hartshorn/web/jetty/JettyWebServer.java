@@ -21,6 +21,7 @@ public class JettyWebServer implements WebServer {
         }
         try {
             jettyServer.start();
+            jettyServer.join();
         }
         catch (Exception e) {
             throw new ServerException("Failed to start Jetty server", e);
@@ -52,7 +53,9 @@ public class JettyWebServer implements WebServer {
             throw new IllegalStateException("No connectors available to determine port");
         }
         if (connectors.length > 1) {
-            throw new IllegalStateException("Multiple connectors available, unable to determine port unambiguously");
+            throw new IllegalStateException(
+                    "Multiple connectors available, unable to determine port unambiguously"
+            );
         }
         for (Connector connector : connectors) {
             if (connector instanceof NetworkConnector networkConnector) {

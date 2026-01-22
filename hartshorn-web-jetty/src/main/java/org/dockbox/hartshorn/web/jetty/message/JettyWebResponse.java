@@ -1,6 +1,6 @@
 package org.dockbox.hartshorn.web.jetty.message;
 
-import org.dockbox.hartshorn.web.message.HttpMessageHeaders;
+import org.dockbox.hartshorn.web.message.MutableHttpMessageHeaders;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Response;
@@ -26,7 +26,7 @@ public class JettyWebResponse implements WebResponse {
     }
 
     @Override
-    public HttpMessageHeaders headers() {
+    public MutableHttpMessageHeaders headers() {
         return new JettyHttpMessageHeaders(this.response.getHeaders());
     }
 
