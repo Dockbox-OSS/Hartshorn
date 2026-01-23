@@ -8,5 +8,7 @@ public interface WebRequest {
 
     HttpMessageHeaders headers();
 
+    HttpMessageQuery query();
+
     String path();
 }

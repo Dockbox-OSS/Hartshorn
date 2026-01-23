@@ -15,6 +15,10 @@ public class JettyWebResponse implements WebResponse {
         this.response = response;
     }
 
+    public Response underlyingResponse() {
+        return this.response;
+    }
+
     @Override
     public void write(ByteBuffer data) throws Exception {
         Content.Sink.write(this.response, true, data);

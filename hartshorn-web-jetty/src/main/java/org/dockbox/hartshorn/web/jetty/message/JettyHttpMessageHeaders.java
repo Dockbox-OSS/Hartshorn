@@ -1,7 +1,11 @@
 package org.dockbox.hartshorn.web.jetty.message;
 
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.message.MutableHttpMessageHeaders;
+import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
+
+import java.util.Map;
 
 public class JettyHttpMessageHeaders implements MutableHttpMessageHeaders {
 
@@ -12,8 +16,17 @@ public class JettyHttpMessageHeaders implements MutableHttpMessageHeaders {
     }
 
     @Override
-    public String get(String name) {
-        return this.headers.get(name);
+    public Option<String> get(String name) {
+        return Option.of(this.headers.get(name));
+    }
+
+    @Override
+    public Map<String, String> asMap() {
+        return this.headers.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        HttpField::getName,
+                        HttpField::getValue
+                ));
     }
 
     @Override

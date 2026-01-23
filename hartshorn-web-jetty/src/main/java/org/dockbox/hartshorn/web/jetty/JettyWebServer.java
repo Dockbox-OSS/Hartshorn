@@ -21,7 +21,6 @@ public class JettyWebServer implements WebServer {
         }
         try {
             jettyServer.start();
-            jettyServer.join();
         }
         catch (Exception e) {
             throw new ServerException("Failed to start Jetty server", e);

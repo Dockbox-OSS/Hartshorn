@@ -1,12 +1,11 @@
 package org.dockbox.hartshorn.web.message;
 
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Map;
-
-public interface HttpMessageHeaders {
+public interface HttpMessageQuery {
 
     Option<String> get(String name);
 
-    Map<String, String> asMap();
+    MultiMap<String, String> asMultiMap();
 }
