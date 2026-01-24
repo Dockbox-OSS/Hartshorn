@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -30,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ObjectToOptionConverter implements Converter<Object, Option<?>> {
 
     @Override
-    public Option<?> convert(@Nullable Object input) {
+    public Option<?> convert(@Nullable Object input, Context... contexts) {
         return Option.of(input);
     }
 }

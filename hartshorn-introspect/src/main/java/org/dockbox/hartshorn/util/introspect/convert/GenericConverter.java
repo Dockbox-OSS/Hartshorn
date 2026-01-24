@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 
 import java.util.Set;
 
@@ -51,17 +52,17 @@ public interface GenericConverter {
      * Convert the source object to the specified target type. The implementation should return
      * {@code null} if the source cannot be converted to the specified target type.
      *
-     * @param source the source object to convert
+     * @param <I>        the source type
+     * @param <O>        the target type
+     * @param source     the source object to convert
      * @param sourceType the type descriptor of the source object
      * @param targetType the type descriptor of the target object, which is to be created
-     * @param <I> the source type
-     * @param <O> the target type
-     *
      * @return the converted object, or {@code null} if the conversion cannot be performed
      */
     <I, O> @Nullable Object convert(
         @Nullable Object source,
         @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType
+        @NonNull Class<O> targetType,
+        Context... contexts
     );
 }

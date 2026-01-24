@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToClassConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToTypeViewConverterFactory;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -73,7 +76,7 @@ import java.util.UUID;
  *     #registerCollectionConverters(ConverterRegistry, ConversionService, Introspector)}
  *     </li>
  *     <li>{@link #registerNullWrapperConverters(ConverterRegistry, Introspector)}</li>
- *     <li>{@link #registerStringConverters(ConverterRegistry)}</li>
+ *     <li>{@link #registerStringConverters(ConverterRegistry, Introspector)}</li>
  *     <li>{@link #registerPrimitiveConverters(ConverterRegistry)}</li>
  *     <li>{@link #registerDefaultProviders(ConverterRegistry, Introspector)}</li>
  * </ul>
@@ -111,14 +114,14 @@ public class StandardConversionService implements ConversionService, ConverterRe
      *
      * @see #registerCollectionConverters(ConverterRegistry, ConversionService, Introspector)
      * @see #registerNullWrapperConverters(ConverterRegistry, Introspector)
-     * @see #registerStringConverters(ConverterRegistry)
+     * @see #registerStringConverters(ConverterRegistry, Introspector)
      * @see #registerPrimitiveConverters(ConverterRegistry)
      * @see #registerDefaultProviders(ConverterRegistry, Introspector)
      */
     public StandardConversionService withDefaults() {
         StandardConversionService.registerCollectionConverters(this, this, this.introspector);
         StandardConversionService.registerNullWrapperConverters(this, this.introspector);
-        StandardConversionService.registerStringConverters(this);
+        StandardConversionService.registerStringConverters(this, this.introspector);
         StandardConversionService.registerPrimitiveConverters(this);
         StandardConversionService.registerDefaultProviders(this, this.introspector);
 
@@ -150,24 +153,24 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     @Override
-    public <I, O> O convert(I input, Class<O> targetType) {
+    public <I, O> O convert(I input, Class<O> targetType, Context... contexts) {
         if (targetType == null) {
             throw new IllegalArgumentException("Target type must not be null");
         }
         if (input == null) {
-            return this.convertToDefaultValue(targetType);
+            return this.convertToDefaultValue(targetType, contexts);
         }
         if (targetType.isAssignableFrom(input.getClass())) {
             return targetType.cast(input);
         }
-        return this.tryConvert(input, targetType);
+        return this.tryConvert(input, targetType, contexts);
     }
 
-    private <I, O> O tryConvert(I input, Class<O> targetType) {
+    private <I, O> O tryConvert(I input, Class<O> targetType, Context... contexts) {
         GenericConverter converter = this.converterCache.getConverter(input, targetType);
         if (converter != null) {
             TypeView<O> targetTypeView = this.introspector.introspect(targetType);
-            Object converted = converter.convert(input, input.getClass(), targetType);
+            Object converted = converter.convert(input, input.getClass(), targetType, contexts);
             if (converted == null) {
                 // Ensure we don't return null if the target type is a primitive, or a wrapper for
                 // a primitive
@@ -185,13 +188,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
             ));
     }
 
-    private <O> O convertToDefaultValue(Class<O> targetType) {
+    private <O> O convertToDefaultValue(Class<O> targetType, Context... contexts) {
         GenericConverter converter = this.defaultValueProviderCache.getConverter(
             Null.INSTANCE,
             targetType
         );
         if (converter != null) {
-            Object defaultValue = converter.convert(null, Null.TYPE, targetType);
+            Object defaultValue = converter.convert(null, Null.TYPE, targetType, contexts);
             return targetType.cast(defaultValue);
         }
         return this.introspector.introspect(targetType).defaultOrNull();
@@ -347,7 +350,10 @@ public class StandardConversionService implements ConversionService, ConverterRe
      *
      * @param registry The registry to register the converters to
      */
-    public static void registerStringConverters(ConverterRegistry registry) {
+    public static void registerStringConverters(
+            ConverterRegistry registry,
+            Introspector introspector
+    ) {
         registry.addConverter(new StringToArrayConverter());
         registry.addConverter(String.class, Character.class, new StringToCharacterConverter());
         registry.addConverter(String.class, UUID.class, new StringToUUIDConverter());
@@ -357,6 +363,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(String.class, new StringToEnumConverterFactory());
         registry.addConverterFactory(String.class, new StringToNumberConverterFactory());
         registry.addConverterFactory(String.class, new StringToPrimitiveConverterFactory());
+        registry.addConverterFactory(String.class, new StringToTypeViewConverterFactory(introspector));
+        registry.addConverterFactory(String.class, new StringToClassConverterFactory());
     }
 
     /**

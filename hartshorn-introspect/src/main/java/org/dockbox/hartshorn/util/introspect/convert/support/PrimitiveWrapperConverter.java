@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
@@ -61,8 +62,8 @@ public class PrimitiveWrapperConverter implements GenericConverter, ConditionalC
     public @Nullable <I, O> Object convert(
         @Nullable Object source,
         @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType
-    ) {
+        @NonNull Class<O> targetType,
+        Context... contexts) {
         assert source != null;
         // Implicit (un)boxing
         return source;

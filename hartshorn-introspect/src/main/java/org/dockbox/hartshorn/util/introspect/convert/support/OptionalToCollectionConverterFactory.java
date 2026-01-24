@@ -57,7 +57,7 @@ public record OptionalToCollectionConverterFactory(
     public <O extends Collection<?>> Converter<Optional<?>, O> create(Class<O> targetType) {
         Converter<Option<?>, O> optionToCollectionConverter = this
             .helperOptionToCollectionConverterFactory.create(targetType);
-        return input -> {
+        return (input, _) -> {
             Option<?> option = this.helperOptionalToOptionConverter.convert(input);
             return optionToCollectionConverter.convert(option);
         };

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -85,7 +86,7 @@ public class CollectionToCollectionConverterFactory
         }
 
         @Override
-        public O convert(Collection<?> source) {
+        public O convert(Collection<?> source, Context... contexts) {
             //noinspection unchecked
             Collection<Object> collection = (Collection<Object>) this.defaultValueProvider
                 .defaultValue();

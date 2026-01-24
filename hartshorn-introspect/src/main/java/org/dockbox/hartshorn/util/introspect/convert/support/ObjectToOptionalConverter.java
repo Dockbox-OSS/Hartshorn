@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
 import java.util.Optional;
@@ -32,7 +33,7 @@ import java.util.Optional;
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 
     @Override
-    public Optional<?> convert(@Nullable Object input) {
+    public Optional<?> convert(@Nullable Object input, Context... contexts) {
         return Optional.ofNullable(input);
     }
 }

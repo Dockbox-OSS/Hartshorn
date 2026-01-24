@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
@@ -47,8 +48,8 @@ public class ObjectToVoidConverter implements GenericConverter, ConditionalConve
     public @Nullable <I, O> Object convert(
         @Nullable Object source,
         @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType
-    ) {
+        @NonNull Class<O> targetType,
+        Context... contexts) {
         // Void should never be instantiated, so we can safely return null
         return null;
     }

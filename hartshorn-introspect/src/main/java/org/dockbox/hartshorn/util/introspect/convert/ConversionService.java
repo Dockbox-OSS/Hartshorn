@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import org.dockbox.hartshorn.context.Context;
+
 /**
  * An interface representing a service for object converters. This service provides a standardized
  * way of converting objects from one type to another in Java applications. The service provides
@@ -73,5 +75,5 @@ public interface ConversionService {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    <I, O> O convert(I input, Class<O> targetType);
+    <I, O> O convert(I input, Class<O> targetType, Context... contexts);
 }

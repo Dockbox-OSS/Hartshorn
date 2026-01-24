@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
@@ -57,7 +58,7 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
         implements Converter<String, T> {
 
         @Override
-        public @Nullable T convert(@Nullable String source) {
+        public @Nullable T convert(@Nullable String source, Context... contexts) {
             assert source != null;
             if (source.isEmpty()) {
                 return null;

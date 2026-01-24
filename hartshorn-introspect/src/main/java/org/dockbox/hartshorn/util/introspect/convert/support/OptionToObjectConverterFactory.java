@@ -35,7 +35,7 @@ public class OptionToObjectConverterFactory
 
     @Override
     public <O> Converter<Option<?>, O> create(Class<O> targetType) {
-        return input -> {
+        return (input, _) -> {
             assert input != null;
             return input.cast(targetType).orNull();
         };

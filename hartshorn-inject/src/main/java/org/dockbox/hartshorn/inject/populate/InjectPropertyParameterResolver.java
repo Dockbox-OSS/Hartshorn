@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.properties.ListProperty;
 import org.dockbox.hartshorn.properties.ObjectProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.ValueProperty;
+import org.dockbox.hartshorn.util.introspect.convert.AdditionalTargetTypeContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -90,8 +91,12 @@ public class InjectPropertyParameterResolver implements InjectParameterResolver 
         String propertyName
     ) {
         return propertyRegistry.value(propertyName, property -> {
-            return Option.of(this.conversionService()
-                .convert(property, injectionPoint.type().type()));
+            var context = new AdditionalTargetTypeContext<>(injectionPoint.type());
+            return Option.of(this.conversionService().convert(
+                    property,
+                    injectionPoint.type().type(),
+                    context
+            ));
         });
     }
 

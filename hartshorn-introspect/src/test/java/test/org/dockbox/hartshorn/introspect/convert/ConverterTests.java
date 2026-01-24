@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.junit.jupiter.api.Test;
 
@@ -25,10 +26,10 @@ class ConverterTests {
 
     @Test
     void converterChainingFollowsCorrectOrder() {
-        Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
-            .andThen(Double::longValue)
-            .andThen(Long::intValue)
-            .andThen(Integer::byteValue);
+        Converter<String, Byte> converter = ((Converter<String, Double>) (s, contexts) -> Double.parseDouble(s))
+            .andThen((aDouble, contexts) -> aDouble.longValue())
+            .andThen((Object input, Context... contexts) -> Long.intValue(input))
+            .andThen((T input1, Context... contexts) -> Integer.byteValue(input1));
 
         byte result = converter.convert("1.0");
         assertThat(result).isOne();

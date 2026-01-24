@@ -46,21 +46,21 @@ public class StringToPrimitiveConverterFactory
 
     private static final Map<Class<?>, Converter<String, ?>> PRIMITIVE_CONVERTERS = Map.ofEntries(
         Map.entry(boolean.class, new StringToBooleanConverter()
-            .andThen(aBoolean -> aBoolean)),
+            .andThen((aBoolean, _) -> aBoolean)),
         Map.entry(char.class, new StringToCharacterConverter()
-            .andThen(character -> character)),
+            .andThen((character, _) -> character)),
         Map.entry(byte.class, NUMBER_CONVERTER_FACTORY.create(Byte.class)
-            .andThen(aByte -> aByte)),
+            .andThen((aByte, _) -> aByte)),
         Map.entry(double.class, NUMBER_CONVERTER_FACTORY.create(Double.class)
-            .andThen(aDouble -> aDouble)),
+            .andThen((aDouble, _) -> aDouble)),
         Map.entry(float.class, NUMBER_CONVERTER_FACTORY.create(Float.class)
-            .andThen(aFloat -> aFloat)),
+            .andThen((aFloat, _) -> aFloat)),
         Map.entry(int.class, NUMBER_CONVERTER_FACTORY.create(Integer.class)
-            .andThen(integer -> integer)),
+            .andThen((integer, _) -> integer)),
         Map.entry(long.class, NUMBER_CONVERTER_FACTORY.create(Long.class)
-            .andThen(aLong -> aLong)),
+            .andThen((aLong, _) -> aLong)),
         Map.entry(short.class, NUMBER_CONVERTER_FACTORY.create(Short.class)
-            .andThen(aShort -> aShort))
+            .andThen((aShort, _) -> aShort))
     );
 
     @SuppressWarnings("unchecked")

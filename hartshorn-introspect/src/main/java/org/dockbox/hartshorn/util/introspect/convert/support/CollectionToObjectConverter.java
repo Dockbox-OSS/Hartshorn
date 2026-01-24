@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
@@ -52,8 +53,8 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     public @Nullable <I, O> Object convert(
         @Nullable Object source,
         @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType
-    ) {
+        @NonNull Class<O> targetType,
+        Context... contexts) {
         assert source != null;
         Collection<?> collection = (Collection<?>) source;
         return CollectionUtilities.first(collection);

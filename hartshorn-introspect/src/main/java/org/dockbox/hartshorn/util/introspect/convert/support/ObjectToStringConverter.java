@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
 /**
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 public class ObjectToStringConverter implements Converter<Object, String> {
 
     @Override
-    public @Nullable String convert(@Nullable Object input) {
+    public @Nullable String convert(@Nullable Object input, Context... contexts) {
         return String.valueOf(input);
     }
 }
