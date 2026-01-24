@@ -4,11 +4,13 @@ import org.dockbox.hartshorn.web.HttpMethod;
 
 public interface WebRequest {
 
+    String path();
+
     HttpMethod method();
 
     HttpMessageHeaders headers();
 
     HttpMessageQuery query();
 
-    String path();
+    HttpRequestBody body();
 }
