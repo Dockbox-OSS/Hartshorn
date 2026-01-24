@@ -44,7 +44,7 @@ public interface ContextIdentity<T extends ContextView> {
      * ensured that the name of the context is equal to the name of the identity. This is only a
      * recommendation.
      *
-     * @return The name of the context represented by this identity.
+     * @return The name of the context represented by this identity, or null if no name was defined.
      */
     String name();
 
