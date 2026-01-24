@@ -110,7 +110,7 @@ public abstract class AbstractNavigableMultiMap<K, V>
     }
 
     @Override
-    protected NavigableMap<K, Collection<V>> map() {
+    public NavigableMap<K, Collection<V>> map() {
         return (NavigableMap<K, Collection<V>>) super.map();
     }
 

@@ -42,7 +42,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
     }
 
     @Override
-    protected Map<K, Collection<V>> map() {
+    public Map<K, Collection<V>> map() {
         if (this.map == null) {
             this.map = this.createEmptyMap();
         }
