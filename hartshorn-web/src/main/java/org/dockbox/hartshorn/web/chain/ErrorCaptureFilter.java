@@ -9,11 +9,11 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 
-public class ErrorCaptureHandlerStrategy implements RequestHandlerStrategy {
+public class ErrorCaptureFilter implements RequestFilter {
 
     private final ExceptionHandler exceptionHandler;
 
-    public ErrorCaptureHandlerStrategy(ExceptionHandler exceptionHandler) {
+    public ErrorCaptureFilter(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -21,7 +21,7 @@ public class ErrorCaptureHandlerStrategy implements RequestHandlerStrategy {
     public void handle(
         WebRequest request,
         WebResponse response,
-        RequestHandlerChain chain
+        RequestFilterChain chain
     ) throws Exception {
         try {
             chain.accept(request, response);

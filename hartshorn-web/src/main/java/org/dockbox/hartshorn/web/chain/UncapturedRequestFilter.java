@@ -1,18 +1,19 @@
 package org.dockbox.hartshorn.web.chain;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 
-public class UncapturedRequestHandlerStrategy implements RequestHandlerStrategy {
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
+public class UncapturedRequestFilter implements RequestFilter {
 
     @Override
     public void handle(
         WebRequest request,
         WebResponse response,
-        RequestHandlerChain chain
+        RequestFilterChain chain
     ) throws Exception {
         // TODO: Configurable 404 handling
         response.status(404);

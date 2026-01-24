@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.web.jetty.route;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.web.chain.RequestHandlerChain;
+import org.dockbox.hartshorn.web.chain.RequestFilterChain;
 import org.dockbox.hartshorn.web.jetty.message.JettyWebRequest;
 import org.dockbox.hartshorn.web.jetty.message.JettyWebResponse;
 import org.dockbox.hartshorn.web.message.WebRequest;
@@ -13,10 +13,10 @@ import org.eclipse.jetty.util.Callback;
 
 public class JettyRequestHandler extends Handler.Abstract {
 
-    private final RequestHandlerChain chain;
+    private final RequestFilterChain chain;
 
     @Inject
-    public JettyRequestHandler(RequestHandlerChain chain) {
+    public JettyRequestHandler(RequestFilterChain chain) {
         this.chain = chain;
     }
 

@@ -6,11 +6,11 @@ import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RequestHandler;
 
-public class PathMatchingHandlerStrategy implements RequestHandlerStrategy {
+public class PathMatchingFilter implements RequestFilter {
 
     private final PathRouteRegistry registry;
 
-    public PathMatchingHandlerStrategy(PathRouteRegistry registry) {
+    public PathMatchingFilter(PathRouteRegistry registry) {
         this.registry = registry;
     }
 
@@ -18,7 +18,7 @@ public class PathMatchingHandlerStrategy implements RequestHandlerStrategy {
     public void handle(
         WebRequest request,
         WebResponse response,
-        RequestHandlerChain chain
+        RequestFilterChain chain
     ) throws Exception {
         RequestHandler handler = this.registry.handler(request);
         if (handler != null) {

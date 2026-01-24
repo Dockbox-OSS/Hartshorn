@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.web;
 
-import java.util.Comparator;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
@@ -12,49 +11,51 @@ import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.web.chain.ErrorCaptureHandlerStrategy;
-import org.dockbox.hartshorn.web.chain.PathMatchingHandlerStrategy;
-import org.dockbox.hartshorn.web.chain.RequestHandlerChain;
-import org.dockbox.hartshorn.web.chain.RequestHandlerStrategy;
-import org.dockbox.hartshorn.web.chain.SimpleRequestHandlerChain;
-import org.dockbox.hartshorn.web.chain.UncapturedRequestHandlerStrategy;
+import org.dockbox.hartshorn.web.chain.ErrorCaptureFilter;
+import org.dockbox.hartshorn.web.chain.PathMatchingFilter;
+import org.dockbox.hartshorn.web.chain.RequestFilter;
+import org.dockbox.hartshorn.web.chain.RequestFilterChain;
+import org.dockbox.hartshorn.web.chain.SimpleRequestFilterChain;
+import org.dockbox.hartshorn.web.chain.UncapturedRequestFilter;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.PathMatchingRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
 
+import java.util.Comparator;
+
 @Configuration
 @RequiresActivator(UseWebServer.class)
 public class WebServerConfiguration {
 
     @Singleton
-    public RequestHandlerChain requestHandlerChain(
-        @Fuzzy ComponentCollection<RequestHandlerStrategy> strategies
+    public RequestFilterChain requestHandlerChain(
+        @Fuzzy ComponentCollection<RequestFilter> strategies
     ) {
-        return new SimpleRequestHandlerChain(strategies.stream()
-            .sorted(Comparator.comparingInt(RequestHandlerStrategy::order))
+        return new SimpleRequestFilterChain(strategies.stream()
+            .sorted(Comparator.comparingInt(RequestFilter::order))
             .toList());
     }
 
     @Singleton
     @CompositeMember
-    public RequestHandlerStrategy errorCaptureHandlerStrategy(ExceptionHandler exceptionHandler) {
-        return new ErrorCaptureHandlerStrategy(exceptionHandler);
+    public RequestFilter errorCaptureHandlerStrategy(ExceptionHandler exceptionHandler) {
+        return new ErrorCaptureFilter(exceptionHandler);
     }
 
     @Singleton
     @CompositeMember
-    public RequestHandlerStrategy pathMatchingHandlerStrategy(
+    public RequestFilter pathMatchingHandlerStrategy(
             PathRouteRegistry registry
     ) {
-        return new PathMatchingHandlerStrategy(registry);
+        return new PathMatchingFilter(registry);
     }
 
     @Singleton
     @CompositeMember
-    public RequestHandlerStrategy uncapturedRequestHandlerStrategy() {
-        return new UncapturedRequestHandlerStrategy();
+    public RequestFilter uncapturedRequestHandlerStrategy() {
+        return new UncapturedRequestFilter();
     }
 
     @Singleton
