@@ -11,6 +11,8 @@ public interface WebResponse {
     // TODO: Use pre-defined status codes
     void status(int status);
 
+    int statusCode();
+
     MutableHttpMessageHeaders headers();
 
     boolean committed();

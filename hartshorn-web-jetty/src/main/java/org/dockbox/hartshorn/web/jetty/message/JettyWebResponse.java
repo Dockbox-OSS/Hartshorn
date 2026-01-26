@@ -36,6 +36,11 @@ public class JettyWebResponse implements WebResponse {
     }
 
     @Override
+    public int statusCode() {
+        return this.response.getStatus();
+    }
+
+    @Override
     public MutableHttpMessageHeaders headers() {
         return new JettyHttpMessageHeaders(this.response.getHeaders());
     }
