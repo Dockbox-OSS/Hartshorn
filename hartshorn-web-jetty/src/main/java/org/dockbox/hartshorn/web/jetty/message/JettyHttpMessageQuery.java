@@ -37,7 +37,9 @@ public class JettyHttpMessageQuery implements HttpMessageQuery {
             if (!queryString.isEmpty()) {
                 queryString.append("&");
             }
-            queryString.append(field.getName()).append("=").append(field.getValue());
+            queryString.append(field.getName())
+                    .append("=")
+                    .append(String.join(",", field.getValues()));
         });
         return queryString.toString();
     }
