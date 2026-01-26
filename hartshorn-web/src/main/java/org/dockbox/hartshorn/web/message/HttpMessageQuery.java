@@ -8,4 +8,8 @@ public interface HttpMessageQuery {
     Option<String> get(String name);
 
     MultiMap<String, String> asMultiMap();
+
+    boolean notEmpty();
+
+    String asString();
 }

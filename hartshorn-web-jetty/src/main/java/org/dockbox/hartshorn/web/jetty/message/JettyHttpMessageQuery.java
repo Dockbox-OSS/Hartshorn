@@ -24,4 +24,21 @@ public class JettyHttpMessageQuery implements HttpMessageQuery {
         this.queryParameters.toMultiMap().forEach(entries::putAll);
         return entries;
     }
+
+    @Override
+    public boolean notEmpty() {
+        return !this.queryParameters.isEmpty();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder queryString = new StringBuilder();
+        this.queryParameters.forEach(field -> {
+            if (!queryString.isEmpty()) {
+                queryString.append("&");
+            }
+            queryString.append(field.getName()).append("=").append(field.getValue());
+        });
+        return queryString.toString();
+    }
 }
