@@ -339,8 +339,7 @@ public final class StringUtilities {
 
     /**
      * Tests if the given raw string matches the given formatted string. The raw string may contain
-     * placeholders in the form of {@code {0}}, {@code {1}}, etc. This is a matcher for strings that
-     * are typically formatted with {@link #format(String, Object...)}.
+     * placeholders in the form of {@code {0}}, {@code {1}}, etc.
      *
      * @param raw the raw string with placeholders
      * @param formatted the formatted string to match against

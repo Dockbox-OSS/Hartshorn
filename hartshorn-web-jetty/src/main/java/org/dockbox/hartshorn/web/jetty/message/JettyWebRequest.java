@@ -3,9 +3,10 @@ package org.dockbox.hartshorn.web.jetty.message;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.message.HttpMessageHeaders;
 import org.dockbox.hartshorn.web.message.HttpMessageQuery;
-import org.dockbox.hartshorn.web.message.HttpRequestBody;
+import org.dockbox.hartshorn.web.message.HttpMessageBody;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebRequestClient;
+import org.dockbox.hartshorn.web.message.WebRequestPathParameters;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.Fields;
 
@@ -39,13 +40,18 @@ public class JettyWebRequest implements WebRequest {
     }
 
     @Override
-    public HttpRequestBody body() {
-        return new JettyHttpRequestBody(this.request);
+    public HttpMessageBody body() {
+        return new JettyHttpMessageBody(this.request);
     }
 
     @Override
     public WebRequestClient client() {
         return new JettyWebRequestClient(this.request);
+    }
+
+    @Override
+    public WebRequestPathParameters pathParameters() {
+        throw new UnsupportedOperationException("Path parameters are not supported in JettyWebRequest");
     }
 
     @Override

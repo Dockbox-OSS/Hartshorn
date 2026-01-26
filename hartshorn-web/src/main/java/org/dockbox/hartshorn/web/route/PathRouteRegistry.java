@@ -8,15 +8,44 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PathRouteRegistry {
 
-    private final Map<String, RequestHandler> routes = new ConcurrentHashMap<>();
+    private final Map<
+            HttpMethod,
+            Map<String, RequestHandler>
+            > methodRoutes = new ConcurrentHashMap<>();
 
     public void register(HttpMethod method, String path, RequestHandler handler) {
-        this.routes.put(path, handler);
+        this.methodRoutes
+                .computeIfAbsent(method, _ -> new ConcurrentHashMap<>())
+                .put(path, handler);
     }
 
-    public RequestHandler handler(WebRequest request) {
-        // TODO: Actual path matching
-        // TODO: Include HTTP method
-        return this.routes.get(request.path());
+    public RegisteredRoute handler(WebRequest request) {
+        Map<String, RequestHandler> routes = this.methodRoutes.get(request.method());
+        if (routes == null) {
+            return null;
+        }
+        for (Map.Entry<String, RequestHandler> entry : routes.entrySet()) {
+            PathPatternMatcher.MatchResult result = PathPatternMatcher.match(
+                    entry.getKey(),
+                    request.path()
+            );
+            if (result.matches()) {
+                RequestHandler handler = entry.getValue();
+                return new RegisteredRoute(
+                        request.method(),
+                        entry.getKey(),
+                        handler,
+                        result.parameters()
+                );
+            }
+        }
+        return null;
     }
+
+    public record RegisteredRoute(
+            HttpMethod method,
+            String path,
+            RequestHandler handler,
+            Map<String, String> pathParameters
+    ) {}
 }

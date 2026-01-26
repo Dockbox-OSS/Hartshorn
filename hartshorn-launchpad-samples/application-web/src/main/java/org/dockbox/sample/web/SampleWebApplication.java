@@ -36,7 +36,7 @@ public class SampleWebApplication {
             DiagnosticsReportCollector collector
     ) {
         return routes -> {
-            routes.get("/validate", (request, response) -> validationOutput(responseWriter, request, response));
+            routes.get("/validate/{param}", (request, response) -> validationOutput(responseWriter, request, response));
             routes.get("/report", (_, response) -> writeReport(reportable, collector, response));
             routes.get("/error", (_, _) -> {
                 throw new ArrayIndexOutOfBoundsException(42);
@@ -67,7 +67,8 @@ public class SampleWebApplication {
                 request.path(),
                 ((StandardMultiMap)request.query().asMultiMap()).map(),
                 request.headers().asMap(),
-                request.body().asString()
+                request.body().asString(),
+                request.pathParameters().asMap()
         );
         response.status(200);
         response.write(responseWriter, body);
@@ -78,6 +79,7 @@ public class SampleWebApplication {
             String path,
             Map<String, Collection<String>> queryParameters,
             Map<String, String> headers,
-            String body
+            String body,
+            Map<String, String> pathParameters
     ) {}
 }

@@ -1,16 +1,16 @@
 package org.dockbox.hartshorn.web.jetty.message;
 
-import org.dockbox.hartshorn.web.message.HttpRequestBody;
+import org.dockbox.hartshorn.web.message.HttpMessageBody;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Request;
 
 import java.io.IOException;
 
-public class JettyHttpRequestBody implements HttpRequestBody {
+public class JettyHttpMessageBody implements HttpMessageBody {
 
     private final Request request;
 
-    public JettyHttpRequestBody(Request request) {
+    public JettyHttpMessageBody(Request request) {
         this.request = request;
     }
 

@@ -2,7 +2,7 @@ package org.dockbox.hartshorn.web.message;
 
 import java.io.IOException;
 
-public interface HttpRequestBody {
+public interface HttpMessageBody {
 
     byte[] bytes() throws IOException;
 
