@@ -6,11 +6,11 @@ import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RequestHandler;
 
-public class PathMatchingFilter implements RequestFilter {
+public class PathMatchingRequestFilter implements RequestFilter {
 
     private final PathRouteRegistry registry;
 
-    public PathMatchingFilter(PathRouteRegistry registry) {
+    public PathMatchingRequestFilter(PathRouteRegistry registry) {
         this.registry = registry;
     }
 

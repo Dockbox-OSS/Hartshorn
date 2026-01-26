@@ -1,19 +1,20 @@
 package org.dockbox.hartshorn.web.chain;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 
-public class ErrorCaptureFilter implements RequestFilter {
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
+public class ErrorCaptureRequestFilter implements RequestFilter {
 
     private final ExceptionHandler exceptionHandler;
 
-    public ErrorCaptureFilter(ExceptionHandler exceptionHandler) {
+    public ErrorCaptureRequestFilter(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 

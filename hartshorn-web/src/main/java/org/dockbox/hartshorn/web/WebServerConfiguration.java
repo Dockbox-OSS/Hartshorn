@@ -3,27 +3,36 @@ package org.dockbox.hartshorn.web;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
+import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
+import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.web.chain.ErrorCaptureFilter;
-import org.dockbox.hartshorn.web.chain.PathMatchingFilter;
+import org.dockbox.hartshorn.web.chain.ErrorCaptureRequestFilter;
+import org.dockbox.hartshorn.web.chain.PathMatchingRequestFilter;
 import org.dockbox.hartshorn.web.chain.RequestFilter;
 import org.dockbox.hartshorn.web.chain.RequestFilterChain;
+import org.dockbox.hartshorn.web.chain.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.chain.SimpleRequestFilterChain;
 import org.dockbox.hartshorn.web.chain.UncapturedRequestFilter;
+import org.dockbox.hartshorn.web.message.ObjectMapperResponseWriter;
+import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.PathMatchingRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
+import org.slf4j.Logger;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 @Configuration
 @RequiresActivator(UseWebServer.class)
@@ -40,21 +49,34 @@ public class WebServerConfiguration {
 
     @Singleton
     @CompositeMember
-    public RequestFilter errorCaptureHandlerStrategy(ExceptionHandler exceptionHandler) {
-        return new ErrorCaptureFilter(exceptionHandler);
+    public RequestFilter errorCaptureRequestFilter(ExceptionHandler exceptionHandler) {
+        return new ErrorCaptureRequestFilter(exceptionHandler);
     }
 
     @Singleton
     @CompositeMember
-    public RequestFilter pathMatchingHandlerStrategy(
+    public RequestFilter pathMatchingRequestFilter(
             PathRouteRegistry registry
     ) {
-        return new PathMatchingFilter(registry);
+        return new PathMatchingRequestFilter(registry);
     }
 
     @Singleton
     @CompositeMember
-    public RequestFilter uncapturedRequestHandlerStrategy() {
+    @RequiresProperty(name = "hartshorn.web.logging.enabled", withValue = "true")
+    public RequestFilter requestLoggingFilter(
+            @Required(false) RequestLoggingFilter.Builder builder,
+            @LoggerMeta(context = RequestLoggingFilter.class) Logger logger
+    ) {
+        return Objects.requireNonNullElseGet(
+                builder,
+                RequestLoggingFilter::builder
+        ).build(logger);
+    }
+
+    @Singleton
+    @CompositeMember
+    public RequestFilter uncapturedRequestFilter() {
         return new UncapturedRequestFilter();
     }
 
@@ -82,6 +104,11 @@ public class WebServerConfiguration {
     @CompositeMember
     public LifecycleObserver webServerBootstrap() {
         return new WebServerBootstrap();
+    }
+
+    @Singleton
+    public ResponseWriter<Object> objectMapperResponseWriter(JsonMapper jsonMapper) {
+        return new ObjectMapperResponseWriter(jsonMapper, "application/json");
     }
 
     @Prototype
