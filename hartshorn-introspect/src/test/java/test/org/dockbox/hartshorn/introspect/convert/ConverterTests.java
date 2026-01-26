@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.junit.jupiter.api.Test;
 
@@ -26,10 +25,11 @@ class ConverterTests {
 
     @Test
     void converterChainingFollowsCorrectOrder() {
-        Converter<String, Byte> converter = ((Converter<String, Double>) (s, contexts) -> Double.parseDouble(s))
-            .andThen((aDouble, contexts) -> aDouble.longValue())
-            .andThen((Object input, Context... contexts) -> Long.intValue(input))
-            .andThen((T input1, Context... contexts) -> Integer.byteValue(input1));
+        Converter<String, Double> base = (s, _) -> Double.parseDouble(s);
+        Converter<String, Byte> converter = base
+            .andThen((input, _) -> input.longValue())
+            .andThen((input, _) -> input.intValue())
+            .andThen((input, _) -> input.byteValue());
 
         byte result = converter.convert("1.0");
         assertThat(result).isOne();
