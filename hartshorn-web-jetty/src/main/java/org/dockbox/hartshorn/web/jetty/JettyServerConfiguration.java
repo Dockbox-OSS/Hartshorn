@@ -37,9 +37,9 @@ public class JettyServerConfiguration {
     @Prototype
     public Server jettyServer(
             RequestFilterChain chain,
-            ThreadPool threadPool,
-            Scheduler scheduler,
-            ByteBufferPool bufferPool,
+            @Named("jettyServerThreadPool") ThreadPool threadPool,
+            @Named("jettyServerScheduler") Scheduler scheduler,
+            @Named("jettyServerBufferPool") ByteBufferPool bufferPool,
             @Fuzzy ComponentCollection<Customizer<Server>> customizers,
             @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
     ) {
