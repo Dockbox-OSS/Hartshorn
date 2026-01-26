@@ -2,21 +2,26 @@ package org.dockbox.sample.web;
 
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.reporting.DiagnosticsReport;
+import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.UseReporting;
+import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.web.UseWebServer;
+import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
-import tools.jackson.databind.ObjectMapper;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
 
 @UseWebServer
+@UseReporting
 public class SampleWebApplication {
 
     static void main(String[] args) {
@@ -25,19 +30,38 @@ public class SampleWebApplication {
 
     @Singleton
     @CompositeMember
-    Customizer<RouterPathConfigurer> routeCustomizer(ApplicationContext applicationContext) {
+    Customizer<RouterPathConfigurer> routeCustomizer(
+            ResponseWriter<Object> responseWriter,
+            Reportable reportable,
+            DiagnosticsReportCollector collector
+    ) {
         return routes -> {
-            routes.get("/validate", (request, response) -> validationOutput(applicationContext, request, response));
+            routes.get("/validate", (request, response) -> validationOutput(responseWriter, request, response));
+            routes.get("/report", (_, response) -> writeReport(reportable, collector, response));
             routes.get("/error", (_, _) -> {
                 throw new ArrayIndexOutOfBoundsException(42);
             });
         };
     }
 
-    private static void validationOutput(ApplicationContext applicationContext, WebRequest request, WebResponse response) throws Exception {
+    private void writeReport(
+            Reportable reportable,
+            DiagnosticsReportCollector collector,
+            WebResponse response
+    ) throws Exception {
+        DiagnosticsReport diagnosticsReport = collector.report(reportable);
+        String serializedReport =
+                diagnosticsReport.serialize(new ObjectMapperReportSerializer.JsonReportSerializer());
         response.status(200);
-        response.headers().set("Content-Type", "application/json; charset=utf-8");
+        response.headers().set("Content-Type", "application/json");
+        response.write(ByteBuffer.wrap(serializedReport.getBytes()));
+    }
 
+    private static void validationOutput(
+            ResponseWriter<Object> responseWriter,
+            WebRequest request,
+            WebResponse response
+    ) throws Exception {
         ValidationResponseBody body = new ValidationResponseBody(
                 request.method().name(),
                 request.path(),
@@ -45,8 +69,8 @@ public class SampleWebApplication {
                 request.headers().asMap(),
                 request.body().asString()
         );
-        ObjectMapper mapper = new ObjectMapper();
-        response.write(ByteBuffer.wrap(mapper.writeValueAsBytes(body)));
+        response.status(200);
+        response.write(responseWriter, body);
     }
 
     private record ValidationResponseBody(

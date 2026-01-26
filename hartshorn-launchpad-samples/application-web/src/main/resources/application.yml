@@ -5,3 +5,5 @@ hartshorn:
       threadpool: org.eclipse.jetty.util.thread.VirtualThreadPool
       scheduler: org.eclipse.jetty.util.thread.ScheduledExecutorScheduler
       bufferpool: org.eclipse.jetty.io.ArrayByteBufferPool$Quadratic
+    logging:
+      enabled: true

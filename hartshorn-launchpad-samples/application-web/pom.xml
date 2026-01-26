@@ -22,6 +22,10 @@
     </dependency>
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-reporting</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-web-jetty</artifactId>
     </dependency>
   </dependencies>
