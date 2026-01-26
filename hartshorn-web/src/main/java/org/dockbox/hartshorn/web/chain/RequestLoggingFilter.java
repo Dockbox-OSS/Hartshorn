@@ -11,6 +11,7 @@ public class RequestLoggingFilter implements RequestFilter {
     private final boolean includeQueryString;
     private final boolean includeContentType;
     private final boolean includeResponse;
+    private final boolean includeDuration;
     private final Logger logger;
 
     private RequestLoggingFilter(
@@ -18,12 +19,14 @@ public class RequestLoggingFilter implements RequestFilter {
             boolean includeQueryString,
             boolean includeContentType,
             boolean includeResponse,
+            boolean includeDuration,
             Logger logger
     ) {
         this.includeClientInfo = includeClientInfo;
         this.includeQueryString = includeQueryString;
         this.includeContentType = includeContentType;
         this.includeResponse = includeResponse;
+        this.includeDuration = includeDuration;
         this.logger = logger;
     }
 
@@ -34,9 +37,11 @@ public class RequestLoggingFilter implements RequestFilter {
             RequestFilterChain chain
     ) throws Exception {
         this.logInboundRequest(request);
+        long startTime = System.nanoTime();
         chain.accept(request, response);
+        long duration = System.nanoTime() - startTime;
         if (this.includeResponse) {
-            this.logOutboundRequest(request, response);
+            this.logOutboundRequest(request, response, duration);
         }
     }
 
@@ -64,7 +69,7 @@ public class RequestLoggingFilter implements RequestFilter {
         this.logger.info(logMessage.toString());
     }
 
-    private void logOutboundRequest(WebRequest request, WebResponse response) {
+    private void logOutboundRequest(WebRequest request, WebResponse response, long duration) {
         StringBuilder logMessage = new StringBuilder("Outgoing response: ")
                 .append(request.method())
                 .append(" ")
@@ -76,6 +81,10 @@ public class RequestLoggingFilter implements RequestFilter {
             response.headers().get("Content-Type").peek(contentType ->
                 logMessage.append(" [Content-Type: ").append(contentType).append("]")
             );
+        }
+
+        if (this.includeDuration) {
+            logMessage.append(" [Duration: ").append(duration / 1_000_000).append(" ms]");
         }
 
         this.logger.info(logMessage.toString());
@@ -93,9 +102,10 @@ public class RequestLoggingFilter implements RequestFilter {
     public static class Builder {
 
         private boolean includeClientInfo = true;
-        private boolean includeQueryString = true;
+        private boolean includeQueryString = false;
         private boolean includeContentType = true;
         private boolean includeResponse = true;
+        private boolean includeDuration = false;
 
         public Builder includeClientInfo(boolean includeClientInfo) {
             this.includeClientInfo = includeClientInfo;
@@ -117,12 +127,18 @@ public class RequestLoggingFilter implements RequestFilter {
             return this;
         }
 
+        public Builder includeDuration(boolean includeDuration) {
+            this.includeDuration = includeDuration;
+            return this;
+        }
+
         public RequestLoggingFilter build(Logger logger) {
             return new RequestLoggingFilter(
                     this.includeClientInfo,
                     this.includeQueryString,
                     this.includeContentType,
                     this.includeResponse,
+                    this.includeDuration,
                     logger
             );
         }
