@@ -13,4 +13,6 @@ public interface WebRequest {
     HttpMessageQuery query();
 
     HttpRequestBody body();
+
+    WebRequestClient client();
 }
