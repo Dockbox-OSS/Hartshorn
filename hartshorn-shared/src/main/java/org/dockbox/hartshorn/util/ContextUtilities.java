@@ -24,11 +24,28 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
+/**
+ * Utility methods for working with {@link Context contexts}.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public final class ContextUtilities {
 
     private ContextUtilities() {
     }
 
+    /**
+     * Finds the first context of the given type in the provided iterable of contexts.
+     *
+     * @param contexts The iterable of contexts to search.
+     * @param type The type of context to find.
+     * @param <C> The type of context.
+     *
+     * @return An {@link Option} containing the first context of the given type, or an empty option
+     * if no such context is found.
+     */
     public static <C extends Context> Option<C> first(
             Iterable<Context> contexts,
             Class<C> type
@@ -36,6 +53,16 @@ public final class ContextUtilities {
         return first(contexts, new SimpleContextIdentity<>(type));
     }
 
+    /**
+     * Finds the first context matching the given identity in the provided iterable of contexts.
+     *
+     * @param contexts The iterable of contexts to search.
+     * @param identity The identity of the context to find.
+     * @param <C> The type of context.
+     *
+     * @return An {@link Option} containing the first context matching the given identity, or an
+     * empty option if no such context is found.
+     */
     public static <C extends Context> Option<C> first(
             Iterable<Context> contexts,
             ContextIdentity<C> identity
@@ -55,6 +82,16 @@ public final class ContextUtilities {
         return Option.empty();
     }
 
+    /**
+     * Finds the first context of the given type in the provided array of contexts.
+     *
+     * @param contexts The array of contexts to search.
+     * @param type The type of context to find.
+     * @param <C> The type of context.
+     *
+     * @return An {@link Option} containing the first context of the given type, or an empty option
+     * if no such context is found.
+     */
     public static <C extends Context> Option<C> first(
             Context[] contexts,
             Class<C> type
@@ -62,6 +99,16 @@ public final class ContextUtilities {
         return first(contexts, new SimpleContextIdentity<>(type));
     }
 
+    /**
+     * Finds the first context matching the given identity in the provided array of contexts.
+     *
+     * @param contexts The array of contexts to search.
+     * @param identity The identity of the context to find.
+     * @param <C> The type of context.
+     *
+     * @return An {@link Option} containing the first context matching the given identity, or an
+     * empty option if no such context is found.
+     */
     public static <C extends Context> Option<C> first(
             Context[] contexts,
             ContextIdentity<C> identity

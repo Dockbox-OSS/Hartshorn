@@ -58,12 +58,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
         Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer =
             environment -> {
-                environment.injectorConfiguration(ImmutableInjectorConfiguration.create(injector -> {
-                    injector.disableBanner();
-                    injector.enableBatchMode();
-                    injector.showStacktraces();
-                    this.applicationCustomizer.customizeInjector(injector);
-                }));
+                environment.injectorConfiguration(ImmutableInjectorConfiguration.create(
+                    injector -> {
+                        injector.disableBanner();
+                        injector.enableBatchMode();
+                        injector.showStacktraces();
+                        this.applicationCustomizer.customizeInjector(injector);
+                    }));
 
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
                 environment.applicationContext(SimpleApplicationContext.create(

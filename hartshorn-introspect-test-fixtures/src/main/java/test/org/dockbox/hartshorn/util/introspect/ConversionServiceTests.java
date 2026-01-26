@@ -244,7 +244,7 @@ public abstract class ConversionServiceTests {
         // Not allowed because the source and target types cannot practically be determined due to
         // type erasure
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
-            registry.addConverter((Converter<String, Integer>) (s, contexts) -> Integer.parseInt(s));
+            registry.addConverter((Converter<String, Integer>) (s, _) -> Integer.parseInt(s));
         });
     }
 

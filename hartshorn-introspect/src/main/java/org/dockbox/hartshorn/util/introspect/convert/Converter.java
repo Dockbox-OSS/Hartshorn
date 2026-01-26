@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.context.Context;
  * A functional interface for converting objects from one type to another. This interface provides a
  * single method for converting an input object of type {@link I} to an output object of type
  * {@link O}. The input object may be nullable, and the output object may be nullable as well. If
- * the input object is {@code null}, the {@link #convert(Object, Context...)} method may return null, or provide
- * a default value.
+ * the input object is {@code null}, the {@link #convert(Object, Context...)} method may return
+ * null, or provide a default value.
  *
  * <p>Implementations of this interface are intended to be used as converters in a {@link
  * ConversionService} instance or in other contexts where a functional-style converter is required.

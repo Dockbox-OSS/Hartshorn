@@ -52,11 +52,15 @@ public interface GenericConverter {
      * Convert the source object to the specified target type. The implementation should return
      * {@code null} if the source cannot be converted to the specified target type.
      *
-     * @param <I>        the source type
-     * @param <O>        the target type
-     * @param source     the source object to convert
+     * @param source the source object to convert
      * @param sourceType the type descriptor of the source object
      * @param targetType the type descriptor of the target object, which is to be created
+     * @param contexts an optional array of {@link Context} objects that may provide additional
+     * information for the conversion process
+     *
+     * @param <I> the source type
+     * @param <O> the target type
+     *
      * @return the converted object, or {@code null} if the conversion cannot be performed
      */
     <I, O> @Nullable Object convert(

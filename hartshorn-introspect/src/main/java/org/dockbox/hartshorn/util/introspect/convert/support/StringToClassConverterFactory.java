@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.List;
 import org.dockbox.hartshorn.util.ContextUtilities;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.convert.AdditionalTargetTypeContext;
@@ -23,15 +24,11 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
-import java.util.List;
-
 /**
- * Converts a {@link String} to a {@link Boolean}.
+ * Converts a {@link String} to a {@link Class} by introspecting the string as a type name.
  *
- * @see Boolean#parseBoolean(String)
+ * @since 0.7.0
  *
- * @since 0.5.0
- * 
  * @author Guus Lieben
  */
 public class StringToClassConverterFactory implements ConverterFactory<String, Class<?>> {
@@ -49,7 +46,9 @@ public class StringToClassConverterFactory implements ConverterFactory<String, C
             if (input != null) {
                 Class<?> type = TypeUtils.forName(input).orNull();
                 if (type != null) {
-                    ParameterizableType parameterizableType = additionalTypeContext.parameterizableType();
+                    ParameterizableType parameterizableType = additionalTypeContext
+                        .parameterizableType();
+
                     if (!isValidBound(parameterizableType, type)) {
                         throw new IllegalArgumentException(
                                 ("Cannot convert '%s' to type %s: " +

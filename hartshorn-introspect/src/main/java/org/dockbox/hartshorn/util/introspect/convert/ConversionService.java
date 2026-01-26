@@ -68,6 +68,8 @@ public interface ConversionService {
      *
      * @param input the object to convert
      * @param targetType the target type to convert to
+     * @param contexts optional contexts to provide additional information for the conversion
+     *
      * @param <I> the input type
      * @param <O> the output type
      *

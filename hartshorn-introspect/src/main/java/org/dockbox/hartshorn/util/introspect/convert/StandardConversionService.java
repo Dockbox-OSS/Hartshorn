@@ -349,6 +349,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * Registers a set of converters for converting strings.
      *
      * @param registry The registry to register the converters to
+     * @param introspector The introspector to use for introspecting types
      */
     public static void registerStringConverters(
             ConverterRegistry registry,
@@ -363,7 +364,9 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(String.class, new StringToEnumConverterFactory());
         registry.addConverterFactory(String.class, new StringToNumberConverterFactory());
         registry.addConverterFactory(String.class, new StringToPrimitiveConverterFactory());
-        registry.addConverterFactory(String.class, new StringToTypeViewConverterFactory(introspector));
+        registry.addConverterFactory(String.class, new StringToTypeViewConverterFactory(
+            introspector
+        ));
         registry.addConverterFactory(String.class, new StringToClassConverterFactory());
     }
 

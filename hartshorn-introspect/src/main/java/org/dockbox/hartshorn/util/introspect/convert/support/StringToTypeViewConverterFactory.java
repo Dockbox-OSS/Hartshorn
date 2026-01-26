@@ -27,11 +27,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.List;
 
 /**
- * Converts a {@link String} to a {@link Boolean}.
+ * Converts a {@link String} to a {@link TypeView} by introspecting the string as a type name.
+ *
+ * @since 0.7.0
  *
  * @author Guus Lieben
- * @see Boolean#parseBoolean(String)
- * @since 0.5.0
  */
 public class StringToTypeViewConverterFactory implements ConverterFactory<String, TypeView<?>> {
 
@@ -44,6 +44,7 @@ public class StringToTypeViewConverterFactory implements ConverterFactory<String
     @Override
     public <O extends TypeView<?>> Converter<String, O> create(Class<O> targetType) {
         return (input, contexts) -> {
+            //noinspection unchecked
             AdditionalTargetTypeContext<O> additionalTypeContext = ContextUtilities.first(
                     contexts,
                     AdditionalTargetTypeContext.class
@@ -54,7 +55,8 @@ public class StringToTypeViewConverterFactory implements ConverterFactory<String
             if (input != null) {
                 TypeView<?> type = this.introspector.introspect(input);
                 if (!type.isVoid()) {
-                    ParameterizableType parameterizableType = additionalTypeContext.parameterizableType();
+                    ParameterizableType parameterizableType = additionalTypeContext
+                        .parameterizableType();
                     if (!isValidBound(parameterizableType, type)) {
                         throw new IllegalArgumentException(
                                 ("Cannot convert '%s' to type %s: " +

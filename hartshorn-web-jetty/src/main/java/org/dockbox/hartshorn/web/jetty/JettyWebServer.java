@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
@@ -8,25 +24,24 @@ import org.eclipse.jetty.server.Server;
 
 import java.util.Arrays;
 
-public class JettyWebServer implements WebServer {
-
-    private final Server jettyServer;
-
-    public JettyWebServer(Server jettyServer) {
-        this.jettyServer = jettyServer;
-    }
-
-    public Server jettyServer() {
-        return jettyServer;
-    }
+/**
+ * An implementation of {@link WebServer} using Jetty as the underlying server.
+ *
+ * @param jettyServer the backing Jetty server instance
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
+public record JettyWebServer(Server jettyServer) implements WebServer {
 
     @Override
     public void start() throws ServerException {
-        if (jettyServer.isStarted() || jettyServer.isStarting()) {
+        if (this.jettyServer.isStarted() || this.jettyServer.isStarting()) {
             throw new IllegalStateException("Cannot start a web server that is already running");
         }
         try {
-            jettyServer.start();
+            this.jettyServer.start();
         }
         catch (Exception e) {
             throw new ServerException("Failed to start Jetty server", e);
@@ -35,11 +50,11 @@ public class JettyWebServer implements WebServer {
 
     @Override
     public void stop() throws ServerException {
-        if (!jettyServer.isStarted()) {
+        if (!this.jettyServer.isStarted()) {
             throw new IllegalStateException("Cannot stop a web server that is not running");
         }
         try {
-            jettyServer.stop();
+            this.jettyServer.stop();
         }
         catch (Exception e) {
             throw new ServerException("Failed to stop Jetty server", e);
@@ -48,18 +63,18 @@ public class JettyWebServer implements WebServer {
 
     @Override
     public boolean running() {
-        return jettyServer.isStarted();
+        return this.jettyServer.isStarted();
     }
 
     @Override
     public int port() {
-        return Arrays.stream(jettyServer.getConnectors())
-                .filter(NetworkConnector.class::isInstance)
-                .map(NetworkConnector.class::cast)
-                .collect(CollectorUtilities.toOption())
-                .map(NetworkConnector::getLocalPort)
-                .orElseThrow(() -> new IllegalStateException(
-                        "No network connector available to determine port"
-                ));
+        return Arrays.stream(this.jettyServer.getConnectors())
+            .filter(NetworkConnector.class::isInstance)
+            .map(NetworkConnector.class::cast)
+            .collect(CollectorUtilities.toOption())
+            .map(NetworkConnector::getLocalPort)
+            .orElseThrow(() -> new IllegalStateException(
+                "No network connector available to determine port"
+            ));
     }
 }

@@ -40,7 +40,8 @@ public interface DefaultValueProvider<T> extends Converter<Null, T> {
 
     /**
      * Returns the default value to use when the input is {@code null}. This method should only be
-     * called through {@link Converter#convert(Object, Context...)}, and serves purely as a convenience method.
+     * called through {@link Converter#convert(Object, Context...)}, and serves purely as a
+     * convenience method.
      *
      * @return the default value to use when the input is {@code null}
      */
