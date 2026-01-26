@@ -16,13 +16,13 @@
 
 package test.org.dockbox.hartshorn.inject.compatibility;
 
-import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 
 public class DisableSingleConstructorFallbackTestCustomizer implements TestApplicationCustomizer {
 
     @Override
-    public void customizeEnvironment(ConfigurableApplicationEnvironment.Configurer configurer) {
+    public void customizeInjector(ImmutableInjectorConfiguration.Configurer configurer) {
         configurer.disallowFallbackToSingleConstructor();
     }
 }

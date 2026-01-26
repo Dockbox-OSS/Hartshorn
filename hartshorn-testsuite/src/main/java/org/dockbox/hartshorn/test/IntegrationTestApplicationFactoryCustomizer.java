@@ -16,13 +16,7 @@
 
 package org.dockbox.hartshorn.test;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
@@ -35,6 +29,14 @@ import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Customizer for the {@link StandardApplicationContextFactory} that configures the application
@@ -56,9 +58,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
         Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer =
             environment -> {
-                environment.disableBanner();
-                environment.enableBatchMode();
-                environment.showStacktraces();
+                environment.injectorConfiguration(ImmutableInjectorConfiguration.create(injector -> {
+                    injector.disableBanner();
+                    injector.enableBatchMode();
+                    injector.showStacktraces();
+                    this.applicationCustomizer.customizeInjector(injector);
+                }));
+
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
                 environment.applicationContext(SimpleApplicationContext.create(
                     this.applicationCustomizer::customizeApplication

@@ -209,7 +209,7 @@ class ApplicationConfigurerTests {
     void batchModeCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::enableBatchMode);
-        assertThat(applicationContext.environment().isBatchMode()).isTrue();
+        assertThat(applicationContext.environment().configuration().isBatchMode()).isTrue();
     }
 
     @Test
@@ -217,7 +217,7 @@ class ApplicationConfigurerTests {
     void batchModeDisabledCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::disableBatchMode);
-        assertThat(applicationContext.environment().isBatchMode()).isFalse();
+        assertThat(applicationContext.environment().configuration().isBatchMode()).isFalse();
     }
 
     @Test
@@ -225,7 +225,7 @@ class ApplicationConfigurerTests {
     void strictModeCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::enableStrictMode);
-        assertThat(applicationContext.environment().isStrictMode()).isTrue();
+        assertThat(applicationContext.environment().configuration().isStrictMode()).isTrue();
     }
 
     @Test
@@ -233,7 +233,7 @@ class ApplicationConfigurerTests {
     void strictModeDisabledCustomizer() {
         ApplicationContext applicationContext =
             createApplication(HartshornApplicationConfigurer::disableStrictMode);
-        assertThat(applicationContext.environment().isStrictMode()).isFalse();
+        assertThat(applicationContext.environment().configuration().isStrictMode()).isFalse();
     }
 
     @Test

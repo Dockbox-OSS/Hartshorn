@@ -52,7 +52,7 @@ import java.util.Set;
  */
 public class ComponentProviderPostProcessorAdapter implements ComponentProviderPostProcessor {
 
-    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final RequireInjectionPointRule requireRule;
     private final ComponentRegistryAwareComponentProvider owner;
     private final ComponentPostProcessor processor;
     private final InjectionCapableApplication application;
@@ -68,6 +68,9 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         this.processor = processor;
         this.application = application;
         this.componentStoreCallback = componentStoreCallback;
+        this.requireRule = new AnnotatedInjectionPointRequireRule(
+                application.environment().configuration()
+        );
     }
 
     @Override

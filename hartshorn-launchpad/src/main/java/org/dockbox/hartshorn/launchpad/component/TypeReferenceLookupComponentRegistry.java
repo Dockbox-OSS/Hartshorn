@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.launchpad.component;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Component;
@@ -57,16 +56,13 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
     private final Set<ComponentContainer<?>> containers =
         new ConcurrentSkipListSet<>(ComponentContainer.COMPARE_BY_ID);
-    private final EnvironmentTypeResolver typeResolver;
-    private final InjectorConfiguration configuration;
+    private final ApplicationEnvironment environment;
     private boolean environmentTypesResolved = false;
 
     public TypeReferenceLookupComponentRegistry(
-        EnvironmentTypeResolver typeResolver,
-        InjectorConfiguration configuration
+            ApplicationEnvironment applicationEnvironment
     ) {
-        this.typeResolver = typeResolver;
-        this.configuration = configuration;
+        this.environment = applicationEnvironment;
     }
 
     /**
@@ -126,7 +122,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
             // Qualifiers are not supported in this registry
             return Option.empty();
         }
-        else if (InjectorUtilities.isStrict(key, this.configuration)) {
+        else if (InjectorUtilities.isStrict(key, this.environment.configuration())) {
             return container(key.type());
         }
         else {
@@ -147,7 +143,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
         // components are registered.
         if (!this.environmentTypesResolved) {
             this.environmentTypesResolved = true;
-            this.typeResolver.types(Component.class).stream()
+            this.environment.typeResolver().types(Component.class).stream()
                 // Filter out component stereotypes (annotation types)
                 .filter(type -> !AnnotationUtilities.isStereotypeOf(type.type(), Component.class))
                 .map(AnnotatedComponentContainer::new)

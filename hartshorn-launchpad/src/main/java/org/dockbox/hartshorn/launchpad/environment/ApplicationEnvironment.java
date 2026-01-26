@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.ManagedComponentEnvironment;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -81,23 +80,4 @@ public interface ApplicationEnvironment
      * @return {@code true} if the environment is a CI environment, {@code false} otherwise.
      */
     boolean isBuildEnvironment();
-
-    /**
-     * Indicates whether the current environment is running in batch mode. Batch mode is typically
-     * used for optimizations specific to applications which will spawn multiple application
-     * contexts with shared resources.
-     *
-     * @return {@code true} if the environment is running in batch mode, {@code false} otherwise.
-     */
-    boolean isBatchMode();
-
-    /**
-     * Indicates whether strict mode is enabled. Strict mode is typically used to indicate that a
-     * lookup should only return a value if it is explicitly bound to the key, and not if it is
-     * bound to a sub-type of the key. This value is typically the default value of
-     * {@link ComponentKey#strict()} if it is not explicitly set.
-     *
-     * @return {@code true} if strict mode is enabled, {@code false} otherwise.
-     */
-    boolean isStrictMode();
 }

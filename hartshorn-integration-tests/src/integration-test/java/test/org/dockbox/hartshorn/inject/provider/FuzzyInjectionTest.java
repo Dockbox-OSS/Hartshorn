@@ -67,7 +67,7 @@ public class FuzzyInjectionTest {
                 constructor.includeBasePackages(false);
             }));
         }).environment();
-        assertThat(environment.isStrictMode()).isTrue();
+        assertThat(environment.configuration().isStrictMode()).isTrue();
     }
 
     public static void main(String[] args) {
@@ -88,7 +88,7 @@ public class FuzzyInjectionTest {
             }));
         });
         ApplicationEnvironment environment = applicationContext.environment();
-        assertThat(environment.isStrictMode()).isFalse();
+        assertThat(environment.configuration().isStrictMode()).isFalse();
 
         applicationContext.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class).build();

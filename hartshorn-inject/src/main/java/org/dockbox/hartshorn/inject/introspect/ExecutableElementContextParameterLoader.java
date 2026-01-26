@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,14 +42,23 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 public class ExecutableElementContextParameterLoader
     extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
-    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final RequireInjectionPointRule requireRule;
     private final InjectionCapableApplication application;
 
     public ExecutableElementContextParameterLoader(InjectionCapableApplication application) {
         super(ApplicationBoundParameterLoaderContext.class);
         this.application = application;
-        this.add(new ContextParameterLoaderRule(application));
-        this.add(new PropertyParameterLoaderRule(application.defaultProvider()));
+        this.requireRule = new AnnotatedInjectionPointRequireRule(
+                application.environment().configuration()
+        );
+        this.add(new ContextParameterLoaderRule(
+                application,
+                application.environment().configuration()
+        ));
+        this.add(new PropertyParameterLoaderRule(
+                application.defaultProvider(),
+                application.environment().configuration()
+        ));
         this.add(new ScopeParameterLoaderRule());
     }
 

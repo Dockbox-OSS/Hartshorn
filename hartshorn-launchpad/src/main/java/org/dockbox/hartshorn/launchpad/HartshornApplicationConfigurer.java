@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -77,6 +78,7 @@ public class HartshornApplicationConfigurer {
     private Customizer<Configurer> applicationBuilder = Customizer.useDefaults();
     private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory = Customizer.useDefaults();
     private Customizer<ConfigurableApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
+    private Customizer<ImmutableInjectorConfiguration.Configurer> injectorConfiguration = Customizer.useDefaults();
     private Customizer<SimpleApplicationContext.Configurer> applicationContext = Customizer.useDefaults();
     private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
     private Customizer<AnnotatedMethodComponentPostConstructor.Configurer> componentPostConstructor = Customizer.useDefaults();
@@ -228,7 +230,7 @@ public class HartshornApplicationConfigurer {
     public HartshornApplicationConfigurer enableBanner(
         ContextualInitializer<PropertyRegistry, Boolean> enableBanner
     ) {
-        this.environment = this.environment
+        this.injectorConfiguration = this.injectorConfiguration
             .compose(configuration -> configuration.enableBanner(enableBanner));
         return this;
     }
@@ -265,7 +267,7 @@ public class HartshornApplicationConfigurer {
     public HartshornApplicationConfigurer enableBatchMode(
         ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode
     ) {
-        this.environment = this.environment
+        this.injectorConfiguration = this.injectorConfiguration
             .compose(configuration -> configuration.enableBatchMode(enableBatchMode));
         return this;
     }
@@ -326,7 +328,7 @@ public class HartshornApplicationConfigurer {
     public HartshornApplicationConfigurer enableStrictMode(
         ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode
     ) {
-        this.environment = this.environment
+        this.injectorConfiguration = this.injectorConfiguration
             .compose(configuration -> configuration.enableStrictMode(enableStrictMode));
         return this;
     }
@@ -342,7 +344,7 @@ public class HartshornApplicationConfigurer {
     public HartshornApplicationConfigurer showStacktraces(
         ContextualInitializer<PropertyRegistry, Boolean> showStacktraces
     ) {
-        this.environment = this.environment
+        this.injectorConfiguration = this.injectorConfiguration
             .compose(configuration -> configuration.showStacktraces(showStacktraces));
         return this;
     }
@@ -637,6 +639,9 @@ public class HartshornApplicationConfigurer {
         ));
         environment.injectionPointsResolver(ContextualInitializer.defer(() -> {
             return MethodsAndFieldsInjectionPointResolver.create(this.injectionPointResolver);
+        }));
+        environment.injectorConfiguration(ContextualInitializer.defer(() -> {
+            return ImmutableInjectorConfiguration.create(this.injectorConfiguration);
         }));
     }
 

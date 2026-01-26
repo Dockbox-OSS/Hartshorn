@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,4 +48,38 @@ public interface InjectorConfiguration {
      * {@code false} otherwise
      */
     boolean allowFallbackToSingleConstructor();
+
+    /**
+     * Returns whether injection points are required by default. If this is {@code true}, all
+     * injection points will be considered required unless explicitly marked as optional. If this is
+     * {@code false}, all injection points will be considered optional unless explicitly marked as
+     * required.
+     *
+     * @return {@code true} if injection points are required by default, {@code false} otherwise
+     */
+    boolean requiredByDefault();
+
+    /**
+     * Indicates whether the application banner is enabled. If enabled, the banner will be displayed
+     * during application startup.
+     *
+     * @return {@code true} if the banner is enabled, {@code false} otherwise.
+     */
+    boolean bannerEnabled();
+
+    /**
+     * Indicates whether the current environment is running in batch mode. Batch mode is typically
+     * used for optimizations specific to applications which will spawn multiple application
+     * contexts with shared resources.
+     *
+     * @return {@code true} if the environment is running in batch mode, {@code false} otherwise.
+     */
+    boolean isBatchMode();
+
+    /**
+     * Indicates whether stack traces should be shown for exceptions thrown during injection.
+     *
+     * @return {@code true} if stack traces should be shown, {@code false} otherwise.
+     */
+    boolean showStacktraces();
 }
