@@ -1,6 +1,7 @@
 package org.dockbox.hartshorn.web.jetty.message;
 
 import org.dockbox.hartshorn.web.message.MutableHttpMessageHeaders;
+import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Response;
@@ -22,6 +23,11 @@ public class JettyWebResponse implements WebResponse {
     @Override
     public void write(ByteBuffer data) throws Exception {
         Content.Sink.write(this.response, true, data);
+    }
+
+    @Override
+    public <T> void write(ResponseWriter<T> writer, T body) throws Exception {
+        writer.write(this, body);
     }
 
     @Override
