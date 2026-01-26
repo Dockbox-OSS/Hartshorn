@@ -35,9 +35,18 @@ public @interface LoggerMeta {
 
     /**
      * The name of the logger. When configured, this takes precedence over the automatically
-     * resolved logger name.
+     * resolved logger name. If {@link #context()} is also set, this value will be ignored.
      *
      * @return The name of the logger, or an empty string if the name is not set.
      */
     String name() default "";
+
+    /**
+     * The context class for the logger. This is typically the class in which the logger is used.
+     * When set, this takes precedence over both the automatically resolved logger name and the
+     * {@link #name()} value.
+     *
+     * @return The context class for the logger, or {@link Void} if the context is not set.
+     */
+    Class<?> context() default Void.class;
 }
