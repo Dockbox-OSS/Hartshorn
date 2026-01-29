@@ -38,12 +38,18 @@ import java.util.regex.Pattern;
 public class StringToArrayConverter implements GenericConverter {
 
     private final Pattern delimiter;
+    private boolean trim;
 
     public StringToArrayConverter() {
-        this.delimiter = Pattern.compile(",");
+        this(true);
     }
 
-    public StringToArrayConverter(Pattern delimiter) {
+    public StringToArrayConverter(boolean trim) {
+        this(Pattern.compile(","), trim);
+    }
+
+    public StringToArrayConverter(Pattern delimiter, boolean trim) {
+        this.trim = trim;
         this.delimiter = delimiter;
     }
 
@@ -59,7 +65,13 @@ public class StringToArrayConverter implements GenericConverter {
         @NonNull Class<O> targetType,
         Context... contexts) {
         if (source instanceof String charSequence) {
-            return charSequence.split(this.delimiter.pattern());
+            String[] strings = charSequence.split(this.delimiter.pattern());
+            if (this.trim) {
+                for (int i = 0; i < strings.length; i++) {
+                    strings[i] = strings[i].trim();
+                }
+            }
+            return strings;
         }
         return null;
     }
