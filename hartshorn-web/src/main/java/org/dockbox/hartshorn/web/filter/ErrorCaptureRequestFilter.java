@@ -44,13 +44,13 @@ public class ErrorCaptureRequestFilter implements RequestFilter {
     }
 
     @Override
-    public void handle(
+    public boolean handle(
         WebRequest request,
         WebResponse response,
         RequestFilterChain chain
     ) throws Exception {
         try {
-            chain.accept(request, response);
+            return chain.accept(request, response);
         }
         catch (Throwable throwable) {
             this.exceptionHandler.handle(
@@ -58,6 +58,7 @@ public class ErrorCaptureRequestFilter implements RequestFilter {
                 throwable
             );
             this.handleError(throwable, response);
+            return false;
         }
     }
 

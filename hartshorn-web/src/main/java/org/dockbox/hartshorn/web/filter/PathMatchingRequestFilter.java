@@ -44,7 +44,7 @@ public class PathMatchingRequestFilter implements RequestFilter, Reportable {
     }
 
     @Override
-    public void handle(
+    public boolean handle(
         WebRequest request,
         WebResponse response,
         RequestFilterChain chain
@@ -54,10 +54,10 @@ public class PathMatchingRequestFilter implements RequestFilter, Reportable {
             RequestHandler handler = route.handler();
             Map<String, String> parameters = route.pathParameters();
             WebRequest wrapper = new PathParamAwareWebRequest(request, parameters);
-            handler.handle(wrapper, response);
+            return handler.handle(wrapper, response);
         }
         else {
-            chain.accept(request, response);
+            return chain.accept(request, response);
         }
     }
 

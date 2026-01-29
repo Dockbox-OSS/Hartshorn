@@ -50,8 +50,14 @@ public class JettyRequestHandler extends Handler.Abstract implements Reportable 
     public boolean handle(Request request, Response response, Callback callback) throws Exception {
         WebRequest webRequest = new JettyWebRequest(request);
         WebResponse webResponse = new JettyWebResponse(response);
-        this.chain.accept(webRequest, webResponse);
-        return true;
+        boolean accepted = this.chain.accept(webRequest, webResponse);
+        if (accepted) {
+            callback.succeeded();
+        }
+        else {
+            callback.failed(new IllegalStateException("Request was not handled by the filter chain"));
+        }
+        return accepted;
     }
 
     @Override

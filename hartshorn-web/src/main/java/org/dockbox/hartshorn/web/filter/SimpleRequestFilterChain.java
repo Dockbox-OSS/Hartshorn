@@ -60,15 +60,16 @@ public class SimpleRequestFilterChain implements RequestFilterChain, Reportable 
     }
 
     @Override
-    public void accept(WebRequest request, WebResponse response) throws Exception {
+    public boolean accept(WebRequest request, WebResponse response) throws Exception {
         if (this.index < this.filters.size()) {
             RequestFilter currentFilter = this.filters.get(this.index);
             RequestFilterChain nextChain = new SimpleRequestFilterChain(
                 this.filters,
                 this.index + 1
             );
-            currentFilter.handle(request, response, nextChain);
+            return currentFilter.handle(request, response, nextChain);
         }
+        return true;
     }
 
     @Override

@@ -56,18 +56,19 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
     }
 
     @Override
-    public void handle(
+    public boolean handle(
             WebRequest request,
             WebResponse response,
             RequestFilterChain chain
     ) throws Exception {
         this.logInboundRequest(request);
         long startTime = System.nanoTime();
-        chain.accept(request, response);
+        boolean result = chain.accept(request, response);
         long duration = System.nanoTime() - startTime;
         if (this.includeResponse) {
             this.logOutboundRequest(request, response, duration);
         }
+        return result;
     }
 
     private void logInboundRequest(WebRequest request) {

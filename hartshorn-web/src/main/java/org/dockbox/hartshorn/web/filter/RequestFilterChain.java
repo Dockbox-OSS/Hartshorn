@@ -36,5 +36,5 @@ public interface RequestFilterChain {
      *
      * @throws Exception If an error occurs while processing the request.
      */
-    void accept(WebRequest request, WebResponse response) throws Exception;
+    boolean accept(WebRequest request, WebResponse response) throws Exception;
 }

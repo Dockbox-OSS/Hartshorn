@@ -34,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 public class UncapturedRequestFilter implements RequestFilter {
 
     @Override
-    public void handle(
+    public boolean handle(
         WebRequest request,
         WebResponse response,
         RequestFilterChain chain
@@ -47,6 +47,7 @@ public class UncapturedRequestFilter implements RequestFilter {
             <p>The requested resource was not found on this server.</p>
             """.getBytes(StandardCharsets.UTF_8));
         response.write(buffer);
+        return true;
     }
 
     @Override

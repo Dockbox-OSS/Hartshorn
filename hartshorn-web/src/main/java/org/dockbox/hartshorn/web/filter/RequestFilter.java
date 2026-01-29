@@ -38,7 +38,7 @@ public interface RequestFilter {
      *
      * @throws Exception If an error occurs while handling the request.
      */
-    void handle(
+    boolean handle(
         WebRequest request,
         WebResponse response,
         RequestFilterChain chain

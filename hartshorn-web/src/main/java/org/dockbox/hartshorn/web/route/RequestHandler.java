@@ -37,5 +37,5 @@ public interface RequestHandler {
      *
      * @throws Exception If an error occurs while handling the request.
      */
-    void handle(WebRequest request, WebResponse response) throws Exception;
+    boolean handle(WebRequest request, WebResponse response) throws Exception;
 }

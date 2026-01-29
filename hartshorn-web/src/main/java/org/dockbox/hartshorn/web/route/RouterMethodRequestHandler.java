@@ -29,7 +29,7 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
     }
 
     @Override
-    public void handle(WebRequest request, WebResponse response) throws Exception {
+    public boolean handle(WebRequest request, WebResponse response) throws Exception {
         WebRequestScope scope = new WebRequestScope(request, response);
         var adapter = new InjectorExecutableInvocationAdapter(this.application)
                 .scope(scope)
@@ -40,14 +40,16 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
 
         P instance = this.application.defaultProvider().get(this.methodView.declaredBy().type());
         try {
+            // TODO: Handle the result appropriately. Currently does not support non-void methods.
             Option<R> result = adapter.invoke(this.methodView, instance);
-            // TODO: Handle the result appropriately
+            return true;
         }
         catch (Exception e) {
+            // Will be handled upstream
             throw e;
         }
         catch (Throwable t) {
-            // TODO: Improve exception handling
+            // Will be handled upstream
             throw new Exception(t);
         }
     }
