@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.reporting.serialize;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.util.properties.ArrayNode;
 import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.NodeVisitor;
-
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link NodeVisitor} which converts a {@link Node} to a {@link JsonNode}. This is useful for
@@ -43,16 +42,16 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
         JsonNodeFactory factory = JsonNodeFactory.instance;
         Object value = node.value();
         return switch (value) {
-            case String stringValue -> factory.textNode(stringValue);
+            case String stringValue -> factory.stringNode(stringValue);
             case Integer integerValue -> factory.numberNode(integerValue);
             case Double doubleValue -> factory.numberNode(doubleValue);
             case Long longValue -> factory.numberNode(longValue);
             case Short shortValue -> factory.numberNode(shortValue);
             case Boolean booleanValue -> factory.booleanNode(booleanValue);
             case Node<?> nodeValue -> nodeValue.accept(this);
-            case null -> throw new IllegalArgumentException("Unsupported type null");
+            case null -> factory.nullNode();
             default -> throw new IllegalArgumentException("Unsupported type " + value.getClass()
-                .getName());
+                .getName() + " at node " + node.name());
         };
     }
 
