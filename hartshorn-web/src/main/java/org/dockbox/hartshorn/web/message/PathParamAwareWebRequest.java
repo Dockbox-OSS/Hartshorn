@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.web.message;
 import org.dockbox.hartshorn.web.HttpMethod;
 
 import java.util.Map;
-import org.dockbox.hartshorn.web.chain.PathMatchingRequestFilter;
+import org.dockbox.hartshorn.web.filter.PathMatchingRequestFilter;
 
 /**
  * A {@link WebRequest} implementation that is aware of path parameters. Should only be created by

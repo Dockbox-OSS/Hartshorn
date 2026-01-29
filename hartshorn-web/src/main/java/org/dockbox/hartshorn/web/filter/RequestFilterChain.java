@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.chain;
+package org.dockbox.hartshorn.web.filter;
 
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;

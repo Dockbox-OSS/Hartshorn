@@ -16,13 +16,18 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.web.ServerException;
 import org.dockbox.hartshorn.web.WebServer;
+import org.dockbox.hartshorn.web.jetty.report.NetworkConnectorReporter;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * An implementation of {@link WebServer} using Jetty as the underlying server.
@@ -33,7 +38,7 @@ import java.util.Arrays;
  *
  * @author Guus Lieben
  */
-public record JettyWebServer(Server jettyServer) implements WebServer {
+public record JettyWebServer(Server jettyServer) implements WebServer, Reportable {
 
     @Override
     public void start() throws ServerException {
@@ -68,13 +73,30 @@ public record JettyWebServer(Server jettyServer) implements WebServer {
 
     @Override
     public int port() {
-        return Arrays.stream(this.jettyServer.getConnectors())
-            .filter(NetworkConnector.class::isInstance)
-            .map(NetworkConnector.class::cast)
+        return getNetworkConnectors().stream()
             .collect(CollectorUtilities.toOption())
             .map(NetworkConnector::getLocalPort)
             .orElseThrow(() -> new IllegalStateException(
                 "No network connector available to determine port"
             ));
+    }
+
+    private List<NetworkConnector> getNetworkConnectors() {
+        return Arrays.stream(this.jettyServer.getConnectors())
+                .filter(NetworkConnector.class::isInstance)
+                .map(NetworkConnector.class::cast)
+                .toList();
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("connectors").writeDelegates(getNetworkConnectors().stream()
+                .map(NetworkConnectorReporter::new)
+                .toArray(Reportable[]::new));
+
+        Handler handler = this.jettyServer.getHandler();
+        if (handler instanceof Reportable reportable) {
+            collector.property("handler").writeDelegate(reportable);
+        }
     }
 }

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-import org.dockbox.hartshorn.web.chain.RequestFilterChain;
+import org.dockbox.hartshorn.web.filter.RequestFilterChain;
 import org.dockbox.hartshorn.web.jetty.route.JettyRequestHandler;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;

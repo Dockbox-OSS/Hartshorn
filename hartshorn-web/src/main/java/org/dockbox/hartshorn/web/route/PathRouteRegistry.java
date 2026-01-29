@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.web.route;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.message.WebRequest;
 
@@ -30,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class PathRouteRegistry {
+public class PathRouteRegistry implements Reportable {
 
     private final Map<
             HttpMethod,
@@ -78,6 +81,29 @@ public class PathRouteRegistry {
             }
         }
         return null;
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        for (HttpMethod method : HttpMethod.values()) {
+            Map<String, RequestHandler> routes = this.methodRoutes.get(method);
+            if (routes == null || routes.isEmpty()) {
+                continue;
+            }
+            collector.property(method.name()).writeDelegate(methodCollector -> {
+                for (Map.Entry<String, RequestHandler> entry : routes.entrySet()) {
+                    DiagnosticsPropertyWriter propertyWriter = methodCollector.property(
+                            entry.getKey()
+                    );
+                    if (entry.getValue() instanceof Reportable reportable) {
+                        propertyWriter.writeDelegate(reportable);
+                    }
+                    else {
+                        propertyWriter.writeString(entry.getValue().getClass().getName());
+                    }
+                }
+            });
+        }
     }
 
     /**

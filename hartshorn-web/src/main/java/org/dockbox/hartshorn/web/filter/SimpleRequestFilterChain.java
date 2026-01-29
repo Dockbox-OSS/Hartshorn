@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.chain;
+package org.dockbox.hartshorn.web.filter;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
+import org.dockbox.hartshorn.web.report.RequestFilterReporter;
 
 import java.util.List;
 
@@ -29,7 +32,7 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class SimpleRequestFilterChain implements RequestFilterChain {
+public class SimpleRequestFilterChain implements RequestFilterChain, Reportable {
 
     private final List<RequestFilter> filters;
     private final int index;
@@ -66,5 +69,12 @@ public class SimpleRequestFilterChain implements RequestFilterChain {
             );
             currentFilter.handle(request, response, nextChain);
         }
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("filters").writeDelegates(this.filters.stream()
+                .map(RequestFilterReporter::new)
+                .toArray(Reportable[]::new));
     }
 }

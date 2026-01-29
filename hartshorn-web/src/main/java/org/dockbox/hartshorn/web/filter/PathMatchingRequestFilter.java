@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.chain;
+package org.dockbox.hartshorn.web.filter;
 
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.web.message.PathParamAwareWebRequest;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
@@ -33,7 +35,7 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public class PathMatchingRequestFilter implements RequestFilter {
+public class PathMatchingRequestFilter implements RequestFilter, Reportable {
 
     private final PathRouteRegistry registry;
 
@@ -62,5 +64,10 @@ public class PathMatchingRequestFilter implements RequestFilter {
     @Override
     public int order() {
         return ProcessingPriority.NORMAL_PRECEDENCE;
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("routeRegistry").writeDelegate(this.registry);
     }
 }

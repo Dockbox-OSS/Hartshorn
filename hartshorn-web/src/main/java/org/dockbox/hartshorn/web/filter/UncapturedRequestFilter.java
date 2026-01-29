@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.chain;
+package org.dockbox.hartshorn.web.filter;
 
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 
@@ -39,7 +40,7 @@ public class UncapturedRequestFilter implements RequestFilter {
         RequestFilterChain chain
     ) throws Exception {
         // TODO: Configurable 404 handling
-        response.status(404);
+        response.status(HttpStatus.NOT_FOUND.code());
         response.headers().set("Content-Type", "text/html; charset=UTF-8");
         ByteBuffer buffer = ByteBuffer.wrap("""
             <h1>404 Not Found</h1>

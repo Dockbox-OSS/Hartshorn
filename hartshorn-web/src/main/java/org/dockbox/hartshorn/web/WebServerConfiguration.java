@@ -29,18 +29,20 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.web.chain.ErrorCaptureRequestFilter;
-import org.dockbox.hartshorn.web.chain.PathMatchingRequestFilter;
-import org.dockbox.hartshorn.web.chain.RequestFilter;
-import org.dockbox.hartshorn.web.chain.RequestFilterChain;
-import org.dockbox.hartshorn.web.chain.RequestLoggingFilter;
-import org.dockbox.hartshorn.web.chain.SimpleRequestFilterChain;
-import org.dockbox.hartshorn.web.chain.UncapturedRequestFilter;
+import org.dockbox.hartshorn.web.filter.ErrorCaptureRequestFilter;
+import org.dockbox.hartshorn.web.filter.PathMatchingRequestFilter;
+import org.dockbox.hartshorn.web.filter.RequestFilter;
+import org.dockbox.hartshorn.web.filter.RequestFilterChain;
+import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
+import org.dockbox.hartshorn.web.filter.SimpleRequestFilterChain;
+import org.dockbox.hartshorn.web.filter.UncapturedRequestFilter;
 import org.dockbox.hartshorn.web.message.ObjectMapperResponseWriter;
 import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
+import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
 import org.dockbox.hartshorn.web.route.PathMatchingRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
@@ -66,17 +68,17 @@ public class WebServerConfiguration {
      * Creates a {@link RequestFilterChain}, collecting all registered {@link RequestFilter filters}
      * and sorting them by their order.
      *
-     * @param strategies The collection of request filters.
+     * @param filters The collection of request filters.
      *
      * @return A sorted request filter chain.
      */
     @Singleton
     public RequestFilterChain requestHandlerChain(
-        @Fuzzy ComponentCollection<RequestFilter> strategies
+        @Fuzzy ComponentCollection<RequestFilter> filters
     ) {
-        return new SimpleRequestFilterChain(strategies.stream()
-            .sorted(Comparator.comparingInt(RequestFilter::order))
-            .toList());
+        return new SimpleRequestFilterChain(filters.stream()
+                .sorted(Comparator.comparingInt(RequestFilter::order))
+                .toList());
     }
 
     /**
@@ -226,5 +228,11 @@ public class WebServerConfiguration {
     @Scoped(WebRequestScope.class)
     public WebResponse webResponse(WebRequestScope scope) {
         return scope.response();
+    }
+
+    @Singleton
+    @CompositeMember
+    public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
+        return new WebServerDiagnosticsReporter(webServer);
     }
 }

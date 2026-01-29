@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.web.jetty.route;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.web.chain.RequestFilterChain;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.web.filter.RequestFilterChain;
 import org.dockbox.hartshorn.web.jetty.message.JettyWebRequest;
 import org.dockbox.hartshorn.web.jetty.message.JettyWebResponse;
 import org.dockbox.hartshorn.web.message.WebRequest;
@@ -35,7 +37,7 @@ import org.eclipse.jetty.util.Callback;
  *
  * @author Guus Lieben
  */
-public class JettyRequestHandler extends Handler.Abstract {
+public class JettyRequestHandler extends Handler.Abstract implements Reportable {
 
     private final RequestFilterChain chain;
 
@@ -50,5 +52,12 @@ public class JettyRequestHandler extends Handler.Abstract {
         WebResponse webResponse = new JettyWebResponse(response);
         this.chain.accept(webRequest, webResponse);
         return true;
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        if (chain instanceof Reportable reportable) {
+            collector.property("filterChain").writeDelegate(reportable);
+        }
     }
 }

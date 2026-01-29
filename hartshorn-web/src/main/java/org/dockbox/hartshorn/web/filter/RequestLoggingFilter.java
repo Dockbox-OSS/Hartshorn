@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.chain;
+package org.dockbox.hartshorn.web.filter;
 
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.slf4j.Logger;
@@ -28,7 +30,7 @@ import org.slf4j.Logger;
  *
  * @author Guus Lieben
  */
-public class RequestLoggingFilter implements RequestFilter {
+public class RequestLoggingFilter implements RequestFilter, Reportable {
 
     private final boolean includeClientInfo;
     private final boolean includeQueryString;
@@ -125,6 +127,15 @@ public class RequestLoggingFilter implements RequestFilter {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("includeClientInfo").writeBoolean(this.includeClientInfo);
+        collector.property("includeQueryString").writeBoolean(this.includeQueryString);
+        collector.property("includeContentType").writeBoolean(this.includeContentType);
+        collector.property("includeResponse").writeBoolean(this.includeResponse);
+        collector.property("includeDuration").writeBoolean(this.includeDuration);
     }
 
     /**
