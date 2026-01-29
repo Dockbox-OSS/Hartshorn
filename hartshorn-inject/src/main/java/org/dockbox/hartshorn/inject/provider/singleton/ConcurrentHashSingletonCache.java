@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.inject.provider.singleton;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
-import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
@@ -44,6 +44,12 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
     private final Map<ComponentKeyView<?>, Object> cache = new ConcurrentHashMap<>();
     private final Set<ComponentKeyView<?>> locked = ConcurrentHashMap.newKeySet();
 
+    private final ComponentKeyMatcher componentKeyMatcher;
+
+    public ConcurrentHashSingletonCache(ComponentKeyMatcher componentKeyMatcher) {
+        this.componentKeyMatcher = componentKeyMatcher;
+    }
+
     @Override
     public void lock(ComponentKey<?> key) {
         ComponentKeyView<?> keyView = new ComponentKeyView<>(key);
@@ -68,7 +74,7 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
     @Override
     public <T> Option<T> get(ComponentKey<T> key) {
         return EntryStream.of(this.cache)
-                .filterKeys(view -> SimpleComponentKeyMatcher.INSTANCE.matches(key, view))
+                .filterKeys(view -> componentKeyMatcher.matches(key, view))
                 .values()
                 .collect(CollectorUtilities.toOption())
                 .cast(key.type());

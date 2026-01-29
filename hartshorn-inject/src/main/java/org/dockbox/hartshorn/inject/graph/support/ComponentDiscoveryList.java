@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.graph.support;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -56,8 +57,8 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      *
      * @param node the component to add
      */
-    public void add(TypePathNode<?> node) {
-        this.discoveredComponents.addFirst(new DiscoveredComponent(node, node.type()));
+    public void add(TypePathNode<?> node, LifecycleType lifecycleType) {
+        this.add(node, node.type(), lifecycleType);
     }
 
     /**
@@ -67,8 +68,12 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      * @param node the component to add
      * @param actualType the actual type of the component
      */
-    public void add(TypePathNode<?> node, TypeView<?> actualType) {
-        this.discoveredComponents.addFirst(new DiscoveredComponent(node, actualType));
+    public void add(TypePathNode<?> node, TypeView<?> actualType, LifecycleType lifecycleType) {
+        this.discoveredComponents.addFirst(new DiscoveredComponent(
+                node,
+                actualType,
+                lifecycleType
+        ));
     }
 
     /**
@@ -78,8 +83,12 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      * @param node the component to add
      * @param constructor the constructor that was used to create the component
      */
-    public void add(TypePathNode<?> node, ConstructorView<?> constructor) {
-        this.discoveredComponents.addFirst(new DiscoveredComponent(node, constructor.declaredBy()));
+    public void add(
+            TypePathNode<?> node,
+            ConstructorView<?> constructor,
+            LifecycleType lifecycleType
+    ) {
+        this.add(node, constructor.declaredBy(), lifecycleType);
     }
 
     /**
@@ -155,7 +164,11 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      *
      * @author Guus Lieben
      */
-    public record DiscoveredComponent(TypePathNode<?> node, TypeView<?> actualType) {
+    public record DiscoveredComponent(
+            TypePathNode<?> node,
+            TypeView<?> actualType,
+            LifecycleType lifecycleType
+    ) {
 
         /**
          * Returns whether the component was discovered from a binding declaration, or from a

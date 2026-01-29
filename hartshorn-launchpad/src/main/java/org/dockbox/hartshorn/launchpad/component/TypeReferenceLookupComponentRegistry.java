@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.launchpad.component;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Component;
@@ -126,9 +127,14 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
             return container(key.type());
         }
         else {
+            ComponentKeyMatcher matcher = SimpleComponentKeyMatcher.create(
+                    this.environment.configuration()
+            );
             return this.withContainerCache(containers -> containers.stream()
-                .filter(container -> SimpleComponentKeyMatcher.INSTANCE.matches(key,
-                    ComponentKey.of(container.type())))
+                .filter(container -> matcher.matches(
+                        key,
+                    ComponentKey.of(container.type())
+                ))
                 .collect(CollectorUtilities.toOption()));
         }
     }

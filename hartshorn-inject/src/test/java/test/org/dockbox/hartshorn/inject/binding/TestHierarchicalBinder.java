@@ -17,8 +17,10 @@
 package test.org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.context.SimpleSingleElementContext;
+import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchyCache;
 import org.dockbox.hartshorn.inject.binding.SimpleHierarchicalBinder;
@@ -27,6 +29,7 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.UUID;
@@ -37,10 +40,15 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
     private HierarchyCache hierarchyCache;
 
     public TestHierarchicalBinder() {
+        var propertyRegistry = SimpleSingleElementContext.create(new MapPropertyRegistry());
+        InjectorConfiguration configuration = ImmutableInjectorConfiguration
+                .create(Customizer.useDefaults())
+                .initialize(propertyRegistry);
+        ComponentKeyMatcher componentKeyMatcher = SimpleComponentKeyMatcher.create(configuration);
         super(
             null,
             new DefaultBindingAliasNormalizer(),
-            new ConcurrentHashSingletonCache()
+            new ConcurrentHashSingletonCache(componentKeyMatcher)
         );
     }
 

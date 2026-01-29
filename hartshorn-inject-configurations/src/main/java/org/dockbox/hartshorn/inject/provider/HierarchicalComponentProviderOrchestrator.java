@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
 import org.dockbox.hartshorn.inject.binding.AliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -113,7 +114,9 @@ public class HierarchicalComponentProviderOrchestrator
                 this.postConstructor,
                 this.bindingAliasNormalizer,
                 this.application,
-                new ConcurrentHashSingletonCache(),
+                new ConcurrentHashSingletonCache(SimpleComponentKeyMatcher.create(
+                        this.application.environment().configuration()
+                )),
                 scope,
                 strategies -> {
                     strategies.insert(0, new ManagedComponentProviderStrategy());

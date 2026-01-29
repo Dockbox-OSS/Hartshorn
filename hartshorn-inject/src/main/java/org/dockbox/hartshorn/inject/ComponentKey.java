@@ -414,10 +414,11 @@ public final class ComponentKey<T> implements Reportable {
             HighestPriorityProviderSelectionStrategy.INSTANCE;
         private ComponentResolutionFailureStrategy failureStrategy =
             ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
-        private Scope scope = null; // If not provided, defaults to application scope
+        // If not provided, defaults to application scope
+        private Scope scope = null;
         private boolean postConstructionAllowed = true;
+        // If not provided, defaults to InjectorConfiguration#isStrictMode
         private Tristate strict = Tristate.UNDEFINED;
-            // If not provided, defaults to InjectorConfiguration#isStrictMode
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;

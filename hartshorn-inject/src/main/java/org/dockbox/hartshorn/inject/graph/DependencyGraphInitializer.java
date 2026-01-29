@@ -163,9 +163,9 @@ public final class DependencyGraphInitializer {
 
         // checkstyle:off LineLength
         private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator>
-            graphValidator = LazyStreamableConfigurer.of(Set.of(
-            new DependenciesVisitedGraphValidator(),
+            graphValidator = LazyStreamableConfigurer.of(List.of(
             new CyclicDependencyGraphValidator(),
+            new DependenciesVisitedGraphValidator(),
             new OverlappingAliasDependencyGraphValidator()
         ));
         // checkstyle:on LineLength

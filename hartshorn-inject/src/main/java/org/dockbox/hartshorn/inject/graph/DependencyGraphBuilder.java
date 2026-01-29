@@ -258,7 +258,7 @@ public class DependencyGraphBuilder {
                     });
                 this.checkNoDuplicateContexts(dependency, dependencyNodes);
                 graph.addRoots(dependencyNodes);
-                dependencyContexts.forEach(node -> node.addParents(dependencyNodes));
+                componentNode.addParents(dependencyNodes);
             }
         }
     }

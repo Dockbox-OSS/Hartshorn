@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph.support;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphValidator;
@@ -33,6 +29,10 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A validator that can be used to detect cyclic dependencies in a {@link DependencyGraph}. A cyclic
@@ -101,25 +101,6 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         if (knownNodes.contains(node)) {
             return List.of(node);
         }
-
-        // Defaults to true, as we should assume that the node needs immediate resolution unless
-        // proven otherwise.
-        boolean needsImmediateResolution = true;
-        if (node instanceof ContainableGraphNode<DependencyContext<?>> containableGraphNode) {
-            ComponentKey<?> dependencyCandidate = node.value().componentKey();
-            // If none of the parents need immediate resolution, then we can cut potential cyclic
-            // graphs short.
-            needsImmediateResolution = containableGraphNode.children().stream()
-                .anyMatch(parent -> parent.value().needsImmediateResolution(dependencyCandidate));
-        }
-
-        // If the node doesn't need immediate resolution, then we can skip it. Note that this does
-        // not affect potential grandchild dependencies, as this validator goes over all nodes in
-        // the graph, and not just the roots.
-        if (!needsImmediateResolution) {
-            return List.of();
-        }
-
         knownNodes.add(node);
 
         for (GraphNode<DependencyContext<?>> child : node.children()) {
@@ -163,13 +144,13 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
                     introspector.introspect(implementationDependencyContext.implementationContext()
                         .componentKey()
                         .parameterizedType());
-                discoveryList.add(typePathNode, actualType);
+                discoveryList.add(typePathNode, actualType, dependencyContext.lifecycleType());
             }
             else {
                 TypePathNode<?> pathNode = this.createTypePathNode(dependencyContext.componentKey(),
                     dependencyContext.origin(),
                     introspector);
-                discoveryList.add(pathNode);
+                discoveryList.add(pathNode, dependencyContext.lifecycleType());
             }
         }
         return discoveryList;

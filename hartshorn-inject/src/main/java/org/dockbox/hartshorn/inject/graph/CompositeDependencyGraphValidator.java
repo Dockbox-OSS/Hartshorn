@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,7 +38,7 @@ import java.util.Set;
  */
 public class CompositeDependencyGraphValidator implements DependencyGraphValidator {
 
-    private final Set<DependencyGraphValidator> validators = new HashSet<>();
+    private final List<DependencyGraphValidator> validators = new ArrayList<>();
 
     public CompositeDependencyGraphValidator(Collection<DependencyGraphValidator> validators) {
         this.validators.addAll(validators);
