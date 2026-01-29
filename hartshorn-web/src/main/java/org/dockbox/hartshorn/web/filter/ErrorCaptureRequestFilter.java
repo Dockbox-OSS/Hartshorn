@@ -67,7 +67,7 @@ public class ErrorCaptureRequestFilter implements RequestFilter {
     }
 
     private void handleError(Throwable throwable, WebResponse response) throws Exception {
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR.code());
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR);
         response.headers().set("Content-Type", "text/html; charset=UTF-8");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PrintWriter writer = new PrintWriter(out);

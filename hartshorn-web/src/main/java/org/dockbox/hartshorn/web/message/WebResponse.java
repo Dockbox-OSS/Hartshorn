@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.web.message;
 
+import org.dockbox.hartshorn.web.HttpStatusCode;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -50,14 +52,14 @@ public interface WebResponse {
      *
      * @param status The status code to set.
      */
-    void status(int status);
+    void status(HttpStatusCode status);
 
     /**
      * Returns the status code of the response.
      *
      * @return The status code.
      */
-    int statusCode();
+    HttpStatusCode statusCode();
 
     /**
      * Returns the mutable headers of the response.

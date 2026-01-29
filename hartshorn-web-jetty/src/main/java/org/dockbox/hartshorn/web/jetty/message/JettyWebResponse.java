@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web.jetty.message;
 
+import org.dockbox.hartshorn.web.HttpStatusCode;
 import org.dockbox.hartshorn.web.message.MutableHttpMessageHeaders;
 import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebResponse;
@@ -59,13 +60,13 @@ public class JettyWebResponse implements WebResponse {
     }
 
     @Override
-    public void status(int status) {
-        this.response.setStatus(status);
+    public void status(HttpStatusCode status) {
+        this.response.setStatus(status.code());
     }
 
     @Override
-    public int statusCode() {
-        return this.response.getStatus();
+    public HttpStatusCode statusCode() {
+        return HttpStatusCode.of(this.response.getStatus());
     }
 
     @Override

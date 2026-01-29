@@ -6,15 +6,46 @@ public interface HttpStatusCode {
 
     HttpStatusSeries series();
 
-    boolean isInformational();
+    default boolean isInformational() {
+        return this.series() == HttpStatusSeries.INFORMATIONAL;
+    }
 
-    boolean isSuccessful();
+    default boolean isSuccessful() {
+        return this.series() == HttpStatusSeries.SUCCESSFUL;
+    }
 
-    boolean isRedirection();
+    default boolean isRedirection() {
+        return this.series() == HttpStatusSeries.REDIRECTION;
+    }
 
-    boolean isClientError();
+    default boolean isClientError() {
+        return this.series() == HttpStatusSeries.CLIENT_ERROR;
+    }
 
-    boolean isServerError();
+    default boolean isServerError() {
+        return this.series() == HttpStatusSeries.SERVER_ERROR;
+    }
 
-    boolean isError();
+    default boolean isError() {
+        return this.isClientError() || this.isServerError();
+    }
+
+    static HttpStatusCode of(int statusCode) {
+        HttpStatus status = HttpStatus.of(statusCode);
+        if (status != null) {
+            return status;
+        }
+        HttpStatusSeries series = HttpStatusSeries.of(statusCode);
+        return new HttpStatusCode() {
+            @Override
+            public int code() {
+                return statusCode;
+            }
+
+            @Override
+            public HttpStatusSeries series() {
+                return series;
+            }
+        };
+    }
 }

@@ -94,6 +94,10 @@ public enum HttpStatus implements HttpStatusCode {
         this.series = HttpStatusSeries.of(code);
     }
 
+    public String reasonPhrase() {
+        return reasonPhrase;
+    }
+
     @Override
     public int code() {
         return this.code;
@@ -104,33 +108,12 @@ public enum HttpStatus implements HttpStatusCode {
         return this.series;
     }
 
-    @Override
-    public boolean isInformational() {
-        return this.series == HttpStatusSeries.INFORMATIONAL;
-    }
-
-    @Override
-    public boolean isSuccessful() {
-        return this.series == HttpStatusSeries.SUCCESSFUL;
-    }
-
-    @Override
-    public boolean isRedirection() {
-        return this.series == HttpStatusSeries.REDIRECTION;
-    }
-
-    @Override
-    public boolean isClientError() {
-        return this.series == HttpStatusSeries.CLIENT_ERROR;
-    }
-
-    @Override
-    public boolean isServerError() {
-        return this.series == HttpStatusSeries.SERVER_ERROR;
-    }
-
-    @Override
-    public boolean isError() {
-        return this.isClientError() || this.isServerError();
+    public static HttpStatus of(int status) {
+        for (HttpStatus httpStatus : values()) {
+            if (httpStatus.code == status) {
+                return httpStatus;
+            }
+        }
+        return null;
     }
 }

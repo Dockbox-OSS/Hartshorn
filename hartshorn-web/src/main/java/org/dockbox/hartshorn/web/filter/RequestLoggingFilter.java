@@ -100,7 +100,7 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
                 .append(" ")
                 .append(request.path())
                 .append(" -> ")
-                .append(response.statusCode());
+                .append(response.statusCode().code());
 
         if (this.includeContentType) {
             response.headers().get("Content-Type").peek(contentType ->

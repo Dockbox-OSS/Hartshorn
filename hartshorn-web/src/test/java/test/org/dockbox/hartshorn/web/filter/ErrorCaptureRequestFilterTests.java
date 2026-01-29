@@ -30,7 +30,7 @@ public class ErrorCaptureRequestFilterTests {
                 Mockito.eq("An error occurred while processing a web request"),
                 Mockito.any(RuntimeException.class)
         );
-        Mockito.verify(response).status(HttpStatus.INTERNAL_SERVER_ERROR.code());
+        Mockito.verify(response).status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -44,10 +44,11 @@ public class ErrorCaptureRequestFilterTests {
 
         RequestFilterChain next = (_, _) -> {
             // No exception thrown
+            return true;
         };
         filter.handle(request, response, next);
 
         Mockito.verifyNoInteractions(exceptionHandler);
-        Mockito.verify(response, Mockito.never()).status(HttpStatus.INTERNAL_SERVER_ERROR.code());
+        Mockito.verify(response, Mockito.never()).status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

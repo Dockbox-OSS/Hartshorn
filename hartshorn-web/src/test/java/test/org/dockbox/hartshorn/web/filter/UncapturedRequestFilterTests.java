@@ -21,7 +21,7 @@ public class UncapturedRequestFilterTests {
         UncapturedRequestFilter filter = new UncapturedRequestFilter();
         filter.handle(request, response, next);
 
-        Mockito.verify(response).status(HttpStatus.NOT_FOUND.code());
+        Mockito.verify(response).status(HttpStatus.NOT_FOUND);
         Mockito.verify(next, Mockito.never()).accept(request, response);
     }
 }

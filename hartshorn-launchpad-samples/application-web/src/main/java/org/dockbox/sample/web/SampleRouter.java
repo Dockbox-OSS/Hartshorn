@@ -36,7 +36,7 @@ public class SampleRouter {
         String serializedReport = diagnosticsReport.serialize(
                 new ObjectMapperReportSerializer.JsonReportSerializer()
         );
-        response.status(HttpStatus.OK.code());
+        response.status(HttpStatus.OK);
         response.headers().set("Content-Type", "application/json");
         response.write(ByteBuffer.wrap(serializedReport.getBytes()));
     }
@@ -57,7 +57,7 @@ public class SampleRouter {
                 request.pathParameters().asMap(),
                 acceptEncoding
         );
-        response.status(HttpStatus.OK.code());
+        response.status(HttpStatus.OK);
         response.write(responseWriter, body);
     }
 

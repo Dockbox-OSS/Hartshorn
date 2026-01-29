@@ -40,7 +40,7 @@ public class UncapturedRequestFilter implements RequestFilter {
         RequestFilterChain chain
     ) throws Exception {
         // TODO: Configurable 404 handling
-        response.status(HttpStatus.NOT_FOUND.code());
+        response.status(HttpStatus.NOT_FOUND);
         response.headers().set("Content-Type", "text/html; charset=UTF-8");
         ByteBuffer buffer = ByteBuffer.wrap("""
             <h1>404 Not Found</h1>
