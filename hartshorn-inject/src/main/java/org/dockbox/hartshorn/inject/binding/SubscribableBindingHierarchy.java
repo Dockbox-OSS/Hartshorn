@@ -180,4 +180,9 @@ public class SubscribableBindingHierarchy<C>
         }
         return 0;
     }
+
+    @Override
+    public BindingHierarchy<C> delegate() {
+        return this.real;
+    }
 }

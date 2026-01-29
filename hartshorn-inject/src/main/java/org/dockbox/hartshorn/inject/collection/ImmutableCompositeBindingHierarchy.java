@@ -63,6 +63,10 @@ public class ImmutableCompositeBindingHierarchy<T>
         this.hierarchies = hierarchies;
     }
 
+    public Set<CollectionBindingHierarchy<T>> hierarchies() {
+        return Collections.unmodifiableSet(this.hierarchies);
+    }
+
     @Override
     public List<InstantiationStrategy<ComponentCollection<T>>> providers() {
         return this.hierarchies.stream()

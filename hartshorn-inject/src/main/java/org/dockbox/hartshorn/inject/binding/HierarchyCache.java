@@ -166,10 +166,12 @@ public class HierarchyCache {
     @Nullable
     private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key) {
         final BindingHierarchy<?> hierarchy;
-        // Collection components can always be created, as they may contain 0-N elements.
-        if (this.isCollectionComponentKey(key) && key.strict() == Tristate.UNDEFINED) {
-            hierarchy =
-                new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
+        // Strict collection components can always be created, as they may contain 0-N elements.
+        if (this.isCollectionComponentKey(key)
+                && InjectorUtilities.isStrict(key, this.configuration)) {
+            hierarchy = new CollectionBindingHierarchy<>(
+                    TypeUtils.unchecked(key, ComponentKey.class)
+            );
         }
         else if (InjectorUtilities.isStrict(key, this.configuration)) {
             // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead,
@@ -183,7 +185,6 @@ public class HierarchyCache {
         }
         return hierarchy;
     }
-
 
     @Nullable
     private <T> BindingHierarchy<?> fuzzyMatchHierarchy(ComponentKey<T> key) {
@@ -258,6 +259,19 @@ public class HierarchyCache {
                     + compatibleKey
                     + ". Expected CollectionBindingHierarchy, but found "
                     + hierarchy.getClass().getSimpleName());
+            }
+        }
+        if (key.scope().present()) {
+            ComponentKey<ComponentCollection<T>> unscopedKey = key.mutable()
+                    // Need to drop the scope, otherwise we risk the global binder being an
+                    // orchestrator which delegates based on the scope of the key, which would
+                    // defeat the point of attempting a top-level lookup.
+                    .scope(null)
+                    .build();
+            var globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
+            if (globalHierarchy instanceof CollectionBindingHierarchy<T>
+                    collectionBindingHierarchy) {
+                hierarchies.add(collectionBindingHierarchy);
             }
         }
         return new ImmutableCompositeBindingHierarchy<>(key,

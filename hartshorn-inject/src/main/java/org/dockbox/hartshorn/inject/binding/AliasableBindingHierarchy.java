@@ -32,7 +32,9 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public interface AliasableBindingHierarchy<C> extends BindingHierarchy<C> {
+public interface AliasableBindingHierarchy<C> extends
+        BindingHierarchy<C>,
+        BindingHierarchyWrapper<C> {
 
     /**
      * Add an alias to the current hierarchy. Note that this will affect all providers in the

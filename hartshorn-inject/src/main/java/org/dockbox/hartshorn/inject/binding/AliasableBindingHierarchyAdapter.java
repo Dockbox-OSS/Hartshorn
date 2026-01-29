@@ -135,4 +135,9 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
             .field("delegate", this.delegate)
             .describe();
     }
+
+    @Override
+    public BindingHierarchy<C> delegate() {
+        return this.delegate;
+    }
 }

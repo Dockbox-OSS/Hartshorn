@@ -682,9 +682,13 @@ public final class ComponentKey<T> implements Reportable {
                     .parameters(this.type)
                     .build();
             Builder<?> builder = builder(collectionType)
-                .qualifiers(this.qualifier.qualifiers())
-                .scope(this.scope)
-                .postConstructionAllowed(this.postConstructionAllowed);
+                    .qualifiers(this.qualifier.qualifiers())
+                    .scope(this.scope)
+                    .selectionStrategy(this.selectionStrategy)
+                    .failureStrategy(this.failureStrategy)
+                    .postConstructionAllowed(this.postConstructionAllowed);
+            builder.strict = this.strict;
+
             return TypeUtils.unchecked(builder, Builder.class);
         }
 
