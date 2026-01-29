@@ -26,6 +26,9 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the
  * {@link InjectionCapableApplication} to load parameters.
@@ -40,6 +43,8 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     private final ComponentRequestContext componentRequestContext;
     private final InjectionCapableApplication application;
     private final Scope scope;
+    private final Set<ParameterLoaderRule<ApplicationBoundParameterLoaderContext>> additionalRules =
+            new HashSet<>();
 
     public InjectorExecutableInvocationAdapter(
         InjectorExecutableInvocationAdapter adapter,
@@ -57,17 +62,24 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
         this.scope = null; // Global scope by default
     }
 
+    public InjectorExecutableInvocationAdapter addParameterLoaderRule(
+        ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule
+    ) {
+        this.additionalRules.add(rule);
+        return this;
+    }
+
     private ComponentRequestContext componentRequestContext() {
         return this.componentRequestContext;
     }
 
     @Override
-    public ComponentExecutableInvocationAdapter scope(Scope scope) {
+    public InjectorExecutableInvocationAdapter scope(Scope scope) {
         return new InjectorExecutableInvocationAdapter(this, this.componentRequestContext, scope);
     }
 
     @Override
-    public ComponentExecutableInvocationAdapter requestContext(
+    public InjectorExecutableInvocationAdapter requestContext(
         ComponentRequestContext componentRequestContext
     ) {
         return new InjectorExecutableInvocationAdapter(this, componentRequestContext, this.scope);
@@ -87,15 +99,18 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
             );
         ComponentRequestContext componentRequestContext = this.componentRequestContext();
         if (componentRequestContext.isForInjectionPoint()) {
-            ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule =
-                new InjectionPointParameterLoaderRule(componentRequestContext);
+            var rule = new InjectionPointParameterLoaderRule(componentRequestContext);
             parameterLoader.add(rule);
         }
-        ApplicationBoundParameterLoaderContext loaderContext =
-            new ApplicationBoundParameterLoaderContext(element,
+        for (var rule : this.additionalRules) {
+            parameterLoader.add(rule);
+        }
+        var loaderContext = new ApplicationBoundParameterLoaderContext(
+                element,
                 null,
                 this.application,
-                this.scope());
+                this.scope()
+        );
         this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
