@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,17 @@ package test.org.dockbox.hartshorn.inject.strategies;
 import org.dockbox.hartshorn.inject.annotations.Component;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.Required;
 
 @Component
 public class SetterInjectedComponentWithNonRequiredAbsentBinding {
 
     @Inject
+    @Required(false)
     private NotImplemented object;
 
     @Inject
-    public void setObject(NotImplemented object) {
+    public void setObject(@Required(false) NotImplemented object) {
         this.object = object;
     }
 
