@@ -155,7 +155,6 @@ public class ReflectionMethodView<Parent, ReturnType>
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").writeString(this.name());
-        collector.property("elementType").writeString("method");
         collector.property("returnType").writeDelegate(this.genericReturnType());
         collector.property("parameters")
             .writeDelegates(this.parameters().all().toArray(Reportable[]::new));

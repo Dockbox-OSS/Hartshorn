@@ -200,7 +200,6 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").writeString(this.name());
-        collector.property("elementType").writeString("field");
         collector.property("type").writeDelegate(this.genericType());
         collector.property("declaredBy").writeDelegate(this.declaredBy());
     }

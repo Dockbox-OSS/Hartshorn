@@ -141,7 +141,6 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("type").writeDelegate(this.type());
-        collector.property("elementType").writeString("constructor");
         collector.property("parameters")
             .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
     }

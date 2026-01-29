@@ -36,6 +36,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntros
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardPackageView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
@@ -479,6 +480,9 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public PackageView packageInfo() {
+        if (this.isVoid()) {
+            return new WildcardPackageView();
+        }
         return this.introspector.introspect(this.type.getPackage());
     }
 
@@ -500,6 +504,10 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").writeString(this.name());
+        if (this.isVoid()) {
+            return;
+        }
+
         collector.property("package").writeString(this.packageInfo().name());
 
         TypeParametersIntrospector typeParameters = this.typeParameters();
