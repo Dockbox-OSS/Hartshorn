@@ -68,6 +68,6 @@ public class PathMatchingRequestFilter implements RequestFilter, Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("routeRegistry").writeDelegate(this.registry);
+        collector.property("routes").writeDelegate(this.registry);
     }
 }

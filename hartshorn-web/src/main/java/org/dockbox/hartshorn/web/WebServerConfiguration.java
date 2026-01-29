@@ -17,20 +17,24 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
+import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.ErrorCaptureRequestFilter;
 import org.dockbox.hartshorn.web.filter.PathMatchingRequestFilter;
 import org.dockbox.hartshorn.web.filter.RequestFilter;
@@ -43,9 +47,11 @@ import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
+import org.dockbox.hartshorn.web.route.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.PathMatchingRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.PathRouteRegistry;
 import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
+import org.dockbox.hartshorn.web.route.RouterPathRegistrar;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -171,11 +177,11 @@ public class WebServerConfiguration {
     @Singleton
     @CompositeMember
     Customizer<PathRouteRegistry> routeCustomizer(
-            @Fuzzy ComponentCollection<Customizer<RouterPathConfigurer>> pathCustomizers
+            @Fuzzy ComponentCollection<RouterPathRegistrar> pathCustomizers
     ) {
         return registry -> {
             RouterPathConfigurer configurer = new PathMatchingRouterPathConfigurer(registry);
-            pathCustomizers.forEach(customizer -> customizer.configure(configurer));
+            pathCustomizers.forEach(customizer -> customizer.register(configurer));
         };
     }
 
@@ -200,6 +206,7 @@ public class WebServerConfiguration {
      * @return A response writer for JSON objects.
      */
     @Singleton
+    @Named("json")
     public ResponseWriter<Object> objectMapperResponseWriter(JsonMapper jsonMapper) {
         return new ObjectMapperResponseWriter(jsonMapper, "application/json");
     }
@@ -234,5 +241,19 @@ public class WebServerConfiguration {
     @CompositeMember
     public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
         return new WebServerDiagnosticsReporter(webServer);
+    }
+
+    @Singleton
+    @CompositeMember
+    public RouterPathRegistrar declarativeRouterPathConfigurer(
+            ComponentRegistry componentRegistry,
+            ConversionService conversionService,
+            InjectionCapableApplication application
+    ) {
+        return new DeclarativeRouterPathConfigurer(
+                componentRegistry,
+                conversionService,
+                application
+        );
     }
 }
