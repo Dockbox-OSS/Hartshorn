@@ -62,9 +62,9 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
             RequestFilterChain chain
     ) throws Exception {
         this.logInboundRequest(request);
-        long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
         boolean result = chain.accept(request, response);
-        long duration = System.nanoTime() - startTime;
+        long duration = System.currentTimeMillis() - startTime;
         if (this.includeResponse) {
             this.logOutboundRequest(request, response, duration);
         }
@@ -110,7 +110,7 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
         }
 
         if (this.includeDuration) {
-            logMessage.append(" [Duration: ").append(duration / 1_000_000).append(" ms]");
+            logMessage.append(" [Duration: ").append(duration).append(" ms]");
         }
 
         this.logger.info(logMessage.toString());
