@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.web;
 
 /**
@@ -94,8 +110,13 @@ public enum HttpStatus implements HttpStatusCode {
         this.series = HttpStatusSeries.of(code);
     }
 
+    /**
+     * Returns the reason phrase of this HTTP status code.
+     *
+     * @return the reason phrase
+     */
     public String reasonPhrase() {
-        return reasonPhrase;
+        return this.reasonPhrase;
     }
 
     @Override
@@ -108,6 +129,14 @@ public enum HttpStatus implements HttpStatusCode {
         return this.series;
     }
 
+    /**
+     * Returns the {@link HttpStatus} corresponding to the given status code. If no matching
+     * status code is found, {@code null} is returned.
+     *
+     * @param status the HTTP status code
+     *
+     * @return the corresponding {@link HttpStatus}, or {@code null} if not found
+     */
     public static HttpStatus of(int status) {
         for (HttpStatus httpStatus : values()) {
             if (httpStatus.code == status) {

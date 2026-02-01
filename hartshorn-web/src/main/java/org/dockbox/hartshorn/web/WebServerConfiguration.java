@@ -237,12 +237,30 @@ public class WebServerConfiguration {
         return scope.response();
     }
 
+    /**
+     * Creates a {@link WebServerDiagnosticsReporter} for reporting diagnostics related to the web
+     * server.
+     *
+     * @param webServer The web server to report diagnostics for.
+     *
+     * @return A web server diagnostics reporter.
+     */
     @Singleton
     @CompositeMember
     public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
         return new WebServerDiagnosticsReporter(webServer);
     }
 
+    /**
+     * Creates a {@link DeclarativeRouterPathConfigurer} to register routes declared in router
+     * components.
+     *
+     * @param componentRegistry The component registry.
+     * @param conversionService The conversion service.
+     * @param application The injection-capable application.
+     *
+     * @return A declarative router path configurer.
+     */
     @Singleton
     @CompositeMember
     public RouterPathRegistrar declarativeRouterPathConfigurer(

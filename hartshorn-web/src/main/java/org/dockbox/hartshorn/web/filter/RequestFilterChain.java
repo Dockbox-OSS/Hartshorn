@@ -34,6 +34,8 @@ public interface RequestFilterChain {
      * @param request The web request to process.
      * @param response The web response to process.
      *
+     * @return true if the request was handled successfully, false otherwise.
+     *
      * @throws Exception If an error occurs while processing the request.
      */
     boolean accept(WebRequest request, WebResponse response) throws Exception;

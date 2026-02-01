@@ -36,6 +36,8 @@ public interface RequestFilter {
      * @param response The web response to handle.
      * @param chain The filter chain to delegate to.
      *
+     * @return true if the request was handled successfully, false otherwise.
+     *
      * @throws Exception If an error occurs while handling the request.
      */
     boolean handle(

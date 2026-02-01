@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,14 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
         this.scope = null; // Global scope by default
     }
 
+    /**
+     * Adds a parameter loader rule to this invocation adapter. The rule will be used when loading
+     * parameters for executable elements.
+     *
+     * @param rule the rule to add
+     *
+     * @return this adapter for chaining
+     */
     public InjectorExecutableInvocationAdapter addParameterLoaderRule(
         ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule
     ) {

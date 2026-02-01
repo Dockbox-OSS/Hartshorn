@@ -35,6 +35,8 @@ public interface RequestHandler {
      * @param request  The web request to handle.
      * @param response The web response to populate.
      *
+     * @return true if the request was handled successfully, false otherwise.
+     *
      * @throws Exception If an error occurs while handling the request.
      */
     boolean handle(WebRequest request, WebResponse response) throws Exception;

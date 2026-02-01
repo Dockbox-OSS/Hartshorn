@@ -55,7 +55,9 @@ public class JettyRequestHandler extends Handler.Abstract implements Reportable 
             callback.succeeded();
         }
         else {
-            callback.failed(new IllegalStateException("Request was not handled by the filter chain"));
+            callback.failed(new IllegalStateException(
+                "Request was not handled by the filter chain"
+            ));
         }
         return accepted;
     }

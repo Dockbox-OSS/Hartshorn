@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      * the most recent component that was discovered.
      *
      * @param node the component to add
+     * @param lifecycleType the lifecycle type of the component
      */
     public void add(TypePathNode<?> node, LifecycleType lifecycleType) {
         this.add(node, node.type(), lifecycleType);
@@ -67,6 +68,7 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      *
      * @param node the component to add
      * @param actualType the actual type of the component
+     * @param lifecycleType the lifecycle type of the component
      */
     public void add(TypePathNode<?> node, TypeView<?> actualType, LifecycleType lifecycleType) {
         this.discoveredComponents.addFirst(new DiscoveredComponent(
@@ -82,6 +84,7 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      *
      * @param node the component to add
      * @param constructor the constructor that was used to create the component
+     * @param lifecycleType the lifecycle type of the component
      */
     public void add(
             TypePathNode<?> node,
@@ -159,6 +162,7 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      *
      * @param node the original binding declaration
      * @param actualType the actual type of the component
+     * @param lifecycleType the lifecycle type of the component
      *
      * @since 0.5.0
      *
