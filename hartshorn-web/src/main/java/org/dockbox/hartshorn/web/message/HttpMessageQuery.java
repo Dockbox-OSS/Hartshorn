@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.web.message;
 
-import java.util.List;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 /**
  * Represents the query parameters of an HTTP message.
@@ -31,7 +32,7 @@ public interface HttpMessageQuery {
 
     /**
      * Retrieves the value of the query parameter with the given name. If multiple values are
-     * present for the same name, the first value is returned.
+     * present for the same name, they are concatenated using a comma as a separator.
      *
      * @param name The name of the query parameter.
      *

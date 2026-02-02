@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for binding a method parameter to an HTTP header value.
+ * Annotation for binding a method parameter to a query parameter value.
  *
  * @since 0.7.0
  *
@@ -30,17 +30,17 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Header {
+public @interface QueryParameter {
 
     /**
-     * The name of the HTTP header to bind to.
+     * The name of the query parameter to bind to.
      *
-     * @return the header name
+     * @return the query parameter name
      */
     String value();
 
     /**
-     * The default value to use if the header is not present.
+     * The default value to use if the query is not present.
      *
      * @return the default value
      */

@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.web.WebRequestScope;
 import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.route.rules.HeaderValueParameterLoaderRule;
+import org.dockbox.hartshorn.web.route.rules.PathParameterValueParameterLoaderRule;
+import org.dockbox.hartshorn.web.route.rules.QueryParameterValueParameterLoaderRule;
 
 /**
  * A request handler that invokes a method on a router component using dependency injection
@@ -61,6 +63,14 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
         var adapter = new InjectorExecutableInvocationAdapter(this.application)
                 .scope(scope)
                 .addParameterLoaderRule(new HeaderValueParameterLoaderRule<>(
+                        request,
+                        this.conversionService
+                ))
+                .addParameterLoaderRule(new PathParameterValueParameterLoaderRule<>(
+                        request,
+                        this.conversionService
+                ))
+                .addParameterLoaderRule(new QueryParameterValueParameterLoaderRule<>(
                         request,
                         this.conversionService
                 ));

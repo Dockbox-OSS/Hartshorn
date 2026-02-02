@@ -12,6 +12,8 @@ import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.rest.GetRoute;
 import org.dockbox.hartshorn.web.rest.Header;
+import org.dockbox.hartshorn.web.rest.PathParameter;
+import org.dockbox.hartshorn.web.rest.QueryParameter;
 import org.dockbox.hartshorn.web.rest.RestRouter;
 
 import java.nio.ByteBuffer;
@@ -46,7 +48,9 @@ public class SampleRouter {
             WebRequest request,
             WebResponse response,
             @Named("json") ResponseWriter<Object> responseWriter,
-            @Header("Accept-Encoding") String[] acceptEncoding
+            @Header("Accept-Encoding") String[] acceptEncoding,
+            @PathParameter("param") String pathParameter,
+            @QueryParameter("query") int queryParameter
     ) throws Exception {
         SampleRouter.ValidationResponseBody body = new SampleRouter.ValidationResponseBody(
                 request.method().name(),
@@ -55,7 +59,9 @@ public class SampleRouter {
                 request.headers().asMap(),
                 request.body().asString(),
                 request.pathParameters().asMap(),
-                acceptEncoding
+                acceptEncoding,
+                pathParameter,
+                queryParameter
         );
         response.status(HttpStatus.OK);
         response.write(responseWriter, body);
@@ -68,7 +74,9 @@ public class SampleRouter {
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,
-            String[] encodings
+            String[] encodings,
+            String pathParameter,
+            int queryParameter
     ) {
     }
 }

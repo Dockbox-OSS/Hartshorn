@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.web.jetty.message;
 
-import java.util.List;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.message.HttpMessageQuery;
 import org.eclipse.jetty.util.Fields;
+
+import java.util.List;
 
 /**
  * An implementation of {@link HttpMessageQuery} for Jetty's {@link Fields}.
@@ -39,7 +40,13 @@ public class JettyHttpMessageQuery implements HttpMessageQuery {
 
     @Override
     public Option<String> get(String name) {
-        return Option.of(this.queryParameters.getValue(name));
+        List<String> values = getAll(name);
+        if (values.isEmpty()) {
+            return Option.empty();
+        }
+        else {
+            return Option.of(String.join(",", values));
+        }
     }
 
     @Override

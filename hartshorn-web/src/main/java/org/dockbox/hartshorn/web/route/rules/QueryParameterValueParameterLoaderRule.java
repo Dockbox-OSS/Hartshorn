@@ -21,11 +21,11 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.rest.Header;
+import org.dockbox.hartshorn.web.rest.QueryParameter;
 
 /**
- * A {@link ParameterLoaderRule} that loads parameter values from HTTP headers using the
- * {@link Header} annotation.
+ * A {@link ParameterLoaderRule} that loads parameter values from query parameters using the
+ * {@link QueryParameter} annotation.
  *
  * @param <C> the type of the parameter loader context
  *
@@ -33,23 +33,23 @@ import org.dockbox.hartshorn.web.rest.Header;
  *
  * @author Guus Lieben
  */
-public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
-        extends AbstractWebRequestParameterLoaderRule<Header, C> {
+public class QueryParameterValueParameterLoaderRule<C extends ParameterLoaderContext>
+        extends AbstractWebRequestParameterLoaderRule<QueryParameter, C> {
 
-    public HeaderValueParameterLoaderRule(
+    public QueryParameterValueParameterLoaderRule(
             WebRequest request,
             ConversionService conversionService
     ) {
-        super(Header.class, request, conversionService);
+        super(QueryParameter.class, request, conversionService);
     }
 
     @Override
-    protected Option<String> lookupValue(WebRequest request, Header annotation) {
-        return request.headers().get(annotation.value());
+    protected Option<String> lookupValue(WebRequest request, QueryParameter annotation) {
+        return request.query().get(annotation.value());
     }
 
     @Override
-    protected String getDefaultValue(Header annotation) {
+    protected String getDefaultValue(QueryParameter annotation) {
         return annotation.defaultValue();
     }
 }
