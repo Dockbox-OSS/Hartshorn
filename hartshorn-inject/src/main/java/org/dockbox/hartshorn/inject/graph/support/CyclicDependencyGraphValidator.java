@@ -101,6 +101,27 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         if (knownNodes.contains(node)) {
             return List.of(node);
         }
+
+        // Defaults to true, as we should assume that the node needs immediate resolution unless
+        // proven otherwise.
+        boolean needsImmediateResolution = true;
+        if (node instanceof ContainableGraphNode<DependencyContext<?>> containableGraphNode) {
+            ComponentKey<?> dependencyCandidate = node.value().componentKey();
+            // If none of the parents need immediate resolution, then we can cut potential cyclic
+            // graphs short.
+            needsImmediateResolution = containableGraphNode.children().stream()
+                    .anyMatch(parent -> {
+                        return parent.value().needsImmediateResolution(dependencyCandidate);
+                    });
+        }
+
+        // If the node doesn't need immediate resolution, then we can skip it. Note that this does
+        // not affect potential grandchild dependencies, as this validator goes over all nodes in
+        // the graph, and not just the roots.
+        if (!needsImmediateResolution) {
+            return List.of();
+        }
+
         knownNodes.add(node);
 
         for (GraphNode<DependencyContext<?>> child : node.children()) {

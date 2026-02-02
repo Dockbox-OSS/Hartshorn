@@ -273,15 +273,19 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("type", this.type)
-            .field("qualifier", this.qualifier)
-            .field("scope", this.scope)
-            .field("postConstructionAllowed", this.postConstructionAllowed)
-            .field("strict", this.strict)
-            .field("selectionStrategy", this.selectionStrategy)
-            .field("failureStrategy", this.failureStrategy)
-            .describe();
+        ObjectDescriber<ComponentKey<T>> describer = ObjectDescriber.of(this)
+                .field("type", this.type)
+                .field("postConstructionAllowed", this.postConstructionAllowed)
+                .field("strict", this.strict)
+                .field("selectionStrategy", this.selectionStrategy)
+                .field("failureStrategy", this.failureStrategy);
+        if (!this.qualifier.isEmpty()) {
+            describer.field("qualifier", this.qualifier);
+        }
+        if (this.scope != null) {
+            describer.field("scope", this.scope);
+        }
+        return describer.describe();
     }
 
     @Override
