@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -243,7 +244,7 @@ public abstract class ConversionServiceTests {
         // Not allowed because the source and target types cannot practically be determined due to
         // type erasure
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
-            registry.addConverter((Converter<String, Integer>) Integer::parseInt);
+            registry.addConverter((Converter<String, Integer>) (s, _) -> Integer.parseInt(s));
         });
     }
 
@@ -252,7 +253,7 @@ public abstract class ConversionServiceTests {
         this.testConverterTypeIsAdaptedCorrectly(
             registry -> registry.addConverter(String.class,
                 Integer.class,
-                source -> Integer.parseInt(source)),
+                (source, contexts) -> Integer.parseInt(source)),
             "1", Integer.class,
             ConverterType.CONVERTER
         );
@@ -330,7 +331,7 @@ public abstract class ConversionServiceTests {
 
     private static class SimpleConverter implements Converter<String, Integer> {
         @Override
-        public Integer convert(String source) {
+        public Integer convert(String source, Context... contexts) {
             return Integer.parseInt(source);
         }
     }

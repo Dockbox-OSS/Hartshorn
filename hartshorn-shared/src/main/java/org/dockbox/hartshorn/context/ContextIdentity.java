@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public interface ContextIdentity<T extends ContextView> {
      * ensured that the name of the context is equal to the name of the identity. This is only a
      * recommendation.
      *
-     * @return The name of the context represented by this identity.
+     * @return The name of the context represented by this identity, or null if no name was defined.
      */
     String name();
 

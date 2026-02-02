@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
+import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchyCache;
 import org.dockbox.hartshorn.inject.binding.SimpleHierarchicalBinder;
@@ -24,6 +28,8 @@ import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCa
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
+import org.dockbox.hartshorn.properties.MapPropertyRegistry;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.UUID;
@@ -34,10 +40,15 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
     private HierarchyCache hierarchyCache;
 
     public TestHierarchicalBinder() {
+        var propertyRegistry = SimpleSingleElementContext.create(new MapPropertyRegistry());
+        InjectorConfiguration configuration = ImmutableInjectorConfiguration
+                .create(Customizer.useDefaults())
+                .initialize(propertyRegistry);
+        ComponentKeyMatcher componentKeyMatcher = SimpleComponentKeyMatcher.create(configuration);
         super(
             null,
             new DefaultBindingAliasNormalizer(),
-            new ConcurrentHashSingletonCache()
+            new ConcurrentHashSingletonCache(componentKeyMatcher)
         );
     }
 
@@ -64,16 +75,13 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
     }
 
     protected InjectorConfiguration configuration() {
-        return new InjectorConfiguration() {
-            @Override
-            public boolean isStrictMode() {
-                return true;
-            }
-
-            @Override
-            public boolean allowFallbackToSingleConstructor() {
-                return true;
-            }
-        };
+        return ImmutableInjectorConfiguration.create(configuration -> {
+            configuration.enableStrictMode()
+                    .allowFallbackToSingleConstructor()
+                    .requireByDefault()
+                    .disableBanner()
+                    .disableBatchMode()
+                    .showStacktraces();
+        }).initialize(SimpleSingleElementContext.create(new MapPropertyRegistry()));
     }
 }

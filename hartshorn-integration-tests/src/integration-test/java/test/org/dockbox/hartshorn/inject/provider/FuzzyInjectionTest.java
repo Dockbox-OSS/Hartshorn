@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.HartshornApplication;
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment.Configurer;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.Tristate;
 import org.junit.jupiter.api.Test;
@@ -67,28 +67,25 @@ public class FuzzyInjectionTest {
                 constructor.includeBasePackages(false);
             }));
         }).environment();
-        assertThat(environment.isStrictMode()).isTrue();
+        assertThat(environment.configuration().isStrictMode()).isTrue();
     }
-
-    public static void main(String[] args) {
-        HartshornApplication.create(FuzzyInjectionTest.class, application -> {
-            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
-                constructor.includeBasePackages(false);
-            }));
-        });
-    }
-
 
     @Test
     void customizingEnvironmentStrictModeAffectsLookup() {
+        // Could usually be simplified by calling HartshornApplication#createApplication, but as we
+        // need to disable base package scanning, we have to go through the 'full' factory setup.
         ApplicationContext applicationContext = HartshornApplication.create(FuzzyInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
-                constructor.environment(ConfigurableApplicationEnvironment.create(Configurer::disableStrictMode));
+                constructor.environment(ConfigurableApplicationEnvironment.create(environment -> {
+                    environment.injectorConfiguration(ImmutableInjectorConfiguration.create(
+                        ImmutableInjectorConfiguration.Configurer::disableStrictMode
+                    ));
+                }));
             }));
         });
         ApplicationEnvironment environment = applicationContext.environment();
-        assertThat(environment.isStrictMode()).isFalse();
+        assertThat(environment.configuration().isStrictMode()).isFalse();
 
         applicationContext.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class).build();

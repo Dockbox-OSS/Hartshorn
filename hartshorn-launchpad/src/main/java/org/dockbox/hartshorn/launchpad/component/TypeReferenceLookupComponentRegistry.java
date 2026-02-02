@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.launchpad.component;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Component;
@@ -57,16 +57,13 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
     private final Set<ComponentContainer<?>> containers =
         new ConcurrentSkipListSet<>(ComponentContainer.COMPARE_BY_ID);
-    private final EnvironmentTypeResolver typeResolver;
-    private final InjectorConfiguration configuration;
+    private final ApplicationEnvironment environment;
     private boolean environmentTypesResolved = false;
 
     public TypeReferenceLookupComponentRegistry(
-        EnvironmentTypeResolver typeResolver,
-        InjectorConfiguration configuration
+            ApplicationEnvironment applicationEnvironment
     ) {
-        this.typeResolver = typeResolver;
-        this.configuration = configuration;
+        this.environment = applicationEnvironment;
     }
 
     /**
@@ -126,13 +123,18 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
             // Qualifiers are not supported in this registry
             return Option.empty();
         }
-        else if (InjectorUtilities.isStrict(key, this.configuration)) {
+        else if (InjectorUtilities.isStrict(key, this.environment.configuration())) {
             return container(key.type());
         }
         else {
+            ComponentKeyMatcher matcher = SimpleComponentKeyMatcher.create(
+                    this.environment.configuration()
+            );
             return this.withContainerCache(containers -> containers.stream()
-                .filter(container -> SimpleComponentKeyMatcher.INSTANCE.matches(key,
-                    ComponentKey.of(container.type())))
+                .filter(container -> matcher.matches(
+                        key,
+                    ComponentKey.of(container.type())
+                ))
                 .collect(CollectorUtilities.toOption()));
         }
     }
@@ -147,7 +149,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
         // components are registered.
         if (!this.environmentTypesResolved) {
             this.environmentTypesResolved = true;
-            this.typeResolver.types(Component.class).stream()
+            this.environment.typeResolver().types(Component.class).stream()
                 // Filter out component stereotypes (annotation types)
                 .filter(type -> !AnnotationUtilities.isStereotypeOf(type.type(), Component.class))
                 .map(AnnotatedComponentContainer::new)

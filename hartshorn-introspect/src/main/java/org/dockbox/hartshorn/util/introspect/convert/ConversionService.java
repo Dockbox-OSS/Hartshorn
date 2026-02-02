@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.dockbox.hartshorn.util.introspect.convert;
+
+import org.dockbox.hartshorn.context.Context;
 
 /**
  * An interface representing a service for object converters. This service provides a standardized
@@ -66,6 +68,8 @@ public interface ConversionService {
      *
      * @param input the object to convert
      * @param targetType the target type to convert to
+     * @param contexts optional contexts to provide additional information for the conversion
+     *
      * @param <I> the input type
      * @param <O> the output type
      *
@@ -73,5 +77,5 @@ public interface ConversionService {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    <I, O> O convert(I input, Class<O> targetType);
+    <I, O> O convert(I input, Class<O> targetType, Context... contexts);
 }

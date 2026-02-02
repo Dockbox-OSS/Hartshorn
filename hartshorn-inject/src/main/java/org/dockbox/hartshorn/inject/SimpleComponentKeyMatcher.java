@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 import java.util.List;
@@ -31,12 +32,26 @@ import java.util.List;
  */
 public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
 
-    public static final ComponentKeyMatcher INSTANCE = new SimpleComponentKeyMatcher();
+    private final InjectorConfiguration configuration;
+
+    private SimpleComponentKeyMatcher(InjectorConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * Creates a new {@link SimpleComponentKeyMatcher} with the given configuration.
+     *
+     * @param configuration the injector configuration
+     * @return a new simple component key matcher
+     */
+    public static ComponentKeyMatcher create(InjectorConfiguration configuration) {
+        return new SimpleComponentKeyMatcher(configuration);
+    }
 
     @Override
     public boolean matches(ComponentKey<?> requested, ComponentKey<?> actual) {
         // Strict matching, use equality if either key is strict
-        if (requested.strict().booleanValue() || actual.strict().booleanValue()) {
+        if (this.isStrict(requested) || this.isStrict(actual)) {
             return StrictComponentKeyMatcher.INSTANCE.matches(requested, actual);
         }
         // Fuzzy matching otherwise
@@ -46,11 +61,18 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
     @Override
     public boolean matches(ComponentKey<?> requested, ComponentKeyView<?> actual) {
         // Strict matching, use equality if the key is strict
-        if (requested.strict().booleanValue()) {
+        if (this.isStrict(requested)) {
             return StrictComponentKeyMatcher.INSTANCE.matches(requested, actual);
         }
         // Fuzzy matching otherwise
         return FuzzyComponentKeyMatcher.INSTANCE.matches(requested, actual);
+    }
+
+    private boolean isStrict(ComponentKey<?> key) {
+        if (key.strict() != Tristate.UNDEFINED) {
+            return key.strict().booleanValue();
+        }
+        return this.configuration.isStrictMode();
     }
 
     /**

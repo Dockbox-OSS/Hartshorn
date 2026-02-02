@@ -16,6 +16,7 @@
 package test.org.dockbox.hartshorn.core.application
 
 import org.dockbox.hartshorn.inject.ExceptionHandler
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration
 import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer
 import org.dockbox.hartshorn.inject.component.ComponentRegistry
@@ -135,30 +136,6 @@ class BootstrapConfigurationContractTests {
   fun testContextualEnvironmentContract() {
     val instance = ConfigurableApplicationEnvironment.Configurer()
 
-    assertContextInitializer(instance) { configurer, initializer ->
-      configurer.enableBanner(
-        initializer
-      )
-    }
-    assertCustom(instance) { configurer -> configurer.enableBanner() }
-    assertCustom(instance) { configurer -> configurer.disableBanner() }
-
-    assertContextInitializer(instance) { configurer, initializer ->
-      configurer.enableBatchMode(
-        initializer
-      )
-    }
-    assertCustom(instance) { configurer -> configurer.enableBatchMode() }
-    assertCustom(instance) { configurer -> configurer.disableBatchMode() }
-
-    assertContextInitializer(instance) { configurer, initializer ->
-      configurer.showStacktraces(
-        initializer
-      )
-    }
-    assertCustom(instance) { configurer -> configurer.showStacktraces() }
-    assertCustom(instance) { configurer -> configurer.hideStacktraces() }
-
     assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? ->
       configurer.applicationOrchestrator(
         deferred
@@ -235,6 +212,34 @@ class BootstrapConfigurationContractTests {
         initializer
       )
     }
+  }
+
+  @Test
+  fun testInjectorConfigurationContract() {
+    val instance = ImmutableInjectorConfiguration.Configurer()
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.enableBanner(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.enableBanner() }
+    assertCustom(instance) { configurer -> configurer.disableBanner() }
+
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.enableBatchMode(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.enableBatchMode() }
+    assertCustom(instance) { configurer -> configurer.disableBatchMode() }
+
+    assertContextInitializer(instance) { configurer, initializer ->
+      configurer.showStacktraces(
+        initializer
+      )
+    }
+    assertCustom(instance) { configurer -> configurer.showStacktraces() }
+    assertCustom(instance) { configurer -> configurer.hideStacktraces() }
   }
 
   @Test

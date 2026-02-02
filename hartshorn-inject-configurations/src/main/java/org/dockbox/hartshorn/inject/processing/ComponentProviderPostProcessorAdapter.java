@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import java.util.Set;
  */
 public class ComponentProviderPostProcessorAdapter implements ComponentProviderPostProcessor {
 
-    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final RequireInjectionPointRule requireRule;
     private final ComponentRegistryAwareComponentProvider owner;
     private final ComponentPostProcessor processor;
     private final InjectionCapableApplication application;
@@ -68,6 +68,9 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         this.processor = processor;
         this.application = application;
         this.componentStoreCallback = componentStoreCallback;
+        this.requireRule = new AnnotatedInjectionPointRequireRule(
+                application.environment().configuration()
+        );
     }
 
     @Override

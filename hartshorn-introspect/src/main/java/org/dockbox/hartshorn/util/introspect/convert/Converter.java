@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 
 /**
  * A functional interface for converting objects from one type to another. This interface provides a
  * single method for converting an input object of type {@link I} to an output object of type
  * {@link O}. The input object may be nullable, and the output object may be nullable as well. If
- * the input object is {@code null}, the {@link #convert(Object)} method may return null, or provide
- * a default value.
+ * the input object is {@code null}, the {@link #convert(Object, Context...)} method may return
+ * null, or provide a default value.
  *
  * <p>Implementations of this interface are intended to be used as converters in a {@link
  * ConversionService} instance or in other contexts where a functional-style converter is required.
@@ -44,11 +45,12 @@ public interface Converter<I, O> {
      * value, or {@code null} itself.
      *
      * @param input the input object to convert, which may be {@code null}
-     *
+     * @param contexts an optional array of {@link Context} objects that may provide additional
+     * information for the conversion process
      * @return the converted object, which may be {@code null}
      */
     @Nullable
-    O convert(@Nullable I input);
+    O convert(@Nullable I input, Context... contexts);
 
     /**
      * Return a composed converter that first applies this converter to its input, and then applies
@@ -62,9 +64,9 @@ public interface Converter<I, O> {
      * {@code after}
      */
     default <T> Converter<I, T> andThen(Converter<O, T> after) {
-        return (I input) -> {
-            O result = this.convert(input);
-            return result != null ? after.convert(result) : null;
+        return (I input, Context... contexts) -> {
+            O result = this.convert(input, contexts);
+            return result != null ? after.convert(result, contexts) : null;
         };
     }
 }

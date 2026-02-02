@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
@@ -48,7 +49,6 @@ import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyReg
 import org.dockbox.hartshorn.launchpad.properties.PropertyRegistryFactory;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.launchpad.resources.StrategyResourceLookup;
-import org.dockbox.hartshorn.properties.PropertyInitializer;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
@@ -124,11 +124,8 @@ public final class ConfigurableApplicationEnvironment
     private final EnvironmentTypeResolver typeResolver;
     private final PropertyRegistry propertyRegistry;
     private final ComponentRegistry componentRegistry;
-
+    private final InjectorConfiguration injectorConfiguration;
     private final boolean isBuildEnvironment;
-    private final boolean isBatchMode;
-    private final boolean isStrictMode;
-    private final boolean allowFallbackToSingleConstructor;
 
     private ApplicationContext applicationContext;
     private Introspector introspector;
@@ -201,14 +198,12 @@ public final class ConfigurableApplicationEnvironment
             this.propertyRegistry
         );
 
-        this.printStackTraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
-        this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
-        this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
-        this.allowFallbackToSingleConstructor = configurer.allowFallbackToSingleConstructor
-            .initialize(argumentsInitializerContext);
+        this.injectorConfiguration = configurer.injectorConfiguration
+                .initialize(argumentsInitializerContext);
+        this.printStackTraces(this.injectorConfiguration.showStacktraces());
 
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
-            batchCapableIntrospector.enableBatchMode(this.isBatchMode());
+            batchCapableIntrospector.enableBatchMode(this.configuration().isBatchMode());
         }
 
         Boolean isBuildEnvironment = configurer.isBuildEnvironment
@@ -220,7 +215,7 @@ public final class ConfigurableApplicationEnvironment
         this.isBuildEnvironment = isBuildEnvironment;
 
         if (!this.isBuildEnvironment
-            && configurer.enableBanner.initialize(argumentsInitializerContext)
+            && this.injectorConfiguration.bannerEnabled()
         ) {
             this.printBanner(mainClass);
         }
@@ -304,18 +299,7 @@ public final class ConfigurableApplicationEnvironment
 
     @Override
     public InjectorConfiguration configuration() {
-        return new InjectorConfiguration() {
-
-            @Override
-            public boolean isStrictMode() {
-                return ConfigurableApplicationEnvironment.this.isStrictMode;
-            }
-
-            @Override
-            public boolean allowFallbackToSingleConstructor() {
-                return ConfigurableApplicationEnvironment.this.allowFallbackToSingleConstructor;
-            }
-        };
+        return this.injectorConfiguration;
     }
 
     @Override
@@ -348,16 +332,6 @@ public final class ConfigurableApplicationEnvironment
     @Override
     public boolean isBuildEnvironment() {
         return this.isBuildEnvironment;
-    }
-
-    @Override
-    public boolean isBatchMode() {
-        return this.isBatchMode;
-    }
-
-    @Override
-    public boolean isStrictMode() {
-        return this.isStrictMode;
     }
 
     @Override
@@ -502,26 +476,6 @@ public final class ConfigurableApplicationEnvironment
     public static class Configurer {
 
         // checkstyle:off LineLength
-        private ContextualInitializer<PropertyRegistry, Boolean> enableBanner =
-            PropertyInitializer.booleanProperty("hartshorn.banner.enabled")
-                .orElseGet(() -> true);
-
-        private ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode =
-            PropertyInitializer.booleanProperty("hartshorn.batch.enabled")
-                .orElseGet(() -> false);
-
-        private ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode =
-            PropertyInitializer.booleanProperty("hartshorn.strict.enabled")
-                .orElseGet(() -> true);
-
-        private ContextualInitializer<PropertyRegistry, Boolean> showStacktraces =
-            PropertyInitializer.booleanProperty("hartshorn.exceptions.stacktraces")
-                .orElseGet(() -> true);
-
-        private ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor =
-            PropertyInitializer.booleanProperty("hartshorn.inject.allow-single-constructor-fallback")
-                .orElseGet(() -> true);
-
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
             TypeReferenceCollectorContext collectorContext =
                 context.firstContext(TypeReferenceCollectorContext.class)
@@ -531,13 +485,7 @@ public final class ConfigurableApplicationEnvironment
         };
 
         private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry =
-            context -> {
-                ApplicationEnvironment environment = context.input();
-                return new TypeReferenceLookupComponentRegistry(
-                    environment.typeResolver(),
-                    environment.configuration()
-                );
-            };
+                ContextualInitializer.of(TypeReferenceLookupComponentRegistry::new);
 
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator =
             DefaultProxyOrchestratorLoader.create(Customizer.useDefaults());
@@ -561,7 +509,7 @@ public final class ConfigurableApplicationEnvironment
             SimpleApplicationContext.create(Customizer.useDefaults());
 
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment =
-            ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment());
+            ContextualInitializer.of(_ -> BuildEnvironmentPredicate.isBuildEnvironment());
 
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver =
             ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
@@ -576,192 +524,10 @@ public final class ConfigurableApplicationEnvironment
             ContextualInitializer.of(environment -> {
                 return new ConditionMatcher(environment::applicationContext);
             });
+
+        private ContextualInitializer<PropertyRegistry, InjectorConfiguration> injectorConfiguration =
+                ImmutableInjectorConfiguration.create(Customizer.useDefaults());
         // checkstyle:on LineLength
-
-        /**
-         * Enables or disables the banner. If the banner is enabled, it will be printed to the
-         * console when the application starts. The banner is enabled by default.
-         *
-         * @param enableBanner whether to enable or disable the banner
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableBanner(
-            ContextualInitializer<PropertyRegistry, Boolean> enableBanner
-        ) {
-            this.enableBanner = enableBanner;
-            return this;
-        }
-
-        /**
-         * Enables the banner. If the banner is enabled, it will be printed to the console when the
-         * application starts. The banner is enabled by default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableBanner() {
-            return this.enableBanner(ContextualInitializer.of(true));
-        }
-
-        /**
-         * Disables the banner. If the banner is disabled, it will not be printed to the console
-         * when the application starts. The banner is enabled by default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer disableBanner() {
-            return this.enableBanner(ContextualInitializer.of(false));
-        }
-
-        /**
-         * Enables or disables batch mode. Batch mode is typically used for optimizations specific
-         * to applications which will spawn multiple application contexts with shared resources.
-         * Batch mode is disabled by default.
-         *
-         * @param enableBatchMode whether to enable or disable batch mode
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableBatchMode(
-            ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode
-        ) {
-            this.enableBatchMode = enableBatchMode;
-            return this;
-        }
-
-        /**
-         * Enables strict mode. Strict mode is typically used to indicate that a lookup should only
-         * return a value if it is explicitly bound to the key, and not if it is bound to a sub-type
-         * of the key.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableStrictMode() {
-            return this.enableStrictMode(ContextualInitializer.of(true));
-        }
-
-        /**
-         * Disables strict mode. Strict mode is typically used to indicate that a lookup should only
-         * return a value if it is explicitly bound to the key, and not if it is bound to a sub-type
-         * of the key.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer disableStrictMode() {
-            return this.enableStrictMode(ContextualInitializer.of(false));
-        }
-
-        /**
-         * Enables or disables strict mode. Strict mode is typically used to indicate that a lookup
-         * should only return a value if it is explicitly bound to the key, and not if it is bound
-         * to a sub-type of the key.
-         *
-         * @param enableStrictMode whether to enable or disable strict mode
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableStrictMode(
-            ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode
-        ) {
-            this.enableStrictMode = enableStrictMode;
-            return this;
-        }
-
-        /**
-         * Enables batch mode. Batch mode is typically used for optimizations specific to
-         * applications which will spawn multiple application contexts with shared resources. Batch
-         * mode is disabled by default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer enableBatchMode() {
-            return this.enableBatchMode(ContextualInitializer.of(true));
-        }
-
-        /**
-         * Disables batch mode. Batch mode is typically used for optimizations specific to
-         * applications which will spawn multiple application contexts with shared resources. Batch
-         * mode is disabled by default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer disableBatchMode() {
-            return this.enableBatchMode(ContextualInitializer.of(false));
-        }
-
-        /**
-         * Enables or disables the printing of stacktraces when exceptions occur. Stacktraces are
-         * enabled by default.
-         *
-         * @param showStacktraces whether to enable or disable stacktraces
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer showStacktraces(
-            ContextualInitializer<PropertyRegistry, Boolean> showStacktraces
-        ) {
-            this.showStacktraces = showStacktraces;
-            return this;
-        }
-
-        /**
-         * Enables the printing of stacktraces when exceptions occur. Stacktraces are enabled by
-         * default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer showStacktraces() {
-            return this.showStacktraces(ContextualInitializer.of(true));
-        }
-
-        /**
-         * Disables the printing of stacktraces when exceptions occur. Stacktraces are enabled by
-         * default.
-         *
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer hideStacktraces() {
-            return this.showStacktraces(ContextualInitializer.of(false));
-        }
-
-        /**
-         * Enables or disables the fallback to a single constructor.
-         *
-         * @param allowFallbackToSingleConstructor initializer to determine whether fallback is
-         * allowed.
-         *
-         * @return the current {@link Configurer} instance
-         *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
-         */
-        public Configurer allowFallbackToSingleConstructor(
-            ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor
-        ) {
-            this.allowFallbackToSingleConstructor = allowFallbackToSingleConstructor;
-            return this;
-        }
-
-        /**
-         * Enables fallback to a single constructor.
-         *
-         * @return the current {@link Configurer} instance
-         *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
-         */
-        public Configurer allowFallbackToSingleConstructor() {
-            return this.allowFallbackToSingleConstructor(ContextualInitializer.of(true));
-        }
-
-        /**
-         * Disables fallback to a single constructor.
-         *
-         * @return the current {@link Configurer} instance
-         *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
-         */
-        public Configurer disallowFallbackToSingleConstructor() {
-            return this.allowFallbackToSingleConstructor(ContextualInitializer.of(false));
-        }
 
         /**
          * Configures the {@link ComponentRegistry} that is used by the
@@ -1212,6 +978,35 @@ public final class ConfigurableApplicationEnvironment
             ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher
         ) {
             this.conditionMatcher = conditionMatcher;
+            return this;
+        }
+
+        /**
+         * Sets the {@link InjectorConfiguration} to use. The
+         * {@link InjectorConfiguration} is responsible for configuring the behavior of the
+         * component injector within the application environment.
+         *
+         * @param injectorConfiguration the {@link InjectorConfiguration} to use
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer injectorConfiguration(InjectorConfiguration injectorConfiguration) {
+            return this.injectorConfiguration(ContextualInitializer.of(injectorConfiguration));
+        }
+
+        /**
+         * Sets the {@link InjectorConfiguration} to use. The
+         * {@link InjectorConfiguration} is responsible for configuring the behavior of the
+         * component injector within the application environment.
+         *
+         * @param injectorConfiguration the {@link InjectorConfiguration} to use
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer injectorConfiguration(
+            ContextualInitializer<PropertyRegistry, InjectorConfiguration> injectorConfiguration
+        ) {
+            this.injectorConfiguration = injectorConfiguration;
             return this;
         }
     }

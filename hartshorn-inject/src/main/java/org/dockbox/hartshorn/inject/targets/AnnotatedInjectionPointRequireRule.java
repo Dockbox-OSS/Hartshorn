@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.annotations.Required;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A rule that determines whether an {@link InjectionPoint} is required to be present. This uses the
@@ -31,10 +31,17 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class AnnotatedInjectionPointRequireRule implements RequireInjectionPointRule {
 
+    private final InjectorConfiguration injectorConfiguration;
+
+    public AnnotatedInjectionPointRequireRule(InjectorConfiguration injectorConfiguration) {
+        this.injectorConfiguration = injectorConfiguration;
+    }
+
     @Override
     public boolean isRequired(InjectionPoint injectionPoint) {
-        Option<Required> required =
-            injectionPoint.injectionPoint().annotations().get(Required.class);
-        return required.present() && required.get().value();
+        return injectionPoint.injectionPoint().annotations().get(Required.class)
+                .map(Required::value)
+                .orCompute(this.injectorConfiguration::requiredByDefault)
+                .test(Boolean::booleanValue);
     }
 }

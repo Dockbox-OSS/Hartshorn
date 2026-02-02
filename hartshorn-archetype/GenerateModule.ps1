@@ -59,7 +59,7 @@ Write-Host "- Add org.dockbox.hartshorn:hartshorn-$Module to pom.xml <modules>" 
 Write-Host "  <module>hartshorn-$Module</module>" -ForegroundColor DarkGray
 Write-Host "- Add org.dockbox.hartshorn:hartshorn-$Module to hartshorn-bom/pom.xml <dependencyManagement>" -ForegroundColor Yellow
 Write-Host "  <dependency>" -ForegroundColor DarkGray
-Write-Host "    <groupId>org.dockbox.hartshorn</group>" -ForegroundColor DarkGray
+Write-Host "    <groupId>org.dockbox.hartshorn</groupId>" -ForegroundColor DarkGray
 Write-Host "    <artifactId>hartshorn-$Module</artifactId>" -ForegroundColor DarkGray
 Write-Host "    <version>`${revision}</version>" -ForegroundColor DarkGray
 Write-Host "  </dependency>" -ForegroundColor DarkGray

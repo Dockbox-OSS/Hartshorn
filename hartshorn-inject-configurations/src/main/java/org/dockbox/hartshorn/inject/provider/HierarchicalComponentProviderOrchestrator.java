@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
 import org.dockbox.hartshorn.inject.binding.AliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -113,7 +114,9 @@ public class HierarchicalComponentProviderOrchestrator
                 this.postConstructor,
                 this.bindingAliasNormalizer,
                 this.application,
-                new ConcurrentHashSingletonCache(),
+                new ConcurrentHashSingletonCache(SimpleComponentKeyMatcher.create(
+                        this.application.environment().configuration()
+                )),
                 scope,
                 strategies -> {
                     strategies.insert(0, new ManagedComponentProviderStrategy());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.introspect;
 
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.populate.InjectParameterResolver;
 import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
@@ -41,11 +42,15 @@ import org.dockbox.hartshorn.util.option.Option;
 public class InjectParameterResolverParameterLoaderRule
     implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
-    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final RequireInjectionPointRule requireRule;
     private final InjectParameterResolver parameterResolver;
 
-    public InjectParameterResolverParameterLoaderRule(InjectParameterResolver parameterResolver) {
+    public InjectParameterResolverParameterLoaderRule(
+            InjectParameterResolver parameterResolver,
+            InjectorConfiguration configuration
+    ) {
         this.parameterResolver = parameterResolver;
+        this.requireRule = new AnnotatedInjectionPointRequireRule(configuration);
     }
 
     @Override

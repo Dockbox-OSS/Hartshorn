@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,15 +273,19 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("type", this.type)
-            .field("qualifier", this.qualifier)
-            .field("scope", this.scope)
-            .field("postConstructionAllowed", this.postConstructionAllowed)
-            .field("strict", this.strict)
-            .field("selectionStrategy", this.selectionStrategy)
-            .field("failureStrategy", this.failureStrategy)
-            .describe();
+        ObjectDescriber<ComponentKey<T>> describer = ObjectDescriber.of(this)
+                .field("type", this.type)
+                .field("postConstructionAllowed", this.postConstructionAllowed)
+                .field("strict", this.strict)
+                .field("selectionStrategy", this.selectionStrategy)
+                .field("failureStrategy", this.failureStrategy);
+        if (!this.qualifier.isEmpty()) {
+            describer.field("qualifier", this.qualifier);
+        }
+        if (this.scope != null) {
+            describer.field("scope", this.scope);
+        }
+        return describer.describe();
     }
 
     @Override
@@ -414,10 +418,11 @@ public final class ComponentKey<T> implements Reportable {
             HighestPriorityProviderSelectionStrategy.INSTANCE;
         private ComponentResolutionFailureStrategy failureStrategy =
             ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
-        private Scope scope = null; // If not provided, defaults to application scope
+        // If not provided, defaults to application scope
+        private Scope scope = null;
         private boolean postConstructionAllowed = true;
+        // If not provided, defaults to InjectorConfiguration#isStrictMode
         private Tristate strict = Tristate.UNDEFINED;
-            // If not provided, defaults to InjectorConfiguration#isStrictMode
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;

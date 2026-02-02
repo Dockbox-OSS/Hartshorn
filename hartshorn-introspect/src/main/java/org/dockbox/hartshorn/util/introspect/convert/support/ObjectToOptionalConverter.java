@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
 import java.util.Optional;
@@ -32,7 +33,7 @@ import java.util.Optional;
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 
     @Override
-    public Optional<?> convert(@Nullable Object input) {
+    public Optional<?> convert(@Nullable Object input, Context... contexts) {
         return Optional.ofNullable(input);
     }
 }

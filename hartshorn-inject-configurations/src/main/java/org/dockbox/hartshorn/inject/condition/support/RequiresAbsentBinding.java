@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,22 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 /**
  * A condition that requires a binding to be present in the
  * {@link org.dockbox.hartshorn.inject.binding.HierarchicalBinder}.
+ *
+ * <p>Absent bindings are resolved by type and optionally by name, but do not support additional
+ * qualifiers. In case of more complex resolution requirements, consider using custom property
+ * profiles or similar mechanisms.
  *
  * @see AbsentBindingCondition
  *

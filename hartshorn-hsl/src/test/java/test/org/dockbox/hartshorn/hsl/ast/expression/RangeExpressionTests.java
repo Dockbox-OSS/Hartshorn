@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class RangeExpressionTests {
         Array array = assertThat(value)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
-        assertThat(array.values()).containsExactly(new Double[]{1d, 2d, 3d, 4d, 5d});
+        assertThat(array.values()).containsExactly(1d, 2d, 3d, 4d, 5d);
     }
 
     @Test
@@ -57,7 +57,7 @@ class RangeExpressionTests {
         Array array = assertThat(value)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
-        assertThat(array.values()).containsExactly(new Double[]{2d});
+        assertThat(array.values()).containsExactly(2d);
     }
 
     @Test
@@ -74,6 +74,6 @@ class RangeExpressionTests {
         Array array = assertThat(value)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
-        assertThat(array.values()).containsExactly(new Double[]{1d, 2d, 3d, 4d, 5d});
+        assertThat(array.values()).containsExactly(1d, 2d, 3d, 4d, 5d);
     }
 }

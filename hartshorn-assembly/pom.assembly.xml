@@ -115,6 +115,14 @@
       <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-testsuite</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-web-jetty</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

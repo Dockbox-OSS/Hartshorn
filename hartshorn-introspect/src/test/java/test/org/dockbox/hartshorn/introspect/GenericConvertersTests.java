@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.introspect;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.AmbiguousConverterException;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
@@ -99,8 +100,8 @@ class GenericConvertersTests {
         public @Nullable <I, O> Object convert(
             @Nullable Object source,
             @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
-        ) {
+            @NonNull Class<O> targetType,
+            Context... contexts) {
             throw new UnsupportedOperationException("Not implemented");
         }
     }

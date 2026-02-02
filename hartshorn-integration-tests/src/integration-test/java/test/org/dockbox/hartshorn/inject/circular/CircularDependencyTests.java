@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,8 +120,7 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularImmediateResolution")
-    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path)
-            throws Exception {
+    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) throws Exception {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
@@ -161,8 +160,7 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularDelayedResolution")
-    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path)
-            throws Exception {
+    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) throws Exception {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
@@ -260,14 +258,23 @@ public class CircularDependencyTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        assertThat(roots).isEmpty(); // Cyclic, so no roots
+        assertThat(roots).hasSize(2); // Cyclic, but interfaces are roots
+        roots.forEach(root -> {
+            Class<?> type = root.value().componentKey().type();
+            assertThat(type).isIn(
+                    InterfaceCircularDependencyA.class,
+                    InterfaceCircularDependencyB.class
+            );
+        });
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         assertThat(nodes).hasSize(4); // 4 nodes, 2 interfaces, 2 implementations
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
-                .collect(Collectors.toMap(node -> node.value().componentKey().type(),
-                        Function.identity()));
+                .collect(Collectors.toMap(
+                        node -> node.value().componentKey().type(),
+                        Function.identity()
+                ));
         GraphNode<DependencyContext<?>> firstNode = nodesByType.get(BoundCircularDependencyA.class);
 
         List<GraphNode<DependencyContext<?>>> recursivePath =

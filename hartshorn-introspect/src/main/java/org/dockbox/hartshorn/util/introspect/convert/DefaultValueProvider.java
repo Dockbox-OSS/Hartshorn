@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 
 /**
  * A specialized {@link Converter} to handle {@code null} values. This is useful when implementing
@@ -32,14 +33,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public interface DefaultValueProvider<T> extends Converter<Null, T> {
 
     @Override
-    default @Nullable T convert(@Nullable Null input) {
+    default @Nullable T convert(@Nullable Null input, Context... contexts) {
         assert input == null;
         return this.defaultValue();
     }
 
     /**
      * Returns the default value to use when the input is {@code null}. This method should only be
-     * called through {@link #convert(Null)}, and serves purely as a convenience method.
+     * called through {@link Converter#convert(Object, Context...)}, and serves purely as a
+     * convenience method.
      *
      * @return the default value to use when the input is {@code null}
      */

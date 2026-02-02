@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.test;
 
+import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
@@ -71,6 +72,16 @@ public interface TestApplicationCustomizer {
      * @param configurer the configurer to customize the application context
      */
     default void customizeApplication(SimpleApplicationContext.Configurer configurer) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Customizes the injector configuration. The injector configuration allows for configuration
+     * of the component injector, such as strict mode and constructor resolution strategies.
+     *
+     * @param configurer the configurer to customize the injector configuration
+     */
+    default void customizeInjector(ImmutableInjectorConfiguration.Configurer configurer) {
         // Default implementation does nothing
     }
 }

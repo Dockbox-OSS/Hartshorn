@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
@@ -37,12 +38,18 @@ import java.util.regex.Pattern;
 public class StringToArrayConverter implements GenericConverter {
 
     private final Pattern delimiter;
+    private boolean trim;
 
     public StringToArrayConverter() {
-        this.delimiter = Pattern.compile(",");
+        this(true);
     }
 
-    public StringToArrayConverter(Pattern delimiter) {
+    public StringToArrayConverter(boolean trim) {
+        this(Pattern.compile(","), trim);
+    }
+
+    public StringToArrayConverter(Pattern delimiter, boolean trim) {
+        this.trim = trim;
         this.delimiter = delimiter;
     }
 
@@ -55,10 +62,16 @@ public class StringToArrayConverter implements GenericConverter {
     public @Nullable <I, O> Object convert(
         @Nullable Object source,
         @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType
-    ) {
+        @NonNull Class<O> targetType,
+        Context... contexts) {
         if (source instanceof String charSequence) {
-            return charSequence.split(this.delimiter.pattern());
+            String[] strings = charSequence.split(this.delimiter.pattern());
+            if (this.trim) {
+                for (int i = 0; i < strings.length; i++) {
+                    strings[i] = strings[i].trim();
+                }
+            }
+            return strings;
         }
         return null;
     }

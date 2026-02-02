@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -75,7 +76,7 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
     ) implements Converter<Object, O> {
 
         @Override
-        public O convert(@Nullable Object source) {
+        public O convert(@Nullable Object source, Context... contexts) {
             Object[] array;
             if (source != null) {
                 array = (Object[]) Array.newInstance(source.getClass(), 1);

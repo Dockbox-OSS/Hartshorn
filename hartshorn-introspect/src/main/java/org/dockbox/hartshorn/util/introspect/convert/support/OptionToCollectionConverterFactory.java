@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Collection;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
 
 /**
  * Converts an {@link Option} to a {@link Collection}. If the {@link Option} is empty, an empty
@@ -50,7 +50,7 @@ public class OptionToCollectionConverterFactory
 
     @Override
     public <O extends Collection<?>> Converter<Option<?>, O> create(Class<O> targetType) {
-        return input -> {
+        return (input, _) -> {
             //noinspection unchecked
             Collection<Object> collection = (Collection<Object>) this.defaultValueProviderFactory
                 .create(targetType).defaultValue();

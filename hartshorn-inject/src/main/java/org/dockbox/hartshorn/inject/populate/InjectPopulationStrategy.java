@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,7 +185,13 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
 
         // checkstyle:off LineLength
         private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule> requiresComponentRules =
-            LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
+            LazyStreamableConfigurer.of(configurer -> {
+                configurer.add(ContextualInitializer.of(application -> {
+                    return new AnnotatedInjectionPointRequireRule(
+                            application.environment().configuration()
+                    );
+                }));
+            });
 
         private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver> parameterResolvers =
             LazyStreamableConfigurer.of(configurer -> {

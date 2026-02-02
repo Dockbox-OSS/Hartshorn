@@ -40,6 +40,8 @@
     <module>hartshorn-launchpad</module>
     <module>hartshorn-reporting</module>
     <module>hartshorn-hsl</module>
+    <module>hartshorn-web</module>
+    <module>hartshorn-web-jetty</module>
     <module>hartshorn-test-assertions</module>
     <module>hartshorn-testsuite</module>
     <module>hartshorn-launchpad-kotlin-extensions</module>

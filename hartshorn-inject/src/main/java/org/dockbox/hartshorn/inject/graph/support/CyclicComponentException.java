@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.graph.support;
 
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import java.util.Iterator;
 public class CyclicComponentException extends ApplicationException {
 
     private static final String CYCLE_TOP = " ┌───┐\n";
-    private static final String CYCLE_NODE = " ↑  %s (in %s)\n";
+    private static final String CYCLE_NODE = " ↑  %s [%s] (in %s)\n";
     private static final String CYCLE_BINDING = " |   ↓   ↳ Implemented by %s\n";
     private static final String CYCLE_PATH = " |   ↓\n";
     private static final String CYCLE_BOTTOM = " └───┘";
@@ -88,7 +89,7 @@ public class CyclicComponentException extends ApplicationException {
      *  ↑  com.sample.AbstractComponentC
      *  |   ↓   ↳ Implemented by com.sample.ConcreteComponentC
      *  └───┘
-     *  }</pre>
+     * }</pre>
      *
      * @param path the path to format
      *
@@ -104,8 +105,11 @@ public class CyclicComponentException extends ApplicationException {
 
         for (Iterator<DiscoveredComponent> iterator = path.iterator(); iterator.hasNext(); ) {
             DiscoveredComponent node = iterator.next();
-            builder.append(CYCLE_NODE.formatted(node.node().qualifiedName(),
-                node.node().origin().qualifiedName()));
+            builder.append(CYCLE_NODE.formatted(
+                    node.node().qualifiedName(),
+                    StringUtilities.capitalize(node.lifecycleType().name().toLowerCase()),
+                    node.node().origin().qualifiedName()
+            ));
             if (node.fromBinding()) {
                 builder.append(CYCLE_BINDING.formatted(node.actualType().qualifiedName()));
             }

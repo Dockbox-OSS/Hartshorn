@@ -37,7 +37,8 @@ class ApplicationContextCarrierDelegationTests {
     @Test
     @TestComponents(ContextCarrierComponent.class)
     void contextCarrierDelegation(@Inject ContextCarrierComponent component) throws Exception {
-        assertThat(findTypeDelegate(component)).present();
+        // No delegation should occur, as the method is implemented by the component itself
+        assertThat(findTypeDelegate(component)).absent();
         assertThat(findMethodDelegate(component)).absent();
         assertThat(component.applicationContext()).isNotNull();
     }

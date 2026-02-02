@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.introspect;
 
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.inject.populate.InjectPropertyParameterResolver;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
@@ -33,7 +34,10 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  */
 public class PropertyParameterLoaderRule extends InjectParameterResolverParameterLoaderRule {
 
-    public PropertyParameterLoaderRule(ComponentProvider componentProvider) {
-        super(new InjectPropertyParameterResolver(componentProvider));
+    public PropertyParameterLoaderRule(
+            ComponentProvider componentProvider,
+            InjectorConfiguration configuration
+    ) {
+        super(new InjectPropertyParameterResolver(componentProvider), configuration);
     }
 }

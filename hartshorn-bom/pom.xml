@@ -29,6 +29,7 @@
     <javassist.version>3.30.2-GA</javassist.version>
     <javax.inject.version>1</javax.inject.version>
     <javax.annotations.version>1.3.2</javax.annotations.version>
+    <jetty.version>12.1.5</jetty.version>
     <junit.version>6.0.1</junit.version>
     <logback.version>1.5.22</logback.version>
     <mockito.version>5.21.0</mockito.version>
@@ -121,6 +122,16 @@
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-web</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-web-jetty</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-test-assertions</artifactId>
         <version>${revision}</version>
         <scope>test</scope>
@@ -165,6 +176,11 @@
         <version>${javax.annotations.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
         <version>${junit.version}</version>
@@ -197,6 +213,11 @@
       <dependency>
         <groupId>tools.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>tools.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
         <version>${jackson.version}</version>
       </dependency>
       <dependency>

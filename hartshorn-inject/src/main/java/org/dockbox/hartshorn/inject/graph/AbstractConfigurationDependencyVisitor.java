@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
@@ -27,6 +24,9 @@ import org.dockbox.hartshorn.util.graph.ContentAwareGraph;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Simple implementation of {@link ConfigurationDependencyVisitor} that provides a default
@@ -75,7 +75,7 @@ public abstract class AbstractConfigurationDependencyVisitor
             }
             else {
                 throw new GraphException("Dangling prototype node found: "
-                    + context.componentKey());
+                    + context.componentKey() + ". Defined by " + context.origin().qualifiedName());
             }
         }
         return iterated;
