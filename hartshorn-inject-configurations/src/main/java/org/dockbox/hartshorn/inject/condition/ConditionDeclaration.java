@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.ObjectFactory;
 
 /**
  * Represents a condition declaration, which may put constraints on the usage of a component or
@@ -30,14 +30,13 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 public interface ConditionDeclaration {
 
     /**
-     * Returns the condition that is declared by this instance. The condition may use any context
-     * that is provided by the application context.
+     * Returns the condition that is declared by this instance.
      *
-     * @param application The application context that is used to resolve the condition
+     * @param objectFactory The application context that is used to resolve the condition
      *
      * @return The condition that is declared by this instance
      */
-    Condition condition(InjectionCapableApplication application);
+    Condition condition(ObjectFactory objectFactory);
 
     /**
      * Indicates whether the {@link ConditionMatcher} should fail when the condition does not match.

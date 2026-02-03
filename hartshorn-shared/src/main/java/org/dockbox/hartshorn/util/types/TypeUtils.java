@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -564,6 +564,56 @@ public class TypeUtils {
             return throwable;
         }
         return getRootCause(cause);
+    }
+
+    /**
+     * Returns whether the given name is a resource name.
+     *
+     * @param name the name to check
+     * @return {@code true} if the name is a resource name, {@code false} otherwise
+     */
+    public static boolean isResourceName(String name) {
+        return name != null && !name.isEmpty() && name.contains("/") && name.endsWith(".class");
+    }
+
+    /**
+     * Converts a fully qualified class name to a resource name.
+     *
+     * @param className the fully qualified class name, e.g. {@code java.lang.String}
+     * @return the corresponding resource name, e.g. {@code java/lang/String.class}
+     * @throws IllegalArgumentException if the given class name is not valid
+     */
+    public static String classNameToResourceName(String className) {
+        if (!isClassName(className)) {
+            throw new IllegalArgumentException("Not a valid class name: " + className);
+        }
+        return className.replace('.', '/') + ".class";
+    }
+
+    /**
+     * Returns whether the given name is a fully qualified class name.
+     *
+     * @param name the name to check
+     * @return {@code true} if the name is a fully qualified class name, {@code false} otherwise
+     */
+    public static boolean isClassName(String name) {
+        return name != null && name.contains(".") && !name.endsWith(".class");
+    }
+
+    /**
+     * Converts a resource name to a fully qualified class name.
+     *
+     * @param resourceName the resource name, e.g. {@code java/lang/String.class}
+     * @return the corresponding fully qualified class name, e.g. {@code java.lang.String}
+     * @throws IllegalArgumentException if the given resource name is not valid
+     */
+    public static String resourceNameToClassName(String resourceName) {
+        if (!isResourceName(resourceName)) {
+            throw new IllegalArgumentException("Not a valid resource name: " + resourceName);
+        }
+        return resourceName
+                .substring(0, resourceName.length() - ".class".length())
+                .replace('/', '.');
     }
 
     /**

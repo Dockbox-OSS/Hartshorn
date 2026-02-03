@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,70 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.TypeReferenceCondition;
+import org.dockbox.hartshorn.inject.condition.TypeReferenceConditionContext;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.AnnotationValue;
+import java.lang.classfile.ClassModel;
+import java.util.List;
+
 /**
- * A condition that matches when a class is present on the classpath. Due to the nature of this
- * condition, it is required to provide the class name as a string.
+ * A condition that matches when a class is present on the classpath.
  *
  * @see RequiresClass
- * @see Class#forName(String)
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
-public class ClassCondition implements Condition {
+public class ClassCondition implements TypeReferenceCondition {
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresClass.class).map(condition -> {
-            for (String name : condition.value()) {
-                if (!TypeUtils.exists(name)) {
-                    return ConditionResult.notFound("class", name);
-                }
+    public ConditionResult matches(TypeReferenceConditionContext context) {
+        ClassModel classModel = context.classModel();
+        Annotation annotation = ClassFileUtilities.getAnnotation(
+                classModel,
+                RequiresClass.class
+        ).orElseThrow(() -> new IllegalStateException(
+                "ClassModel does not represent a type annotated with RequiresClass"
+        ));
+
+        List<String> classes = ClassFileUtilities.getAnnotationValues(
+                        annotation,
+                        "classes",
+                        AnnotationValue.OfClass.class
+                ).stream()
+                .map(AnnotationValue.OfClass::className)
+                .map(ClassFileUtilities::constantPoolNameToQualifiedName)
+                .toList();
+        // Potentially return early if a class is not found
+        ConditionResult result = matchRequiredClasses(classes);
+        if (result != null) return result;
+
+        List<String> classNames = ClassFileUtilities.getAnnotationValues(
+                        annotation,
+                        "classNames",
+                        AnnotationValue.OfString.class
+                ).stream()
+                .map(AnnotationValue.OfString::stringValue)
+                .toList();
+        result = matchRequiredClasses(classNames);
+        if (result != null) return result;
+
+        return ConditionResult.matched();
+    }
+
+    private static ConditionResult matchRequiredClasses(List<String> classNames) {
+        for (String requiredClassName : classNames) {
+            if (TypeUtils.exists(requiredClassName)) {
+                continue;
             }
-            return ConditionResult.matched();
-        }).orElse(ConditionResult.invalidCondition("class"));
+            return ConditionResult.notFound("class", requiredClassName);
+        }
+        return null;
     }
 }

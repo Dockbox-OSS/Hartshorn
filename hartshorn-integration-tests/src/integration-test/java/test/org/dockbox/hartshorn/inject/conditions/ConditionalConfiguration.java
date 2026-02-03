@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class ConditionalConfiguration {
      */
     @Singleton
     @Named("a")
-    @RequiresClass("java.lang.String")
+    @RequiresClass(classes = String.class)
     public String a() {
         return "a";
     }
@@ -42,7 +42,7 @@ public class ConditionalConfiguration {
      */
     @Singleton
     @Named("b")
-    @RequiresClass("java.gnal.String")
+    @RequiresClass(classNames = "java.gnal.String")
     public String b() {
         return "b";
     }

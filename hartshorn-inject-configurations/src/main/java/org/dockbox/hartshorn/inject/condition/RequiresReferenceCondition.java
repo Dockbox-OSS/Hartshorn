@@ -24,33 +24,37 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A generic condition that requires a specific condition to be met. The condition is defined by the
- * {@link #condition()} attribute. If the condition is not met, the annotated element is not
- * processed.
+ * A condition that requires conditions to be met based on type references. Unlike
+ * {@link RequiresCondition}, this annotation is specifically designed to work with conditions that
+ * evaluate type references, such as classes or interfaces, without needing to load the classes into
+ * the JVM.
  *
- * <p>In most cases, it is recommended to create a custom annotation that extends this annotation,
- * and
- * use that annotation instead. This allows for a more readable code base. A basic example is shown
- * below.
+ * <p>This approach has the benefit of avoiding class loading issues, such as
+ * {@link ClassNotFoundException ClassNotFoundExceptions}, when checking for the presence of
+ * classes that may not be available at runtime. By using type references, conditions can be
+ * evaluated based on metadata alone, allowing for safer and more flexible condition checks. The
+ * drawback is that the condition implementations cannot rely on loaded classes, and must
+ * instead work with type metadata.
+ *
+ * <p>Due to the nature of type references, meta annotations of this annotation are supported, but
+ * lack hierarchy support (i.e. meta-meta annotations and attribute aliases are not supported).
  *
  * <pre>{@code
- * @Extends(RequiresCondition.class)
- * @RequiresCondition(condition  = SampleCondition.class)
+ * @RequiresReferenceCondition(condition  = SampleCondition.class)
  * public @interface RequiresClass {
  *    ... additional attributes for your condition ...
- *    boolean failOnNoMatch() default false;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @see RequiresClass
- * @see Condition
- * @see ConditionMatcher
- * @since 0.4.12
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequiresCondition {
+public @interface RequiresReferenceCondition {
 
     /**
      * The condition that is required to be met. The condition should be a stateless class that
@@ -58,7 +62,7 @@ public @interface RequiresCondition {
      *
      * @return the condition that is required to be met
      */
-    Class<? extends IntrospectionCondition> condition();
+    Class<? extends TypeReferenceCondition> condition();
 
     /**
      * Whether to fail on no match. If set to {@code true}, the operation will fail if the condition

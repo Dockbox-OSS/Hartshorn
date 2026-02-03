@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+import org.dockbox.hartshorn.inject.condition.RequiresReferenceCondition;
 
 /**
  * A condition that requires classes to be present in the classpath.
@@ -36,23 +33,20 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(RequiresCondition.class)
-@RequiresCondition(condition = ClassCondition.class)
+@RequiresReferenceCondition(condition = ClassCondition.class)
 public @interface RequiresClass {
+
+    /**
+     * The classes that are required to be present.
+     *
+     * @return the classes that are required to be present
+     */
+    Class<?>[] classes() default {};
 
     /**
      * The fully qualified name of the classes that are required to be present.
      *
      * @return the fully qualified name of the classes that are required to be present
      */
-    @AttributeAlias(value = "failOnNoMatch", target = RequiresCondition.class)
-    String[] value();
-
-    /**
-     * @return whether to fail on no match
-     *
-     * @see RequiresCondition#failOnNoMatch()
-     */
-    @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
-    boolean failOnNoMatch() default false;
+    String[] classNames() default {};
 }

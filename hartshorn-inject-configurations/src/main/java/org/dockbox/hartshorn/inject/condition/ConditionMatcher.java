@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,8 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.context.ContextView;
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
-import org.dockbox.hartshorn.util.option.Option;
-
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
 import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +26,20 @@ import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ComponentProviderObjectFactoryAdapter;
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.ObjectFactory;
+import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReference;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
 /**
  * A matcher that can be used to match {@link RequiresCondition} annotations against a given set of
@@ -39,18 +47,15 @@ import java.util.stream.Collectors;
  * {@link Condition} instances that are referenced by the {@link RequiresCondition} annotations.
  *
  * <p>Condition matching can be used for a variety of purposes. For example, it can be used to
- * determine whether
- * a component should be registered, a binding method should be invoked, or an event should be
- * dispatched.
+ * determine whether a component should be registered, a binding method should be invoked, or an
+ * event should be dispatched.
  *
+ * @author Guus Lieben
  * @see RequiresCondition
  * @see Condition
  * @see ConditionContext
  * @see ConditionResult
- *
  * @since 0.4.12
- *
- * @author Guus Lieben
  */
 public final class ConditionMatcher extends DefaultContext
     implements InjectionApplicationAwareContext {
@@ -93,16 +98,27 @@ public final class ConditionMatcher extends DefaultContext
     }
 
     /**
-     * Matches the {@link RequiresCondition} annotations of the given {@link AnnotatedElementView},
-     * providing any additional {@link ContextView} instances to the {@link ConditionContext} that
-     * is used to match the {@link Condition condition implementations}. If any of the conditions
-     * does not match, this method will return {@code false}. If all conditions match, this method
-     * will return {@code true}.
+     * Matches the {@link RequiresCondition} and {@link RequiresReferenceCondition} annotations of
+     * the given {@link AnnotatedElementView}, providing any additional {@link ContextView}
+     * instances to the {@link ConditionContext} that is used to match the
+     * {@link Condition condition implementations}. If any of the conditions does not match, this
+     * method will return {@code false}. If all conditions match, this method will return
+     * {@code true}.
      *
-     * <p>If enabled, this method will also match any enclosing conditions of the given element. For
-     * example,
-     * if the given element is a method, this method will also match any conditions that are
-     * declared on the class that declares the method.
+     * <p>If enabled, this method will also match any enclosing conditions of the given element.
+     * For
+     * example, if the given element is a method, this method will also match any conditions that
+     * are declared on the class that declares the method.
+     *
+     * <p>Note that when matching enclosing conditions, the order of evaluation is from the least
+     * enclosed element to the most enclosed element (the given element). This means that
+     * class-level conditions are evaluated before method-level conditions.
+     *
+     * <p>{@link TypeReferenceCondition reference conditions} are also matched for any type views
+     * encountered during the matching process. Note that this may cause issues with class loading
+     * if the type references point to classes that are not available at runtime. In such cases,
+     * {@link #match(TypeReference, ContextView...)} should be used directly to avoid class
+     * loading.
      *
      * @param annotatedElementContext the annotated element to match against
      * @param contexts the additional contexts to provide to the condition context
@@ -126,7 +142,50 @@ public final class ConditionMatcher extends DefaultContext
                 .map(AnnotationConditionDeclaration::new)
                 .collect(Collectors.toSet());
 
-            if (!this.match(elementView, declarations, contexts)) {
+            if (!this.matchAnnotatedElement(elementView, declarations, contexts)) {
+                return false;
+            }
+
+            if (elementView instanceof TypeView<?> typeView
+                && !this.match(new ClassReference(typeView.type()), contexts)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Matches the {@link RequiresReferenceCondition} annotations of the given
+     * {@link TypeReference}, providing any additional {@link ContextView} instances to the
+     * {@link ConditionContext} that is used to match the
+     * {@link Condition condition implementations}. If any of the conditions do not match, this
+     * method will return {@code false}. If all conditions match, this method will return
+     * {@code true}.
+     *
+     * @param typeReference the type reference to match against
+     * @param contexts the additional contexts to provide to the condition context
+     *
+     * @return {@code true} if all conditions match, {@code false} otherwise
+     */
+    public boolean match(TypeReference typeReference, ContextView... contexts) {
+        ClassModel classModel = ClassFileUtilities.getClassModel(
+            typeReference.qualifiedName()
+        ).orElseThrow(() -> new IllegalStateException(
+            "Could not load class model for type reference: " + typeReference
+        ));
+        List<Annotation> annotations = ClassFileUtilities.getMetaAnnotations(
+            classModel,
+            RequiresReferenceCondition.class
+        );
+        for (Annotation annotation : annotations) {
+            var declaration = ReferenceConditionDeclaration.createFromMetaAnnotation(annotation);
+            TypeReferenceConditionContext conditionContext =
+                new TypeReferenceConditionContext(
+                    declaration,
+                    typeReference,
+                    classModel
+                );
+            if (!this.matchConditionContext(conditionContext, declaration, contexts)) {
                 return false;
             }
         }
@@ -148,13 +207,18 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(
+    private boolean matchAnnotatedElement(
         AnnotatedElementView annotatedElementContext,
         Set<ConditionDeclaration> declarationContexts,
         ContextView... contexts
     ) {
         for (ConditionDeclaration declarationContext : declarationContexts) {
-            if (!this.match(annotatedElementContext, declarationContext, contexts)) {
+            ConditionContext context = new IntrospectedConditionContext(
+                this.application(),
+                annotatedElementContext,
+                declarationContext
+            );
+            if (!this.matchConditionContext(context, declarationContext, contexts)) {
                 return false;
             }
         }
@@ -168,21 +232,36 @@ public final class ConditionMatcher extends DefaultContext
      * {@link Condition condition implementations}. If the condition does not match, this method
      * will return {@code false}. If the condition matches, this method will return {@code true}.
      *
-     * @param element the annotated element to match against
+     * @param context the condition context to use for matching
      * @param declarationContext the {@link ConditionDeclaration declaration of the condition} to
      * match
      * @param contexts the additional contexts to provide to the condition context
      *
      * @return {@code true} if the condition matches, {@code false} otherwise
      */
-    public boolean match(
-        AnnotatedElementView element,
+    private boolean matchConditionContext(
+        ConditionContext context,
         ConditionDeclaration declarationContext,
         ContextView... contexts
     ) {
-        Condition condition = declarationContext.condition(this.application());
-        ConditionContext context =
-            new ConditionContext(this.application(), element, declarationContext);
+        InjectionCapableApplication application = this.application();
+        // Application may still be starting, thus fallback should be used.
+        final ObjectFactory objectFactory;
+        if (application == null) {
+            assert context instanceof TypeReferenceConditionContext : """
+                Expected type reference condition context when application is starting.
+                Introspection-capable condition contexts require at least a partially
+                initialized application.
+                """;
+            objectFactory = new ReflectionObjectFactory();
+        }
+        else {
+            objectFactory = new ComponentProviderObjectFactoryAdapter(
+                application.defaultProvider()
+            );
+        }
+
+        Condition condition = declarationContext.condition(objectFactory);
         for (ContextView child : contexts) {
             context.addContext(child);
         }

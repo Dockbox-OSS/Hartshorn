@@ -17,19 +17,18 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * A condition that requires introspection of the annotated element being evaluated. This condition
- * receives an {@link IntrospectedConditionContext} when being matched. As a result, all tested
- * views will have been introspected, and therefore will already be loaded on the classpath.
+ * A {@link Condition} that matches based on a type reference, without requiring the type to be
+ * loaded. This has the benefit of being able to evaluate conditions without causing class loading
+ * early in the application lifecycle. The drawback is that the condition implementation must work
+ * with type references with limited information (compared to loaded classes, which support full
+ * introspection).
  *
- * @see ConditionMatcher
- * @see Condition
- * 
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
-public non-sealed interface IntrospectionCondition extends Condition {
+public non-sealed interface TypeReferenceCondition extends Condition {
 
     /**
      * Returns a {@link ConditionResult} that describes whether the condition is matched.
@@ -40,19 +39,19 @@ public non-sealed interface IntrospectionCondition extends Condition {
      */
     @Override
     default ConditionResult matches(ConditionContext context) {
-        if (context instanceof IntrospectedConditionContext introspectedConditionContext) {
-            return this.matches(introspectedConditionContext);
+        if (context instanceof TypeReferenceConditionContext referenceConditionContext) {
+            return this.matches(referenceConditionContext);
         }
         return ConditionResult.notMatched(
-                "ConditionContext is not an instance of IntrospectedConditionContext"
+                "ConditionContext is not an instance of TypeReferenceConditionContext"
         );
     }
 
     /**
      * Matches the condition against the given context.
      *
-     * @param context the introspected condition context
+     * @param context the type reference condition context
      * @return the condition result
      */
-    ConditionResult matches(IntrospectedConditionContext context);
+    ConditionResult matches(TypeReferenceConditionContext context);
 }

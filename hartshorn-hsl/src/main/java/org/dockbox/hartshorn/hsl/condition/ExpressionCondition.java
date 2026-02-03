@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomi
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
@@ -82,7 +82,7 @@ public class ExpressionCondition implements IntrospectionCondition {
 
     @NonNull
     private ConditionResult calculateResult(
-        ConditionContext context,
+        IntrospectedConditionContext context,
         RequiresExpression condition
     ) {
         String expression = condition.value();
@@ -108,7 +108,7 @@ public class ExpressionCondition implements IntrospectionCondition {
      *
      * @return a new runtime
      */
-    protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
+    protected ValidateExpressionRuntime createRuntime(IntrospectedConditionContext context) {
         InjectionCapableApplication application = context.application();
         ValidateExpressionRuntime runtime;
         if (application instanceof ApplicationContext applicationContext) {
@@ -154,7 +154,7 @@ public class ExpressionCondition implements IntrospectionCondition {
      */
     protected ValidateExpressionRuntime enhance(
         ValidateExpressionRuntime runtime,
-        ConditionContext context
+        InjectionApplicationAwareContext context
     ) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.firstContext(ProvidedParameterContext.class).peek(parameterContext -> {

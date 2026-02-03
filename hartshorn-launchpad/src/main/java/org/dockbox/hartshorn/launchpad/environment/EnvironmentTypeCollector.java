@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
@@ -23,13 +30,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * A collector for types in the environment. This delegates to the
@@ -90,8 +90,10 @@ public class EnvironmentTypeCollector {
     }
 
     private Collection<Class<?>> loadClasses(Collection<TypeReference> references) {
+        ConditionMatcher conditionMatcher = this.environment.conditionMatcher();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
+            .filter(conditionMatcher::match)
             .map(reference -> {
                 try {
                     return reference.getOrLoad(classLoader);

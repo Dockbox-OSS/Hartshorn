@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
@@ -100,7 +101,7 @@ public class ConditionTests {
         RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
         AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
         ConditionContext context =
-            new ConditionContext(this.applicationContext, method, declaration);
+            new IntrospectedConditionContext(this.applicationContext, method, declaration);
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
@@ -120,7 +121,7 @@ public class ConditionTests {
         MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
         RequiresCondition annotationForPresent =
             requiresClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForPresent = new ConditionContext(this.applicationContext,
+        ConditionContext contextForPresent = new IntrospectedConditionContext(this.applicationContext,
             requiresClass,
             new AnnotationConditionDeclaration(annotationForPresent));
         assertThat(condition.matches(contextForPresent).matches()).isTrue();
@@ -129,17 +130,17 @@ public class ConditionTests {
             type.methods().named("requiresAbsentClass").get();
         RequiresCondition annotationForAbsent =
             requiresAbsentClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext,
+        ConditionContext contextForAbsent = new IntrospectedConditionContext(this.applicationContext,
             requiresAbsentClass,
             new AnnotationConditionDeclaration(annotationForAbsent));
         assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }
 
-    @RequiresClass("java.lang.String")
+    @RequiresClass(classes = String.class)
     private void requiresClass() {
     }
 
-    @RequiresClass("java.gnal.String")
+    @RequiresClass(classNames = "java.gnal.String")
     private void requiresAbsentClass() {
     }
 
@@ -158,9 +159,9 @@ public class ConditionTests {
         assertThat(matcher.match(methodView)).isFalse();
     }
 
-    @RequiresClass("java.gnal.String")
+    @RequiresClass(classNames = "java.gnal.String")
     public static class ParentClass {
-        @RequiresClass("java.lang.String")
+        @RequiresClass(classes = String.class)
         public void requiresClass() {
         }
     }

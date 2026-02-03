@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
@@ -31,8 +32,10 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
  *
  * @author Guus Lieben
  */
-public class IntrospectedConditionContext extends ConditionContext {
+public non-sealed class IntrospectedConditionContext extends ConditionContext
+    implements InjectionApplicationAwareContext {
 
+    private final InjectionCapableApplication application;
     private final AnnotatedElementView annotatedElement;
 
     public IntrospectedConditionContext(
@@ -40,7 +43,8 @@ public class IntrospectedConditionContext extends ConditionContext {
         AnnotatedElementView annotatedElement,
         ConditionDeclaration condition
     ) {
-        super(application, condition);
+        super(condition);
+        this.application = application;
         this.annotatedElement = annotatedElement;
     }
 
@@ -51,5 +55,10 @@ public class IntrospectedConditionContext extends ConditionContext {
      */
     public AnnotatedElementView annotatedElement() {
         return this.annotatedElement;
+    }
+
+    @Override
+    public InjectionCapableApplication application() {
+        return this.application;
     }
 }
