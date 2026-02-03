@@ -17,18 +17,19 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.StandardScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
-import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.condition.ConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
+import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Guus Lieben
  */
-public class ExpressionCondition implements Condition {
+public class ExpressionCondition implements IntrospectionCondition {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExpressionCondition.class);
 
@@ -73,7 +74,7 @@ public class ExpressionCondition implements Condition {
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
+    public ConditionResult matches(IntrospectedConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresExpression.class)
             .map(condition -> this.calculateResult(context, condition))
             .orElse(ConditionResult.invalidCondition("expression"));

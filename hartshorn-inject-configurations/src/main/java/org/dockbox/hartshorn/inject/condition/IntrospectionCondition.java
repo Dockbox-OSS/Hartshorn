@@ -17,17 +17,19 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain
- * operation should be executed. Conditions are expected to be stateless, and may be reused for
- * multiple matches.
+ * A condition that requires introspection of the annotated element being evaluated. This condition
+ * receives an {@link IntrospectedConditionContext} when being matched. As a result, all tested
+ * views will have been introspected, and therefore will already be loaded on the classpath.
  *
  * @see ConditionMatcher
+ * @see Condition
  * 
- * @since 0.4.12
+ * @since 0.7.0
  * 
  * @author Guus Lieben
  */
-public sealed interface Condition permits IntrospectionCondition, TypeReferenceCondition {
+@FunctionalInterface
+public non-sealed interface IntrospectionCondition extends Condition {
 
     /**
      * Returns a {@link ConditionResult} that describes whether the condition is matched.
@@ -36,5 +38,15 @@ public sealed interface Condition permits IntrospectionCondition, TypeReferenceC
      *
      * @return a {@link ConditionResult} that describes whether the condition is matched
      */
-    ConditionResult matches(ConditionContext context);
+    @Override
+    default ConditionResult matches(ConditionContext context) {
+        if (context instanceof IntrospectedConditionContext introspectedConditionContext) {
+            return this.matches(introspectedConditionContext);
+        }
+        return ConditionResult.notMatched(
+                "ConditionContext is not an instance of IntrospectedConditionContext"
+        );
+    }
+
+    ConditionResult matches(IntrospectedConditionContext context);
 }

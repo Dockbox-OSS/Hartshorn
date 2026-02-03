@@ -17,8 +17,9 @@
 package org.dockbox.hartshorn.inject.condition.support;
 
 import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -35,10 +36,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * 
  * @author Guus Lieben
  */
-public class PropertyCondition implements Condition {
+public class PropertyCondition implements IntrospectionCondition {
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
+    public ConditionResult matches(IntrospectedConditionContext context) {
         return context.annotatedElement()
             .annotations()
             .get(RequiresProperty.class)

@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
-import java.util.List;
-import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
 import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContextsHolder;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A condition that matches when a binding is absent. This does not require an instance of the
@@ -37,10 +38,10 @@ import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContextsHolder;
  * 
  * @author Guus Lieben
  */
-public class AbsentBindingCondition implements Condition {
+public class AbsentBindingCondition implements IntrospectionCondition {
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
+    public ConditionResult matches(IntrospectedConditionContext context) {
         return context.annotatedElement()
             .annotations()
             .get(RequiresAbsentBinding.class)
@@ -70,7 +71,8 @@ public class AbsentBindingCondition implements Condition {
 
     private static Stream<ConditionalDependencyContext<?>> matchedConditionalContextsExceptCurrent(
         ConditionalDependencyContextsHolder contextsHolder,
-        ConditionContext context, ComponentKey<?> key
+        IntrospectedConditionContext context,
+        ComponentKey<?> key
     ) {
         return contextsHolder.conditionalDependencyContexts().get(key).stream()
             .filter(conditionalDependencyContext -> !conditionalDependencyContext
