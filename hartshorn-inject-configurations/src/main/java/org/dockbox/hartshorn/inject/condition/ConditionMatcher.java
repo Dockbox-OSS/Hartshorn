@@ -16,16 +16,6 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import java.lang.classfile.Annotation;
-import java.lang.classfile.ClassModel;
-import java.util.ArrayDeque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.SequencedCollection;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentProviderObjectFactoryAdapter;
@@ -41,6 +31,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.SequencedCollection;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 /**
  * A matcher that can be used to match {@link RequiresCondition} annotations against a given set of
  * contexts. This matcher will use the {@link InjectionCapableApplication} to resolve the
@@ -50,12 +51,14 @@ import org.dockbox.hartshorn.util.types.ClassFileUtilities;
  * determine whether a component should be registered, a binding method should be invoked, or an
  * event should be dispatched.
  *
- * @author Guus Lieben
  * @see RequiresCondition
  * @see Condition
  * @see ConditionContext
  * @see ConditionResult
+ *
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public final class ConditionMatcher extends DefaultContext
     implements InjectionApplicationAwareContext {

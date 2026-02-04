@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.types;
 
+import org.dockbox.hartshorn.util.collections.GathererUtilities;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.classfile.Annotation;
@@ -30,8 +33,6 @@ import java.lang.constant.ClassDesc;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.util.collections.GathererUtilities;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for working with Java's {@link ClassFile} API, primarily focused on extracting
@@ -161,12 +162,22 @@ public final class ClassFileUtilities {
 
     /**
      * Check if a {@link Utf8Entry} from the constant pool matches the expected fully qualified
-     * class name. Constant pool entries for class names are in the format "Lorg/example/MyClass;",
-     * while the expected value is in the format "org.example.MyClass".
+     * class name. Constant pool entries for class names are expected to be equal to field
+     * descriptors as defined in JVM Specification 4.3.2, thus being in the format {@code
+     * Lorg/example/MyClass;}, while the expected value is in the format {@code
+     * org.example.MyClass}.
+     *
+     * <p>Only reference type field descriptors are supported (i.e., those with term {@code L}).
+     * primitive field descriptors (including array dimensions) are not supported.
      *
      * @param entry the {@link Utf8Entry} from the constant pool
      * @param expectedValue the expected fully qualified class name
+     *
      * @return true if the entry matches the expected value, false otherwise
+     *
+     * @see <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3.2">
+     * JVM Specification 4.3.2 - Field Descriptors. Table 4.3-A Interpretation of field descriptors
+     * </a>
      */
     public static boolean matchesConstantPoolName(
             Utf8Entry entry,
