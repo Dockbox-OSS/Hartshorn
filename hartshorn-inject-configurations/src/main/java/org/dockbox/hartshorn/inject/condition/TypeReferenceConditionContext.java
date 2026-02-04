@@ -16,15 +16,13 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
+import java.lang.classfile.AttributedElement;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
-
-import java.lang.classfile.ClassModel;
 
 /**
  * A context that is used during the evaluation of a condition. This includes the type reference
  * that is being evaluated, and the {@link RequiresReferenceCondition} annotation that is used to
- * evaluate the condition. Note that this annotation is not necessarily present on the annotated
- * element, but may be composed from extending annotations.
+ * evaluate the condition.
  *
  * @see RequiresReferenceCondition
  *
@@ -35,33 +33,36 @@ import java.lang.classfile.ClassModel;
 public non-sealed class TypeReferenceConditionContext extends ConditionContext {
 
     private final TypeReference typeReference;
-    private final ClassModel classModel;
+    private final AttributedElement element;
 
     public TypeReferenceConditionContext(
             ConditionDeclaration condition,
             TypeReference typeReference,
-            ClassModel classModel
+            AttributedElement element
     ) {
         super(condition);
         this.typeReference = typeReference;
-        this.classModel = classModel;
+        this.element = element;
     }
 
     /**
-     * Returns the annotated element that is being evaluated.
+     * Returns the type reference in which the condition is being evaluated. This may match the
+     * {@link #element()} if the element is a type, but may also represent a member or other
+     * annotated element within the type.
      *
-     * @return the annotated element that is being evaluated
+     * @return the type reference being evaluated
      */
     public TypeReference typeReference() {
         return this.typeReference;
     }
 
     /**
-     * Returns the class model of the type reference being evaluated.
+     * Returns the element being evaluated. This may be the type itself, but may also be a member or
+     * other annotated element within the type.
      *
-     * @return the class model of the type reference being evaluated
+     * @return the element being evaluated
      */
-    public ClassModel classModel() {
-        return this.classModel;
+    public AttributedElement element() {
+        return this.element;
     }
 }

@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.AnnotationValue;
+import java.lang.classfile.AttributedElement;
+import java.util.List;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.TypeReferenceCondition;
 import org.dockbox.hartshorn.inject.condition.TypeReferenceConditionContext;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.lang.classfile.Annotation;
-import java.lang.classfile.AnnotationValue;
-import java.lang.classfile.ClassModel;
-import java.util.List;
 
 /**
  * A condition that matches when a class is present on the classpath.
@@ -40,9 +39,9 @@ public class ClassCondition implements TypeReferenceCondition {
 
     @Override
     public ConditionResult matches(TypeReferenceConditionContext context) {
-        ClassModel classModel = context.classModel();
+        AttributedElement element = context.element();
         Annotation annotation = ClassFileUtilities.getAnnotation(
-                classModel,
+                element,
                 RequiresClass.class
         ).orElseThrow(() -> new IllegalStateException(
                 "ClassModel does not represent a type annotated with RequiresClass"

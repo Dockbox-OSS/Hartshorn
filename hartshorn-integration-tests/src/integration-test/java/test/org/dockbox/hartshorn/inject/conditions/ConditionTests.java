@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.inject.conditions;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -25,7 +29,9 @@ import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.inject.condition.TypeReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -34,14 +40,14 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReference;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -113,26 +119,45 @@ public class ConditionTests {
     }
 
     @Test
-    void classConditions() {
-        TypeView<ConditionTests> type =
-            this.applicationContext.environment().introspector().introspect(ConditionTests.class);
+    void classConditionOnPresentClass() {
+        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
         Condition condition = new ClassCondition();
 
-        MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
-        RequiresCondition annotationForPresent =
-            requiresClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForPresent = new IntrospectedConditionContext(this.applicationContext,
+        MethodModel requiresClass = ClassFileUtilities.getMethod(model, "requiresClass").get();
+        Annotation annotationForPresent = ClassFileUtilities.getAnnotation(
             requiresClass,
-            new AnnotationConditionDeclaration(annotationForPresent));
+            RequiresClass.class
+        ).get();
+        ReferenceConditionDeclaration declarationForPresent =
+            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForPresent);
+        ConditionContext contextForPresent = new TypeReferenceConditionContext(
+            declarationForPresent,
+            new ClassReference(ConditionTests.class),
+            requiresClass
+        );
         assertThat(condition.matches(contextForPresent).matches()).isTrue();
+    }
 
-        MethodView<ConditionTests, ?> requiresAbsentClass =
-            type.methods().named("requiresAbsentClass").get();
-        RequiresCondition annotationForAbsent =
-            requiresAbsentClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForAbsent = new IntrospectedConditionContext(this.applicationContext,
+    @Test
+    void classConditionOnAbsentClass() {
+        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
+        Condition condition = new ClassCondition();
+
+        MethodModel requiresAbsentClass = ClassFileUtilities.getMethod(
+            model,
+            "requiresAbsentClass"
+        ).get();
+        Annotation annotationForAbsent = ClassFileUtilities.getAnnotation(
             requiresAbsentClass,
-            new AnnotationConditionDeclaration(annotationForAbsent));
+            RequiresClass.class
+        ).get();
+        ReferenceConditionDeclaration declarationForAbsent =
+            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForAbsent);
+        ConditionContext contextForAbsent = new TypeReferenceConditionContext(
+            declarationForAbsent,
+            new ClassReference(ConditionTests.class),
+            requiresAbsentClass
+        );
         assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }
 

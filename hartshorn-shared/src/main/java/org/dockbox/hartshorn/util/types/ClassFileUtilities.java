@@ -16,23 +16,25 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.collections.GathererUtilities;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.classfile.Annotation;
 import java.lang.classfile.AnnotationElement;
 import java.lang.classfile.AnnotationValue;
+import java.lang.classfile.AttributedElement;
 import java.lang.classfile.Attributes;
 import java.lang.classfile.ClassFile;
 import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
 import java.lang.classfile.attribute.RuntimeVisibleAnnotationsAttribute;
 import java.lang.classfile.constantpool.Utf8Entry;
 import java.lang.constant.ClassDesc;
+import java.lang.constant.MethodTypeDesc;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.collections.GathererUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for working with Java's {@link ClassFile} API, primarily focused on extracting
@@ -87,14 +89,36 @@ public final class ClassFileUtilities {
         }
     }
 
+    public static Option<MethodModel> getMethod(ClassModel model, String name, Class<?>... parameterTypes) {
+        methods:
+        for (MethodModel method : model.methods()) {
+            if (!method.methodName().equalsString(name)) {
+                continue;
+            }
+            MethodTypeDesc descriptor = method.methodTypeSymbol();
+            if (descriptor.parameterCount() != parameterTypes.length) {
+                continue;
+            }
+            ClassDesc[] parameters = descriptor.parameterArray();
+            for (int i = 0; i < parameters.length; i++) {
+                ClassDesc parameter = parameters[i];
+                if (!matchesConstantPoolName(parameter.descriptorString(), parameterTypes[i].getName())) {
+                    continue methods;
+                }
+            }
+            return Option.of(method);
+        }
+        return Option.empty();
+    }
+
     /**
-     * Get all annotations present on the given {@link ClassModel}.
+     * Get all annotations present on the given {@link AttributedElement}.
      *
-     * @param classModel the {@link ClassModel} to extract annotations from
+     * @param element the {@link AttributedElement} to extract annotations from
      * @return a list of {@link Annotation}s present on the class model
      */
-    public static List<Annotation> getAnnotations(ClassModel classModel) {
-        List<RuntimeVisibleAnnotationsAttribute> attributes = classModel.findAttributes(
+    public static List<Annotation> getAnnotations(AttributedElement element) {
+        List<RuntimeVisibleAnnotationsAttribute> attributes = element.findAttributes(
                 Attributes.runtimeVisibleAnnotations()
         );
         return attributes.stream()
@@ -103,18 +127,18 @@ public final class ClassFileUtilities {
     }
 
     /**
-     * Get all meta-annotations of a specific type present on the given {@link ClassModel}.
+     * Get all meta-annotations of a specific type present on the given {@link AttributedElement}.
      *
-     * @param classModel the {@link ClassModel} to extract meta-annotations from
+     * @param element the {@link AttributedElement} to extract meta-annotations from
      * @param annotationType the type of meta-annotation to look for
      *
      * @return a list of {@link Annotation}s that are meta-annotated with the specified type
      */
     public static List<Annotation> getMetaAnnotations(
-        ClassModel classModel,
+        AttributedElement element,
         Class<? extends java.lang.annotation.Annotation> annotationType
     ) {
-        List<Annotation> annotations = getAnnotations(classModel);
+        List<Annotation> annotations = getAnnotations(element);
         return annotations.stream()
                 .filter(annotation -> {
                     ClassModel annotationModel = getClassModel(annotation.classSymbol());
@@ -124,35 +148,35 @@ public final class ClassFileUtilities {
     }
 
     /**
-     * Get a specific annotation present on the given {@link ClassModel}.
+     * Get a specific annotation present on the given {@link AttributedElement}.
      *
-     * @param classModel the {@link ClassModel} to extract the annotation from
+     * @param element the {@link AttributedElement} to extract the annotation from
      * @param annotationType the type of annotation to look for
      *
      * @return an {@link Option} containing the {@link Annotation} if found, otherwise an empty
      * {@link Option}
      */
     public static Option<Annotation> getAnnotation(
-            ClassModel classModel,
+            AttributedElement element,
             Class<? extends java.lang.annotation.Annotation> annotationType
     ) {
-        return getAnnotation(classModel, annotationType.getName());
+        return getAnnotation(element, annotationType.getName());
     }
 
     /**
-     * Get a specific annotation present on the given {@link ClassModel}.
+     * Get a specific annotation present on the given {@link AttributedElement}.
      *
-     * @param classModel the {@link ClassModel} to extract the annotation from
+     * @param element the {@link AttributedElement} to extract the annotation from
      * @param annotationQualifiedName the fully qualified name of the annotation to look for
      *
      * @return an {@link Option} containing the {@link Annotation} if found, otherwise an empty
      * {@link Option}
      */
     public static Option<Annotation> getAnnotation(
-            ClassModel classModel,
+            AttributedElement element,
             String annotationQualifiedName
     ) {
-        return Option.of(getAnnotations(classModel).stream()
+        return Option.of(getAnnotations(element).stream()
                 .filter(annotation -> matchesConstantPoolName(
                         annotation.className(),
                         annotationQualifiedName
@@ -184,11 +208,37 @@ public final class ClassFileUtilities {
             String expectedValue
     ) {
         String entryValue = entry.stringValue();
-        if (entryValue.startsWith("L") && entryValue.endsWith(";")) {
-            entryValue = entryValue.substring(1, entryValue.length() - 1);
+        return matchesConstantPoolName(entryValue, expectedValue);
+    }
+
+    /**
+     * Check if a descriptor from the constant pool matches the expected fully qualified
+     * class name. Constant pool entries for class names are expected to be equal to field
+     * descriptors as defined in JVM Specification 4.3.2, thus being in the format {@code
+     * Lorg/example/MyClass;}, while the expected value is in the format {@code
+     * org.example.MyClass}.
+     *
+     * <p>Only reference type field descriptors are supported (i.e., those with term {@code L}).
+     * primitive field descriptors (including array dimensions) are not supported.
+     *
+     * @param resourceName the descriptor from the constant pool
+     * @param expectedValue the expected fully qualified class name
+     *
+     * @return true if the entry matches the expected value, false otherwise
+     *
+     * @see <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3.2">
+     * JVM Specification 4.3.2 - Field Descriptors. Table 4.3-A Interpretation of field descriptors
+     * </a>
+     */
+    public static boolean matchesConstantPoolName(
+        String resourceName,
+        String expectedValue
+    ) {
+        if (resourceName.startsWith("L") && resourceName.endsWith(";")) {
+            resourceName = resourceName.substring(1, resourceName.length() - 1);
         }
-        entryValue = entryValue.replace('/', '.');
-        return entryValue.equals(expectedValue);
+        resourceName = resourceName.replace('/', '.');
+        return resourceName.equals(expectedValue);
     }
 
     /**
