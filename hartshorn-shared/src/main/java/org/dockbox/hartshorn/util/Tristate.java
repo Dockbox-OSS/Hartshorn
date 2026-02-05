@@ -56,6 +56,17 @@ public enum Tristate {
     }
 
     /**
+     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED},
+     * the provided default value is returned.
+     *
+     * @param defaultValue the default value to return if this tristate is {@link #UNDEFINED}
+     * @return the boolean value of this tristate, or the default value if undefined
+     */
+    public boolean booleanValue(boolean defaultValue) {
+        return this == UNDEFINED ? defaultValue : this.booleanValue;
+    }
+
+    /**
      * Returns the tristate value of the provided boolean value.
      *
      * @param booleanValue the boolean value to convert

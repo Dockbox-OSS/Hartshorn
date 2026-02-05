@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-
 import java.util.List;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * A simple implementation of {@link ComponentKeyMatcher} which delegates to either
@@ -69,10 +67,7 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
     }
 
     private boolean isStrict(ComponentKey<?> key) {
-        if (key.strict() != Tristate.UNDEFINED) {
-            return key.strict().booleanValue();
-        }
-        return this.configuration.isStrictMode();
+        return key.strict().booleanValue(this.configuration.isStrictMode());
     }
 
     /**

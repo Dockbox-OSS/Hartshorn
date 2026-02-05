@@ -261,7 +261,10 @@ public class HierarchyCache {
                     + hierarchy.getClass().getSimpleName());
             }
         }
-        if (key.scope().present()) {
+
+        if (key.scope().present() && key.includeParentScopes().booleanValue(
+            this.configuration.includeParentScopeForFuzzyMatching()
+        )) {
             ComponentKey<ComponentCollection<T>> unscopedKey = key.mutable()
                     // Need to drop the scope, otherwise we risk the global binder being an
                     // orchestrator which delegates based on the scope of the key, which would
@@ -269,9 +272,15 @@ public class HierarchyCache {
                     .scope(null)
                     .build();
             var globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
+            while (globalHierarchy instanceof BindingHierarchyWrapper<ComponentCollection<T>> wrapper) {
+                globalHierarchy = wrapper.delegate();
+            }
             if (globalHierarchy instanceof CollectionBindingHierarchy<T>
                     collectionBindingHierarchy) {
                 hierarchies.add(collectionBindingHierarchy);
+            }
+            else if (globalHierarchy instanceof ImmutableCompositeBindingHierarchy<T> compositeBindingHierarchy) {
+                hierarchies.addAll(compositeBindingHierarchy.hierarchies());
             }
         }
         return new ImmutableCompositeBindingHierarchy<>(key,

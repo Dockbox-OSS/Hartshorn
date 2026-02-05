@@ -42,7 +42,8 @@ public record ImmutableInjectorConfiguration(
         boolean requiredByDefault,
         boolean bannerEnabled,
         boolean isBatchMode,
-        boolean showStacktraces
+        boolean showStacktraces,
+        boolean includeParentScopeForFuzzyMatching
 ) implements InjectorConfiguration {
 
     /**
@@ -64,7 +65,8 @@ public record ImmutableInjectorConfiguration(
                     configurer.requiredByDefault.initialize(registry),
                     configurer.enableBanner.initialize(registry),
                     configurer.enableBatchMode.initialize(registry),
-                    configurer.showStacktraces.initialize(registry)
+                    configurer.showStacktraces.initialize(registry),
+                    configurer.includeParentScopeForFuzzyMatching.initialize(registry)
             );
         };
     }
@@ -82,6 +84,10 @@ public record ImmutableInjectorConfiguration(
         private ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode =
                 PropertyInitializer.booleanProperty("hartshorn.strict.enabled")
                         .orElseGet(() -> true);
+
+        private ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching =
+                PropertyInitializer.booleanProperty("hartshorn.inject.fuzzy-match-with-parent-scopes")
+                        .orElseGet(() -> false);
 
         private ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor =
                 PropertyInitializer.booleanProperty("hartshorn.inject.allow-single-constructor-fallback")
@@ -140,6 +146,39 @@ public record ImmutableInjectorConfiguration(
         ) {
             this.enableStrictMode = enableStrictMode;
             return this;
+        }
+
+        /**
+         * Enables or disables including parent scopes when performing fuzzy matching.
+         *
+         * @param includeParentScopeForFuzzyMatching initializer to determine whether parent scopes
+         * should be included for fuzzy matching.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer includeParentScopeForFuzzyMatching(
+                ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching
+        ) {
+            this.includeParentScopeForFuzzyMatching = includeParentScopeForFuzzyMatching;
+            return this;
+        }
+
+        /**
+         * Enables including parent scopes when performing fuzzy matching.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer includeParentScopeForFuzzyMatching() {
+            return this.includeParentScopeForFuzzyMatching(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables including parent scopes when performing fuzzy matching.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer excludeParentScopeForFuzzyMatching() {
+            return this.includeParentScopeForFuzzyMatching(ContextualInitializer.of(false));
         }
 
         /**

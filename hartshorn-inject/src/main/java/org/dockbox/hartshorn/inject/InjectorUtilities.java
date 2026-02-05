@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.Tristate;
-
 /**
  * Utility class for injector-related operations.
  *
@@ -40,12 +38,6 @@ public final class InjectorUtilities {
      * @return true if the key should be treated in strict mode, false otherwise
      */
     public static boolean isStrict(ComponentKey<?> key, InjectorConfiguration configuration) {
-        Tristate strict = key.strict();
-        if (strict == Tristate.UNDEFINED) {
-            return configuration.isStrictMode();
-        }
-        else {
-            return strict.booleanValue();
-        }
+        return key.strict().booleanValue(configuration.isStrictMode());
     }
 }

@@ -70,6 +70,7 @@ public final class ComponentKey<T> implements Reportable {
     private final Scope scope;
     private final boolean postConstructionAllowed;
     private final Tristate strict;
+    private final Tristate includeParentScopes;
 
     private ComponentKey(
         ProviderSelectionStrategy selectionStrategy,
@@ -78,7 +79,8 @@ public final class ComponentKey<T> implements Reportable {
         CompositeQualifier qualifier,
         Scope scope,
         boolean postConstructionAllowed,
-        Tristate strict
+        Tristate strict,
+        Tristate includeParentScopes
     ) {
         this.selectionStrategy = selectionStrategy;
         this.failureStrategy = failureStrategy;
@@ -87,6 +89,7 @@ public final class ComponentKey<T> implements Reportable {
         this.scope = scope;
         this.postConstructionAllowed = postConstructionAllowed;
         this.strict = strict;
+        this.includeParentScopes = includeParentScopes;
     }
 
     /**
@@ -368,6 +371,16 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
+     * Returns whether parent scopes should be included when performing fuzzy matching for this
+     * component key. Note that this only applies to collector keys.
+     *
+     * @return whether parent scopes should be included when performing fuzzy matching
+     */
+    public Tristate includeParentScopes() {
+        return this.includeParentScopes;
+    }
+
+    /**
      * Returns the strategy that should be used to select a provider for this component. This often
      * selects a provider based on the priority of the key.
      *
@@ -423,6 +436,8 @@ public final class ComponentKey<T> implements Reportable {
         private boolean postConstructionAllowed = true;
         // If not provided, defaults to InjectorConfiguration#isStrictMode
         private Tristate strict = Tristate.UNDEFINED;
+        // If not provided, defaults to InjectorConfiguration#includeParentScopeForFuzzyMatching
+        private Tristate includeParentScopes = Tristate.UNDEFINED;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
@@ -432,6 +447,7 @@ public final class ComponentKey<T> implements Reportable {
             this.scope = key.scope;
             this.postConstructionAllowed = key.postConstructionAllowed;
             this.strict = key.strict;
+            this.includeParentScopes = key.includeParentScopes;
         }
 
         private Builder(ParameterizableType type) {
@@ -670,6 +686,39 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
+         * Sets whether parent scopes should be included when performing fuzzy matching for this
+         * component key. Note that this only applies to collector keys.
+         *
+         * @param includeParentScopes whether parent scopes should be included when performing fuzzy
+         * matching
+         * @return this builder
+         */
+        public Builder<T> includeParentScopes(boolean includeParentScopes) {
+            this.includeParentScopes = Tristate.valueOf(includeParentScopes);
+            return this;
+        }
+
+        /**
+         * Sets that parent scopes should be included when performing fuzzy matching for this
+         * component key. Note that this only applies to collector keys.
+         *
+         * @return this builder
+         */
+        public Builder<T> includeParentScopes() {
+            return this.includeParentScopes(true);
+        }
+
+        /**
+         * Sets that parent scopes should be excluded when performing fuzzy matching for this
+         * component key. Note that this only applies to collector keys.
+         *
+         * @return this builder
+         */
+        public Builder<T> excludeParentScopes() {
+            return this.includeParentScopes(false);
+        }
+
+        /**
          * Builds a collector key builder for the component type of this key. The collector key
          * builder can be used to create a new key for a collection of components of the given
          * type.
@@ -705,7 +754,8 @@ public final class ComponentKey<T> implements Reportable {
                 this.qualifier,
                 this.scope,
                 this.postConstructionAllowed,
-                this.strict
+                this.strict,
+                this.includeParentScopes
             );
         }
 
