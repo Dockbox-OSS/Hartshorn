@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -85,7 +86,11 @@ public class ExpressionConditionTests {
     ConditionResult match(String expression, ContextView... contexts) {
         ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
         AnnotatedElementView element = this.createAnnotatedElement(expression);
-        ConditionContext context = new ConditionContext(this.applicationContext, element, null);
+        ConditionContext context = new IntrospectedConditionContext(
+            this.applicationContext,
+            element,
+            null
+        );
         for (ContextView child : contexts) {
             context.addContext(child);
         }

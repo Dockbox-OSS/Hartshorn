@@ -38,8 +38,10 @@ import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardPackageView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
+import java.lang.classfile.ClassModel;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -499,6 +501,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public boolean isParameterized() {
         return this.parameterizedType != null;
+    }
+
+    @Override
+    public Option<ClassModel> classFileElement() {
+        return ClassFileUtilities.getClassModel(this.type());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad.condition;
 
-import java.lang.annotation.Annotation;
-
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
 import org.dockbox.hartshorn.launchpad.ConfigurableActivationInjectionCapableApplication;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
+
+import java.lang.annotation.Annotation;
 
 /**
  * A condition that matches when an activator is present.
@@ -34,10 +34,10 @@ import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
  * 
  * @author Guus Lieben
  */
-public class ActivatorCondition implements Condition {
+public class ActivatorCondition implements IntrospectionCondition {
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
+    public ConditionResult matches(IntrospectedConditionContext context) {
         if (!(context.application() instanceof ConfigurableActivationInjectionCapableApplication
             configurableInjectionCapableApplication)) {
             return ConditionResult.notMatched("Application is not compatible with activators");

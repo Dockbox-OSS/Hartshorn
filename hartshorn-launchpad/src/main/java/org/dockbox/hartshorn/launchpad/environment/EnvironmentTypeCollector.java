@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
@@ -23,7 +24,9 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
+import java.lang.classfile.ClassModel;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -90,8 +93,10 @@ public class EnvironmentTypeCollector {
     }
 
     private Collection<Class<?>> loadClasses(Collection<TypeReference> references) {
+        ConditionMatcher conditionMatcher = this.environment.conditionMatcher();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
+            .filter(reference -> conditionMatcher.match(resolveClassModel(reference)))
             .map(reference -> {
                 try {
                     return reference.getOrLoad(classLoader);
@@ -103,5 +108,13 @@ public class EnvironmentTypeCollector {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
+    }
+
+    private ClassModel resolveClassModel(TypeReference reference) {
+        return ClassFileUtilities.getClassModel(
+                reference.qualifiedName()
+        ).orElseThrow(() -> new IllegalStateException(
+                "Could not load class model for type reference: " + reference
+        ));
     }
 }

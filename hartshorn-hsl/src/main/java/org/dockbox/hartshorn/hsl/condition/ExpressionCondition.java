@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.StandardScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
-import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
+import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Guus Lieben
  */
-public class ExpressionCondition implements Condition {
+public class ExpressionCondition implements IntrospectionCondition {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExpressionCondition.class);
 
@@ -73,7 +74,7 @@ public class ExpressionCondition implements Condition {
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
+    public ConditionResult matches(IntrospectedConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresExpression.class)
             .map(condition -> this.calculateResult(context, condition))
             .orElse(ConditionResult.invalidCondition("expression"));
@@ -81,7 +82,7 @@ public class ExpressionCondition implements Condition {
 
     @NonNull
     private ConditionResult calculateResult(
-        ConditionContext context,
+        IntrospectedConditionContext context,
         RequiresExpression condition
     ) {
         String expression = condition.value();
@@ -107,7 +108,7 @@ public class ExpressionCondition implements Condition {
      *
      * @return a new runtime
      */
-    protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
+    protected ValidateExpressionRuntime createRuntime(IntrospectedConditionContext context) {
         InjectionCapableApplication application = context.application();
         ValidateExpressionRuntime runtime;
         if (application instanceof ApplicationContext applicationContext) {
@@ -153,7 +154,7 @@ public class ExpressionCondition implements Condition {
      */
     protected ValidateExpressionRuntime enhance(
         ValidateExpressionRuntime runtime,
-        ConditionContext context
+        InjectionApplicationAwareContext context
     ) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.firstContext(ProvidedParameterContext.class).peek(parameterContext -> {

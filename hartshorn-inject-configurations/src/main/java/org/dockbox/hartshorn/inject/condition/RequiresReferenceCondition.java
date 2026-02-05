@@ -24,33 +24,33 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A generic condition that requires a specific condition to be met. The condition is defined by the
- * {@link #condition()} attribute. If the condition is not met, the annotated element is not
- * processed.
+ * A condition that requires conditions to be met based on
+ * {@link java.lang.classfile.AttributedElement class file elements}.
  *
- * <p>In most cases, it is recommended to create a custom annotation that extends this annotation,
- * and
- * use that annotation instead. This allows for a more readable code base. A basic example is shown
- * below.
+ * <p>By using type references, conditions can be evaluated based on metadata alone, allowing for
+ * safer and more flexible condition checks. The drawback is that the condition implementations
+ * cannot rely on loaded classes, and must instead work with type metadata.
+ *
+ * <p>Due to the nature of type references, only meta annotations of this annotation are supported,
+ * but these lack hierarchy support (i.e. meta-meta annotations and attribute aliases are not
+ * supported).
  *
  * <pre>{@code
- * @Extends(RequiresCondition.class)
- * @RequiresCondition(condition  = SampleCondition.class)
+ * @RequiresReferenceCondition(condition  = SampleCondition.class)
  * public @interface RequiresClass {
  *    ... additional attributes for your condition ...
- *    boolean failOnNoMatch() default false;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @see RequiresClass
- * @see Condition
- * @see ConditionMatcher
- * @since 0.4.12
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequiresCondition {
+public @interface RequiresReferenceCondition {
 
     /**
      * The condition that is required to be met. The condition should be a stateless class that
@@ -58,7 +58,7 @@ public @interface RequiresCondition {
      *
      * @return the condition that is required to be met
      */
-    Class<? extends IntrospectionCondition> condition();
+    Class<? extends ReferenceCondition> condition();
 
     /**
      * Whether to fail on no match. If set to {@code true}, the operation will fail if the condition

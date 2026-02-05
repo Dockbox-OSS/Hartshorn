@@ -27,7 +27,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
+import java.lang.classfile.MethodModel;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -159,5 +161,16 @@ public class ReflectionMethodView<Parent, ReturnType>
         collector.property("parameters")
             .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
         collector.property("declaredBy").writeDelegate(this.declaredBy());
+    }
+
+    @Override
+    public Option<MethodModel> classFileElement() {
+        return this.declaredBy()
+                .classFileElement()
+                .flatMap(type -> ClassFileUtilities.getMethod(
+                        type,
+                        this.name(),
+                        this.method.getParameterTypes()
+                ));
     }
 }

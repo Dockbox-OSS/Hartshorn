@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 /**
  * A context that is used during the evaluation of a condition. This includes the annotated element
@@ -30,21 +32,33 @@ import org.dockbox.hartshorn.context.DefaultContext;
  *
  * @author Guus Lieben
  */
-public sealed class ConditionContext extends DefaultContext
-permits IntrospectedConditionContext, ReferenceConditionContext {
+public non-sealed class IntrospectedConditionContext extends ConditionContext
+    implements InjectionApplicationAwareContext {
 
-    private final ConditionDeclaration condition;
+    private final InjectionCapableApplication application;
+    private final AnnotatedElementView annotatedElement;
 
-    public ConditionContext(ConditionDeclaration condition) {
-        this.condition = condition;
+    public IntrospectedConditionContext(
+        InjectionCapableApplication application,
+        AnnotatedElementView annotatedElement,
+        ConditionDeclaration condition
+    ) {
+        super(condition);
+        this.application = application;
+        this.annotatedElement = annotatedElement;
     }
 
     /**
-     * Returns the {@link ConditionDeclaration declaration} that is used to evaluate the condition.
+     * Returns the annotated element that is being evaluated.
      *
-     * @return the {@link ConditionDeclaration declaration} that is used to evaluate the condition
+     * @return the annotated element that is being evaluated
      */
-    public ConditionDeclaration condition() {
-        return this.condition;
+    public AnnotatedElementView annotatedElement() {
+        return this.annotatedElement;
+    }
+
+    @Override
+    public InjectionCapableApplication application() {
+        return this.application;
     }
 }

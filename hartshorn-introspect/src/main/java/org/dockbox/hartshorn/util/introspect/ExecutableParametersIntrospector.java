@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,4 +135,13 @@ public interface ExecutableParametersIntrospector {
      * exactly, else {@code false}
      */
     boolean matchesExact(List<Class<?>> parameterTypes);
+
+    /**
+     * Returns the index of the provided parameter in the executable element. If the parameter is
+     * not declared by the executable element, {@code -1} is returned.
+     *
+     * @param parameter the parameter to find the index of
+     * @return the index of the provided parameter, or {@code -1} if not found
+     */
+    int indexOf(ParameterView<?> parameter);
 }

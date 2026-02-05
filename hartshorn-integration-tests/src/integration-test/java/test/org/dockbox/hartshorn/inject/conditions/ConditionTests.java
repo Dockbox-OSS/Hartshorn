@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,10 @@ import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -35,11 +38,15 @@ import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,7 +107,7 @@ public class ConditionTests {
         RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
         AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
         ConditionContext context =
-            new ConditionContext(this.applicationContext, method, declaration);
+            new IntrospectedConditionContext(this.applicationContext, method, declaration);
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
@@ -112,34 +119,51 @@ public class ConditionTests {
     }
 
     @Test
-    void classConditions() {
-        TypeView<ConditionTests> type =
-            this.applicationContext.environment().introspector().introspect(ConditionTests.class);
+    void classConditionOnPresentClass() {
+        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
         Condition condition = new ClassCondition();
 
-        MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
-        RequiresCondition annotationForPresent =
-            requiresClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForPresent = new ConditionContext(this.applicationContext,
+        MethodModel requiresClass = ClassFileUtilities.getMethod(model, "requiresClass").get();
+        Annotation annotationForPresent = ClassFileUtilities.getAnnotation(
             requiresClass,
-            new AnnotationConditionDeclaration(annotationForPresent));
+            RequiresClass.class
+        ).get();
+        ReferenceConditionDeclaration declarationForPresent =
+            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForPresent);
+        ConditionContext contextForPresent = new ReferenceConditionContext(
+            declarationForPresent,
+                requiresClass
+        );
         assertThat(condition.matches(contextForPresent).matches()).isTrue();
+    }
 
-        MethodView<ConditionTests, ?> requiresAbsentClass =
-            type.methods().named("requiresAbsentClass").get();
-        RequiresCondition annotationForAbsent =
-            requiresAbsentClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext,
+    @Test
+    void classConditionOnAbsentClass() {
+        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
+        Condition condition = new ClassCondition();
+
+        MethodModel requiresAbsentClass = ClassFileUtilities.getMethod(
+            model,
+            "requiresAbsentClass"
+        ).get();
+        Annotation annotationForAbsent = ClassFileUtilities.getAnnotation(
             requiresAbsentClass,
-            new AnnotationConditionDeclaration(annotationForAbsent));
+            RequiresClass.class
+        ).get();
+        ReferenceConditionDeclaration declarationForAbsent =
+            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForAbsent);
+        ConditionContext contextForAbsent = new ReferenceConditionContext(
+            declarationForAbsent,
+                requiresAbsentClass
+        );
         assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }
 
-    @RequiresClass("java.lang.String")
+    @RequiresClass(classes = String.class)
     private void requiresClass() {
     }
 
-    @RequiresClass("java.gnal.String")
+    @RequiresClass(classNames = "java.gnal.String")
     private void requiresAbsentClass() {
     }
 
@@ -158,9 +182,9 @@ public class ConditionTests {
         assertThat(matcher.match(methodView)).isFalse();
     }
 
-    @RequiresClass("java.gnal.String")
+    @RequiresClass(classNames = "java.gnal.String")
     public static class ParentClass {
-        @RequiresClass("java.lang.String")
+        @RequiresClass(classes = String.class)
         public void requiresClass() {
         }
     }
