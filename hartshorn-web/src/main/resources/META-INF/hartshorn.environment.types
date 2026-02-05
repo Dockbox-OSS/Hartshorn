@@ -1,1 +1,2 @@
 org.dockbox.hartshorn.web.WebServerConfiguration
+org.dockbox.hartshorn.web.WebServerConfiguration$JacksonJsonResponseWriterConfiguration

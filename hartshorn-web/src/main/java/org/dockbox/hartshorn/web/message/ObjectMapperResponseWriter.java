@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web.message;
 
+import jakarta.servlet.http.HttpServletResponse;
 import tools.jackson.databind.ObjectMapper;
 
 import java.nio.ByteBuffer;
@@ -41,9 +42,9 @@ public class ObjectMapperResponseWriter implements ResponseWriter<Object> {
     }
 
     @Override
-    public void write(WebResponse response, Object body) throws Exception {
-        response.headers().set("Content-Type", this.contentType);
+    public void write(HttpServletResponse response, Object body) throws Exception {
+        response.setHeader("Content-Type", this.contentType);
         byte[] data = this.objectMapper.writeValueAsBytes(body);
-        response.write(ByteBuffer.wrap(data));
+        response.getOutputStream().write(ByteBuffer.wrap(data));
     }
 }

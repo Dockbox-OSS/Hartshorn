@@ -16,7 +16,8 @@
 
 package test.org.dockbox.hartshorn.web.route;
 
-import org.dockbox.hartshorn.web.route.PathPatternMatcher;
+import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
+import org.dockbox.hartshorn.web.route.support.StandardPathPatternMatcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PathPatternMatcherTests {
+public class StandardPathPatternMatcherTests {
 
     public static Stream<Arguments> matchParameters() {
         // checkstyle:off LineLength
@@ -55,11 +56,9 @@ public class PathPatternMatcherTests {
     @ParameterizedTest
     @MethodSource("matchParameters")
     void matchTests(String pattern, String route, boolean match, Map<String, String> parameters) {
-        PathPatternMatcher.MatchResult result = PathPatternMatcher.match(
-                pattern,
-                route
-        );
-        assertThat(result.matches()).isEqualTo(match);
-        assertThat(result.parameters()).isEqualTo(parameters);
+        StandardPathPatternMatcher matcher = new StandardPathPatternMatcher();
+        PathPatternMatcher.PatternMatch patternMatch = matcher.matches(pattern, route);
+        assertThat(patternMatch.matches()).isEqualTo(match);
+        assertThat(patternMatch.parameters()).isEqualTo(parameters);
     }
 }
