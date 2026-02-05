@@ -16,14 +16,23 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import org.dockbox.hartshorn.inject.condition.RequiresReferenceCondition;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.dockbox.hartshorn.inject.condition.RequiresReferenceCondition;
 
 /**
- * A condition that requires classes to be present in the classpath.
+ * A condition that requires classes to be present in the classpath. As this condition is evaluated
+ * early during the injection process, it does not require the classes to be loaded by the JVM, and
+ * can therefore be used to conditionally load configurations based on optional dependencies.
+ *
+ * <p><b>Note, for binding methods</b>, take into account that the JVM will have loaded the
+ * enclosing class, as well as the return type and any method references, before evaluating this
+ * condition. As such, this condition is best applied to configuration classes. If used on binding
+ * methods, ensure the return type and references do not depend on the checked classes. For such
+ * cases, use separate conditionally loaded configuration classes.
  *
  * @see ClassCondition
  * 

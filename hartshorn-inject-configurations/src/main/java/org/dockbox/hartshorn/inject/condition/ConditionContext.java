@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.context.DefaultContext;
  * @author Guus Lieben
  */
 public sealed class ConditionContext extends DefaultContext
-permits IntrospectedConditionContext, TypeReferenceConditionContext {
+permits IntrospectedConditionContext, ReferenceConditionContext {
 
     private final ConditionDeclaration condition;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 package org.dockbox.hartshorn.util.introspect.view;
 
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.classfile.ClassFileElement;
 
 /**
  * Represents a view of an annotated element, such as a field or method. This view can be used to
@@ -35,4 +38,11 @@ public interface AnnotatedElementView extends EnclosableView {
      * @return an introspector for the element's annotations
      */
     ElementAnnotationsIntrospector annotations();
+
+    /**
+     * Returns the underlying class file element represented by this view, if available.
+     *
+     * @return the underlying class file element
+     */
+    Option<? extends ClassFileElement> classFileElement();
 }

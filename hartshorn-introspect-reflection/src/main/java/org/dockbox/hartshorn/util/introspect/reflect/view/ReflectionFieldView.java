@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.classfile.FieldModel;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -185,6 +186,16 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 (TypeView<Parent>) this.introspector.introspect(this.field.getDeclaringClass());
         }
         return this.declaredBy;
+    }
+
+    @Override
+    public Option<FieldModel> classFileElement() {
+        return this.declaredBy()
+                .classFileElement()
+                .flatMap(type -> Option.of(type.fields().stream()
+                        .filter(fieldModel -> fieldModel.fieldName().equalsString(this.name()))
+                        .findFirst()
+                ));
     }
 
     @Override

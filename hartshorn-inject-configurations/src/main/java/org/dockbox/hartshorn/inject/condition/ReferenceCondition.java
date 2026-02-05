@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * A {@link Condition} that matches based on a type reference, without requiring the type to be
+ * A {@link Condition} that matches based on a reference, without requiring the element to be
  * loaded. This has the benefit of being able to evaluate conditions without causing class loading
  * early in the application lifecycle. The drawback is that the condition implementation must work
- * with type references with limited information (compared to loaded classes, which support full
+ * with references with limited information (compared to loaded elements, which support full
  * introspection).
  *
  * @since 0.7.0
@@ -28,7 +28,7 @@ package org.dockbox.hartshorn.inject.condition;
  * @author Guus Lieben
  */
 @FunctionalInterface
-public non-sealed interface TypeReferenceCondition extends Condition {
+public non-sealed interface ReferenceCondition extends Condition {
 
     /**
      * Returns a {@link ConditionResult} that describes whether the condition is matched.
@@ -39,11 +39,11 @@ public non-sealed interface TypeReferenceCondition extends Condition {
      */
     @Override
     default ConditionResult matches(ConditionContext context) {
-        if (context instanceof TypeReferenceConditionContext referenceConditionContext) {
+        if (context instanceof ReferenceConditionContext referenceConditionContext) {
             return this.matches(referenceConditionContext);
         }
         return ConditionResult.notMatched(
-                "ConditionContext is not an instance of TypeReferenceConditionContext"
+                "ConditionContext is not an instance of ReferenceConditionContext"
         );
     }
 
@@ -53,5 +53,5 @@ public non-sealed interface TypeReferenceCondition extends Condition {
      * @param context the type reference condition context
      * @return the condition result
      */
-    ConditionResult matches(TypeReferenceConditionContext context);
+    ConditionResult matches(ReferenceConditionContext context);
 }

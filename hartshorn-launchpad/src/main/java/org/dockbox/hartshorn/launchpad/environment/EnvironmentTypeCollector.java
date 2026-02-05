@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
@@ -30,6 +24,15 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
+
+import java.lang.classfile.ClassModel;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A collector for types in the environment. This delegates to the
@@ -93,7 +96,7 @@ public class EnvironmentTypeCollector {
         ConditionMatcher conditionMatcher = this.environment.conditionMatcher();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
-            .filter(conditionMatcher::match)
+            .filter(reference -> conditionMatcher.match(resolveClassModel(reference)))
             .map(reference -> {
                 try {
                     return reference.getOrLoad(classLoader);
@@ -105,5 +108,13 @@ public class EnvironmentTypeCollector {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
+    }
+
+    private ClassModel resolveClassModel(TypeReference reference) {
+        return ClassFileUtilities.getClassModel(
+                reference.qualifiedName()
+        ).orElseThrow(() -> new IllegalStateException(
+                "Could not load class model for type reference: " + reference
+        ));
     }
 }

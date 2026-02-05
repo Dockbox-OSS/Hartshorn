@@ -131,6 +131,28 @@ public final class ClassFileUtilities {
     }
 
     /**
+     * Get the constructor from a {@link ClassModel} by its parameter types. The constructor must
+     * have exactly the same parameter types as specified, otherwise an empty {@link Option} is
+     * returned.
+     *
+     * <p>Constructors are represented as methods with the name {@code <init>}, as defined in the
+     * JVM specification.
+     *
+     * @param model the {@link ClassModel} to search for the constructor
+     * @param parameterTypes the parameter types of the constructor to look for
+     *
+     * @return an {@link Option} containing the {@link MethodModel} if found, otherwise an empty
+     * {@link Option}
+     *
+     * @see <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.9">
+     * JVM Specification 2.9 - Special Methods
+     * </a>
+     */
+    public static Option<MethodModel> getConstructor(ClassModel model, Class<?>... parameterTypes) {
+        return getMethod(model, "<init>", parameterTypes);
+    }
+
+    /**
      * Get all annotations present on the given {@link AttributedElement}.
      *
      * @param element the {@link AttributedElement} to extract annotations from

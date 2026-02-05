@@ -24,20 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A condition that requires conditions to be met based on type references. Unlike
- * {@link RequiresCondition}, this annotation is specifically designed to work with conditions that
- * evaluate type references, such as classes or interfaces, without needing to load the classes into
- * the JVM.
+ * A condition that requires conditions to be met based on
+ * {@link java.lang.classfile.AttributedElement class file elements}.
  *
- * <p>This approach has the benefit of avoiding class loading issues, such as
- * {@link ClassNotFoundException ClassNotFoundExceptions}, when checking for the presence of
- * classes that may not be available at runtime. By using type references, conditions can be
- * evaluated based on metadata alone, allowing for safer and more flexible condition checks. The
- * drawback is that the condition implementations cannot rely on loaded classes, and must
- * instead work with type metadata.
+ * <p>By using type references, conditions can be evaluated based on metadata alone, allowing for
+ * safer and more flexible condition checks. The drawback is that the condition implementations
+ * cannot rely on loaded classes, and must instead work with type metadata.
  *
- * <p>Due to the nature of type references, meta annotations of this annotation are supported, but
- * lack hierarchy support (i.e. meta-meta annotations and attribute aliases are not supported).
+ * <p>Due to the nature of type references, only meta annotations of this annotation are supported,
+ * but these lack hierarchy support (i.e. meta-meta annotations and attribute aliases are not
+ * supported).
  *
  * <pre>{@code
  * @RequiresReferenceCondition(condition  = SampleCondition.class)
@@ -62,7 +58,7 @@ public @interface RequiresReferenceCondition {
      *
      * @return the condition that is required to be met
      */
-    Class<? extends TypeReferenceCondition> condition();
+    Class<? extends ReferenceCondition> condition();
 
     /**
      * Whether to fail on no match. If set to {@code true}, the operation will fail if the condition

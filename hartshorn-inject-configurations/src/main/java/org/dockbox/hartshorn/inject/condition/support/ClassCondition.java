@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.ReferenceCondition;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.lang.classfile.Annotation;
 import java.lang.classfile.AnnotationValue;
 import java.lang.classfile.AttributedElement;
 import java.util.List;
-import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.inject.condition.TypeReferenceCondition;
-import org.dockbox.hartshorn.inject.condition.TypeReferenceConditionContext;
-import org.dockbox.hartshorn.util.types.ClassFileUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A condition that matches when a class is present on the classpath.
@@ -35,10 +36,10 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  *
  * @author Guus Lieben
  */
-public class ClassCondition implements TypeReferenceCondition {
+public class ClassCondition implements ReferenceCondition {
 
     @Override
-    public ConditionResult matches(TypeReferenceConditionContext context) {
+    public ConditionResult matches(ReferenceConditionContext context) {
         AttributedElement element = context.element();
         Annotation annotation = ClassFileUtilities.getAnnotation(
                 element,

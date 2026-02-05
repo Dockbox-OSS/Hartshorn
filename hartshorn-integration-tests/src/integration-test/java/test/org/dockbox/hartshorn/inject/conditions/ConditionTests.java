@@ -16,10 +16,6 @@
 
 package test.org.dockbox.hartshorn.inject.conditions;
 
-import java.lang.classfile.Annotation;
-import java.lang.classfile.ClassModel;
-import java.lang.classfile.MethodModel;
-import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -31,7 +27,7 @@ import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.ReferenceConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.inject.condition.TypeReferenceConditionContext;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -40,7 +36,6 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.introspect.scan.ClassReference;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
@@ -48,6 +43,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -130,10 +130,9 @@ public class ConditionTests {
         ).get();
         ReferenceConditionDeclaration declarationForPresent =
             ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForPresent);
-        ConditionContext contextForPresent = new TypeReferenceConditionContext(
+        ConditionContext contextForPresent = new ReferenceConditionContext(
             declarationForPresent,
-            new ClassReference(ConditionTests.class),
-            requiresClass
+                requiresClass
         );
         assertThat(condition.matches(contextForPresent).matches()).isTrue();
     }
@@ -153,10 +152,9 @@ public class ConditionTests {
         ).get();
         ReferenceConditionDeclaration declarationForAbsent =
             ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForAbsent);
-        ConditionContext contextForAbsent = new TypeReferenceConditionContext(
+        ConditionContext contextForAbsent = new ReferenceConditionContext(
             declarationForAbsent,
-            new ClassReference(ConditionTests.class),
-            requiresAbsentClass
+                requiresAbsentClass
         );
         assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }

@@ -27,7 +27,7 @@ package org.dockbox.hartshorn.inject.condition;
  * 
  * @author Guus Lieben
  */
-public sealed interface Condition permits IntrospectionCondition, TypeReferenceCondition {
+public sealed interface Condition permits IntrospectionCondition, ReferenceCondition {
 
     /**
      * Returns a {@link ConditionResult} that describes whether the condition is matched.

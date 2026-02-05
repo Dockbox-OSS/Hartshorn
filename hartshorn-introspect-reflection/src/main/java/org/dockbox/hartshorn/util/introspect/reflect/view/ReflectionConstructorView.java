@@ -27,7 +27,9 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
+import java.lang.classfile.MethodModel;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -143,5 +145,15 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         collector.property("type").writeDelegate(this.type());
         collector.property("parameters")
             .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+    }
+
+    @Override
+    public Option<MethodModel> classFileElement() {
+        return this.declaredBy()
+                .classFileElement()
+                .flatMap(type -> ClassFileUtilities.getConstructor(
+                        type,
+                        this.constructor.getParameterTypes()
+                ));
     }
 }

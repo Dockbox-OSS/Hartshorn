@@ -23,16 +23,13 @@ import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
-import org.dockbox.hartshorn.util.introspect.scan.ClassReference;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
 import java.lang.classfile.Annotation;
-import java.lang.classfile.ClassModel;
+import java.lang.classfile.AttributedElement;
 import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,10 +114,10 @@ public final class ConditionMatcher extends DefaultContext
      * enclosed element to the most enclosed element (the given element). This means that
      * class-level conditions are evaluated before method-level conditions.
      *
-     * <p>{@link TypeReferenceCondition reference conditions} are also matched for any type views
-     * encountered during the matching process. Note that this may cause issues with class loading
-     * if the type references point to classes that are not available at runtime. In such cases,
-     * {@link #match(TypeReference, ContextView...)} should be used directly to avoid class
+     * <p>{@link ReferenceCondition reference conditions} are also matched for any reference
+     * views encountered during the matching process. Note that this may cause issues with class
+     * loading if the references point to classes that are not available at runtime. In such cases,
+     * {@link #match(AttributedElement, ContextView...)} should be used directly to avoid class
      * loading.
      *
      * @param annotatedElementContext the annotated element to match against
@@ -149,8 +146,9 @@ public final class ConditionMatcher extends DefaultContext
                 return false;
             }
 
-            if (elementView instanceof TypeView<?> typeView
-                && !this.match(new ClassReference(typeView.type()), contexts)) {
+            if (!elementView.classFileElement()
+                    .ofType(AttributedElement.class)
+                    .test(element -> this.match(element, contexts), true)) {
                 return false;
             }
         }
@@ -159,35 +157,28 @@ public final class ConditionMatcher extends DefaultContext
 
     /**
      * Matches the {@link RequiresReferenceCondition} annotations of the given
-     * {@link TypeReference}, providing any additional {@link ContextView} instances to the
+     * {@link AttributedElement}, providing any additional {@link ContextView} instances to the
      * {@link ConditionContext} that is used to match the
      * {@link Condition condition implementations}. If any of the conditions do not match, this
      * method will return {@code false}. If all conditions match, this method will return
      * {@code true}.
      *
-     * @param typeReference the type reference to match against
+     * @param element the attributed element to match against
      * @param contexts the additional contexts to provide to the condition context
-     *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(TypeReference typeReference, ContextView... contexts) {
-        ClassModel classModel = ClassFileUtilities.getClassModel(
-            typeReference.qualifiedName()
-        ).orElseThrow(() -> new IllegalStateException(
-            "Could not load class model for type reference: " + typeReference
-        ));
+    public boolean match(AttributedElement element, ContextView... contexts) {
         List<Annotation> annotations = ClassFileUtilities.getMetaAnnotations(
-            classModel,
-            RequiresReferenceCondition.class
+                element,
+                RequiresReferenceCondition.class
         );
         for (Annotation annotation : annotations) {
             var declaration = ReferenceConditionDeclaration.createFromMetaAnnotation(annotation);
-            TypeReferenceConditionContext conditionContext =
-                new TypeReferenceConditionContext(
-                    declaration,
-                    typeReference,
-                    classModel
-                );
+            ReferenceConditionContext conditionContext =
+                    new ReferenceConditionContext(
+                            declaration,
+                            element
+                    );
             if (!this.matchConditionContext(conditionContext, declaration, contexts)) {
                 return false;
             }
@@ -251,7 +242,7 @@ public final class ConditionMatcher extends DefaultContext
         // Application may still be starting, thus fallback should be used.
         final ObjectFactory objectFactory;
         if (application == null) {
-            assert context instanceof TypeReferenceConditionContext : """
+            assert context instanceof ReferenceConditionContext : """
                 Expected type reference condition context when application is starting.
                 Introspection-capable condition contexts require at least a partially
                 initialized application.

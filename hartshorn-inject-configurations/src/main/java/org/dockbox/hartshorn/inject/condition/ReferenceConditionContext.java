@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.inject.condition;
 
 import java.lang.classfile.AttributedElement;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 
 /**
- * A context that is used during the evaluation of a condition. This includes the type reference
- * that is being evaluated, and the {@link RequiresReferenceCondition} annotation that is used to
- * evaluate the condition.
+ * A context that is used during the evaluation of a condition. This context provides access to the
+ * {@link AttributedElement class file element} being evaluated. Unlike the
+ * {@link IntrospectedConditionContext}, this context does not ensure that the element is fully
+ * loaded by the JVM, and may therefore be used in earlier stages of the injection process.
  *
  * @see RequiresReferenceCondition
  *
@@ -30,30 +30,16 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
  *
  * @author Guus Lieben
  */
-public non-sealed class TypeReferenceConditionContext extends ConditionContext {
+public non-sealed class ReferenceConditionContext extends ConditionContext {
 
-    private final TypeReference typeReference;
     private final AttributedElement element;
 
-    public TypeReferenceConditionContext(
+    public ReferenceConditionContext(
             ConditionDeclaration condition,
-            TypeReference typeReference,
             AttributedElement element
     ) {
         super(condition);
-        this.typeReference = typeReference;
         this.element = element;
-    }
-
-    /**
-     * Returns the type reference in which the condition is being evaluated. This may match the
-     * {@link #element()} if the element is a type, but may also represent a member or other
-     * annotated element within the type.
-     *
-     * @return the type reference being evaluated
-     */
-    public TypeReference typeReference() {
-        return this.typeReference;
     }
 
     /**
