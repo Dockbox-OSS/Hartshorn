@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.web.ServerException;
 import org.dockbox.hartshorn.web.WebServer;
@@ -25,6 +26,7 @@ import org.dockbox.hartshorn.web.jetty.report.NetworkConnectorReporter;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -98,5 +100,13 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         if (handler instanceof Reportable reportable) {
             collector.property("handler").writeDelegate(reportable);
         }
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("jettyServer", this.jettyServer)
+                .describe();
     }
 }

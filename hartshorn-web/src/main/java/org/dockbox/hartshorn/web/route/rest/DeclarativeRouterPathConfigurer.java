@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.route;
+package org.dockbox.hartshorn.web.route.rest;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.web.rest.HttpRoute;
 import org.dockbox.hartshorn.web.rest.RestRouter;
+import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
+import org.dockbox.hartshorn.web.route.RequestHandler;
+import org.dockbox.hartshorn.web.route.RouteMapping;
+import org.dockbox.hartshorn.web.route.RouterCustomizer;
+
+import java.util.List;
 
 /**
- * A {@link RouterPathRegistrar} that registers routes declared in
- * {@link RestRouter router components}.
+ * A {@link RouterCustomizer} that registers routes declared in {@link RestRouter router components}
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class DeclarativeRouterPathConfigurer implements RouterPathRegistrar {
+public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
 
     private final ComponentRegistry componentRegistry;
     private final ConversionService conversionService;
@@ -47,16 +54,30 @@ public class DeclarativeRouterPathConfigurer implements RouterPathRegistrar {
     }
 
     @Override
-    public void register(RouterPathConfigurer target) {
+    public void configure(HandlerMappingRegistrar routes) {
         for (ComponentContainer<?> container : componentRegistry.containers()) {
             if (container.type().annotations().has(RestRouter.class)) {
-                RestRouterPathRegistrar registrar = new RestRouterPathRegistrar(
-                        this.application,
-                        this.conversionService,
-                        container.type()
-                );
-                registrar.registerPaths(target);
+                this.register(container, routes);
             }
+        }
+    }
+
+    private void register(ComponentContainer<?> container, HandlerMappingRegistrar routes) {
+        List<? extends MethodView<?, ?>> routeMethods = container.type().methods()
+                .annotatedWith(HttpRoute.class);
+        for (MethodView<?, ?> routeMethod : routeMethods) {
+            RequestHandler handler = new RouterMethodRequestHandler<>(
+                    this.application,
+                    this.conversionService,
+                    routeMethod
+            );
+            HttpRoute httpRoute = routeMethod.annotations().get(HttpRoute.class)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Expected method to be annotated with @%s".formatted(
+                                    HttpRoute.class.getSimpleName()
+                            )
+                    ));
+            routes.add(RouteMapping.of(httpRoute.method(), httpRoute.path()), handler);
         }
     }
 }

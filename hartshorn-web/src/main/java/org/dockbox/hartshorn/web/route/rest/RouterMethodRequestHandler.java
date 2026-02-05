@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.route;
+package org.dockbox.hartshorn.web.route.rest;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -24,8 +26,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.WebRequestScope;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
+import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.route.rules.HeaderValueParameterLoaderRule;
 
 /**
@@ -56,7 +57,7 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
     }
 
     @Override
-    public boolean handle(WebRequest request, WebResponse response) throws Exception {
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         WebRequestScope scope = new WebRequestScope(request, response);
         var adapter = new InjectorExecutableInvocationAdapter(this.application)
                 .scope(scope)
@@ -69,7 +70,6 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
         try {
             // TODO: Handle the result appropriately. Currently does not support non-void methods.
             Option<R> result = adapter.invoke(this.methodView, instance);
-            return true;
         }
         catch (Exception e) {
             // Will be handled upstream

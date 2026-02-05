@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.web.message;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
- * A writer that can write a response body to a {@link WebResponse}.
+ * A writer that can write a response body to a {@link HttpServletResponse}.
  *
  * @param <T> The type of the response body.
  *
@@ -35,5 +37,5 @@ public interface ResponseWriter<T> {
      *
      * @throws Exception If an error occurs while writing the response.
      */
-    void write(WebResponse response, T body) throws Exception;
+    void write(HttpServletResponse response, T body) throws Exception;
 }

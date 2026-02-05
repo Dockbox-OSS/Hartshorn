@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.inject.ExceptionHandler;
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
@@ -28,34 +30,30 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
-import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-import org.dockbox.hartshorn.web.filter.ErrorCaptureRequestFilter;
-import org.dockbox.hartshorn.web.filter.PathMatchingRequestFilter;
-import org.dockbox.hartshorn.web.filter.RequestFilter;
-import org.dockbox.hartshorn.web.filter.RequestFilterChain;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
-import org.dockbox.hartshorn.web.filter.SimpleRequestFilterChain;
-import org.dockbox.hartshorn.web.filter.UncapturedRequestFilter;
 import org.dockbox.hartshorn.web.message.ObjectMapperResponseWriter;
 import org.dockbox.hartshorn.web.message.ResponseWriter;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
-import org.dockbox.hartshorn.web.route.DeclarativeRouterPathConfigurer;
-import org.dockbox.hartshorn.web.route.PathMatchingRouterPathConfigurer;
-import org.dockbox.hartshorn.web.route.PathRouteRegistry;
-import org.dockbox.hartshorn.web.route.RouterPathConfigurer;
-import org.dockbox.hartshorn.web.route.RouterPathRegistrar;
+import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
+import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
+import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
+import org.dockbox.hartshorn.web.route.RouterCustomizer;
+import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
+import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
+import org.dockbox.hartshorn.web.route.rest.DeclarativeRouterPathConfigurer;
+import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
+import org.dockbox.hartshorn.web.route.support.PatternMatchingHandlerMappingResolver;
+import org.dockbox.hartshorn.web.route.support.StandardPathPatternMatcher;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -71,53 +69,6 @@ import java.util.Objects;
 public class WebServerConfiguration {
 
     /**
-     * Creates a {@link RequestFilterChain}, collecting all registered {@link RequestFilter filters}
-     * and sorting them by their order.
-     *
-     * @param filters The collection of request filters.
-     *
-     * @return A sorted request filter chain.
-     */
-    @Singleton
-    public RequestFilterChain requestHandlerChain(
-        @Fuzzy ComponentCollection<RequestFilter> filters
-    ) {
-        return new SimpleRequestFilterChain(filters.stream()
-                .sorted(Comparator.comparingInt(RequestFilter::order))
-                .toList());
-    }
-
-    /**
-     * Creates an {@link ErrorCaptureRequestFilter} that uses the provided {@link ExceptionHandler}
-     * to handle exceptions during request processing.
-     *
-     * @param exceptionHandler The exception handler to use.
-     *
-     * @return An error capture request filter.
-     */
-    @Singleton
-    @CompositeMember
-    public RequestFilter errorCaptureRequestFilter(ExceptionHandler exceptionHandler) {
-        return new ErrorCaptureRequestFilter(exceptionHandler);
-    }
-
-    /**
-     * Creates a {@link PathMatchingRequestFilter} that uses the provided {@link PathRouteRegistry}
-     * to match incoming requests to registered routes.
-     *
-     * @param registry The path route registry to use.
-     *
-     * @return A path matching request filter.
-     */
-    @Singleton
-    @CompositeMember
-    public RequestFilter pathMatchingRequestFilter(
-            PathRouteRegistry registry
-    ) {
-        return new PathMatchingRequestFilter(registry);
-    }
-
-    /**
      * Creates a {@link RequestLoggingFilter} if request logging is enabled via configuration.
      *
      * @param builder An optional builder for the request logging filter.
@@ -128,7 +79,7 @@ public class WebServerConfiguration {
     @Singleton
     @CompositeMember
     @RequiresProperty(name = "hartshorn.web.logging.enabled", withValue = "true")
-    public RequestFilter requestLoggingFilter(
+    public Filter requestLoggingFilter(
             @Required(false) RequestLoggingFilter.Builder builder,
             @LoggerMeta(context = RequestLoggingFilter.class) Logger logger
     ) {
@@ -139,50 +90,48 @@ public class WebServerConfiguration {
     }
 
     /**
-     * Creates an {@link UncapturedRequestFilter} to handle requests that do not match any
-     * registered routes.
+     * Creates a {@link HandlerMappingRegistry} and applies all registered customizers to it.
      *
-     * @return An uncaptured request filter.
+     * @param customizers The collection of customizers for the handler mapping registry.
+     *
+     * @return A configured handler mapping registry.
      */
     @Singleton
-    @CompositeMember
-    public RequestFilter uncapturedRequestFilter() {
-        return new UncapturedRequestFilter();
-    }
-
-    /**
-     * Creates a {@link PathRouteRegistry} and applies all registered customizers to it.
-     *
-     * @param customizers The collection of customizers for the path route registry.
-     *
-     * @return A configured path route registry.
-     */
-    @Singleton
-    public PathRouteRegistry pathRouteRegistry(
-            @Fuzzy ComponentCollection<Customizer<PathRouteRegistry>> customizers
+    public HandlerMappingRegistry pathRouteRegistry(
+            @Fuzzy ComponentCollection<RouterCustomizer> customizers,
+            @LoggerMeta(context = HandlerMappingRegistrar.class) Logger logger
     ) {
-        PathRouteRegistry registry = new PathRouteRegistry();
-        customizers.forEach(customizer -> customizer.configure(registry));
+        HandlerMappingRegistry registry = new SimpleHandlerMappingRegistry();
+        HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry, logger);
+        customizers.forEach(customizer -> customizer.configure(registrar));
         return registry;
     }
 
-    /**
-     * Creates a customizer for the {@link PathRouteRegistry} that applies all registered
-     * {@link RouterPathConfigurer path configurers}.
-     *
-     * @param pathCustomizers The collection of path configurers.
-     *
-     * @return A customizer for the path route registry.
-     */
     @Singleton
     @CompositeMember
-    Customizer<PathRouteRegistry> routeCustomizer(
-            @Fuzzy ComponentCollection<RouterPathRegistrar> pathCustomizers
+    public RouterCustomizer declarativeRouterPathConfigurer(
+            ComponentRegistry componentRegistry,
+            ConversionService conversionService,
+            InjectionCapableApplication application
     ) {
-        return registry -> {
-            RouterPathConfigurer configurer = new PathMatchingRouterPathConfigurer(registry);
-            pathCustomizers.forEach(customizer -> customizer.register(configurer));
-        };
+        return new DeclarativeRouterPathConfigurer(
+                componentRegistry,
+                conversionService,
+                application
+        );
+    }
+
+    @Singleton
+    public HandlerMappingResolver handlerMappingResolver(
+            PathPatternMatcher patternMatcher,
+            HandlerMappingRegistry registry
+    ) {
+        return new PatternMatchingHandlerMappingResolver(patternMatcher, registry);
+    }
+
+    @Singleton
+    public PathPatternMatcher pathPatternMatcher() {
+        return new StandardPathPatternMatcher();
     }
 
     /**
@@ -198,21 +147,7 @@ public class WebServerConfiguration {
     }
 
     /**
-     * Creates a {@link ResponseWriter} that uses a {@link JsonMapper} to serialize objects to
-     * JSON.
-     *
-     * @param jsonMapper The JSON mapper to use for serialization.
-     *
-     * @return A response writer for JSON objects.
-     */
-    @Singleton
-    @Named("json")
-    public ResponseWriter<Object> objectMapperResponseWriter(JsonMapper jsonMapper) {
-        return new ObjectMapperResponseWriter(jsonMapper, "application/json");
-    }
-
-    /**
-     * Provides the current {@link WebRequest} from the {@link WebRequestScope}.
+     * Provides the current {@link HttpServletRequest} from the {@link WebRequestScope}.
      *
      * @param scope The web request scope.
      *
@@ -220,12 +155,12 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
-    public WebRequest webRequest(WebRequestScope scope) {
+    public HttpServletRequest webRequest(WebRequestScope scope) {
         return scope.request();
     }
 
     /**
-     * Provides the current {@link WebResponse} from the {@link WebRequestScope}.
+     * Provides the current {@link HttpServletResponse} from the {@link WebRequestScope}.
      *
      * @param scope The web request scope.
      *
@@ -233,7 +168,7 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
-    public WebResponse webResponse(WebRequestScope scope) {
+    public HttpServletResponse webResponse(WebRequestScope scope) {
         return scope.response();
     }
 
@@ -251,27 +186,22 @@ public class WebServerConfiguration {
         return new WebServerDiagnosticsReporter(webServer);
     }
 
-    /**
-     * Creates a {@link DeclarativeRouterPathConfigurer} to register routes declared in router
-     * components.
-     *
-     * @param componentRegistry The component registry.
-     * @param conversionService The conversion service.
-     * @param application The injection-capable application.
-     *
-     * @return A declarative router path configurer.
-     */
-    @Singleton
-    @CompositeMember
-    public RouterPathRegistrar declarativeRouterPathConfigurer(
-            ComponentRegistry componentRegistry,
-            ConversionService conversionService,
-            InjectionCapableApplication application
-    ) {
-        return new DeclarativeRouterPathConfigurer(
-                componentRegistry,
-                conversionService,
-                application
-        );
+    @Configuration
+    @RequiresClass(classes = JsonMapper.class)
+    public static class JacksonJsonResponseWriterConfiguration {
+
+        /**
+         * Creates a {@link ResponseWriter} that uses a {@link JsonMapper} to serialize objects to
+         * JSON.
+         *
+         * @param jsonMapper The JSON mapper to use for serialization.
+         *
+         * @return A response writer for JSON objects.
+         */
+        @Singleton
+        @Named("json")
+        public ResponseWriter<Object> objectMapperResponseWriter(JsonMapper jsonMapper) {
+            return new ObjectMapperResponseWriter(jsonMapper, "application/json");
+        }
     }
 }

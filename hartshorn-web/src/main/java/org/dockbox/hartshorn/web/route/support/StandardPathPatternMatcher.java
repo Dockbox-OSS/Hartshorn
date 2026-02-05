@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.route;
+package org.dockbox.hartshorn.web.route.support;
 
 import java.util.Map;
 
@@ -31,37 +31,26 @@ import java.util.Map;
  * <p>This class provides methods to determine if a given request path matches
  * a specified pattern and to extract any parameters from the path.
  *
- * @see PathRouteRegistry
- * @see PathMatchingRouterPathConfigurer
- *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class PathPatternMatcher {
+public class StandardPathPatternMatcher implements PathPatternMatcher {
 
-    /**
-     * Matches the given pattern against the specified path.
-     *
-     * @param pattern The path pattern to match against (e.g., /users/{id}).
-     * @param path The actual request path (e.g., /users/123).
-     *
-     * @return A {@link MatchResult} indicating whether the path matches the pattern and any
-     * extracted parameters.
-     */
-    public static MatchResult match(String pattern, String path) {
+    @Override
+    public PatternMatch matches(String pattern, String path) {
         // Filter out leading and trailing slashes for consistency
         pattern = filterPattern(pattern);
         path = filterPattern(path);
         if (pattern.equals(path)) {
-            return new MatchResult(true, Map.of());
+            return new PatternMatch(true, Map.of());
         }
 
         String[] patternSegments = pattern.split("/");
         String[] pathSegments = path.split("/");
 
         if (patternSegments.length != pathSegments.length) {
-            return new MatchResult(false, Map.of());
+            return new PatternMatch(false, Map.of());
         }
 
         Map<String, String> parameters = new java.util.HashMap<>();
@@ -76,14 +65,13 @@ public class PathPatternMatcher {
                 String paramName = patternSegment.substring(1, patternSegment.length() - 1);
                 parameters.put(paramName, pathSegment);
             } else if (!patternSegment.equals(pathSegment)) {
-                return new MatchResult(false, Map.of());
+                return new PatternMatch(false, Map.of());
             }
         }
-
-        return new MatchResult(true, parameters);
+        return new PatternMatch(true, parameters);
     }
 
-    private static String filterPattern(String pattern) {
+    private String filterPattern(String pattern) {
         if (pattern.startsWith("/")) {
             pattern = pattern.substring(1);
         }

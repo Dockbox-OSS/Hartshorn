@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import jakarta.servlet.Filter;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
@@ -30,10 +31,15 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-import org.dockbox.hartshorn.web.filter.RequestFilterChain;
-import org.dockbox.hartshorn.web.jetty.route.JettyRequestHandler;
+import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
+import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -68,7 +74,7 @@ public class JettyServerConfiguration {
      * Creates a prototype instance of the Jetty {@link Server}. Unlike {@link WebServer}, the
      * backing Jetty Server is not a singleton, allowing for multiple server instances if needed.
      *
-     * @param chain The request filter chain.
+     * @param handlerMappingResolver The path route registry for handling incoming requests.
      * @param threadPool The thread pool for the server.
      * @param scheduler The scheduler for the server.
      * @param bufferPool The byte buffer pool for the server.
@@ -79,17 +85,27 @@ public class JettyServerConfiguration {
      */
     @Prototype
     public Server jettyServer(
-            RequestFilterChain chain,
+            HandlerMappingResolver handlerMappingResolver,
             @Named("jettyServerThreadPool") ThreadPool threadPool,
             @Named("jettyServerScheduler") Scheduler scheduler,
             @Named("jettyServerBufferPool") ByteBufferPool bufferPool,
             @Fuzzy ComponentCollection<Customizer<Server>> customizers,
+            @Fuzzy ComponentCollection<Filter> filters,
             @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
     ) {
         Server server = new Server(threadPool, scheduler, bufferPool);
-        server.setHandler(new JettyRequestHandler(chain));
 
-        ServerConnector connector = new ServerConnector(server);
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        context.addServlet(new ServletHolder(new RequestRoutingServlet(handlerMappingResolver)), "/*");
+        filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
+        server.setHandler(context);
+
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        ServerConnector connector = new ServerConnector(
+                server,
+                new HttpConnectionFactory(httpConfig)
+        );
         connector.setPort(port);
         server.addConnector(connector);
 

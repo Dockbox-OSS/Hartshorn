@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.web.route.rules;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.dockbox.hartshorn.util.introspect.convert.AdditionalTargetTypeContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.message.WebRequest;
 import org.dockbox.hartshorn.web.rest.Header;
 
 /**
@@ -38,10 +38,10 @@ import org.dockbox.hartshorn.web.rest.Header;
 public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
         implements ParameterLoaderRule<C> {
 
-    private final WebRequest request;
+    private final HttpServletRequest request;
     private final ConversionService conversionService;
 
-    public HeaderValueParameterLoaderRule(WebRequest request, ConversionService conversionService) {
+    public HeaderValueParameterLoaderRule(HttpServletRequest request, ConversionService conversionService) {
         this.request = request;
         this.conversionService = conversionService;
     }
@@ -56,7 +56,7 @@ public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
         Header header = parameter.annotations().get(Header.class).orElseThrow(() -> {
             return new IllegalStateException("Parameter is not annotated with @Header");
         });
-        String value = this.request.headers().get(header.value()).orNull();
+        String value = this.request.getHeader(header.value());
         T result = this.conversionService.convert(
                 value,
                 parameter.type().type(),

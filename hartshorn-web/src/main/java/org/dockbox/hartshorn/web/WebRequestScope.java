@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.web;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
 
 /**
  * A scope representing a web request and its corresponding response.
@@ -33,8 +33,8 @@ import org.dockbox.hartshorn.web.message.WebResponse;
  * @author Guus Lieben
  */
 public record WebRequestScope(
-        WebRequest request,
-        WebResponse response
+        HttpServletRequest request,
+        HttpServletResponse response
 ) implements Scope {
 
     @Override

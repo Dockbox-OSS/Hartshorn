@@ -16,12 +16,17 @@
 
 package org.dockbox.hartshorn.web.filter;
 
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
+import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 /**
  * A request filter that logs incoming requests and outgoing responses.
@@ -30,7 +35,7 @@ import org.slf4j.Logger;
  *
  * @author Guus Lieben
  */
-public class RequestLoggingFilter implements RequestFilter, Reportable {
+public class RequestLoggingFilter extends HttpFilter implements Reportable {
 
     private final boolean includeClientInfo;
     private final boolean includeQueryString;
@@ -56,56 +61,59 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
     }
 
     @Override
-    public boolean handle(
-            WebRequest request,
-            WebResponse response,
-            RequestFilterChain chain
-    ) throws Exception {
+    protected void doFilter(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         this.logInboundRequest(request);
         long startTime = System.currentTimeMillis();
-        boolean result = chain.accept(request, response);
+        chain.doFilter(request, response);
         long duration = System.currentTimeMillis() - startTime;
         if (this.includeResponse) {
             this.logOutboundRequest(request, response, duration);
         }
-        return result;
     }
 
-    private void logInboundRequest(WebRequest request) {
+    private void logInboundRequest(HttpServletRequest request) {
         StringBuilder logMessage = new StringBuilder("Incoming request: ")
-                .append(request.method())
+                .append(request.getMethod())
                 .append(" ")
-                .append(request.path());
+                .append(request.getPathInfo());
 
-        if (this.includeQueryString && request.query().notEmpty()) {
-            logMessage.append("?").append(request.query().asString());
+        if (this.includeQueryString && !request.getQueryString().isEmpty()) {
+            logMessage.append("?").append(request.getQueryString());
         }
 
         if (this.includeContentType) {
-            request.headers().get("Content-Type").peek(contentType ->
+            Option.of(request.getHeader("Content-Type")).peek(contentType ->
                 logMessage.append(" [Content-Type: ").append(contentType).append("]")
             );
         }
 
         if (this.includeClientInfo) {
-            logMessage.append(" from ").append(request.client().address())
-                      .append(":").append(request.client().port());
+            logMessage.append(" from ").append(request.getRemoteAddr())
+                      .append(":").append(request.getRemotePort());
         }
 
         this.logger.info(logMessage.toString());
     }
 
-    private void logOutboundRequest(WebRequest request, WebResponse response, long duration) {
+    private void logOutboundRequest(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            long duration
+    ) {
         StringBuilder logMessage = new StringBuilder("Outgoing response: ")
-                .append(request.method())
+                .append(request.getMethod())
                 .append(" ")
-                .append(request.path())
+                .append(request.getPathInfo())
                 .append(" -> ")
-                .append(response.statusCode().code());
+                .append(response.getStatus());
 
         if (this.includeContentType) {
-            response.headers().get("Content-Type").peek(contentType ->
-                logMessage.append(" [Content-Type: ").append(contentType).append("]")
+            Option.of(response.getHeader("Content-Type")).peek(contentType ->
+                    logMessage.append(" [Content-Type: ").append(contentType).append("]")
             );
         }
 
@@ -114,11 +122,6 @@ public class RequestLoggingFilter implements RequestFilter, Reportable {
         }
 
         this.logger.info(logMessage.toString());
-    }
-
-    @Override
-    public int order() {
-        return ProcessingPriority.HIGHEST_PRECEDENCE - 512;
     }
 
     /**

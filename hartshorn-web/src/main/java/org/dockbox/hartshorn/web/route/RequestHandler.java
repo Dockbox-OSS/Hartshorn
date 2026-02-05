@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web.route;
 
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A handler for web requests. Implementations of this interface are responsible for processing
@@ -35,9 +35,7 @@ public interface RequestHandler {
      * @param request  The web request to handle.
      * @param response The web response to populate.
      *
-     * @return true if the request was handled successfully, false otherwise.
-     *
      * @throws Exception If an error occurs while handling the request.
      */
-    boolean handle(WebRequest request, WebResponse response) throws Exception;
+    void handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
