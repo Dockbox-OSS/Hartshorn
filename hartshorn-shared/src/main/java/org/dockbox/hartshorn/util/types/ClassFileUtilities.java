@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.types;
 
+import org.dockbox.hartshorn.util.collections.GathererUtilities;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.classfile.Annotation;
@@ -33,8 +36,6 @@ import java.lang.constant.MethodTypeDesc;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.util.collections.GathererUtilities;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for working with Java's {@link ClassFile} API, primarily focused on extracting
@@ -89,7 +90,22 @@ public final class ClassFileUtilities {
         }
     }
 
-    public static Option<MethodModel> getMethod(ClassModel model, String name, Class<?>... parameterTypes) {
+    /**
+     * Get a specific method from a {@link ClassModel} by its name and parameter types. The method
+     * must have exactly the same name and parameter types as specified, otherwise an empty
+     * {@link Option} is returned.
+     *
+     * @param model the {@link ClassModel} to search for the method
+     * @param name the name of the method to look for
+     * @param parameterTypes the parameter types of the method to look for
+     * @return an {@link Option} containing the {@link MethodModel} if found, otherwise an empty
+     * {@link Option}
+     */
+    public static Option<MethodModel> getMethod(
+            ClassModel model,
+            String name,
+            Class<?>... parameterTypes
+    ) {
         methods:
         for (MethodModel method : model.methods()) {
             if (!method.methodName().equalsString(name)) {
@@ -102,7 +118,10 @@ public final class ClassFileUtilities {
             ClassDesc[] parameters = descriptor.parameterArray();
             for (int i = 0; i < parameters.length; i++) {
                 ClassDesc parameter = parameters[i];
-                if (!matchesConstantPoolName(parameter.descriptorString(), parameterTypes[i].getName())) {
+                if (!matchesConstantPoolName(
+                        parameter.descriptorString(),
+                        parameterTypes[i].getName()
+                )) {
                     continue methods;
                 }
             }
