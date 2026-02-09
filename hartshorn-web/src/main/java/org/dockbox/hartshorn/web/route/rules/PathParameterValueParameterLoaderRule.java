@@ -17,16 +17,18 @@
 package org.dockbox.hartshorn.web.route.rules;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.Header;
+import org.dockbox.hartshorn.web.message.RequestAttributes;
+import org.dockbox.hartshorn.web.rest.PathParameter;
+
+import java.util.Map;
 
 /**
- * A {@link ParameterLoaderRule} that loads parameter values from HTTP headers using the
- * {@link Header} annotation.
+ * A {@link ParameterLoaderRule} that loads parameter values from path parameters using the
+ * {@link PathParameter} annotation.
  *
  * @param <C> the type of the parameter loader context
  *
@@ -34,26 +36,24 @@ import org.dockbox.hartshorn.web.Header;
  *
  * @author Guus Lieben
  */
-public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
-        extends AbstractWebRequestParameterLoaderRule<Header, C> {
+public class PathParameterValueParameterLoaderRule<C extends ParameterLoaderContext>
+        extends AbstractWebRequestParameterLoaderRule<PathParameter, C> {
 
-    public HeaderValueParameterLoaderRule(
+    public PathParameterValueParameterLoaderRule(
             HttpServletRequest request,
             ConversionService conversionService
     ) {
-        super(Header.class, request, conversionService);
+        super(PathParameter.class, request, conversionService);
     }
 
     @Override
-    protected Option<String> lookupValue(HttpServletRequest request, Header annotation) {
-        Iterable<String> headers = CollectionUtilities.iterableOf(
-                request.getHeaders(annotation.value())
-        );
-        return Option.of(headers).map(values -> String.join(",", values));
+    protected Option<String> lookupValue(HttpServletRequest request, PathParameter annotation) {
+        Map<String, String> parameters = RequestAttributes.pathParameters(request);
+        return Option.of(parameters.get(annotation.value()));
     }
 
     @Override
-    protected String getDefaultValue(Header annotation) {
-        return annotation.defaultValue();
+    protected String getDefaultValue(PathParameter annotation) {
+        throw new UnsupportedOperationException("Path parameters do not support default values.");
     }
 }

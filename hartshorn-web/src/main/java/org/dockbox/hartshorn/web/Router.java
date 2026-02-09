@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
+package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-import org.dockbox.hartshorn.web.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,23 +25,35 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for defining HTTP PUT routes on methods. Shorthand for
- * {@link HttpRoute} with the PUT method.
+ * Annotation for defining REST routers on classes. Routers are special components that permit
+ * handling of HTTP requests through {@link HttpRoute annotated routes}.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(HttpRoute.class)
-@HttpRoute(method = HttpMethod.PUT, path = "")
-public @interface PutRoute {
+@Extends(Component.class)
+public @interface Router {
 
     /**
-     * @see HttpRoute#path()
-     * @return the path of the route
+     * The path prefix for all routes defined in the router. This is optional, and can be left
+     * empty if no prefix is desired.
+     *
+     * @return the path prefix for all routes defined in the router
      */
-    @AttributeAlias(value = "path", target = HttpRoute.class)
-    String value();
+    String value() default "";
+
+    /**
+     * @see Component#permitProxying()
+     * @return whether proxying is permitted
+     */
+    boolean permitProxying() default true;
+
+    /**
+     * @see Component#permitProcessing()
+     * @return whether processing is permitted
+     */
+    boolean permitProcessing() default true;
 }

@@ -14,28 +14,36 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.message;
+package org.dockbox.hartshorn.web;
 
-import jakarta.servlet.http.HttpServletResponse;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A writer that can write a response body to a {@link HttpServletResponse}.
- *
- * @param <T> The type of the response body.
+ * Annotation for defining HTTP routes on methods.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public interface ResponseWriter<T> {
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface HttpRoute {
 
     /**
-     * Writes the given response body to the provided web response.
+     * The HTTP method of the route.
      *
-     * @param response The web response to write to.
-     * @param body The response body to write.
-     *
-     * @throws Exception If an error occurs while writing the response.
+     * @return the HTTP method
      */
-    void write(HttpServletResponse response, T body) throws Exception;
+    HttpMethod method();
+
+    /**
+     * The path of the route. The path may include path variables in the form of
+     * {@code /path/{variable}/to/{resource}}.
+     *
+     * @return the path
+     */
+    String path();
 }

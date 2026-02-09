@@ -16,33 +16,33 @@
 
 package org.dockbox.hartshorn.web.rest;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-import org.dockbox.hartshorn.web.HttpMethod;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for defining HTTP DELETE routes on methods. Shorthand for
- * {@link HttpRoute} with the DELETE method.
+ * Annotation for binding a method parameter to a query parameter value.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(HttpRoute.class)
-@HttpRoute(method = HttpMethod.DELETE, path = "")
-public @interface DeleteRoute {
+public @interface QueryParameter {
 
     /**
-     * @see HttpRoute#path()
-     * @return the path of the route
+     * The name of the query parameter to bind to.
+     *
+     * @return the query parameter name
      */
-    @AttributeAlias(value = "path", target = HttpRoute.class)
     String value();
+
+    /**
+     * The default value to use if the query is not present.
+     *
+     * @return the default value
+     */
+    String defaultValue() default "";
 }
