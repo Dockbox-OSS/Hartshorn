@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
-import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
@@ -38,8 +37,6 @@ import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
-import org.dockbox.hartshorn.web.message.ObjectMapperResponseWriter;
-import org.dockbox.hartshorn.web.message.ResponseWriter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
@@ -47,7 +44,12 @@ import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.rest.DeclarativeRouterPathConfigurer;
+import org.dockbox.hartshorn.web.route.response.GlobalResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.JacksonResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.ResponseHandler;
+import org.dockbox.hartshorn.web.route.response.ResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
+import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
 import org.dockbox.hartshorn.web.route.support.PatternMatchingHandlerMappingResolver;
 import org.dockbox.hartshorn.web.route.support.StandardPathPatternMatcher;
@@ -112,12 +114,25 @@ public class WebServerConfiguration {
     public RouterCustomizer declarativeRouterPathConfigurer(
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
-            InjectionCapableApplication application
+            InjectionCapableApplication application,
+            ResponseHandler responseHandler
     ) {
         return new DeclarativeRouterPathConfigurer(
                 componentRegistry,
                 conversionService,
-                application
+                application,
+                responseHandler
+        );
+    }
+
+    @Singleton
+    public ResponseHandler responseHandlerChain(
+            GlobalResponseMessageConverter globalResponseMessageConverter,
+            @Fuzzy ComponentCollection<ResponseMessageConverter<?>> responseMessageConverters
+    ) {
+        return new SimpleResponseHandler(
+                globalResponseMessageConverter,
+                responseMessageConverters.stream().toList()
         );
     }
 
@@ -191,7 +206,7 @@ public class WebServerConfiguration {
     public static class JacksonJsonResponseWriterConfiguration {
 
         /**
-         * Creates a {@link ResponseWriter} that uses a {@link JsonMapper} to serialize objects to
+         * Creates a {@link ResponseMessageConverter} that uses a {@link JsonMapper} to serialize objects to
          * JSON.
          *
          * @param jsonMapper The JSON mapper to use for serialization.
@@ -199,9 +214,13 @@ public class WebServerConfiguration {
          * @return A response writer for JSON objects.
          */
         @Singleton
-        @Named("json")
-        public ResponseWriter<Object> objectMapperResponseWriter(JsonMapper jsonMapper) {
-            return new ObjectMapperResponseWriter(jsonMapper, "application/json");
+        @RequiresProperty(
+                name = "hartshorn.web.response.json.enabled",
+                withValue = "true",
+                matchIfMissing = true
+        )
+        public GlobalResponseMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
+            return new JacksonResponseMessageConverter(jsonMapper, MimeTypes.APPLICATION_JSON);
         }
     }
 }
