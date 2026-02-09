@@ -14,37 +14,34 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
+package org.dockbox.hartshorn.web;
+
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.dockbox.hartshorn.web.HttpMethod;
 
 /**
- * Annotation for defining HTTP routes on methods.
+ * Annotation for defining HTTP POST routes on methods. Shorthand for
+ * {@link HttpRoute} with the POST method.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HttpRoute {
+@Extends(HttpRoute.class)
+@HttpRoute(method = HttpMethod.POST, path = "")
+public @interface PostRoute {
 
     /**
-     * The HTTP method of the route.
-     *
-     * @return the HTTP method
+     * @see HttpRoute#path()
+     * @return the path of the route
      */
-    HttpMethod method();
-
-    /**
-     * The path of the route. The path may include path variables in the form of
-     * {@code /path/{variable}/to/{resource}}.
-     *
-     * @return the path
-     */
-    String path();
+    @AttributeAlias(value = "path", target = HttpRoute.class)
+    String value();
 }

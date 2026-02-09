@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.web;
+package org.dockbox.hartshorn.web.rest;
 
-import org.junit.jupiter.api.Test;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import static org.assertj.core.api.Assertions.assertThat;
+/**
+ * Annotation for binding a method parameter to a path parameter value.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PathParameter {
 
-public class MainTests {
-
-    @Test
-    void sampleAssertion() {
-        assertThat("Hello, Hartshorn Web!").isNotEmpty();
-    }
+    /**
+     * The name of the path parameter to bind to.
+     *
+     * @return the path parameter name
+     */
+    String value();
 }

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
+package org.dockbox.hartshorn.web;
+
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,20 +25,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for binding a method parameter to an HTTP header value.
+ * Annotation for defining HTTP DELETE routes on methods. Shorthand for
+ * {@link HttpRoute} with the DELETE method.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@Target(ElementType.PARAMETER)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Header {
+@Extends(HttpRoute.class)
+@HttpRoute(method = HttpMethod.DELETE, path = "")
+public @interface DeleteRoute {
 
     /**
-     * The name of the HTTP header to bind to.
-     *
-     * @return the header name
+     * @see HttpRoute#path()
+     * @return the path of the route
      */
+    @AttributeAlias(value = "path", target = HttpRoute.class)
     String value();
 }

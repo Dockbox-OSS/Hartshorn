@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
-
-import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+package org.dockbox.hartshorn.web;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,27 +22,27 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for defining REST routers on classes. Routers are special components that permit
- * handling of HTTP requests through {@link HttpRoute annotated routes}.
+ * Annotation for binding a method parameter to an HTTP header value.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(Component.class)
-public @interface RestRouter {
+public @interface Header {
 
     /**
-     * @see Component#permitProxying()
-     * @return whether proxying is permitted
+     * The name of the HTTP header to bind to.
+     *
+     * @return the header name
      */
-    boolean permitProxying() default true;
+    String value();
 
     /**
-     * @see Component#permitProcessing()
-     * @return whether processing is permitted
+     * The default value to use if the header is not present.
+     *
+     * @return the default value
      */
-    boolean permitProcessing() default true;
+    String defaultValue() default "";
 }

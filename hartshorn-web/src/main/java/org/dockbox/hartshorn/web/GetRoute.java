@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
+package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-import org.dockbox.hartshorn.web.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,8 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for defining HTTP POST routes on methods. Shorthand for
- * {@link HttpRoute} with the POST method.
+ * Annotation for defining HTTP GET routes on methods. Shorthand for
+ * {@link HttpRoute} with the GET method.
  *
  * @since 0.7.0
  *
@@ -36,8 +35,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(HttpRoute.class)
-@HttpRoute(method = HttpMethod.POST, path = "")
-public @interface PostRoute {
+@HttpRoute(method = HttpMethod.GET, path = "")
+public @interface GetRoute {
 
     /**
      * @see HttpRoute#path()
