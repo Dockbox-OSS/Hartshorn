@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -308,6 +309,19 @@ public final class CollectionUtilities {
      */
     public static <T> Iterable<T> iterableOf(Iterator<T> iterator) {
         return () -> iterator;
+    }
+
+    /**
+     * Returns an {@link Iterable} that wraps the given {@link Enumeration}, to allow the
+     * enumeration to be used in e.g. for-each loops.
+     *
+     * @param enumeration The enumeration to wrap
+     * @param <T> The type of the elements in the enumeration
+     *
+     * @return An iterable that wraps the given enumeration
+     */
+    public static <T> Iterable<T> iterableOf(Enumeration<T> enumeration) {
+        return iterableOf(enumeration.asIterator());
     }
 
     /**
