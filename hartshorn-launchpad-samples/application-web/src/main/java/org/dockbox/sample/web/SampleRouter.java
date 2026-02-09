@@ -2,23 +2,21 @@ package org.dockbox.sample.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
+import org.dockbox.hartshorn.web.GetRoute;
+import org.dockbox.hartshorn.web.Header;
 import org.dockbox.hartshorn.web.HttpStatus;
+import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.message.RequestAttributes;
-import org.dockbox.hartshorn.web.message.ResponseWriter;
-import org.dockbox.hartshorn.web.rest.GetRoute;
-import org.dockbox.hartshorn.web.rest.Header;
-import org.dockbox.hartshorn.web.rest.RestRouter;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestRouter
+@Router("/api")
 public class SampleRouter {
 
     @GetRoute("/error")
@@ -42,10 +40,9 @@ public class SampleRouter {
     }
 
     @GetRoute("/validate/{param}")
-    public void validationOutput(
+    public ValidationResponseBody validationOutput(
             HttpServletRequest request,
             HttpServletResponse response,
-            @Named("json") ResponseWriter<Object> responseWriter,
             @Header("Accept-Encoding") String[] acceptEncoding
     ) throws Exception {
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -54,23 +51,21 @@ public class SampleRouter {
             String headerName = headerNames.nextElement();
             headers.put(headerName, request.getHeader(headerName));
         }
-        SampleRouter.ValidationResponseBody body = new SampleRouter.ValidationResponseBody(
+        return new SampleRouter.ValidationResponseBody(
                 request.getMethod(),
                 request.getPathInfo(),
-                request.getQueryString(),
+                request.getParameterMap(),
                 headers,
                 request.getReader().readAllAsString(),
                 RequestAttributes.pathParameters(request),
                 acceptEncoding
         );
-        response.setStatus(HttpStatus.OK.code());
-        responseWriter.write(response, body);
     }
 
-    private record ValidationResponseBody(
+    public record ValidationResponseBody(
             String method,
             String path,
-            String queryParameters,
+            Map<String, String[]> queryParameters,
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,
