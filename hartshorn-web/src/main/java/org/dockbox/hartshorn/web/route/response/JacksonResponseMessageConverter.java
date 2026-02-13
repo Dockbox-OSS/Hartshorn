@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.MimeType;
 import tools.jackson.databind.ObjectMapper;
 
-public class JacksonResponseMessageConverter implements GlobalResponseMessageConverter {
+public class JacksonResponseMessageConverter implements HttpMessageConverter {
 
     private final ObjectMapper objectMapper;
     private final MimeType contentType;
