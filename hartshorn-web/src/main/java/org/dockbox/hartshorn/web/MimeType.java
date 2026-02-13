@@ -8,7 +8,7 @@ public record MimeType(String type, String subtype, Map<String, String> paramete
 
     private static final String WILDCARD_TYPE = "*";
 
-    public MimeType(String subtype, String type) {
+    public MimeType(String type, String subtype) {
         this(type, subtype, Map.of());
     }
 
@@ -45,7 +45,7 @@ public record MimeType(String type, String subtype, Map<String, String> paramete
         sb.append(this.type).append("/").append(this.subtype);
         if (!this.parameters.isEmpty()) {
             this.parameters.forEach((key, value) -> sb
-                    .append("; ")
+                    .append(";")
                     .append(key)
                     .append("=")
                     .append(value)

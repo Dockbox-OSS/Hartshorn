@@ -44,10 +44,10 @@ import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.response.GlobalResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.JacksonResponseMessageConverter;
 import org.dockbox.hartshorn.web.route.response.ResponseHandler;
-import org.dockbox.hartshorn.web.route.response.ResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.TypeHttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
@@ -127,12 +127,12 @@ public class WebServerConfiguration {
 
     @Singleton
     public ResponseHandler responseHandlerChain(
-            GlobalResponseMessageConverter globalResponseMessageConverter,
-            @Fuzzy ComponentCollection<ResponseMessageConverter<?>> responseMessageConverters
+            HttpMessageConverter httpMessageConverter,
+            @Fuzzy ComponentCollection<TypeHttpMessageConverter<?>> messageConverters
     ) {
         return new SimpleResponseHandler(
-                globalResponseMessageConverter,
-                responseMessageConverters.stream().toList()
+                httpMessageConverter,
+                messageConverters.stream().toList()
         );
     }
 
@@ -206,8 +206,8 @@ public class WebServerConfiguration {
     public static class JacksonJsonResponseWriterConfiguration {
 
         /**
-         * Creates a {@link ResponseMessageConverter} that uses a {@link JsonMapper} to serialize objects to
-         * JSON.
+         * Creates a {@link TypeHttpMessageConverter} that uses a {@link JsonMapper} to serialize
+         * objects to JSON.
          *
          * @param jsonMapper The JSON mapper to use for serialization.
          *
@@ -219,7 +219,7 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
-        public GlobalResponseMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
+        public HttpMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
             return new JacksonResponseMessageConverter(jsonMapper, MimeTypes.APPLICATION_JSON);
         }
     }
