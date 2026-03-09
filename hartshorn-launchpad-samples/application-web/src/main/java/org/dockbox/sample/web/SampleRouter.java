@@ -6,6 +6,8 @@ import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
+import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.web.GetRoute;
 import org.dockbox.hartshorn.web.Header;
 import org.dockbox.hartshorn.web.HttpStatus;
@@ -16,6 +18,7 @@ import org.dockbox.hartshorn.web.message.RequestAttributes;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Router("/api")
@@ -55,11 +58,14 @@ public class SampleRouter {
             String headerName = headerNames.nextElement();
             headers.put(headerName, request.getHeader(headerName));
         }
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        MultiMap<String, String> parameters = new ArrayListMultiMap<>();
+        parameterMap.forEach((key, value) -> parameters.putAll(key, List.of(value)));
         return new SampleRouter.ValidationResponseBody(
                 request.getMethod(),
                 request.getRequestURI(),
-                request.getParameterMap(),
                 testQueryParameter,
+                parameters,
                 headers,
                 request.getReader().readAllAsString(),
                 RequestAttributes.pathParameters(request),
@@ -71,8 +77,8 @@ public class SampleRouter {
     public record ValidationResponseBody(
             String method,
             String path,
-            Map<String, String[]> queryParameters,
             String testQueryParameter,
+            MultiMap<String, String> queryParameters,
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,

@@ -60,6 +60,7 @@ import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -275,16 +276,16 @@ public class WebServerConfiguration {
      * @author Guus Lieben
      */
     @Configuration
-    @RequiresClass(classes = JsonMapper.class)
-    public static class JacksonJsonResponseWriterConfiguration {
+    @RequiresClass(classes = ObjectMapper.class)
+    public static class JacksonResponseWriterConfiguration {
 
         /**
          * Creates a {@link HttpMessageConverter} that uses a {@link JsonMapper} to serialize
          * objects to JSON.
          *
-         * @param jsonMapper The JSON mapper to use for serialization.
+         * @param jsonMapper The object mapper to use for serialization.
          *
-         * @return A response writer for JSON objects.
+         * @return A response writer backed by Jackson.
          */
         @Singleton
         @RequiresProperty(

@@ -1,0 +1,5 @@
+= Hartshorn Support
+Guus Lieben
+:description: Additional support for third-party dependencies
+
+To be written
