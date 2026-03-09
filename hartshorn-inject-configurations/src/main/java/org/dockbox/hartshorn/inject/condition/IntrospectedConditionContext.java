@@ -20,6 +20,8 @@ import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
+import java.util.Objects;
+
 /**
  * A context that is used during the evaluation of a condition. This includes the annotated element
  * that is being evaluated, and the {@link RequiresCondition} annotation that is used to evaluate
@@ -60,5 +62,17 @@ public non-sealed class IntrospectedConditionContext extends ConditionContext
     @Override
     public InjectionCapableApplication application() {
         return this.application;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        IntrospectedConditionContext that = (IntrospectedConditionContext) o;
+        return Objects.equals(annotatedElement, that.annotatedElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(annotatedElement);
     }
 }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import org.dockbox.hartshorn.inject.condition.CacheableCondition;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
@@ -36,7 +37,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * 
  * @author Guus Lieben
  */
-public class PropertyCondition implements IntrospectionCondition {
+public class PropertyCondition implements IntrospectionCondition, CacheableCondition {
 
     @Override
     public ConditionResult matches(IntrospectedConditionContext context) {

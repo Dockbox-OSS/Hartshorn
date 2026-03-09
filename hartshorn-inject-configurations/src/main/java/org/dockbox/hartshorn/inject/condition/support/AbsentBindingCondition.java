@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import java.util.List;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
 import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContextsHolder;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * A condition that matches when a binding is absent. This does not require an instance of the

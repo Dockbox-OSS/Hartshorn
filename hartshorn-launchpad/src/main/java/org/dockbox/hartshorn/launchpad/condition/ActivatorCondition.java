@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.condition;
 
+import org.dockbox.hartshorn.inject.condition.CacheableCondition;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
@@ -34,7 +35,7 @@ import java.lang.annotation.Annotation;
  * 
  * @author Guus Lieben
  */
-public class ActivatorCondition implements IntrospectionCondition {
+public class ActivatorCondition implements IntrospectionCondition, CacheableCondition {
 
     @Override
     public ConditionResult matches(IntrospectedConditionContext context) {

@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import java.lang.classfile.Annotation;
-import java.lang.classfile.AnnotationValue;
-import java.lang.classfile.ClassModel;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.lang.classfile.Annotation;
+import java.lang.classfile.AnnotationValue;
+import java.lang.classfile.ClassModel;
+import java.util.Objects;
 
 /**
  * Represents a condition declaration that is based on an annotation reference. The type on which
@@ -38,6 +40,7 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 public class ReferenceConditionDeclaration implements ConditionDeclaration {
 
     private final Annotation annotation;
+    private Option<Class<?>> conditionType;
 
     public ReferenceConditionDeclaration(Annotation annotation) {
         this.annotation = annotation;
@@ -69,19 +72,36 @@ public class ReferenceConditionDeclaration implements ConditionDeclaration {
 
     @Override
     public Condition condition(ObjectFactory objectFactory) {
-        return ClassFileUtilities.getAnnotationValue(
-                this.annotation,
-                "condition",
-                AnnotationValue.OfClass.class
-            )
-            .map(AnnotationValue.OfClass::className)
-            .map(ClassFileUtilities::constantPoolNameToQualifiedName)
-            .flatMap(TypeUtils::forName)
+        return this.getConditionType()
             .map(objectFactory::create)
             .ofType(Condition.class)
             .orElseThrow(() -> new IllegalStateException(
                 "Could not instantiate condition for reference condition declaration"
             ));
+    }
+
+    @Override
+    public String conditionName() {
+        return this.annotation.className().stringValue();
+    }
+
+    @Override
+    public boolean cacheable() {
+        return this.getConditionType().test(CacheableCondition.class::isAssignableFrom);
+    }
+
+    private Option<Class<?>> getConditionType() {
+        if (this.conditionType == null) {
+            this.conditionType = ClassFileUtilities.getAnnotationValue(
+                            this.annotation,
+                            "condition",
+                            AnnotationValue.OfClass.class
+                    )
+                    .map(AnnotationValue.OfClass::className)
+                    .map(ClassFileUtilities::constantPoolNameToQualifiedName)
+                    .flatMap(TypeUtils::forName);
+        }
+        return this.conditionType;
     }
 
     @Override
@@ -93,5 +113,17 @@ public class ReferenceConditionDeclaration implements ConditionDeclaration {
             "failOnNoMatch",
             AnnotationValue.OfBoolean.class
         ).test(AnnotationValue.OfBoolean::booleanValue, false);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ReferenceConditionDeclaration that = (ReferenceConditionDeclaration) o;
+        return Objects.equals(annotation, that.annotation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(annotation);
     }
 }

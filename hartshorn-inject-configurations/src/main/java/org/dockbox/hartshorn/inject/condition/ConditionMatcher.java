@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
+import org.dockbox.hartshorn.util.collections.LFUCache;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -60,6 +61,10 @@ import java.util.stream.Collectors;
 public final class ConditionMatcher extends DefaultContext
     implements InjectionApplicationAwareContext {
 
+    private record ConditionCacheKey(ConditionContext context, ConditionDeclaration declaration) {}
+
+    private final LFUCache<ConditionCacheKey, ConditionResult> conditionResultCache =
+            new LFUCache<>(32);
     private final Supplier<InjectionCapableApplication> applicationSupplier;
     private boolean includeEnclosingConditions = true;
 
@@ -238,30 +243,40 @@ public final class ConditionMatcher extends DefaultContext
         ConditionDeclaration declarationContext,
         ContextView... contexts
     ) {
-        InjectionCapableApplication application = this.application();
-        // Application may still be starting, thus fallback should be used.
-        final ObjectFactory objectFactory;
-        if (application == null) {
-            assert context instanceof ReferenceConditionContext : """
+        ConditionCacheKey cacheKey = new ConditionCacheKey(context, declarationContext);
+        final ConditionResult result;
+        if (this.conditionResultCache.containsKey(cacheKey)) {
+            result = this.conditionResultCache.get(cacheKey);
+        } else {
+            InjectionCapableApplication application = this.application();
+            // Application may still be starting, thus fallback should be used.
+            final ObjectFactory objectFactory;
+            if (application == null) {
+                assert context instanceof ReferenceConditionContext : """
                 Expected type reference condition context when application is starting.
                 Introspection-capable condition contexts require at least a partially
                 initialized application.
                 """;
-            objectFactory = new ReflectionObjectFactory();
-        }
-        else {
-            objectFactory = new ComponentProviderObjectFactoryAdapter(
-                application.defaultProvider()
-            );
+                objectFactory = new ReflectionObjectFactory();
+            }
+            else {
+                objectFactory = new ComponentProviderObjectFactoryAdapter(
+                        application.defaultProvider()
+                );
+            }
+
+            Condition condition = declarationContext.condition(objectFactory);
+            for (ContextView child : contexts) {
+                context.addContext(child);
+            }
+            result = condition.matches(context);
+            if (declarationContext.cacheable()) {
+                this.conditionResultCache.put(cacheKey, result);
+            }
         }
 
-        Condition condition = declarationContext.condition(objectFactory);
-        for (ContextView child : contexts) {
-            context.addContext(child);
-        }
-        ConditionResult result = condition.matches(context);
         if (!result.matches() && declarationContext.failOnNoMatch()) {
-            throw new ConditionFailedException(condition, result);
+            throw new ConditionFailedException(declarationContext, result);
         }
         return result.matches();
     }

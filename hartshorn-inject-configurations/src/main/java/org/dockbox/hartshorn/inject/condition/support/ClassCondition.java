@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import org.dockbox.hartshorn.inject.condition.CacheableCondition;
 import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.ReferenceCondition;
@@ -36,7 +37,7 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class ClassCondition implements ReferenceCondition {
+public class ClassCondition implements ReferenceCondition, CacheableCondition {
 
     @Override
     public ConditionResult matches(ReferenceConditionContext context) {
