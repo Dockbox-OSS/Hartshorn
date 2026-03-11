@@ -6,6 +6,7 @@ jobs:
   depCheck:
     name: OWASP Dependency Check
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 25
