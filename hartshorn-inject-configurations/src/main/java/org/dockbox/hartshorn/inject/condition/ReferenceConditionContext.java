@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.condition;
 
 import java.lang.classfile.AttributedElement;
+import java.util.Objects;
 
 /**
  * A context that is used during the evaluation of a condition. This context provides access to the
@@ -50,5 +51,17 @@ public non-sealed class ReferenceConditionContext extends ConditionContext {
      */
     public AttributedElement element() {
         return this.element;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ReferenceConditionContext that = (ReferenceConditionContext) o;
+        return Objects.equals(element, that.element);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(element);
     }
 }

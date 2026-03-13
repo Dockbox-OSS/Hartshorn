@@ -16,26 +16,12 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
 /**
- * Thrown when a {@link Condition} does not match, and the {@link RequiresCondition} annotation is
- * configured to fail on a mismatch.
+ * Marker interface for conditions that permit their results to be cached.
  *
- * @see RequiresCondition#failOnNoMatch()
- * @see RequiresCondition
- * @see Condition
- *
- * @since 0.4.12
+ * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ConditionFailedException extends ApplicationRuntimeException {
-
-    public ConditionFailedException(ConditionDeclaration declaration, ConditionResult result) {
-        super("Condition failed ("
-            + declaration.conditionName()
-            + ") with reason: "
-            + result.message());
-    }
+public interface CacheableCondition {
 }

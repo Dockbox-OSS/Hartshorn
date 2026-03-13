@@ -39,6 +39,21 @@ public interface ConditionDeclaration {
     Condition condition(ObjectFactory objectFactory);
 
     /**
+     * Returns the name of the condition declaration. This is typically the simple name of the
+     * annotation that declares the condition.
+     *
+     * @return The name of the condition declaration
+     */
+    String conditionName();
+
+    /**
+     * Indicates whether the condition result may be cached.
+     *
+     * @return {@code true} when the condition result may be cached, {@code false} otherwise
+     */
+    boolean cacheable();
+
+    /**
      * Indicates whether the {@link ConditionMatcher} should fail when the condition does not match.
      * When this method returns {@code true}, the condition matcher will throw a
      * {@link ConditionFailedException} when the condition does not match. When this method returns

@@ -33,6 +33,8 @@ import java.lang.classfile.attribute.RuntimeVisibleAnnotationsAttribute;
 import java.lang.classfile.constantpool.Utf8Entry;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -409,5 +411,46 @@ public final class ClassFileUtilities {
         return classModelOption.orElseThrow(() -> new IllegalStateException(
             "Could not load class model for descriptor: " + descriptor
         ));
+    }
+
+    /**
+     * Convert a runtime annotation to a class file annotation.
+     *
+     * @param annotation the runtime annotation to convert
+     * @return the corresponding class file annotation
+     */
+    public static Annotation toClassfileAnnotation(java.lang.annotation.Annotation annotation) {
+        Class<?> type = annotation.annotationType();
+        ClassDesc classDesc = ClassDesc.of(type.getName());
+        List<AnnotationElement> elements = new ArrayList<>();
+        for (Method m : type.getDeclaredMethods()) {
+            Object value;
+            try {
+                value = m.invoke(annotation);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            AnnotationValue av = toAnnotationValue(value);
+            elements.add(AnnotationElement.of(m.getName(), av));
+        }
+        return Annotation.of(classDesc, elements);
+    }
+
+    /**
+     * Convert a runtime annotation element value to a class file annotation value. The behavior
+     * of this method is primarily equal to {@link AnnotationValue#of(Object)}, but with additional
+     * handling for class literals, which are converted to {@link ClassDesc} instances, as expected
+     * by the class file API.
+     *
+     * @param value the runtime annotation element value to convert
+     * @return the corresponding class file annotation value
+     *
+     * @see AnnotationValue#of(Object)
+     */
+    public static AnnotationValue toAnnotationValue(Object value) {
+        if (value instanceof Class<?> type) {
+            return AnnotationValue.of(ClassDesc.of(type.getName()));
+        }
+        return AnnotationValue.of(value);
     }
 }

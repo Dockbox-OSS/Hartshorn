@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.inject.condition;
 
 import org.dockbox.hartshorn.inject.ObjectFactory;
 
+import java.util.Objects;
+
 /**
  * Represents an annotation-based condition declaration. This may represent a direct use of the
  * {@link RequiresCondition} annotation, or a meta-annotation that contains the
@@ -43,7 +45,30 @@ public class AnnotationConditionDeclaration implements ConditionDeclaration {
     }
 
     @Override
+    public String conditionName() {
+        return this.annotation.annotationType().getSimpleName();
+    }
+
+    @Override
+    public boolean cacheable() {
+        Class<? extends IntrospectionCondition> conditionType = this.annotation.condition();
+        return CacheableCondition.class.isAssignableFrom(conditionType);
+    }
+
+    @Override
     public boolean failOnNoMatch() {
         return this.annotation.failOnNoMatch();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AnnotationConditionDeclaration that = (AnnotationConditionDeclaration) o;
+        return Objects.equals(annotation, that.annotation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(annotation);
     }
 }
