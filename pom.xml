@@ -20,6 +20,7 @@
     <revision>0.7.0</revision>
 
     <!-- Assembly properties -->
+    <jacoco.skip>false</jacoco.skip>
     <antora.skip>false</antora.skip>
     <javadoc.skip>false</javadoc.skip>
 
@@ -121,6 +122,47 @@
             <goals>
               <goal>antora</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- JaCoCo code coverage -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${plugin.jacoco.version}</version>
+        <configuration>
+          <skip>${jacoco.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>report-aggregate</id>
+            <phase>verify</phase>
+            <configuration>
+              <skip>${jacoco.skip}</skip>
+            </configuration>
+            <goals>
+              <goal>report-aggregate</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>merge-results</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <configuration>
+              <skip>${jacoco.skip}</skip>
+              <fileSets>
+                <fileSet>
+                  <directory>${basedir}</directory>
+                  <includes>
+                    <include>**/target/jacoco.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+              <destFile>${project.build.directory}/aggregate.exec</destFile>
+            </configuration>
           </execution>
         </executions>
       </plugin>
