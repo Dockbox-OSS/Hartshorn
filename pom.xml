@@ -13,47 +13,98 @@
 
   <artifactId>hartshorn</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
-
-  <modules>
-    <!-- Platform and base modules -->
-    <module>hartshorn-assembly/pom.platform.build.xml</module>
-    <module>hartshorn-assembly/pom.staging.xml</module>
-    <module>hartshorn-assembly/pom.platform.updates.xml</module>
-    <module>hartshorn-bom</module>
-    <module>hartshorn-assembly/pom.platform.support.xml</module>
-
-    <!-- Individually deployable modules -->
-    <module>hartshorn-shared</module>
-    <module>hartshorn-properties</module>
-    <module>hartshorn-profiles</module>
-    <module>hartshorn-spi</module>
-    <module>hartshorn-proxy</module>
-    <module>hartshorn-proxy-test-fixtures</module>
-    <module>hartshorn-proxy-javassist</module>
-    <module>hartshorn-introspect</module>
-    <module>hartshorn-introspect-test-fixtures</module>
-    <module>hartshorn-introspect-reflection</module>
-    <module>hartshorn-inject</module>
-    <module>hartshorn-integration-tests</module>
-    <module>hartshorn-inject-configurations</module>
-    <module>hartshorn-launchpad</module>
-    <module>hartshorn-reporting</module>
-    <module>hartshorn-hsl</module>
-    <module>hartshorn-web</module>
-    <module>hartshorn-web-jetty</module>
-    <module>hartshorn-test-assertions</module>
-    <module>hartshorn-testsuite</module>
-    <module>hartshorn-launchpad-kotlin-extensions</module>
-    <module>hartshorn-launchpad-starter</module>
-    <module>hartshorn-launchpad-samples</module>
-
-    <!-- Assembly modules -->
-    <module>hartshorn-assembly/pom.assembly.xml</module>
-  </modules>
 
   <properties>
     <!-- Project version, keep in sync with build support POM -->
     <revision>0.7.0</revision>
+
+    <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
+    <antora.playbook>playbook-release.yml</antora.playbook>
+
+    <!-- Maven plugin versions, in alphabetical order -->
+    <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <property>
+          <name>!includeModules</name>
+        </property>
+      </activation>
+      <modules>
+        <!-- Platform and base modules -->
+        <module>hartshorn-assembly/pom.platform.build.xml</module>
+        <module>hartshorn-assembly/pom.staging.xml</module>
+        <module>hartshorn-assembly/pom.platform.updates.xml</module>
+        <module>hartshorn-bom</module>
+        <module>hartshorn-assembly/pom.platform.support.xml</module>
+
+        <!-- Individually deployable modules -->
+        <module>hartshorn-shared</module>
+        <module>hartshorn-properties</module>
+        <module>hartshorn-profiles</module>
+        <module>hartshorn-spi</module>
+        <module>hartshorn-proxy</module>
+        <module>hartshorn-proxy-test-fixtures</module>
+        <module>hartshorn-proxy-javassist</module>
+        <module>hartshorn-introspect</module>
+        <module>hartshorn-introspect-test-fixtures</module>
+        <module>hartshorn-introspect-reflection</module>
+        <module>hartshorn-inject</module>
+        <module>hartshorn-integration-tests</module>
+        <module>hartshorn-inject-configurations</module>
+        <module>hartshorn-launchpad</module>
+        <module>hartshorn-reporting</module>
+        <module>hartshorn-hsl</module>
+        <module>hartshorn-web</module>
+        <module>hartshorn-web-jetty</module>
+        <module>hartshorn-test-assertions</module>
+        <module>hartshorn-testsuite</module>
+        <module>hartshorn-launchpad-kotlin-extensions</module>
+        <module>hartshorn-launchpad-starter</module>
+        <module>hartshorn-launchpad-samples</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>ci</id>
+      <properties>
+        <jacoco.skip>true</jacoco.skip>
+        <antora.skip>true</antora.skip>
+        <javadoc.skip>true</javadoc.skip>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+
+      <!-- Antora documentation -->
+      <plugin>
+        <groupId>org.antora</groupId>
+        <artifactId>antora-maven-plugin</artifactId>
+        <configuration>
+          <skip>${antora.skip}</skip>
+          <playbookFile>
+            ${maven.multiModuleProjectDirectory}/hartshorn-assembly/antora/${antora.playbook}
+          </playbookFile>
+          <packages>
+            <package>@antora/lunr-extension</package>
+            <package>@asciidoctor/tabs</package>
+            <package>asciidoctor-interdoc-reftext</package>
+          </packages>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <phase>install</phase>
+            <goals>
+              <goal>antora</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

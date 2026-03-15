@@ -14,12 +14,12 @@ jobs:
           java-version: 25
           distribution: temurin
       - name: Build developer documentation
-        run: mvn clean install -DskipTests -P ci,local -Dantora.skip=false -Dantora.playbook=playbook-local.yml
+        run: mvn clean install -DskipTests -P ci -DincludeModules=false -Dantora.skip=false -Dantora.playbook=playbook-local.yml
       - name: Archive Antora artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Antora documentation archive
-          path: hartshorn-assembly/target/site
+          path: target/site
           if-no-files-found: error
           retention-days: 7
       - name: Build Javadocs
