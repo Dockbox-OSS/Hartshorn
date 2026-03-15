@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing a unary operation, which is an operation that applies to a single
- * expression. For example, the expression <code>-x</code> would negate the value of
- * <code>x</code>.
+ * expression. For example, the expression {@code -x} would negate the value of
+ * {@code x}.
  *
  * @since 0.4.12
  * 

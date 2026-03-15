@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * based on a single operator, but rather a function or method that takes two values and produces a
  * result.
  *
- * <p>For example, in the expression <code>value in list</code>, the <code>in</code> operator is an
- * infix operator that checks whether the <code>value</code> is present in the <code>list</code>.
+ * <p>For example, in the expression {@code value in list}, the {@code in} operator is an
+ * infix operator that checks whether the {@code value} is present in the {@code list}.
  *
  * @see FunctionStatement#functionType()
  * 

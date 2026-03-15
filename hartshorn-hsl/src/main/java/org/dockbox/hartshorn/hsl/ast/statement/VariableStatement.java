@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
  * A variable statement, which declares a variable with an optional initializer. If the initializer
- * is not provided, the variable will be initialized to <code>null</code>.
+ * is not provided, the variable will be initialized to {@code null}.
  *
- * <p>For example, the statement below declares a variable named <code>x</code> with an
- * initializer of <code>10</code>:
+ * <p>For example, the statement below declares a variable named {@code x} with an
+ * initializer of {@code 10}:
  * <pre>{@code
  * var x = 10;
  * }</pre>
@@ -58,9 +58,9 @@ public class VariableStatement extends FinalizableStatement implements NamedNode
 
     /**
      * Returns the initializer expression for this variable. If no initializer was provided,
-     * this method may return <code>null</code>.
+     * this method may return {@code null}.
      *
-     * @return the initializer expression, or <code>null</code> if none was provided
+     * @return the initializer expression, or {@code null} if none was provided
      */
     public Expression initializer() {
         return this.initializer;

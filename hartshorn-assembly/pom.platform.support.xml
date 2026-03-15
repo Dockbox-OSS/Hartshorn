@@ -13,7 +13,6 @@
 
   <artifactId>hartshorn-platform-support</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
 
   <name>Hartshorn Platform Support</name>
   <description>Common parent POM for all public facing Hartshorn modules</description>
@@ -26,9 +25,10 @@
     <checkstyle.skip>false</checkstyle.skip>
     <owasp.skip>false</owasp.skip>
     <license-check.skip>false</license-check.skip>
-    <jacoco.skip>false</jacoco.skip>
     <errorprone.skip>false</errorprone.skip>
     <coverage.skip>false</coverage.skip>
+    <jacoco.skip>false</jacoco.skip>
+    <javadoc.skip>false</javadoc.skip>
 
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
@@ -36,7 +36,7 @@
     <plugin.versions.version>2.18.0</plugin.versions.version>
     <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
     <plugin.license.version>5.0.0</plugin.license.version>
-    <plugin.owasp.version>12.1.6</plugin.owasp.version>
+    <plugin.owasp.version>12.2.0</plugin.owasp.version>
     <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
     <!-- Plugin dependencies, in alphabetical order -->
@@ -47,6 +47,8 @@
 
     <!-- TODO: Remove override property once all modules have reached 80% coverage -->
     <coverage.target>80%</coverage.target>
+
+    <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
   </properties>
 
   <profiles>
@@ -59,6 +61,8 @@
         <license-check.skip>true</license-check.skip>
         <errorprone.skip>true</errorprone.skip>
         <coverage.skip>true</coverage.skip>
+        <jacoco.skip>true</jacoco.skip>
+        <javadoc.skip>true</javadoc.skip>
       </properties>
     </profile>
     <profile>
@@ -537,9 +541,28 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.5</version>
+      </plugin>
+
+      <!-- JavaDoc documentation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
+          <skip>${javadoc.skip}</skip>
+          <show>package</show>
+          <show>protected</show>
+          <show>public</show>
         </configuration>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <phase>install</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

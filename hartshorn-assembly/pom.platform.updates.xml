@@ -20,7 +20,7 @@
 
   <properties>
     <updates.skip>false</updates.skip>
-    <plugin.versions.version>2.20.1</plugin.versions.version>
+    <plugin.versions.version>2.21.0</plugin.versions.version>
   </properties>
 
   <build>

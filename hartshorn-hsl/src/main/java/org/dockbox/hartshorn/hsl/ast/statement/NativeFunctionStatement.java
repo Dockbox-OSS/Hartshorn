@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,16 +33,16 @@ import java.util.List;
  * to resolve the function at runtime. Invoking a native function is done without the module name,
  * as if it were a regular function defined in the script.
  *
- * <p>For example, the statement below defines a native function named <code>calculateSum</code>
- * that takes two parameters and is implemented in a module named <code>math</code> (where the
- * <code>math</code> module is not imported in the script, but is available to the runtime):
+ * <p>For example, the statement below defines a native function named {@code calculateSum}
+ * that takes two parameters and is implemented in a module named {@code math} (where the
+ * {@code math} module is not imported in the script, but is available to the runtime):
  * <pre>{@code
  * native function math:calculateSum(a, b);
  * var sum = calculateSum(5, 10)
  * }</pre>
  *
  * <p>Module names can be hierarchical, using dot notation to represent submodules. For example,
- * a native function could be defined in a submodule like <code>utils.string</code>:
+ * a native function could be defined in a submodule like {@code utils.string}:
  * <pre>{@code
  * native function utils.string:toUpperCase(str);
  * var upper = toUpperCase("hello");

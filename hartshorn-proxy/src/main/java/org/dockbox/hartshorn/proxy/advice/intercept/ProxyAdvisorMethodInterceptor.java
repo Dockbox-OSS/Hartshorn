@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * @param source the method being invoked, represented as a {@link MethodInvokable}
      * @param proxy the proxy method being invoked, which may be null if the method is not proxied
      * @param callbackTarget the target instance on which the method is invoked, which may differ
-     * from <code>self</code> if a delegate is used
+     * from {@code self} if a delegate is used
      * @param methodView the method view representing the method being invoked, used for
      * introspection
      * @param defaultInvocation the default invocation to use if no interceptor is present
@@ -163,7 +163,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * @param source the method being invoked, represented as a {@link MethodInvokable}
      * @param proxy the proxy method being invoked, which may be null if the method is not proxied
      * @param callbackTarget the target instance on which the method is invoked, which may differ
-     * from the <code>self</code> instance
+     * from the {@code self} instance
      *
      * @return a {@link CustomInvocation} that defines how the method should be invoked
      */
@@ -198,7 +198,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * objects
      *
      * @return an array of resolved arguments, which may be modified from the original
-     * <code>args</code> array
+     * {@code args} array
      */
     protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
         MethodView<?, ?> methodView = method.toIntrospector();

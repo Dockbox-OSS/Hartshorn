@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * public final myField = 42;
  * }</pre>
  *
- * <p>In this example, <code>public</code> is the modifier, <code>myField</code> is the name of
- * the field, and <code>42</code> is the initializer expression that sets the initial value of the
- * field. Additionally, the field is marked as <code>final</code>, indicating that its value cannot
+ * <p>In this example, {@code public} is the modifier, {@code myField} is the name of
+ * the field, and {@code 42} is the initializer expression that sets the initial value of the
+ * field. Additionally, the field is marked as {@code final}, indicating that its value cannot
  * be changed after initialization.
  *
  * @since 0.4.12

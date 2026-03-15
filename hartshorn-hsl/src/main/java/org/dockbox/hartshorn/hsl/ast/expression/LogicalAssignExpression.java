@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * An expression representing a logical assignment operation, which combines a logical operator with
  * an assignment.
  *
- * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a
+ * <p>For example, in the expression {@code a &&= b}, the {@code &&=} operator is a
  * logical
- * assignment operator that assigns the result of the logical operation <code>a && b</code> back to
- * <code>a</code>.
+ * assignment operator that assigns the result of the logical operation {@code a && b} back to
+ * {@code a}.
  *
  * @since 0.4.12
  *
@@ -54,8 +54,8 @@ public class LogicalAssignExpression extends AssignExpression {
     /**
      * Returns the logical operator type associated with this logical assignment expression. This is
      * the logical operator without the assignment component. For example, if the assignment
-     * operator is <code>&&=</code>, this method would return the logical operator type for
-     * <code>&&</code>.
+     * operator is {@code &&=}, this method would return the logical operator type for
+     * {@code &&}.
      *
      * @return the logical operator type
      */

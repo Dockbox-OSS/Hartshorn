@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * the expression should be evaluated as a single unit, allowing for precedence to be applied
  * correctly in complex expressions.
  *
- * <p>For example, in the expression <code>(a + b) * c</code>, the grouping ensures that
- * <code>a + b</code> is evaluated before multiplying by <code>c</code>. This is particularly
+ * <p>For example, in the expression {@code (a + b) * c}, the grouping ensures that
+ * {@code a + b} is evaluated before multiplying by {@code c}. This is particularly
  * useful in mathematical expressions and logical operations where operator precedence might
  * otherwise lead to unexpected results.
  *

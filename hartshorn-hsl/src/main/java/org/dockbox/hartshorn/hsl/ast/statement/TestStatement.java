@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * assert, a test statement can have a body of multiple statements, which should return a truthy
  * value if the test passes.
  *
- * <p>For example, the statement below defines a test named <code>isPositive</code>:
+ * <p>For example, the statement below defines a test named {@code isPositive}:
  * <pre>{@code
  * test("isPositive") {
  *    return value > 0;

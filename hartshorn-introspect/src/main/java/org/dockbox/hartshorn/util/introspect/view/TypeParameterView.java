@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,24 +35,24 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * <p>For example, given the following type declaration:
  *
- * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
+ * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
  *
- * <p>The type parameter <code>E<sub>1</sub></code> is an input parameter, while
- * <code>E<sub>2</sub></code> is an output parameter. The type parameter <code>E<sub>1</sub></code>
- * is declared on the type <code>List</code>, and consumed by the type <code>List</code>. The type
- * parameter <code>E<sub>2</sub></code> is declared on the type <code>List</code>, but is consumed
- * by the type <code>Collection</code>.
+ * <p>The type parameter {@code E<sub>1</sub>} is an input parameter, while
+ * {@code E<sub>2</sub>} is an output parameter. The type parameter {@code E<sub>1</sub>}
+ * is declared on the type {@code List}, and consumed by the type {@code List}. The type
+ * parameter {@code E<sub>2</sub>} is declared on the type {@code List}, but is consumed
+ * by the type {@code Collection}.
  *
  * <p>For all input type parameters that are {@link #consumedBy() consumed}, the
  * {@link #represents()} method will return a set of output type parameters which represent the
  * counterparts of the input type parameters. For example, given the example above, the
- * {@link #represents()} method of <code>E<sub>1</sub></code> will return a set containing
- * <code>E<sub>2</sub></code>.
+ * {@link #represents()} method of {@code E<sub>1</sub>} will return a set containing
+ * {@code E<sub>2</sub>}.
  *
  * <p>For all output parameters which do not have a {@link #resolvedType() resolved type}, the
  * {@link #definition()} method will return the input type parameter which defines the output type
  * parameter. For example, given the example above, the {@link #definition()} method of
- * <code>E<sub>2</sub></code> will return a type parameter representing <code>E<sub>1</sub></code>.
+ * {@code E<sub>2</sub>} will return a type parameter representing {@code E<sub>1</sub>}.
  *
  * <p>Type parameters may be bounded, unbounded, or concrete. A type parameter is bounded if it has
  * an upper bound that is not {@link Object}. An example of a bounded type parameter is
@@ -70,12 +70,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * <p>Annotations on type parameters are accessible, as long as they are directly on the parameter
  * itself, and not on upperbounds. For example, given the following type declaration:
- * {@code List<@NotNull T extends CharSequence>}, the type parameter <code>T</code> has an
+ * {@code List<@NotNull T extends CharSequence>}, the type parameter {@code T} has an
  * annotation of
- * <code>@NotNull</code>, which can be accessed through the {@link #annotations()} method. Given
+ * {@code @NotNull}, which can be accessed through the {@link #annotations()} method. Given
  * the
  * following type declaration however: {@code List<T extends @NotNull CharSequence>}, the type
- * parameter <code>T</code> has no annotations, as the annotation is declared on the upper bound,
+ * parameter {@code T} has no annotations, as the annotation is declared on the upper bound,
  * and not on the type parameter itself.
  *
  * @since 0.5.0
@@ -88,10 +88,10 @@ public interface TypeParameterView extends AnnotatedElementView {
      * Returns the index of the type parameter. This is the index of the type parameter in the
      * type's type parameter list. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;T, U&gt;</code></pre>
+     * <pre>{@code List&lt;T, U&gt;}</pre>
      *
-     * <p>The type parameter <code>T</code> has an index of 0, while the type parameter
-     * <code>U</code> has an index of 1.
+     * <p>The type parameter {@code T} has an index of 0, while the type parameter
+     * {@code U} has an index of 1.
      *
      * @return the index of the type parameter
      */
@@ -102,10 +102,10 @@ public interface TypeParameterView extends AnnotatedElementView {
      * otherwise. An input parameter is a type parameter that is declared on- and consumed by the
      * type itself. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
+     * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
      *
-     * <p>The type parameter <code>E<sub>1</sub></code> is an input parameter, as it is declared on
-     * the type <code>List</code>, and consumed by the type <code>List</code>.
+     * <p>The type parameter {@code E<sub>1</sub>} is an input parameter, as it is declared on
+     * the type {@code List}, and consumed by the type {@code List}.
      *
      * @return {@code true} if this type parameter is an input parameter, or {@code false} otherwise
      */
@@ -116,11 +116,11 @@ public interface TypeParameterView extends AnnotatedElementView {
      * otherwise. An output parameter is a type parameter that is declared on the type, but consumed
      * by its parents. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
+     * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
      *
-     * <p>The type parameter <code>E<sub>2</sub></code> is an output parameter, as it is declared
+     * <p>The type parameter {@code E<sub>2</sub>} is an output parameter, as it is declared
      * on
-     * the type <code>List</code>, but consumed by the type <code>Collection</code>.
+     * the type {@code List}, but consumed by the type {@code Collection}.
      *
      * @return {@code true} if this type parameter is an output parameter, or {@code false}
      * otherwise
@@ -132,9 +132,9 @@ public interface TypeParameterView extends AnnotatedElementView {
      * parameter. It is not required nor guaranteed that the declaring type is also the consuming
      * type. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;E&gt; extends Collection&lt;E&gt;</code></pre>
+     * <pre>{@code List&lt;E&gt; extends Collection&lt;E&gt;}</pre>
      *
-     * <p>The type parameter <code>E</code> is declared by the type <code>List</code>.
+     * <p>The type parameter {@code E} is declared by the type {@code List}.
      *
      * @return the type that declares this type parameter
      */
@@ -145,9 +145,9 @@ public interface TypeParameterView extends AnnotatedElementView {
      * parameter. It is not required nor guaranteed that the consuming type is also the declaring
      * type. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;E&gt; extends Collection&lt;E&gt;</code></pre>
+     * <pre>{@code List&lt;E&gt; extends Collection&lt;E&gt;}</pre>
      *
-     * <p>The type parameter <code>E</code> is consumed by the type <code>Collection</code>.
+     * <p>The type parameter {@code E} is consumed by the type {@code Collection}.
      *
      * @return the type that consumes this type parameter
      */
@@ -157,10 +157,10 @@ public interface TypeParameterView extends AnnotatedElementView {
      * Returns the input type parameter that defines this output type parameter. This is the type
      * parameter that is declared on the type. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
+     * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
      *
-     * <p>Given that the current type parameter is <code>E<sub>2</sub></code>, the definition of
-     * this type parameter is <code>E<sub>1</sub></code>.
+     * <p>Given that the current type parameter is {@code E<sub>2</sub>}, the definition of
+     * this type parameter is {@code E<sub>1</sub>}.
      *
      * <p>If this type parameter is an input type parameter, this method will return an empty
      * option.
@@ -174,15 +174,15 @@ public interface TypeParameterView extends AnnotatedElementView {
      * the set of type parameters that are declared on the type, but consumed by its parents. For
      * example, given the following type declaration:
      *
-     * <pre><code>
+     * <pre>{@code 
      *   List&lt;E<sub>1</sub>&gt; extends
      *     Collection&lt;E<sub>2</sub>&gt;,
      *     Iterable&lt;E<sub>3</sub>&gt;
-     * </code></pre>
+     * }</pre>
      *
-     * <p>Given that the current type parameter is <code>E<sub>1</sub></code>, the set of type
+     * <p>Given that the current type parameter is {@code E<sub>1</sub>}, the set of type
      * parameters that this input type parameter represents is
-     * <code>[E<sub>2</sub>, E<sub>3</sub>]</code>.
+     * {@code [E<sub>2</sub>, E<sub>3</sub>]}.
      *
      * <p>If this type parameter is an output type parameter, this method will return an empty set.
      *
@@ -194,10 +194,10 @@ public interface TypeParameterView extends AnnotatedElementView {
      * Returns the set of upper bounds of this type parameter. This is the set of types that this
      * type parameter extends. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;? extends CharSequence &amp; Iterable&lt;?&gt;&gt;</code></pre>
+     * <pre>{@code List&lt;? extends CharSequence &amp; Iterable&lt;?&gt;&gt;}</pre>
      *
      * <p>The set of upper bounds of the type parameter {@code ?} is
-     * <code>[CharSequence, Iterable&lt;?&gt;]</code>
+     * {@code [CharSequence, Iterable&lt;?&gt;]}
      *
      * <p>If this type parameter is unbounded, this method will return an empty set.
      *
@@ -209,7 +209,7 @@ public interface TypeParameterView extends AnnotatedElementView {
      * Returns the concrete type that this type parameter represents. This may be a raw-,
      * parameterized- or wildcard type. For example, given the following type declaration:
      *
-     * <pre><code>List&lt;String&gt;</code></pre>
+     * <pre>{@code List&lt;String&gt;}</pre>
      *
      * <p>The type parameter {@code String} is a concrete type, as it represents the type
      * {@link String}. Note that if a type parameter is a wildcard with upper bounds, it is returned
@@ -217,7 +217,7 @@ public interface TypeParameterView extends AnnotatedElementView {
      * introspect the upper bounds of the wildcard. For example, given the following type
      * declaration:
      *
-     * <pre><code>List&lt;? extends CharSequence&gt;</code></pre>
+     * <pre>{@code List&lt;? extends CharSequence&gt;}</pre>
      *
      * <p>The type parameter {@code ?} is a wildcard type, and will only return a 'raw'
      * {@link WildcardTypeView}.
@@ -316,10 +316,10 @@ public interface TypeParameterView extends AnnotatedElementView {
      * resolves the input parameter on the consuming type. For example, given the following type
      * declaration:
      *
-     * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
+     * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
      *
-     * <p>Given that the current type parameter is <code>E<sub>2</sub></code>, the resolved input
-     * type parameter is {@code E} on {@code Collection}, and not <code>E<sub>1</sub></code> on
+     * <p>Given that the current type parameter is {@code E<sub>2</sub>}, the resolved input
+     * type parameter is {@code E} on {@code Collection}, and not {@code E<sub>1</sub>} on
      * {@code List}.
      *
      * <p>If this type parameter is an input type parameter, this method will return the current

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing the Elvis operator, which is used to provide a default value when a
- * condition evaluates to null or false. For example, the expression <code>nullableValue ?:
- * defaultValue</code> will return the value of <code>nullableValue</code> if it is not null or
- * false (truthy), otherwise it will return <code>defaultValue</code>.
+ * condition evaluates to null or false. For example, the expression {@code nullableValue ?:
+ * defaultValue} will return the value of {@code nullableValue} if it is not null or
+ * false (truthy), otherwise it will return {@code defaultValue}.
  *
  * @since 0.4.12
  * 

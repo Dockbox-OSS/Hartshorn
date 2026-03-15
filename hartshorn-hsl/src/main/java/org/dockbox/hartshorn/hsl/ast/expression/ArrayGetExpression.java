@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 /**
  * Represents an expression that retrieves a value from an array using a numeric index.
  *
- * <p>For example, the expression <code>array[0]</code> retrieves the first element from the array
- * named <code>array</code>.
+ * <p>For example, the expression {@code array[0]} retrieves the first element from the array
+ * named {@code array}.
  *
  * @since 0.4.12
  * 

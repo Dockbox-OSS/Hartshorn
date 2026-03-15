@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Parser for literal expressions, such as boolean values, null, numbers, strings, characters, the
- * <code>this</code> keyword, and the <code>super</code> keyword.
+ * {@code this} keyword, and the {@code super} keyword.
  *
  * @since 0.7.0
  *
