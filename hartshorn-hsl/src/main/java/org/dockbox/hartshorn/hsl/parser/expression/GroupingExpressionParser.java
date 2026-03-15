@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
  * Parser for grouping expressions, which are expressions enclosed in parentheses. This is commonly
  * used to override the default precedence of operations in expressions. For example, in the
  * expression
- * <code>(a + b) * c</code>, the addition operation is performed before the multiplication due to
+ * {@code (a + b) * c}, the addition operation is performed before the multiplication due to
  * the
- * grouping of <code>a + b</code> within parentheses.
+ * grouping of {@code a + b} within parentheses.
  *
  * @since 0.7.0
  *

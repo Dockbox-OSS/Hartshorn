@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ import java.util.List;
  * vector.z = 5; // Adding a new property dynamically
  * }</pre>
  *
- * <p>In this example, <code>Vector</code> is the name of the class, which extends the superclass
- * <code>Point</code>. The class has two private fields, <code>x</code> and <code>y</code>, a
+ * <p>In this example, {@code Vector} is the name of the class, which extends the superclass
+ * {@code Point}. The class has two private fields, {@code x} and {@code y}, a
  * constructor
- * that initializes these fields, and a public method <code>magnitude</code> that calculates the
+ * that initializes these fields, and a public method {@code magnitude} that calculates the
  * magnitude of the vector. As the class name is followed by a question mark, it is marked as
  * dynamic, allowing additional properties to be added at runtime.
  *

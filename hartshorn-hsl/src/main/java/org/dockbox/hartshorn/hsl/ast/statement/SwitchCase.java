@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * A switch case statement, representing a single case within a switch construct. This statement
  * holds a body, which is the statement to be executed if the case matches, and an expression, which
  * is the value to match against the switch expression. If the case is a default case, the
- * expression will be <code>null</code>.
+ * expression will be {@code null}.
  *
  * @since 0.4.12
  *
@@ -60,9 +60,9 @@ public class SwitchCase extends Statement {
 
     /**
      * Returns the expression of this switch case, which is the value to match against the switch
-     * expression. If this is a default case, the expression will be <code>null</code>.
+     * expression. If this is a default case, the expression will be {@code null}.
      *
-     * @return the case expression, or <code>null</code> if this is a default case
+     * @return the case expression, or {@code null} if this is a default case
      */
     public LiteralExpression expression() {
         return this.expression;
@@ -71,7 +71,7 @@ public class SwitchCase extends Statement {
     /**
      * Indicates whether this switch case is the default case.
      *
-     * @return <code>true</code> if this is the default case, <code>false</code> otherwise
+     * @return {@code true} if this is the default case, {@code false} otherwise
      */
     public boolean isDefault() {
         return this.isDefault;

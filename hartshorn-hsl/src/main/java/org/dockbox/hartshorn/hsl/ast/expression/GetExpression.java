@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing the retrieval of a value from an object or structure using a named
- * property. For example, the expression <code>object.property</code> retrieves the value of the
+ * property. For example, the expression {@code object.property} retrieves the value of the
  * property named
- * <code>property</code> from the object named <code>object</code>.
+ * {@code property} from the object named {@code object}.
  *
  * @since 0.4.12
  * 

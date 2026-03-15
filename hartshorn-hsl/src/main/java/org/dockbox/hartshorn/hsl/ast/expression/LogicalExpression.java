@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
  * An expression representing a logical operation, which is an operation that combines two
- * expressions using a logical operator, such as <code>&&</code> (AND), <code>||</code> (OR), or
- * <code>^</code> (XOR).
+ * expressions using a logical operator, such as {@code &&} (AND), {@code ||} (OR), or
+ * {@code ^} (XOR).
  *
- * <p>For example, in the expression <code>a && b</code>, the <code>&&</code> (AND) operator
- * is a logical operator that combines the two expressions <code>a</code> and <code>b</code>,
- * resulting in a new expression that evaluates to <code>true</code> if both <code>a</code> and
- * <code>b</code> are truthy.
+ * <p>For example, in the expression {@code a && b}, the {@code &&} (AND) operator
+ * is a logical operator that combines the two expressions {@code a} and {@code b},
+ * resulting in a new expression that evaluates to {@code true} if both {@code a} and
+ * {@code b} are truthy.
  *
  * @since 0.4.12
  * 

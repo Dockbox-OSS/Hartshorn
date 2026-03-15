@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * Parser for complex array expressions, including array literals and array comprehensions. The most
- * basic array literal is a list of expressions enclosed in array brackets (e.g., <code>[1, 2,
- * 3]</code>).
+ * basic array literal is a list of expressions enclosed in array brackets (e.g., {@code [1, 2,
+ * 3]}).
  *
  * <p>Array comprehensions allow for more complex array constructions using loops and conditions
- * (e.g., <code>[x * 2 for x in range if x > 5 else x]</code>).
+ * (e.g., {@code [x * 2 for x in range if x > 5 else x]}).
  *
  * @since 0.7.0
  *

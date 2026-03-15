@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,22 +49,22 @@ public class TypeParameterResolver {
      *
      * <p>If there is no concrete type parameter for a given index, the type parameter at that index
      * in the result will
-     * be {@code null}.
+     * be {@code null}.</p>
      *
-     * <h2>Examples</h2>
-     * <h3>All parameters defined at same level</h3>
+     * <p><b>Examples</b></p>
+     * <p><b>All parameters defined at same level</b></p>
      * <p>In simple scenarios, all type parameters may be defined at the same level in the
      * hierarchy. For example, if
      * the base type is {@code ArrayList<String>} and the parent is {@code Collection}, this method
-     * will return a list containing a single type parameter view for {@code String}.
+     * will return a list containing a single type parameter view for {@code String}.</p>
      *
-     * <h3>Parameters defined at different levels</h3>
+     * <p><b>Parameters defined at different levels</b></p>
      * <p>Parameters may be defined in different levels of the hierarchy. For example, if the base
      * type is {@code
      * StringToNumberFunction}, which extends {@code NumberFunction<String>}, which in turn extends
      * {@code Function<T, Number>}, and the parent is {@code Function}, this method will return a
      * list containing both {@code String} and {@code Number} as type parameter views, in that
-     * order.
+     * order.</p>
      *
      * @param baseType the base type from which to resolve the input type parameters
      * @param forParent the parent type for which to resolve the input type parameters

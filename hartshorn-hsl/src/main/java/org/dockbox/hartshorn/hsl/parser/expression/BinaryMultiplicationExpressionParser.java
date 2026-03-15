@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Parser for binary multiplication, division, and modulo expressions. Handles the parsing of
- * expressions involving multiplication (<code>*</code>), division (<code>/</code>), and module
- * (<code>%</code>) operators.
+ * expressions involving multiplication ({@code *}), division ({@code /}), and module
+ * ({@code %}) operators.
  *
  * @since 0.7.0
  *

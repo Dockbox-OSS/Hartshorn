@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Parser for infix function (call) expressions. Infix functions are functions that are called using
- * an operator-like syntax, such as <code>a add b</code> instead of
- * <code>add(a, b)</code>.
+ * an operator-like syntax, such as {@code a add b} instead of
+ * {@code add(a, b)}.
  *
  * @since 0.7.0
  * 

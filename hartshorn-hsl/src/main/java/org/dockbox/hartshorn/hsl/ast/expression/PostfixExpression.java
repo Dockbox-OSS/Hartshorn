@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * An expression representing a postfix operation, which is an operation that applies an operator to
  * an expression after the expression has been evaluated.
  *
- * <p>For example, in the expression <code>a++</code>, the <code>++</code> operator is a postfix
- * operator that increments the value of <code>a</code> by 1 after the expression has been
- * evaluated. Thus, the result of this expression is the original value of <code>a</code>, while the
+ * <p>For example, in the expression {@code a++}, the {@code ++} operator is a postfix
+ * operator that increments the value of {@code a} by 1 after the expression has been
+ * evaluated. Thus, the result of this expression is the original value of {@code a}, while the
  * value of
- * <code>a</code> itself is incremented by 1.
+ * {@code a} itself is incremented by 1.
  *
  * @see PrefixExpression the counterpart to this expression, which applies an operator before the
  * expression is evaluated.

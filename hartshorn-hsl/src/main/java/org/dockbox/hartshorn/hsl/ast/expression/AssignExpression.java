@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 /**
  * An expression representing the assignment of a value to a variable or property. For example, the
  * expression
- * <code>variable = value</code> assigns the value specified by the <code>value</code> expression to
+ * {@code variable = value} assigns the value specified by the {@code value} expression to
  * the variable
- * named <code>variable</code>.
+ * named {@code variable}.
  *
  * @since 0.4.12
  *

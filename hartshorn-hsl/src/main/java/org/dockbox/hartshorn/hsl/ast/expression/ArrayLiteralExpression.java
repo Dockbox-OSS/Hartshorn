@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.List;
  * open and close tokens, typically square brackets. Each expression within the array literal
  * represents an element of the array, and can be of any type, including other arrays or objects.
  *
- * <p>For example, the expression <code>[1, 2, 3]</code> represents an array literal containing
+ * <p>For example, the expression {@code [1, 2, 3]} represents an array literal containing
  * three numeric elements.
  *
  * @since 0.4.12

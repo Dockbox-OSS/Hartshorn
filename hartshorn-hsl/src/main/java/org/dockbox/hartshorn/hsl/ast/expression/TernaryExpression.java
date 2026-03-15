@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * condition is true, followed by a colon, and finally an expression to evaluate if the condition is
  * false.
  *
- * <p>For example, in the expression <code>condition ? trueExpression : falseExpression</code>, the
- * <code>condition</code> is evaluated first. If it evaluates to true, the
- * <code>trueExpression</code> is
- * evaluated and returned; if it evaluates to false, the <code>falseExpression</code> is evaluated
+ * <p>For example, in the expression {@code condition ? trueExpression : falseExpression}, the
+ * {@code condition} is evaluated first. If it evaluates to true, the
+ * {@code trueExpression} is
+ * evaluated and returned; if it evaluates to false, the {@code falseExpression} is evaluated
  * and returned instead.
  *
  * @since 0.4.12
