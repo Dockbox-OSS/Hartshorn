@@ -36,7 +36,7 @@
     <plugin.versions.version>2.18.0</plugin.versions.version>
     <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
     <plugin.license.version>5.0.0</plugin.license.version>
-    <plugin.owasp.version>12.1.6</plugin.owasp.version>
+    <plugin.owasp.version>12.2.0</plugin.owasp.version>
     <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
     <!-- Plugin dependencies, in alphabetical order -->
