@@ -28,6 +28,7 @@
     <antora.playbook>playbook-release.yml</antora.playbook>
 
     <!-- Maven plugin versions, in alphabetical order -->
+    <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
     <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
   </properties>
 
@@ -104,6 +105,7 @@
       <plugin>
         <groupId>org.antora</groupId>
         <artifactId>antora-maven-plugin</artifactId>
+        <version>${plugin.antora.version}</version>
         <configuration>
           <skip>${antora.skip}</skip>
           <playbookFile>

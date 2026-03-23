@@ -31,7 +31,6 @@
     <javadoc.skip>false</javadoc.skip>
 
     <!-- Maven plugin versions, in alphabetical order -->
-    <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
     <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
     <plugin.versions.version>2.18.0</plugin.versions.version>
     <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
@@ -314,11 +313,6 @@
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
           <version>${plugin.owasp.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.antora</groupId>
-          <artifactId>antora-maven-plugin</artifactId>
-          <version>${plugin.antora.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
