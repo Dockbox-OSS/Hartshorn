@@ -11,6 +11,16 @@ import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
 
 import java.io.IOException;
 
+/**
+ * Standard servlet for capturing servlet requests and routing them based on available
+ * {@link HandlerMapping handler mappings}. This captures all available HTTP methods and maps them
+ * to {@link org.dockbox.hartshorn.web.route.RouteMapping route mappings} through the provided
+ * {@link HandlerMappingResolver}.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class RequestRoutingServlet extends HttpServlet {
 
     private final HandlerMappingResolver registry;
@@ -19,6 +29,18 @@ public class RequestRoutingServlet extends HttpServlet {
         this.registry = resolver;
     }
 
+    /**
+     * Handles the incoming request by resolving the corresponding {@link HandlerMapping} for the
+     * given HTTP method and request path, and invoking the corresponding handler. If no handler is
+     * found, a 404 response is returned.
+     *
+     * @param method the HTTP method of the request
+     * @param req the servlet request
+     * @param resp the servlet response
+     *
+     * @throws ServletException if an error occurs while handling the request
+     * @throws IOException if an I/O error occurs while handling the request
+     */
     protected void handleRequest(
             HttpMethod method,
             HttpServletRequest req,
@@ -28,53 +50,77 @@ public class RequestRoutingServlet extends HttpServlet {
         if (mapping.present()) {
             try {
                 mapping.get().handler().handle(req, resp);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
+                // TODO: Allow custom error handling
                 throw new ServletException("Failed to handle request", e);
             }
-        }
-        else {
+        } else {
+            // TODO: Allow custom 404 handling
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.GET, req, resp);
     }
 
     @Override
-    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doHead(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.HEAD, req, resp);
     }
 
     @Override
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPatch(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.PATCH, req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.POST, req, resp);
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.PUT, req, resp);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.DELETE, req, resp);
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.OPTIONS, req, resp);
     }
 
     @Override
-    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doTrace(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
         this.handleRequest(HttpMethod.TRACE, req, resp);
     }
 }
