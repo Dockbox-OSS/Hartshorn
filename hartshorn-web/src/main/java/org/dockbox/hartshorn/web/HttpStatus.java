@@ -28,6 +28,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Guus Lieben
  */
 public enum HttpStatus implements HttpStatusCode {
+    // checkstyle:off LineLength
+
     // 1xx Informational
     CONTINUE(HttpServletResponse.SC_CONTINUE, "Continue"),
     SWITCHING_PROTOCOLS(HttpServletResponse.SC_SWITCHING_PROTOCOLS, "Switching Protocols"),
@@ -101,6 +103,7 @@ public enum HttpStatus implements HttpStatusCode {
     NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required"),
 
     ;
+    // checkstyle:on LineLength
 
     private final int code;
     private final String reasonPhrase;

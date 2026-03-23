@@ -1,5 +1,12 @@
 package org.dockbox.hartshorn.web.util;
 
+/**
+ * Utility class for router-related operations, such as path manipulation and normalization.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public final class RouterUtilities {
 
     private RouterUtilities() {

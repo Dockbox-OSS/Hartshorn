@@ -96,6 +96,7 @@ public class WebServerConfiguration {
      * Creates a {@link HandlerMappingRegistry} and applies all registered customizers to it.
      *
      * @param customizers The collection of customizers for the handler mapping registry.
+     * @param logger The logger to use for the handler mapping registrar.
      *
      * @return A configured handler mapping registry.
      */
@@ -110,6 +111,18 @@ public class WebServerConfiguration {
         return registry;
     }
 
+    /**
+     * Customizer to capture and register all {@link HttpRoute HTTP routes}.
+     *
+     * @param componentRegistry the component registry to use for component discovery
+     * @param conversionService the conversion service to use for parameter transformation
+     * @param application the current application
+     * @param responseHandler the handler for handler responses
+     *
+     * @see DeclarativeRouterPathConfigurer
+     *
+     * @return a new {@link DeclarativeRouterPathConfigurer}
+     */
     @Singleton
     @CompositeMember
     public RouterCustomizer declarativeRouterPathConfigurer(
@@ -126,6 +139,15 @@ public class WebServerConfiguration {
         );
     }
 
+    /**
+     * Standard response handler driven by configured {@link HttpMessageConverter converters}, with
+     * a default {@link GenericHttpMessageConverter} as fallback converter.
+     *
+     * @param httpMessageConverter the default fallback converter
+     * @param messageConverters type-constrained message converters
+     *
+     * @return a new {@link SimpleResponseHandler}
+     */
     @Singleton
     public ResponseHandler responseHandler(
             GenericHttpMessageConverter httpMessageConverter,
@@ -137,6 +159,16 @@ public class WebServerConfiguration {
         );
     }
 
+    /**
+     * Pattern-matching capable {@link HandlerMappingResolver}, using the configured
+     * {@link PathPatternMatcher} to resolve handler mappings from the configured
+     * {@link HandlerMappingRegistry}.
+     *
+     * @param patternMatcher the pattern matcher to use for routing paths
+     * @param registry the registry containing {@link HandlerMapping handler mappings}
+     *
+     * @return a new {@link PatternMatchingHandlerMappingResolver}
+     */
     @Singleton
     public HandlerMappingResolver handlerMappingResolver(
             PathPatternMatcher patternMatcher,
@@ -145,6 +177,14 @@ public class WebServerConfiguration {
         return new PatternMatchingHandlerMappingResolver(patternMatcher, registry);
     }
 
+    /**
+     * Standard implementation of {@link PathPatternMatcher} for matching request paths to route
+     * patterns.
+     *
+     * @return a new {@link StandardPathPatternMatcher}.
+     *
+     * @see StandardPathPatternMatcher
+     */
     @Singleton
     public PathPatternMatcher pathPatternMatcher() {
         return new StandardPathPatternMatcher();
@@ -202,6 +242,13 @@ public class WebServerConfiguration {
         return new WebServerDiagnosticsReporter(webServer);
     }
 
+    /**
+     * Jackson-based JSON mapping configuration.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass(classes = JsonMapper.class)
     public static class JacksonJsonResponseWriterConfiguration {

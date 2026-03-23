@@ -14,7 +14,12 @@ public class SimpleHandlerMappingRegistrar implements HandlerMappingRegistrar {
 
     @Override
     public HandlerMappingRegistrar add(RouteMapping mapping, RequestHandler handler) {
-        logger.info("Registering handler for {} {}: {}", mapping.method(), mapping.pathPattern(), handler);
+        logger.info(
+                "Registering handler for {} {}: {}",
+                mapping.method(),
+                mapping.pathPattern(),
+                handler
+        );
         this.registry.add(mapping, handler);
         return this;
     }

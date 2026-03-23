@@ -12,6 +12,15 @@ import org.dockbox.hartshorn.web.route.SimpleHandlerMapping;
 
 import java.util.Map;
 
+/**
+ * A {@link HandlerMappingResolver} that resolves handler mappings based on path pattern matching,
+ * using a given {@link PathPatternMatcher} to match request paths against registered patterns in a
+ * {@link HandlerMappingRegistry}.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class PatternMatchingHandlerMappingResolver implements HandlerMappingResolver {
 
     private final PathPatternMatcher patternMatcher;
@@ -26,7 +35,11 @@ public class PatternMatchingHandlerMappingResolver implements HandlerMappingReso
     }
 
     @Override
-    public Option<HandlerMapping> resolve(HttpMethod method, String path, HttpServletRequest request) {
+    public Option<HandlerMapping> resolve(
+            HttpMethod method,
+            String path,
+            HttpServletRequest request
+    ) {
         Map<String, RequestHandler> mappings = this.registry.mappings(method);
         for (Map.Entry<String, RequestHandler> entry : mappings.entrySet()) {
             String pattern = entry.getKey();
