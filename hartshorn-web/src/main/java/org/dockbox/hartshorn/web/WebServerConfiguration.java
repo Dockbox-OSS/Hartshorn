@@ -38,16 +38,17 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
+import org.dockbox.hartshorn.web.route.HandlerMapping;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
-import org.dockbox.hartshorn.web.route.response.JacksonResponseMessageConverter;
+import org.dockbox.hartshorn.web.route.response.GenericHttpMessageConverter;
+import org.dockbox.hartshorn.web.route.response.JacksonHttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.ResponseHandler;
-import org.dockbox.hartshorn.web.route.response.TypeHttpMessageConverter;
+import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
@@ -126,9 +127,9 @@ public class WebServerConfiguration {
     }
 
     @Singleton
-    public ResponseHandler responseHandlerChain(
-            HttpMessageConverter httpMessageConverter,
-            @Fuzzy ComponentCollection<TypeHttpMessageConverter<?>> messageConverters
+    public ResponseHandler responseHandler(
+            GenericHttpMessageConverter httpMessageConverter,
+            @Fuzzy ComponentCollection<HttpMessageConverter<?>> messageConverters
     ) {
         return new SimpleResponseHandler(
                 httpMessageConverter,
@@ -206,7 +207,7 @@ public class WebServerConfiguration {
     public static class JacksonJsonResponseWriterConfiguration {
 
         /**
-         * Creates a {@link TypeHttpMessageConverter} that uses a {@link JsonMapper} to serialize
+         * Creates a {@link HttpMessageConverter} that uses a {@link JsonMapper} to serialize
          * objects to JSON.
          *
          * @param jsonMapper The JSON mapper to use for serialization.
@@ -219,8 +220,8 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
-        public HttpMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
-            return new JacksonResponseMessageConverter(jsonMapper, MimeTypes.APPLICATION_JSON);
+        public GenericHttpMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
+            return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
         }
     }
 }

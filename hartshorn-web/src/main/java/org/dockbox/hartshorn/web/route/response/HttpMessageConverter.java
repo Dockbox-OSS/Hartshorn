@@ -4,9 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.util.option.Option;
 
-public interface HttpMessageConverter {
+public interface HttpMessageConverter<T> {
 
-    Option<?> read(Class<?> type, HttpServletRequest request) throws Exception;
+    boolean supports(Class<?> type);
 
-    void write(HttpServletResponse response, Object result) throws Exception;
+    Option<T> read(Class<? extends T> type, HttpServletRequest request) throws Exception;
+
+    void write(HttpServletResponse response, T result) throws Exception;
 }
