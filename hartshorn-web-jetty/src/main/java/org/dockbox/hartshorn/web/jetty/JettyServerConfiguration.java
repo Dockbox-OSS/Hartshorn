@@ -79,6 +79,7 @@ public class JettyServerConfiguration {
      * @param scheduler The scheduler for the server.
      * @param bufferPool The byte buffer pool for the server.
      * @param customizers A collection of customizers to configure the server.
+     * @param filters A collection of servlet filters to apply to the server.
      * @param port The port on which the server will listen.
      *
      * @return The Jetty Server instance.
@@ -97,7 +98,9 @@ public class JettyServerConfiguration {
 
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
-        context.addServlet(new ServletHolder(new RequestRoutingServlet(handlerMappingResolver)), "/*");
+        context.addServlet(new ServletHolder(
+                new RequestRoutingServlet(handlerMappingResolver)
+        ), "/*");
         filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
         server.setHandler(context);
 
