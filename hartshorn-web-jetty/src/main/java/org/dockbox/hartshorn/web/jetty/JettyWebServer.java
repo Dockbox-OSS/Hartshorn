@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.web.jetty.report.NetworkConnectorReporter;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -102,7 +101,6 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         }
     }
 
-    @NotNull
     @Override
     public String toString() {
         return ObjectDescriber.of(this)

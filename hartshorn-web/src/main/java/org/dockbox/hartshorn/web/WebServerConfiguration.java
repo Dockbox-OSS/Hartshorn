@@ -119,9 +119,9 @@ public class WebServerConfiguration {
      * @param application the current application
      * @param responseHandler the handler for handler responses
      *
-     * @see DeclarativeRouterPathConfigurer
-     *
      * @return a new {@link DeclarativeRouterPathConfigurer}
+     *
+     * @see DeclarativeRouterPathConfigurer
      */
     @Singleton
     @CompositeMember
