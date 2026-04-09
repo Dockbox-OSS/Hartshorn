@@ -16,16 +16,14 @@
 
 package test.org.dockbox.hartshorn.inject.scope;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 import test.org.dockbox.hartshorn.inject.scope.ScopedBindingConfiguration.SampleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +36,7 @@ class ScopeBindingTests {
 
     @Test
     void scopeBindingIsNotAccessibleFromApplication() {
-        Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
+        Scope scope = ScopeAdapter.of(new Object());
         ComponentKey<String> key = ComponentKey.builder(String.class)
             .scope(scope)
             .build();
@@ -57,7 +55,7 @@ class ScopeBindingTests {
     void applicationBindingIsAccessibleFromScope() {
         this.applicationContext.bind(String.class).singleton("test");
 
-        Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
+        Scope scope = ScopeAdapter.of(new Object());
         ComponentKey<String> key = ComponentKey.builder(String.class)
             .scope(scope)
             .build();
