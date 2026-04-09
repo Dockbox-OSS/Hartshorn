@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test.junit;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.test.junit.cleanup.HartshornCleanupCallback;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -57,14 +58,13 @@ class HartshornJUnitNamespace {
     }
 
     static List<HartshornCleanupCallback> collectCleanupCallbacks(ExtensionContext context) {
-        List<?> callbacks = store(context).getOrComputeIfAbsent(
+        List<?> callbacks = store(context).computeIfAbsent(
             HartshornCleanupCallback.class,
-            key -> new ArrayList<>(),
+            _ -> new ArrayList<>(),
             List.class);
 
         return callbacks.stream()
-            .filter(HartshornCleanupCallback.class::isInstance)
-            .map(HartshornCleanupCallback.class::cast)
+            .gather(StreamGatherers.filterByType(HartshornCleanupCallback.class))
             .toList();
     }
 
@@ -72,9 +72,9 @@ class HartshornJUnitNamespace {
         HartshornCleanupCallback callback,
         ExtensionContext context
     ) {
-        List<HartshornCleanupCallback> callbacks = store(context).getOrComputeIfAbsent(
+        List<HartshornCleanupCallback> callbacks = store(context).computeIfAbsent(
             HartshornCleanupCallback.class,
-            key -> new ArrayList<>(),
+            _ -> new ArrayList<>(),
             TypeUtils.unchecked(List.class, Class.class));
 
         if (!callbacks.contains(callback)) {

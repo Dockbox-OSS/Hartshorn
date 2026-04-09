@@ -26,6 +26,12 @@ import java.lang.annotation.Target;
  * Arguments to be passed to the application context when running the test. Each argument is
  * equivalent to a single CLI argument passed to the application.
  *
+ * <p>For example, the following annotation would set the {@code hartshorn.web.port} property to
+ * {@code 8081} when running the test:
+ * <pre>{@code
+ * @TestProperties("hartshorn.web.port=8081")
+ * }</pre>
+ *
  * @since 0.4.12
  *
  * @author Guus Lieben
