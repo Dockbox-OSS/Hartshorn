@@ -27,7 +27,9 @@ package org.dockbox.hartshorn.web;
 public interface WebServer {
 
     /**
-     * Starts the web server, allowing it to accept incoming HTTP requests.
+     * Starts the web server, allowing it to accept incoming HTTP requests. Web servers should start
+     * in a non-blocking manner, allowing the application to continue initializing while the server
+     * is starting up.
      *
      * @throws ServerException If an error occurs while starting the server.
      */
