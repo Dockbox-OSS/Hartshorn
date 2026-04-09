@@ -7,7 +7,6 @@ param (
 
 ### Module Imports ###
 Import-Module "$PSScriptRoot\psm\AddModuleToPlaybook.psm1"
-Import-Module "$PSScriptRoot\psm\UpdateAssemblyDependencies.psm1"
 Import-Module "$PSScriptRoot\psm\NewModuleFromArchetype.psm1"
 
 ### Preconditions ###
@@ -35,15 +34,6 @@ if (-NOT $NoDocs) {
     Add-ModuleToPlaybook -playBook "local" -moduleId $Module
     Add-ModuleToPlaybook -playBook "release" -moduleId $Module
 }
-
-### POM Updates ###
-Write-Host "`nUpdating hartshorn-assembly POM to include new module dependency..." -ForegroundColor Green
-
-$parentPomPath = "..\hartshorn-assembly\pom.assembly.xml"
-$groupId = "org.dockbox.hartshorn"
-$artifactId = "hartshorn-$Module"
-
-Update-AssemblyDependencies -FilePath $parentPomPath -GroupId $groupId -ArtifactId $artifactId
 
 ### Completion Message ###
 Write-Host "`nModule 'hartshorn-$Module' generation and integration complete! Actions performed:" -ForegroundColor Green
