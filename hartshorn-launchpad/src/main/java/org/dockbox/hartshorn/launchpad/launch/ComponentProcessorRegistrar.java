@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -234,8 +235,7 @@ public class ComponentProcessorRegistrar {
         }
 
         this.additionalComponentProcessors.stream()
-            .filter(ComponentPostProcessor.class::isInstance)
-            .map(ComponentPostProcessor.class::cast)
+            .gather(StreamGatherers.filterByType(ComponentPostProcessor.class))
             .forEach(registry::register);
     }
 

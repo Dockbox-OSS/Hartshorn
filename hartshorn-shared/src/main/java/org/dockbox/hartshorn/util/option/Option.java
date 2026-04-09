@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.util.option;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import javax.xml.transform.Result;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -531,15 +533,21 @@ public interface Option<T> extends Context, Iterable<T> {
 
     @Override
     default Spliterator<T> spliterator() {
-        int size = this.map(value -> 1).orElse(0);
+        int size = Objects.requireNonNull(this.map(_ -> 1).orElse(0));
         return Spliterators.spliterator(this.iterator(), size, 0);
     }
 
     @Override
+    @NonNull
     default Iterator<T> iterator() {
-        return this.map(List::of)
-            .map(List::iterator)
-            .orElseGet(Collections::emptyIterator);
+        return Objects.requireNonNull(this
+                .map(List::of)
+                .map(List::iterator)
+                .orElseGet(Collections::emptyIterator));
+    }
+
+    static <T> Collector<T, ?, Option<T>> collector() {
+        return CollectorUtilities.toOption();
     }
 
     @Override
