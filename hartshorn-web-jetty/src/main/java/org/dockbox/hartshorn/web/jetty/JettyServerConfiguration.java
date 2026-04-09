@@ -33,11 +33,8 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.web.ServerPortProvider;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
-import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.Handler;
@@ -118,30 +115,18 @@ public class JettyServerConfiguration {
     }
 
     /**
-     * Creates a prototype instance of the main server handler, which is a
-     * {@link ServletContextHandler} that routes requests to the appropriate handlers based on the
-     * provided {@link HandlerMappingResolver}. Additionally, any filters configured within the
-     * application are added to the context handler, allowing for additional request processing and
-     * manipulation before reaching the main handlers.
-     *
-     * @param handlerMappingResolver The resolver for mapping requests to handlers.
-     * @param filters A collection of filters to be added to the context handler.
-     *
-     * @return The configured server handler instance.
+     * TODO
      */
     @Prototype
     @Priority(Priority.SUPPORT_PRIORITY)
     public Handler serverHandler(
-            HandlerMappingResolver handlerMappingResolver,
             @Fuzzy ComponentCollection<Filter> filters
     ) {
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
-        context.addServlet(new ServletHolder(
-                new RequestRoutingServlet(handlerMappingResolver)
-        ), "/*");
-
-        context.addServlet();
+        // TODO: Add registration of RequestHandlers
+        // context.addServlet(..)
+        // TODO: Expand filter support
         filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
         return context;
     }

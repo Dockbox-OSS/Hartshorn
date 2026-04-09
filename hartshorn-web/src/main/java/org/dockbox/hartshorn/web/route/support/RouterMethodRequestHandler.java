@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -98,5 +99,12 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("method").writeString(this.methodView.qualifiedName());
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("method", this.methodView.qualifiedName())
+                .describe();
     }
 }

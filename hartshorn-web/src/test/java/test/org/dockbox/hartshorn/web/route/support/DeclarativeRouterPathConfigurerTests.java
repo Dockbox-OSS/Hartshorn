@@ -15,10 +15,10 @@ import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.RequestHandler;
-import org.dockbox.hartshorn.web.route.RouteMapping;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -49,11 +49,11 @@ public class DeclarativeRouterPathConfigurerTests {
         HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry, logger);
         configurer.configure(registrar);
 
-        Map<RouteMapping, RequestHandler> mappings = registry.mappings();
+        Map<PathSpec, RequestHandler> mappings = registry.mappings();
         Assertions.assertThat(mappings)
                 .hasSize(2);
         Assertions.assertThat(mappings.keySet())
-                .extracting(RouteMapping::method, RouteMapping::pathPattern)
+                .extracting(PathSpec::method, PathSpec::parts)
                 .containsExactlyInAnyOrder(
                         Assertions.tuple(HttpMethod.GET, "/api/test"),
                         Assertions.tuple(HttpMethod.POST, "/api/test")

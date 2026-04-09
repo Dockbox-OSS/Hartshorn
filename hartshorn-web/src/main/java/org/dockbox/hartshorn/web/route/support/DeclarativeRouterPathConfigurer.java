@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.web.HttpRoute;
 import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.RequestHandler;
-import org.dockbox.hartshorn.web.route.RouteMapping;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.response.ResponseHandler;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 import org.dockbox.hartshorn.web.util.RouterUtilities;
 
 import java.util.List;
@@ -87,7 +87,7 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
                     .map(Router::value)
                     .orElse("");
             String path = RouterUtilities.combinePaths(pathPrefix, httpRoute.path());
-            routes.add(RouteMapping.of(httpRoute.method(), path), handler);
+            routes.add(httpRoute.method(), PathSpec.parse(path), handler);
         }
     }
 }

@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.web.route;
 
-import org.dockbox.hartshorn.util.stream.EntryStream;
 import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * A simple implementation of {@link HandlerMappingRegistry}.
@@ -32,25 +31,17 @@ import java.util.stream.Collectors;
  */
 public class SimpleHandlerMappingRegistry implements HandlerMappingRegistry {
 
-    private final Map<RouteMapping, RequestHandler> mappings = new ConcurrentHashMap<>();
+    private final Map<PathSpec, RequestHandler> mappings = new ConcurrentHashMap<>();
 
     @Override
-    public void add(RouteMapping mapping, RequestHandler handler) {
+    public void add(HttpMethod method, PathSpec mapping, RequestHandler handler) {
+        // TODO: Include method in some way
         this.mappings.put(mapping, handler);
     }
 
     @Override
-    public Map<RouteMapping, RequestHandler> mappings() {
+    public Map<PathSpec, RequestHandler> mappings() {
+        // TODO: Return method in some way
         return this.mappings;
-    }
-
-    @Override
-    public Map<String, RequestHandler> mappings(HttpMethod method) {
-        return EntryStream.of(this.mappings)
-                .filterKeys(mapping -> mapping.method() == method)
-                .collect(Collectors.toMap(
-                        entry -> entry.getKey().pathPattern(),
-                        Map.Entry::getValue
-                ));
     }
 }
