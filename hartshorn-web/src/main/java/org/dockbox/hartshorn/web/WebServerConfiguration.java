@@ -22,6 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
+import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
@@ -46,9 +48,9 @@ import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.response.GenericHttpMessageConverter;
+import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.JacksonHttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.ResponseHandler;
-import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
@@ -93,6 +95,22 @@ public class WebServerConfiguration {
     }
 
     /**
+     * Provides a {@link ServerPortProvider} that retrieves the port number from the configuration
+     * property {@code hartshorn.web.port}, defaulting to {@code 8080} if the property is not set.
+     *
+     * @param port The port number to use for the web server, retrieved from configuration.
+     *
+     * @return A ServerPortProvider that provides the configured port number.
+     */
+    @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY)
+    public ServerPortProvider serverPortProvider(
+            @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
+    ) {
+        return () -> port;
+    }
+
+    /**
      * Creates a {@link HandlerMappingRegistry} and applies all registered customizers to it.
      *
      * @param customizers The collection of customizers for the handler mapping registry.
@@ -101,6 +119,7 @@ public class WebServerConfiguration {
      * @return A configured handler mapping registry.
      */
     @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY)
     public HandlerMappingRegistry pathRouteRegistry(
             @Fuzzy ComponentCollection<RouterCustomizer> customizers,
             @LoggerMeta(context = HandlerMappingRegistrar.class) Logger logger
@@ -125,6 +144,7 @@ public class WebServerConfiguration {
      */
     @Singleton
     @CompositeMember
+    @Priority(Priority.SUPPORT_PRIORITY)
     public RouterCustomizer declarativeRouterPathConfigurer(
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
@@ -149,6 +169,7 @@ public class WebServerConfiguration {
      * @return a new {@link SimpleResponseHandler}
      */
     @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY)
     public ResponseHandler responseHandler(
             GenericHttpMessageConverter httpMessageConverter,
             @Fuzzy ComponentCollection<HttpMessageConverter<?>> messageConverters
@@ -170,6 +191,7 @@ public class WebServerConfiguration {
      * @return a new {@link PatternMatchingHandlerMappingResolver}
      */
     @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY)
     public HandlerMappingResolver handlerMappingResolver(
             PathPatternMatcher patternMatcher,
             HandlerMappingRegistry registry
@@ -186,6 +208,7 @@ public class WebServerConfiguration {
      * @see StandardPathPatternMatcher
      */
     @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY)
     public PathPatternMatcher pathPatternMatcher() {
         return new StandardPathPatternMatcher();
     }
@@ -211,6 +234,7 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
+    @Priority(Priority.SUPPORT_PRIORITY)
     public HttpServletRequest webRequest(WebRequestScope scope) {
         return scope.request();
     }
@@ -224,6 +248,7 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
+    @Priority(Priority.SUPPORT_PRIORITY)
     public HttpServletResponse webResponse(WebRequestScope scope) {
         return scope.response();
     }
@@ -267,6 +292,7 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
+        @Priority(Priority.SUPPORT_PRIORITY)
         public GenericHttpMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
             return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
         }
