@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.util.Map;
@@ -76,7 +75,7 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
         return EntryStream.of(this.cache)
                 .filterKeys(view -> componentKeyMatcher.matches(key, view))
                 .values()
-                .collect(CollectorUtilities.toOption())
+                .collect(Option.collector())
                 .cast(key.type());
     }
 

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.collections;
-
-import org.dockbox.hartshorn.util.option.Option;
+package org.dockbox.hartshorn.util.stream;
 
 import java.util.stream.Gatherer;
 
@@ -27,9 +25,11 @@ import java.util.stream.Gatherer;
  *
  * @author Guus Lieben
  */
-public class GathererUtilities {
+public class StreamGatherers {
 
-    private GathererUtilities() {}
+    private StreamGatherers() {
+        // Utility class
+    }
 
     /**
      * Filters elements by their type, only allowing elements of the specified type to pass through.
@@ -46,24 +46,6 @@ public class GathererUtilities {
                 (_, element, downstream) -> {
                     if (type.isInstance(element)) {
                         return downstream.push(type.cast(element));
-                    }
-                    return true;
-                }
-        );
-    }
-
-    /**
-     * Unwraps {@link Option} elements, only allowing present values to pass through.
-     *
-     * @param <T> the type of the value inside the option
-     *
-     * @return a gatherer that unwraps options
-     */
-    public static <T> Gatherer<Option<T>, ?, T> unwrapOptions() {
-        return Gatherer.of(
-                (_, element, downstream) -> {
-                    if (element.present()) {
-                        return downstream.push(element.get());
                     }
                     return true;
                 }

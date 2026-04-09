@@ -41,6 +41,7 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -158,8 +159,7 @@ class ApplicationConfigurerTests {
 
         TypeReferenceCollectorContext collectorContext = collectorContextCandidate.get();
         Set<String> packages = collectorContext.collectors().stream()
-            .filter(ClasspathTypeReferenceCollector.class::isInstance)
-            .map(ClasspathTypeReferenceCollector.class::cast)
+            .gather(StreamGatherers.filterByType(ClasspathTypeReferenceCollector.class))
             .flatMap(scanner -> scanner.packageNames().stream())
             .collect(Collectors.toSet());
         assertThat(packages).contains(dummyPackage);
