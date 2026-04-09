@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.MediaTypes;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,7 @@ public class MediaTypeTests {
     }
 
     @Test
-    void mediaTypeInstancesAreReused() {
+    void mediaTypeInstancesOfKnownTypesAreReused() {
         MediaType instanceOne = MediaTypes.parse("application/json");
         MediaType instanceTwo = MediaTypes.parse("application/json");
         // Not just equal, but the same instance, as it should be cached
@@ -104,5 +105,20 @@ public class MediaTypeTests {
         // Predefined constant should be pre-populated in the cache, so it should
         // be the same instance as well
         assertThat(instanceOne).isSameAs(MediaTypes.APPLICATION_JSON);
+    }
+
+    @Test
+    void mediaTypeInstancesOfUnknownTypesAreReused() {
+        MediaType instanceOne = MediaTypes.parse("junit/test");
+        MediaType instanceTwo = MediaTypes.parse("junit/test");
+        // Not just equal, but the same instance, as it should be cached
+        assertThat(instanceOne).isSameAs(instanceTwo);
+    }
+
+    @Test
+    void invalidMediaTypeCannotBeParsed() {
+        Assertions.assertThatCode(() -> {
+            MediaTypes.parse("junit/test/wrong");
+        }).isInstanceOf(IllegalArgumentException.class);
     }
 }
