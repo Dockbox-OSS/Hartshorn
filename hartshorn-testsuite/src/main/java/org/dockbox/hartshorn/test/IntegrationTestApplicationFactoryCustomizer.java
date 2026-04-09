@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyReg
 import org.dockbox.hartshorn.profiles.support.CompositeProfileNameResolver;
 import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
+import org.dockbox.hartshorn.launchpad.test.ApplicationTestManager;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
@@ -155,6 +156,9 @@ public record IntegrationTestApplicationFactoryCustomizer(
                 components -> components.addAll(testComponents.value())
             );
         }
+        constructor.standaloneComponents(components -> {
+            components.add(ApplicationTestManager.class);
+        });
     }
 
     private <T> List<T> instantiateAll(List<Class<? extends T>> types) {
