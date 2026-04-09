@@ -23,19 +23,13 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  * A strategy for selecting a specific provider from a {@link BindingHierarchy}, based on the exact
  * priority of the provider. If no provider is found, {@code null} is returned.
  *
- * @see ProviderSelectionStrategy
- * 
- * @since 0.5.0
- * 
  * @author Guus Lieben
+ * @see ProviderSelectionStrategy
+ * @since 0.5.0
  */
-public class ExactPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
-
-    private final int priority;
-
-    public ExactPriorityProviderSelectionStrategy(int priority) {
-        this.priority = priority;
-    }
+public record ExactPriorityProviderSelectionStrategy(
+        int priority
+) implements ProviderSelectionStrategy {
 
     @Override
     public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {

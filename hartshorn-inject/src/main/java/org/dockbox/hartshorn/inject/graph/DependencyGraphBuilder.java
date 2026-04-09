@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.graph;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -337,18 +338,25 @@ public class DependencyGraphBuilder {
         int priority,
         Collection<DependencyContext<?>> dependencyContexts
     ) {
-        String origins = dependencyContexts.stream()
+        String origins = "\n - " + dependencyContexts.stream()
             .map(DependencyContext::origin)
             .map(View::qualifiedName)
-            .collect(Collectors.joining(",\n"));
+            .collect(Collectors.joining("\n - "));
+
+        String priorityDisplay = switch(priority) {
+            case Priority.DEFAULT_PRIORITY -> "default priority";
+            case Priority.SUPPORT_PRIORITY -> "support priority";
+            case Priority.INFRASTRUCTURE_PRIORITY -> "infrastructure priority";
+            default -> "priority " + priority;
+        };
+
         throw new IllegalStateException(
-            ("Multiple nodes found for dependency %s at priority %d in scope %s but not all are "
-                + "collections. Defined by: %s").formatted(
-                dependency,
-                priority,
-                scope.name(),
-                origins
-            ));
+                "Duplicate definitions found for dependency %s (%s). Defined by: %s"
+                        .formatted(
+                                dependency.qualifiedName(),
+                                priorityDisplay,
+                                origins
+                        ));
     }
 
     @NonNull

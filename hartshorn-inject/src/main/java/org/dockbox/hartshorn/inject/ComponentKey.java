@@ -22,7 +22,10 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.failure.ComponentResolutionFailureStrategy;
 import org.dockbox.hartshorn.inject.provider.failure.ExceptionOnComponentResolutionFailureStrategy;
 import org.dockbox.hartshorn.inject.provider.failure.NoopComponentResolutionFailureStrategy;
+import org.dockbox.hartshorn.inject.provider.selection.ExactPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.provider.selection.MinimumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
@@ -280,7 +283,19 @@ public final class ComponentKey<T> implements Reportable {
                 .field("type", this.type)
                 .field("postConstructionAllowed", this.postConstructionAllowed)
                 .field("strict", this.strict)
-                .field("selectionStrategy", this.selectionStrategy)
+                .field("selectionStrategy", switch(this.selectionStrategy) {
+                    case HighestPriorityProviderSelectionStrategy _ -> "highest-priority";
+                    case ExactPriorityProviderSelectionStrategy exact -> {
+                        yield "exact-priority(%s)".formatted(exact.priority());
+                    }
+                    case MinimumPriorityProviderSelectionStrategy min -> {
+                        yield "minimum-priority(%s)".formatted(min.minimumPriorityInclusive());
+                    }
+                    case MaximumPriorityProviderSelectionStrategy max -> {
+                        yield "maximum-priority(%s)".formatted(max.maximumPriorityExclusive());
+                    }
+                    default -> this.selectionStrategy;
+                })
                 .field("failureStrategy", this.failureStrategy);
         if (!this.qualifier.isEmpty()) {
             describer.field("qualifier", this.qualifier);
