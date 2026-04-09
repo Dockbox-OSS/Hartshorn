@@ -49,7 +49,9 @@ public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
         Iterable<String> headers = CollectionUtilities.iterableOf(
                 request.getHeaders(annotation.value())
         );
-        return Option.of(headers).map(values -> String.join(",", values));
+        return Option.of(headers)
+                .map(values -> String.join(",", values))
+                .filter(value -> !value.isEmpty());
     }
 
     @Override
