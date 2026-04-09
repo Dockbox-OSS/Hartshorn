@@ -40,10 +40,8 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
-import org.dockbox.hartshorn.web.route.HandlerMapping;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.HandlerMappingResolver;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
@@ -53,9 +51,6 @@ import org.dockbox.hartshorn.web.route.response.JacksonHttpMessageConverter;
 import org.dockbox.hartshorn.web.route.response.ResponseHandler;
 import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
-import org.dockbox.hartshorn.web.route.support.PathPatternMatcher;
-import org.dockbox.hartshorn.web.route.support.PatternMatchingHandlerMappingResolver;
-import org.dockbox.hartshorn.web.route.support.StandardPathPatternMatcher;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -178,39 +173,6 @@ public class WebServerConfiguration {
                 httpMessageConverter,
                 messageConverters.stream().toList()
         );
-    }
-
-    /**
-     * Pattern-matching capable {@link HandlerMappingResolver}, using the configured
-     * {@link PathPatternMatcher} to resolve handler mappings from the configured
-     * {@link HandlerMappingRegistry}.
-     *
-     * @param patternMatcher the pattern matcher to use for routing paths
-     * @param registry the registry containing {@link HandlerMapping handler mappings}
-     *
-     * @return a new {@link PatternMatchingHandlerMappingResolver}
-     */
-    @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY)
-    public HandlerMappingResolver handlerMappingResolver(
-            PathPatternMatcher patternMatcher,
-            HandlerMappingRegistry registry
-    ) {
-        return new PatternMatchingHandlerMappingResolver(patternMatcher, registry);
-    }
-
-    /**
-     * Standard implementation of {@link PathPatternMatcher} for matching request paths to route
-     * patterns.
-     *
-     * @return a new {@link StandardPathPatternMatcher}.
-     *
-     * @see StandardPathPatternMatcher
-     */
-    @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY)
-    public PathPatternMatcher pathPatternMatcher() {
-        return new StandardPathPatternMatcher();
     }
 
     /**

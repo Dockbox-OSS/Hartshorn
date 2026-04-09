@@ -17,12 +17,10 @@
 package org.dockbox.hartshorn.web.route;
 
 import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 
 /**
- * A registrar to register {@link RequestHandler request handlers} for specific
- * {@link RouteMapping route mappings}, typically to a {@link HandlerMappingRegistry}. Registrars
- * are typically provided by the framework, and should only be customized through
- * {@link RouterCustomizer router customizers}.
+ * TODO
  *
  * @since 0.7.0
  *
@@ -31,14 +29,14 @@ import org.dockbox.hartshorn.web.HttpMethod;
 public interface HandlerMappingRegistrar {
 
     /**
-     * Registers the given {@link RequestHandler} for the given {@link RouteMapping}.
+     * TODO
      *
      * @param mapping the request mapping to register the handler for
      * @param handler the request handler
      *
      * @return this registrar, for chaining
      */
-    HandlerMappingRegistrar add(RouteMapping mapping, RequestHandler handler);
+    HandlerMappingRegistrar add(HttpMethod method, PathSpec mapping, RequestHandler handler);
 
     /**
      * Registers the given {@link RequestHandler} as a {@link HttpMethod#GET GET} handler for the
@@ -49,8 +47,8 @@ public interface HandlerMappingRegistrar {
      *
      * @return this registrar, for chaining
      */
-    default HandlerMappingRegistrar get(String pathPattern, RequestHandler handler) {
-        return add(RouteMapping.of(HttpMethod.GET, pathPattern), handler);
+    default HandlerMappingRegistrar get(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.GET, pathPattern, handler);
     }
 
     /**
@@ -62,8 +60,8 @@ public interface HandlerMappingRegistrar {
      *
      * @return this registrar, for chaining
      */
-    default HandlerMappingRegistrar post(String pathPattern, RequestHandler handler) {
-        return add(RouteMapping.of(HttpMethod.POST, pathPattern), handler);
+    default HandlerMappingRegistrar post(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.POST, pathPattern, handler);
     }
 
     /**
@@ -75,8 +73,8 @@ public interface HandlerMappingRegistrar {
      *
      * @return this registrar, for chaining
      */
-    default HandlerMappingRegistrar put(String pathPattern, RequestHandler handler) {
-        return add(RouteMapping.of(HttpMethod.PUT, pathPattern), handler);
+    default HandlerMappingRegistrar put(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.PUT, pathPattern, handler);
     }
 
     /**
@@ -88,8 +86,8 @@ public interface HandlerMappingRegistrar {
      *
      * @return this registrar, for chaining
      */
-    default HandlerMappingRegistrar delete(String pathPattern, RequestHandler handler) {
-        return add(RouteMapping.of(HttpMethod.DELETE, pathPattern), handler);
+    default HandlerMappingRegistrar delete(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.DELETE, pathPattern, handler);
     }
 
     /**
@@ -101,7 +99,7 @@ public interface HandlerMappingRegistrar {
      *
      * @return this registrar, for chaining
      */
-    default HandlerMappingRegistrar patch(String pathPattern, RequestHandler handler) {
-        return add(RouteMapping.of(HttpMethod.PATCH, pathPattern), handler);
+    default HandlerMappingRegistrar patch(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.PATCH, pathPattern, handler);
     }
 }
