@@ -171,6 +171,7 @@ public final class ObjectDescriber<T> {
     private String describeValue(Object value, boolean includeTypeName) {
         return switch (value) {
             case null -> "null";
+            case String string -> "\"%s\"".formatted(string);
             // DescribeAsObject is a marker interface for objects that should be described using
             // their own toString() method, rather than a custom case below. E.g. BindingHierarchy
             // is an Iterable, but should be described using its own toString() method.
