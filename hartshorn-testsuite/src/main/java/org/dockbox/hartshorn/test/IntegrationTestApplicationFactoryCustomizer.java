@@ -69,7 +69,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
 
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
                 environment.applicationContext(SimpleApplicationContext.create(
-                    this.applicationCustomizer::customizeApplication
+                    application -> {
+                        application.defaultBindings(bindings -> {
+                            bindings.bind(ApplicationTestManager.class)
+                                    .lazySingleton(ApplicationTestManager.class);
+                        });
+                        this.applicationCustomizer.customizeApplication(application);
+                    }
                 ));
 
                 environment.propertyRegistryFactory(
@@ -156,9 +162,6 @@ public record IntegrationTestApplicationFactoryCustomizer(
                 components -> components.addAll(testComponents.value())
             );
         }
-        constructor.standaloneComponents(components -> {
-            components.add(ApplicationTestManager.class);
-        });
     }
 
     private <T> List<T> instantiateAll(List<Class<? extends T>> types) {
