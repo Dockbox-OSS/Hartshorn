@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.message.RequestAttributes;
-import org.dockbox.hartshorn.web.rest.PathParameter;
+import org.dockbox.hartshorn.web.PathParameter;
 
 import java.util.Map;
 

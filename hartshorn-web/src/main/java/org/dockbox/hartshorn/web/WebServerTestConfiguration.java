@@ -1,6 +1,6 @@
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.launchpad.test.RequiresTestApplication;
@@ -25,7 +25,7 @@ public class WebServerTestConfiguration {
      * {@link ServerPortProvider#DYNAMIC_SELECTION}
      */
     @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY + 128)
+    @SupportPriority
     public ServerPortProvider dynamicPortProvider() {
         return () -> ServerPortProvider.DYNAMIC_SELECTION;
     }

@@ -239,16 +239,14 @@ public final class StringUtilities {
         int length = value.length();
         int currentIndex = 0;
         char[] characters = value.toCharArray();
-
-        while ((currentIndex < length) && (characters[currentIndex] <= trimCharacter)) {
+        while (currentIndex < length && characters[currentIndex] == trimCharacter) {
             currentIndex++;
         }
-        while ((currentIndex < length) && (characters[length - 1] <= trimCharacter)) {
-            length--;
+        int endIndex = length - 1;
+        while (endIndex >= currentIndex && characters[endIndex] == trimCharacter) {
+            endIndex--;
         }
-        return ((currentIndex > 0) || (length < value.length()))
-            ? value.substring(currentIndex, length)
-            : value;
+        return value.substring(currentIndex, endIndex + 1);
     }
 
     /**

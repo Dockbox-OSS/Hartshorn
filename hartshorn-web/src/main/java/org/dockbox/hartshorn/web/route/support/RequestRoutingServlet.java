@@ -20,10 +20,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.message.RequestAttributes;
 import org.dockbox.hartshorn.web.route.RequestHandler;
+import org.dockbox.hartshorn.web.spec.PathSpec;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO
@@ -34,9 +38,11 @@ import org.dockbox.hartshorn.web.route.RequestHandler;
  */
 public class RequestRoutingServlet extends HttpServlet {
 
+    private final PathSpec pathSpec;
     private final Map<HttpMethod, RequestHandler> handlers;
 
-    public RequestRoutingServlet(Map<HttpMethod, RequestHandler> handlers) {
+    public RequestRoutingServlet(PathSpec pathSpec, Map<HttpMethod, RequestHandler> handlers) {
+        this.pathSpec = pathSpec;
         this.handlers = handlers;
     }
 
@@ -62,11 +68,18 @@ public class RequestRoutingServlet extends HttpServlet {
         HttpServletResponse resp,
         ServletFunction fallback
     ) throws ServletException, IOException {
-        if (this.handlers.containsKey(method)) {
+        Map<String, String> pathParameters = new HashMap<>();
+        String fullPath = req.getServletPath();
+        if (req.getPathInfo() != null) {
+            fullPath += req.getPathInfo();
+        }
+        if (pathSpec.matches(fullPath, pathParameters)
+                && this.handlers.containsKey(method)) {
+            RequestAttributes.setPathParameters(req, pathParameters);
             try {
                 this.handlers.get(method).handle(req, resp);
-            }
-            catch (Exception e) {
+                resp.flushBuffer();
+            } catch (Exception e) {
                 // TODO: Allow custom error handling
                 throw new ServletException("Failed to handle request", e);
             }

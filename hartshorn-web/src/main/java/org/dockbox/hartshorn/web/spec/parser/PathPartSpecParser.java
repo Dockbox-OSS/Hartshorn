@@ -1,8 +1,9 @@
 package org.dockbox.hartshorn.web.spec.parser;
 
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.spec.PathPartSpec;
 
 public interface PathPartSpecParser {
 
-    PathPartSpec parse(String part);
+    Option<? extends PathPartSpec> parse(String part);
 }

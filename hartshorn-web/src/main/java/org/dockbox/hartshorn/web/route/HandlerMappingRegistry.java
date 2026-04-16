@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.web.route;
 
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-
-import java.util.Map;
 
 /**
  * TODO
@@ -33,10 +32,10 @@ public interface HandlerMappingRegistry {
     /**
      * TODO
      *
-     * @param mapping the request mapping to register the handler for
+     * @param pathSpec the request mapping to register the handler for
      * @param handler the request handler
      */
-    void add(HttpMethod method, PathSpec mapping, RequestHandler handler);
+    void add(HttpMethod method, PathSpec pathSpec, RequestHandler handler);
 
     /**
      * Returns all currently registered request handlers, identified by their corresponding route
@@ -44,5 +43,5 @@ public interface HandlerMappingRegistry {
      *
      * @return all currently registered request handlers
      */
-    Map<PathSpec, RequestHandler> mappings();
+    MultiMap<PathSpec, PathHandlerSpec> mappings();
 }

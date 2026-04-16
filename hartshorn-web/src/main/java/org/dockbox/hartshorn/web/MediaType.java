@@ -110,4 +110,20 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
         }
         return sb.toString();
     }
+
+    public boolean isCompatibleWith(MediaType mediaType) {
+        if (mediaType == null) {
+            return false;
+        }
+        if (this.isWildcardType()) {
+            return true;
+        }
+        if (!this.type.equals(mediaType.type)) {
+            return false;
+        }
+        if (this.isWildcardSubtype()) {
+            return true;
+        }
+        return this.subtype.equals(mediaType.subtype);
+    }
 }

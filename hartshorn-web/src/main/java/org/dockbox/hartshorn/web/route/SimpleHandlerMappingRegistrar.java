@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.web.route;
 
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-import org.slf4j.Logger;
 
 /**
  * A simple implementation of {@link HandlerMappingRegistrar} that is directly related to a given
@@ -31,21 +30,17 @@ import org.slf4j.Logger;
 public class SimpleHandlerMappingRegistrar implements HandlerMappingRegistrar {
 
     private final HandlerMappingRegistry registry;
-    private final Logger logger;
 
-    public SimpleHandlerMappingRegistrar(HandlerMappingRegistry registry, Logger logger) {
+    public SimpleHandlerMappingRegistrar(HandlerMappingRegistry registry) {
         this.registry = registry;
-        this.logger = logger;
     }
 
     @Override
-    public HandlerMappingRegistrar add(HttpMethod method, PathSpec pathSpec, RequestHandler handler) {
-        logger.info(
-                "Registering handler for {} {}: {}",
-                method,
-                pathSpec.pattern(),
-                handler
-        );
+    public HandlerMappingRegistrar add(
+            HttpMethod method,
+            PathSpec pathSpec,
+            RequestHandler handler
+    ) {
         this.registry.add(method, pathSpec, handler);
         return this;
     }

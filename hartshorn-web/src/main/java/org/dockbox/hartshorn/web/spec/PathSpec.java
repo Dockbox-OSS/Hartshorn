@@ -1,39 +1,75 @@
 package org.dockbox.hartshorn.web.spec;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.SequencedCollection;
-import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class PathSpec {
 
-    private final SequencedCollection<PathPartSpec> parts;
+    private final List<PathPartSpec> parts;
     private final String pattern;
+    private final char pathSeparator;
+    private final String pathSeparatorPattern;
 
     public PathSpec(
-            SequencedCollection<PathPartSpec> parts
+            List<PathPartSpec> parts,
+            char pathSeparator
     ) {
         this.parts = parts;
         this.pattern = parts.stream()
                 .map(PathPartSpec::stringValue)
-                .collect(Collectors.joining("/"));
+                .collect(Collectors.joining(String.valueOf(pathSeparator)));
+        this.pathSeparator = pathSeparator;
+        this.pathSeparatorPattern = Pattern.quote(String.valueOf(this.pathSeparator));
     }
 
     public String pattern() {
         return this.pattern;
     }
 
-    public SequencedCollection<PathPartSpec> parts() {
+    public List<PathPartSpec> parts() {
         return this.parts;
     }
 
-    public PathSpec merge(PathSpec other) {
+    public char pathSeparator() {
+        return pathSeparator;
+    }
+
+    public boolean matches(String path, Map<String, String> pathParameters) {
+        String[] parts = StringUtilities.trimWith(
+                this.pathSeparator,
+                path
+        ).split(this.pathSeparatorPattern);
+        if (parts.length != this.parts.size()) {
+            return false;
+        }
+        for (int i = 0; i < parts.length; i++) {
+            PathPartSpec partSpec = this.parts().get(i);
+            if (!partSpec.matches(parts[i], pathParameters)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public PathSpec combineWith(PathSpec other) {
+        if (other.pathSeparator != this.pathSeparator) {
+            throw new IllegalArgumentException(
+                    "Cannot merge PathSpecs with different path separators: %s and %s"
+                            .formatted(this.pathSeparator, other.pathSeparator)
+            );
+        }
         List<PathPartSpec> parts = CollectionUtilities.mergeList(
                 this.parts(),
                 other.parts()
         );
-        return new PathSpec(parts);
+        return new PathSpec(parts, this.pathSeparator);
     }
 
     @Override
@@ -41,18 +77,20 @@ public final class PathSpec {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (PathSpec) obj;
-        return Objects.equals(this.parts, that.parts);
+        return Objects.equals(this.pattern, that.pattern);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parts);
+        return Objects.hash(this.pattern);
     }
 
     @Override
     public String toString() {
-        return "PathSpec[" +
-                "parts=" + parts + ']';
+        return ObjectDescriber.of(this)
+                .field("pattern", this.pattern)
+                .field("parts", this.parts)
+                .describe();
     }
 
 }

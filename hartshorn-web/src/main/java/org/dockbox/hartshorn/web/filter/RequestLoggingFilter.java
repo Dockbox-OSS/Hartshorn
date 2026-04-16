@@ -79,7 +79,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
         StringBuilder logMessage = new StringBuilder("Incoming request: ")
                 .append(request.getMethod())
                 .append(" ")
-                .append(request.getPathInfo());
+                .append(request.getRequestURI());
 
         if (this.includeQueryString && !request.getQueryString().isEmpty()) {
             logMessage.append("?").append(request.getQueryString());
@@ -107,7 +107,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
         StringBuilder logMessage = new StringBuilder("Outgoing response: ")
                 .append(request.getMethod())
                 .append(" ")
-                .append(request.getPathInfo())
+                .append(request.getRequestURI())
                 .append(" -> ")
                 .append(response.getStatus());
 

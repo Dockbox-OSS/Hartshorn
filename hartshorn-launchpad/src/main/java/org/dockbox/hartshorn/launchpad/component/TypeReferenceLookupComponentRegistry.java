@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 
 import java.util.Collection;
 import java.util.List;
@@ -84,7 +83,8 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
     ) {
         Option<ComponentContainer<?>> existingContainer = containers.stream()
             .filter(c -> c.id().equals(container.id()))
-            .collect(Option.collector())
+            .collect(Option.collector());
+
         if (existingContainer.present()) {
             ComponentContainer<?> firstContainer = existingContainer.get();
             if (firstContainer.type().is(container.type().type())) {
@@ -114,7 +114,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
     public Option<ComponentContainer<?>> container(Class<?> type) {
         return this.withContainerCache(containers -> containers.stream()
             .filter(container -> container.type().is(type))
-            .collect(Option.collector())
+            .collect(Option.collector()));
     }
 
     @Override
@@ -135,7 +135,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
                         key,
                     ComponentKey.of(container.type())
                 ))
-                .collect(Option.collector())
+                .collect(Option.collector()));
         }
     }
 

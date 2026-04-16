@@ -16,32 +16,37 @@
 
 package org.dockbox.hartshorn.web.route;
 
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.spec.PathSpec;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collection;
 
 /**
  * A simple implementation of {@link HandlerMappingRegistry}.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class SimpleHandlerMappingRegistry implements HandlerMappingRegistry {
 
-    private final Map<PathSpec, RequestHandler> mappings = new ConcurrentHashMap<>();
+    private final MultiMap<PathSpec, PathHandlerSpec> requestMappings
+            = new ConcurrentSetMultiMap<>();
 
     @Override
-    public void add(HttpMethod method, PathSpec mapping, RequestHandler handler) {
-        // TODO: Include method in some way
-        this.mappings.put(mapping, handler);
+    public void add(HttpMethod method, PathSpec pathSpec, RequestHandler handler) {
+        Collection<PathHandlerSpec> handlerSpecs = this.requestMappings.get(pathSpec);
+        if (handlerSpecs.stream().anyMatch(spec -> spec.method() == method)) {
+            throw new IllegalArgumentException(
+                    "A handler for path '" + pathSpec + "' and method '" + method + "' is already registered"
+            );
+        }
+        this.requestMappings.put(pathSpec, new PathHandlerSpec(method, handler));
     }
 
     @Override
-    public Map<PathSpec, RequestHandler> mappings() {
-        // TODO: Return method in some way
-        return this.mappings;
+    public MultiMap<PathSpec, PathHandlerSpec> mappings() {
+        return this.requestMappings;
     }
 }
