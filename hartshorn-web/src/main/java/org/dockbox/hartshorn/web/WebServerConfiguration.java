@@ -22,15 +22,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
-import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.inject.annotations.Required;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
@@ -40,20 +41,26 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
+import org.dockbox.hartshorn.web.response.HttpMessageConverter;
+import org.dockbox.hartshorn.web.response.ResponseHandler;
+import org.dockbox.hartshorn.web.response.SimpleResponseHandler;
+import org.dockbox.hartshorn.web.response.support.JacksonHttpMessageConverter;
+import org.dockbox.hartshorn.web.response.support.NoContentMessageConverter;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.response.GenericHttpMessageConverter;
-import org.dockbox.hartshorn.web.route.response.HttpMessageConverter;
-import org.dockbox.hartshorn.web.route.response.JacksonHttpMessageConverter;
-import org.dockbox.hartshorn.web.route.response.ResponseHandler;
-import org.dockbox.hartshorn.web.route.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
+import org.dockbox.hartshorn.web.spec.ParameterPathPartSpec;
+import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
+import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
+import org.dockbox.hartshorn.web.spec.parser.PathParser;
+import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -98,7 +105,8 @@ public class WebServerConfiguration {
      * @return A ServerPortProvider that provides the configured port number.
      */
     @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
+    @RequiresAbsentBinding(ServerPortProvider.class)
     public ServerPortProvider serverPortProvider(
             @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
     ) {
@@ -109,18 +117,15 @@ public class WebServerConfiguration {
      * Creates a {@link HandlerMappingRegistry} and applies all registered customizers to it.
      *
      * @param customizers The collection of customizers for the handler mapping registry.
-     * @param logger The logger to use for the handler mapping registrar.
-     *
      * @return A configured handler mapping registry.
      */
     @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
     public HandlerMappingRegistry pathRouteRegistry(
-            @Fuzzy ComponentCollection<RouterCustomizer> customizers,
-            @LoggerMeta(context = HandlerMappingRegistrar.class) Logger logger
+            @Fuzzy ComponentCollection<RouterCustomizer> customizers
     ) {
         HandlerMappingRegistry registry = new SimpleHandlerMappingRegistry();
-        HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry, logger);
+        HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry);
         customizers.forEach(customizer -> customizer.configure(registrar));
         return registry;
     }
@@ -139,40 +144,46 @@ public class WebServerConfiguration {
      */
     @Singleton
     @CompositeMember
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
     public RouterCustomizer declarativeRouterPathConfigurer(
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
             InjectionCapableApplication application,
-            ResponseHandler responseHandler
+            ResponseHandler responseHandler,
+            PathParser pathParser
     ) {
         return new DeclarativeRouterPathConfigurer(
                 componentRegistry,
                 conversionService,
                 application,
-                responseHandler
+                responseHandler,
+                pathParser
         );
     }
 
     /**
-     * Standard response handler driven by configured {@link HttpMessageConverter converters}, with
-     * a default {@link GenericHttpMessageConverter} as fallback converter.
+     * Standard response handler driven by configured {@link HttpMessageConverter converters}.
      *
-     * @param httpMessageConverter the default fallback converter
      * @param messageConverters type-constrained message converters
      *
      * @return a new {@link SimpleResponseHandler}
      */
     @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
     public ResponseHandler responseHandler(
-            GenericHttpMessageConverter httpMessageConverter,
+            HttpMessageConverter<?> fallbackConverter,
             @Fuzzy ComponentCollection<HttpMessageConverter<?>> messageConverters
     ) {
         return new SimpleResponseHandler(
-                httpMessageConverter,
+                fallbackConverter,
                 messageConverters.stream().toList()
         );
+    }
+
+    @Singleton
+    @CompositeMember
+    public HttpMessageConverter<?> noContentMessageConverter() {
+        return new NoContentMessageConverter();
     }
 
     /**
@@ -196,7 +207,7 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
     public HttpServletRequest webRequest(WebRequestScope scope) {
         return scope.request();
     }
@@ -210,7 +221,7 @@ public class WebServerConfiguration {
      */
     @Prototype
     @Scoped(WebRequestScope.class)
-    @Priority(Priority.SUPPORT_PRIORITY)
+    @SupportPriority
     public HttpServletResponse webResponse(WebRequestScope scope) {
         return scope.response();
     }
@@ -227,6 +238,16 @@ public class WebServerConfiguration {
     @CompositeMember
     public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
         return new WebServerDiagnosticsReporter(webServer);
+    }
+
+    @Singleton
+    @SupportPriority
+    public PathParser pathParser() {
+        return new SimplePathParser('/', List.of(
+                WildcardPathPartSpec::parse,
+                ParameterPathPartSpec::parse,
+                StaticPathPartSpec::parse
+        ));
     }
 
     /**
@@ -254,8 +275,7 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
-        @Priority(Priority.SUPPORT_PRIORITY)
-        public GenericHttpMessageConverter jacksonResponseHandler(JsonMapper jsonMapper) {
+        public HttpMessageConverter<?> jacksonResponseHandler(JsonMapper jsonMapper) {
             return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
         }
     }

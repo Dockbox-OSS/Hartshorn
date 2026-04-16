@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.rest;
+package org.dockbox.hartshorn.web;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

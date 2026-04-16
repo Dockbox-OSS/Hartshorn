@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.rest.QueryParameter;
+import org.dockbox.hartshorn.web.QueryParameter;
 
 /**
  * A {@link ParameterLoaderRule} that loads parameter values from query parameters using the

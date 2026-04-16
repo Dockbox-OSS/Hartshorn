@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.WebRequestScope;
 import org.dockbox.hartshorn.web.route.RequestHandler;
-import org.dockbox.hartshorn.web.route.response.ResponseHandler;
+import org.dockbox.hartshorn.web.response.ResponseHandler;
 import org.dockbox.hartshorn.web.route.rules.HeaderValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.PathParameterValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.QueryParameterValueParameterLoaderRule;
@@ -84,7 +84,7 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
         P instance = this.application.defaultProvider().get(this.methodView.declaredBy().type());
         try {
             Option<R> result = adapter.invoke(this.methodView, instance);
-            this.responseHandler.handleResponse(response, result.orNull());
+            this.responseHandler.handleResponse(request, response, result.orNull());
         }
         catch (Exception e) {
             // Will be handled upstream

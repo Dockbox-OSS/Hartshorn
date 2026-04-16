@@ -21,16 +21,18 @@ import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.HttpRoute;
 import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
-import org.dockbox.hartshorn.web.route.response.ResponseHandler;
+import org.dockbox.hartshorn.web.response.ResponseHandler;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-import org.dockbox.hartshorn.web.util.RouterUtilities;
+import org.dockbox.hartshorn.web.spec.parser.PathParser;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * A {@link RouterCustomizer} that registers routes declared in {@link Router router components}
@@ -45,17 +47,20 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
     private final ConversionService conversionService;
     private final InjectionCapableApplication application;
     private final ResponseHandler responseHandler;
+    private final PathParser pathParser;
 
     public DeclarativeRouterPathConfigurer(
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
             InjectionCapableApplication application,
-            ResponseHandler responseHandler
+            ResponseHandler responseHandler,
+            PathParser pathParser
     ) {
         this.componentRegistry = componentRegistry;
         this.conversionService = conversionService;
         this.application = application;
         this.responseHandler = responseHandler;
+        this.pathParser = pathParser;
     }
 
     @Override
@@ -83,11 +88,22 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
                                     HttpRoute.class.getSimpleName()
                             )
                     ));
-            String pathPrefix = routeMethod.declaredBy().annotations().get(Router.class)
+            Option<PathSpec> routePathSpec = Option.of(httpRoute.path())
+                    .filter(Predicate.not(String::isBlank))
+                    .map(pathParser::parse);
+
+            Option<PathSpec> routerPathSpec = routeMethod.declaredBy().annotations().get(Router.class)
                     .map(Router::value)
-                    .orElse("");
-            String path = RouterUtilities.combinePaths(pathPrefix, httpRoute.path());
-            routes.add(httpRoute.method(), PathSpec.parse(path), handler);
+                    .filter(Predicate.not(String::isBlank))
+                    .map(pathParser::parse);
+
+            PathSpec pathSpec = routePathSpec
+                    .map(spec -> routerPathSpec.map(spec::combineWith).orElse(spec))
+                    .orComputeFlat(() -> routerPathSpec)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Expected either the router or the route to declare a path"
+                    ));
+            routes.add(httpRoute.method(), pathSpec, handler);
         }
     }
 }
