@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;

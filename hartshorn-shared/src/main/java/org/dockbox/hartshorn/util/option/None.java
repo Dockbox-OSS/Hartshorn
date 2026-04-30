@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

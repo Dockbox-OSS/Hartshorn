@@ -59,10 +59,6 @@ public class PropertyCondition implements IntrospectionCondition, CacheableCondi
 
                 ValueProperty property = result.get();
                 Option<String> value = property.value();
-                if (condition.matchIfMissing() && value.present()) {
-                    return ConditionResult.found("property", name, value.get());
-                }
-
                 if (condition.withValue().isEmpty()) {
                     return ConditionResult.matched();
                 }
@@ -71,7 +67,10 @@ public class PropertyCondition implements IntrospectionCondition, CacheableCondi
                 }
                 else {
                     String actualValue = value.get();
-                    return condition.withValue().equals(actualValue)
+                    boolean matched = condition.caseSensitive()
+                            ? condition.withValue().equals(actualValue)
+                            : condition.withValue().equalsIgnoreCase(actualValue);
+                    return matched
                         ? ConditionResult.matched()
                         : ConditionResult.notEqual("property", condition.withValue(), actualValue);
                 }

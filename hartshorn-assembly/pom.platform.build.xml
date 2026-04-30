@@ -202,6 +202,7 @@
           <exportDatatables>true</exportDatatables>
           <activeRecipes>
             <recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+            <recipe>org.openrewrite.java.jspecify.JSpecifyBestPractices</recipe>
           </activeRecipes>
         </configuration>
         <dependencies>

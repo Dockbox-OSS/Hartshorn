@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextKey;
@@ -48,6 +47,7 @@ import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;

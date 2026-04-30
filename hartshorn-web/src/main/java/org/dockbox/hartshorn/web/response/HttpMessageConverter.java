@@ -35,8 +35,27 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public interface HttpMessageConverter<T> {
 
+    /**
+     * Determines whether this converter can read content of the given type from the given request.
+     *
+     * @param type the target type to read content into
+     * @param request the request to read content from
+     *
+     * @return {@code true} if this converter can read content of the given type from the given
+     * request, {@code false} otherwise
+     */
     boolean supportsRequest(Class<?> type, HttpServletRequest request);
 
+    /**
+     * Determines whether this converter can write content of the given type to the given response.
+     *
+     * @param type the type of the content to write
+     * @param request the request associated with the response to write to
+     * @param response the response to write to
+     *
+     * @return {@code true} if this converter can write content of the given type to the given
+     * response, {@code false} otherwise
+     */
     boolean supportsResponse(Class<?> type, HttpServletRequest request, HttpServletResponse response);
 
     /**

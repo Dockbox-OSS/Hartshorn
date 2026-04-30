@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A specialized {@link Converter} to handle {@code null} values. This is useful when implementing

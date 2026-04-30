@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A functional interface for converting objects from one type to another. This interface provides a

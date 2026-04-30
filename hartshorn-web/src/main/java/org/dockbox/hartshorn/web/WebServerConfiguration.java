@@ -59,6 +59,7 @@ import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.slf4j.Logger;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -271,12 +272,42 @@ public class WebServerConfiguration {
          */
         @Singleton
         @RequiresProperty(
-                name = "hartshorn.web.response.json.enabled",
-                withValue = "true",
+                name = "hartshorn.web.default-response.format",
+                withValue = "jackson-json",
                 matchIfMissing = true
         )
         public HttpMessageConverter<?> jacksonResponseHandler(JsonMapper jsonMapper) {
             return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
+        }
+    }
+
+    /**
+     * Jackson-based XML mapping configuration.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    @Configuration
+    @RequiresClass(classes = XmlMapper.class)
+    public static class JacksonXmlResponseWriterConfiguration {
+
+        /**
+         * Creates a {@link HttpMessageConverter} that uses a {@link XmlMapper} to serialize
+         * objects to XML.
+         *
+         * @param xmlMapper The XML mapper to use for serialization.
+         *
+         * @return A response writer for XML objects.
+         */
+        @Singleton
+        @RequiresProperty(
+                name = "hartshorn.web.default-response.format",
+                withValue = "jackson-xml",
+                matchIfMissing = true
+        )
+        public HttpMessageConverter<?> jacksonXmlResponseHandler(XmlMapper xmlMapper) {
+            return new JacksonHttpMessageConverter(xmlMapper, MediaTypes.APPLICATION_XML);
         }
     }
 }
