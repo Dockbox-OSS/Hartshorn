@@ -3,3 +3,5 @@ hartshorn:
     port: 8081
     logging:
       enabled: true
+    default-response:
+      format: jackson-json

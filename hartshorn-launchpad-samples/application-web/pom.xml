@@ -28,5 +28,9 @@
       <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-web-jetty</artifactId>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+    </dependency>
   </dependencies>
 </project>

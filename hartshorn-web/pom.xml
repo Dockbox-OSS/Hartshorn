@@ -40,6 +40,11 @@
       <artifactId>jackson-databind</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+      <optional>true</optional>
+    </dependency>
 
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
