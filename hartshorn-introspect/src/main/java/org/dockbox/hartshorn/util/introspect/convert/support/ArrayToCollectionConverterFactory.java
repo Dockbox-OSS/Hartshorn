@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,7 +71,7 @@ public class ArrayToCollectionConverterFactory
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
-        public O convert(Object @Nullable [] source, Context... contexts) {
+        public O convert(@Nullable Object[] source, Context... contexts) {
             assert source != null;
             Collection collection = this.helperProvider.defaultValue();
             Objects.requireNonNull(collection).addAll(Arrays.asList(source));

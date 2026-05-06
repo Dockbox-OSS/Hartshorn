@@ -1,12 +1,12 @@
 package org.dockbox.sample.processing.components;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.sample.processing.SimpleHelloWorldSupplier;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 public class CustomComponentPostProcessor extends ComponentPostProcessor {

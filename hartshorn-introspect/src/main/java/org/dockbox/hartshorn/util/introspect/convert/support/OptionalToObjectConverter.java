@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Optional;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Converts an {@link Optional} to an {@link Object}. If the optional is empty, {@code null} is

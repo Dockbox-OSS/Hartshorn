@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -42,6 +41,7 @@ import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.View;
 import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.HashSet;

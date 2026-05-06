@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.StandardScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
@@ -30,6 +29,7 @@ import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
 import org.dockbox.hartshorn.inject.condition.IntrospectionCondition;
 import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

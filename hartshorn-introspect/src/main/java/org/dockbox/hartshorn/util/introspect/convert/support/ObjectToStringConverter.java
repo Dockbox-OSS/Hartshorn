@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Converts any object to a {@link String} by invoking {@link String#valueOf(Object)}.

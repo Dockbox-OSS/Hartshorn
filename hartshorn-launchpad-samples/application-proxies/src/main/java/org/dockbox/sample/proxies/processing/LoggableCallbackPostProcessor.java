@@ -1,12 +1,12 @@
 package org.dockbox.sample.proxies.processing;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.proxy.ProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

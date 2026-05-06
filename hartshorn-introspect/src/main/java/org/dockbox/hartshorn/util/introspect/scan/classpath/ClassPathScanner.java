@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
+import org.jspecify.annotations.NonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,8 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A classpath scanner that can be used to scan the classpath for resources. This scanner is capable

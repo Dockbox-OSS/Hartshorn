@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;

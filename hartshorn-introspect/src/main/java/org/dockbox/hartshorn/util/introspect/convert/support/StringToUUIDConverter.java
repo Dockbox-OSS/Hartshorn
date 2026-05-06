@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.UUID;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.jspecify.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * Converts a {@link String} to a {@link UUID}.
