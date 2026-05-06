@@ -1,7 +1,7 @@
 param (
-    [Parameter(Mandatory=$true)][string]$Module,
-    [Parameter(Mandatory=$true)][string]$Name,
-    [Parameter(Mandatory=$true)][string]$Description,
+    [Parameter(Mandatory=$true, HelpMessage="i.e. 'inject'")][string]$Module,
+    [Parameter(Mandatory=$true, HelpMessage="i.e. 'Hartshorn Inject'")][string]$Name,
+    [Parameter(Mandatory=$true, HelpMessage="i.e. 'Inject module for Hartshorn'")][string]$Description,
     [Parameter(Mandatory=$false)][switch]$NoDocs
 )
 
