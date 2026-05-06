@@ -98,7 +98,10 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
                     .map(pathParser::parse);
 
             PathSpec pathSpec = routePathSpec
-                    .map(spec -> routerPathSpec.map(spec::combineWith).orElse(spec))
+                    .map(spec -> routerPathSpec
+                            .map(router -> router.combineWith(spec))
+                            .orElse(spec)
+                    )
                     .orComputeFlat(() -> routerPathSpec)
                     .orElseThrow(() -> new IllegalStateException(
                             "Expected either the router or the route to declare a path"

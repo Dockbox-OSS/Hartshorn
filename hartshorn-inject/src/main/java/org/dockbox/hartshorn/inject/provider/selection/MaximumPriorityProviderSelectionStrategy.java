@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,14 @@ import java.util.SortedSet;
  * as that priority is lower than the provided maximum priority. If no provider is found,
  * {@code null} is returned.
  *
- * @author Guus Lieben
+ * @param maximumPriorityExclusive the maximum priority to select, exclusive
+ *
  * @see ProviderSelectionStrategy
  * @see BindingHierarchy#priorities()
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record MaximumPriorityProviderSelectionStrategy(
         long maximumPriorityExclusive
@@ -43,9 +47,10 @@ public record MaximumPriorityProviderSelectionStrategy(
         for (Integer priority : priorities.reversed()) {
             if (priority < this.maximumPriorityExclusive) {
                 return hierarchy.get(priority)
-                        .orElseThrow(() -> new IllegalStateException("No provider found for priority "
-                                + priority
-                                + ", but priority was reported."));
+                        .orElseThrow(() -> new IllegalStateException(
+                                "No provider found for priority %d, but priority was reported."
+                                        .formatted(priority)
+                        ));
             }
         }
         return null;

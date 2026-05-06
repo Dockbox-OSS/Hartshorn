@@ -546,6 +546,16 @@ public interface Option<T> extends Context, Iterable<T> {
                 .orElseGet(Collections::emptyIterator));
     }
 
+    /**
+     * A collector that collects a single element into an {@link Option}. If multiple elements are
+     * encountered, an {@link IllegalStateException} is thrown.
+     *
+     * @param <T> the type of the stream
+     *
+     * @return a collector that collects a single element into an {@link Option}
+     *
+     * @see CollectorUtilities#toOption()
+     */
     static <T> Collector<T, ?, Option<T>> collector() {
         return CollectorUtilities.toOption();
     }

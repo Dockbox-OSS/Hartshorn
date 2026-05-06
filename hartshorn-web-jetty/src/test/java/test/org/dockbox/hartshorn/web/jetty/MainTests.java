@@ -47,7 +47,7 @@ public class MainTests {
                     .build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         }
-        Assertions.assertThat(response).isEqualTo("hello");
+        Assertions.assertThat(response).isEqualTo("\"hello\"");
     }
 
     @Router

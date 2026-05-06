@@ -40,12 +40,17 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
 
     private static final String WILDCARD_TYPE = "*";
 
-    public MediaType(String type, String subtype) {
-        this(type, subtype, Map.of());
-    }
-
     public MediaType(String type) {
         this(type, "*");
+    }
+
+    public MediaType(String type, String subtype) {
+        this(type, subtype, Map.of());
+        if (isWildcardType() && !isWildcardSubtype()) {
+            throw new IllegalArgumentException(
+                    "A media type with a wildcard type must also have a wildcard subtype"
+            );
+        }
     }
 
     /**
@@ -60,6 +65,11 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
         return Option.of(this.parameters.get(name));
     }
 
+    /**
+     * Returns an unmodifiable copy of the parameters of this media type.
+     *
+     * @return an unmodifiable copy of the parameters of this media type
+     */
     @Override
     public Map<String, String> parameters() {
         return Map.copyOf(parameters);
@@ -111,6 +121,19 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
         return sb.toString();
     }
 
+    /**
+     * Determines whether this media type is compatible with the given media type. For example,
+     * if the base is {@code text/*}, then {@code text/html} and {@code text/plain} are compatible,
+     * but {@code application/json} is not.
+     *
+     * <p>If the given mediatype is a wildcard, it is only compatible if the base is also a
+     * wildcard. For example base {@code text/plain} is not compatible with {@code *}, but base
+     * {@code *} is compatible with {@code text/plain}.
+     *
+     * @param mediaType the media type to check compatibility with
+     * @return {@code true} if this media type is compatible with the given media type,
+     * {@code false} otherwise
+     */
     public boolean isCompatibleWith(MediaType mediaType) {
         if (mediaType == null) {
             return false;
