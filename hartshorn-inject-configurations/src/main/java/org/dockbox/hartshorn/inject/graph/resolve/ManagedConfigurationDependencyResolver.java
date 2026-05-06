@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.ManagedComponentEnvironment;
@@ -34,11 +32,11 @@ import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.strategy.DependencyContextResolver;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingMethodDependencyContextResolver;
 import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
+import org.dockbox.hartshorn.inject.graph.strategy.DependencyContextResolver;
 import org.dockbox.hartshorn.inject.graph.strategy.DependencyContextResolverRegistry;
 import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
-import org.dockbox.hartshorn.inject.graph.strategy.BindingMethodDependencyContextResolver;
 import org.dockbox.hartshorn.inject.graph.strategy.SimpleDependencyContextResolverRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ComponentRegistryAwareComponentProvider;
@@ -49,6 +47,8 @@ import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;

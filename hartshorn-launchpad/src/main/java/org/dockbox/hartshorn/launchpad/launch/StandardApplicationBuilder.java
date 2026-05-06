@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
@@ -27,6 +26,7 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Modifier;
 import java.time.Duration;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
-import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.context.AbstractSingleElementContext;
 import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A context used to initialize the application. This context will always provide a

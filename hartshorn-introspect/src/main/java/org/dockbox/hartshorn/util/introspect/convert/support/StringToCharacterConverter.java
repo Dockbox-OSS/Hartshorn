@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Converts a {@link String} to a {@link Character}. The input must be exactly one character. If the
