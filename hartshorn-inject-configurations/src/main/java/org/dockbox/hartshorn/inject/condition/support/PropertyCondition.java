@@ -72,7 +72,7 @@ public class PropertyCondition implements IntrospectionCondition, CacheableCondi
                             : condition.withValue().equalsIgnoreCase(actualValue);
                     return matched
                         ? ConditionResult.matched()
-                        : ConditionResult.notEqual("property", condition.withValue(), actualValue);
+                        : ConditionResult.notEqual(String.format("property '%s'", name), condition.withValue(), actualValue);
                 }
             })
             .orCompute(() -> ConditionResult.invalidCondition("property"))
