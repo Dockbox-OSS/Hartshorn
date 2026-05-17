@@ -130,7 +130,7 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(AnnotatedElementView annotatedElementContext, ContextView... contexts) {
+    public ConditionResult match(AnnotatedElementView annotatedElementContext, ContextView... contexts) {
         SequencedCollection<AnnotatedElementView> views = this.includeEnclosingConditions()
             ? this.collectEnclosedViews(annotatedElementContext)
             : List.of(annotatedElementContext);
@@ -147,17 +147,20 @@ public final class ConditionMatcher extends DefaultContext
                 .map(AnnotationConditionDeclaration::new)
                 .collect(Collectors.toSet());
 
-            if (!this.matchAnnotatedElement(elementView, declarations, contexts)) {
-                return false;
+            ConditionResult result = this.matchAnnotatedElement(elementView, declarations, contexts);
+            if (!result.matches()) {
+                return result;
             }
 
-            if (!elementView.classFileElement()
+            result = elementView.classFileElement()
                     .ofType(AttributedElement.class)
-                    .test(element -> this.match(element, contexts), true)) {
-                return false;
+                    .map(element -> this.match(element, contexts))
+                    .orElseGet(ConditionResult::matched);
+            if (!result.matches()) {
+                return result;
             }
         }
-        return true;
+        return ConditionResult.matched();
     }
 
     /**
@@ -172,7 +175,7 @@ public final class ConditionMatcher extends DefaultContext
      * @param contexts the additional contexts to provide to the condition context
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(AttributedElement element, ContextView... contexts) {
+    public ConditionResult match(AttributedElement element, ContextView... contexts) {
         List<Annotation> annotations = ClassFileUtilities.getMetaAnnotations(
                 element,
                 RequiresReferenceCondition.class
@@ -184,11 +187,12 @@ public final class ConditionMatcher extends DefaultContext
                             declaration,
                             element
                     );
-            if (!this.matchConditionContext(conditionContext, declaration, contexts)) {
-                return false;
+            ConditionResult result = this.matchConditionContext(conditionContext, declaration, contexts);
+            if (!result.matches()) {
+                return result;
             }
         }
-        return true;
+        return ConditionResult.matched();
     }
 
     /**
@@ -206,7 +210,7 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    private boolean matchAnnotatedElement(
+    private ConditionResult matchAnnotatedElement(
         AnnotatedElementView annotatedElementContext,
         Set<ConditionDeclaration> declarationContexts,
         ContextView... contexts
@@ -217,11 +221,12 @@ public final class ConditionMatcher extends DefaultContext
                 annotatedElementContext,
                 declarationContext
             );
-            if (!this.matchConditionContext(context, declarationContext, contexts)) {
-                return false;
+            ConditionResult result = this.matchConditionContext(context, declarationContext, contexts);
+            if (!result.matches()) {
+                return result;
             }
         }
-        return true;
+        return ConditionResult.matched();
     }
 
     /**
@@ -238,7 +243,7 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if the condition matches, {@code false} otherwise
      */
-    private boolean matchConditionContext(
+    private ConditionResult matchConditionContext(
         ConditionContext context,
         ConditionDeclaration declarationContext,
         ContextView... contexts
@@ -278,7 +283,7 @@ public final class ConditionMatcher extends DefaultContext
         if (!result.matches() && declarationContext.failOnNoMatch()) {
             throw new ConditionFailedException(declarationContext, result);
         }
-        return result.matches();
+        return result;
     }
 
     /**

@@ -96,7 +96,7 @@ public class EnvironmentTypeCollector {
         ConditionMatcher conditionMatcher = this.environment.conditionMatcher();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
-            .filter(reference -> conditionMatcher.match(resolveClassModel(reference)))
+            .filter(reference -> conditionMatcher.match(resolveClassModel(reference)).matches())
             .map(reference -> {
                 try {
                     return reference.getOrLoad(classLoader);

@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.inject.conditions;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -25,9 +26,9 @@ import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.inject.condition.IntrospectedConditionContext;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.ReferenceConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -172,14 +173,20 @@ public class ConditionTests {
         TypeView<ParentClass> type =
             this.applicationContext.environment().introspector().introspect(ParentClass.class);
         ConditionMatcher matcher = new ConditionMatcher(() -> this.applicationContext);
-        assertThat(matcher.match(type)).isFalse();
+        assertThat(matcher.match(type))
+                .extracting(ConditionResult::matches, InstanceOfAssertFactories.BOOLEAN)
+                .isFalse();
 
         MethodView<ParentClass, ?> methodView = type.methods().named("requiresClass").get();
         matcher.includeEnclosingConditions(false);
-        assertThat(matcher.match(methodView)).isTrue();
+        assertThat(matcher.match(methodView))
+                .extracting(ConditionResult::matches, InstanceOfAssertFactories.BOOLEAN)
+                .isTrue();
 
         matcher.includeEnclosingConditions(true);
-        assertThat(matcher.match(methodView)).isFalse();
+        assertThat(matcher.match(methodView))
+                .extracting(ConditionResult::matches, InstanceOfAssertFactories.BOOLEAN)
+                .isFalse();
     }
 
     @RequiresClass(classNames = "java.gnal.String")
