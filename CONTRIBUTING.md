@@ -113,15 +113,14 @@ other documentation files as necessary.
 
 ### Previewing documentation
 
-When working with the Asciidoc documentation, you can build the documentation locally using the
-Asciidoctor Maven Plugin.
+When working with the Asciidoc documentation, you can build the documentation locally using Antora.
 
 ```shell
-mvn clean antora:antora -Dantora.playbook=playbook-local.yml
+npm --prefix hartshorn-assembly/antora run antora -- playbook-local.yml
 ```
 
 After building the documentation, you can view it in your browser by opening the [
-`target/site/index.html`](target/site/index.html) file.
+`hartshorn-assembly/antora/target/site/index.html`](hartshorn-assembly/antora/target/site/index.html) file.
 
 ### Working with attachments
 

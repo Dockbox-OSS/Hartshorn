@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "antora": "npx --yes --package antora --package @antora/lunr-extension --package @asciidoctor/tabs --package asciidoctor-interdoc-reftext antora --to-dir target/site"
+  }
+}
