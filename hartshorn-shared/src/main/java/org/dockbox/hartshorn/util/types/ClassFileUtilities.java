@@ -421,7 +421,7 @@ public final class ClassFileUtilities {
      */
     public static Annotation toClassfileAnnotation(java.lang.annotation.Annotation annotation) {
         Class<?> type = annotation.annotationType();
-        ClassDesc classDesc = ClassDesc.of(type.getName());
+        ClassDesc classDesc = getClassDescriptor(type);
         List<AnnotationElement> elements = new ArrayList<>();
         for (Method m : type.getDeclaredMethods()) {
             Object value;
@@ -449,8 +449,18 @@ public final class ClassFileUtilities {
      */
     public static AnnotationValue toAnnotationValue(Object value) {
         if (value instanceof Class<?> type) {
-            return AnnotationValue.of(ClassDesc.of(type.getName()));
+            return AnnotationValue.of(getClassDescriptor(type));
         }
         return AnnotationValue.of(value);
+    }
+
+    /**
+     * Get the {@link ClassDesc} descriptor for a given class type.
+     *
+     * @param type the class type to get the descriptor for
+     * @return the corresponding {@link ClassDesc} descriptor
+     */
+    public static ClassDesc getClassDescriptor(Class<?> type) {
+        return ClassDesc.of(type.getName());
     }
 }

@@ -143,8 +143,10 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
                 .flatMap(bindsMethod -> this.resolve(declarationContext, bindsMethod)
                     .map(context -> new ConditionalDependencyContext<>(
                         context,
-                        dependencyContextsHolder -> this.conditionMatcher.match(bindsMethod,
-                            dependencyContextsHolder)
+                        dependencyContextsHolder -> this.conditionMatcher.match(
+                                bindsMethod,
+                                dependencyContextsHolder
+                        ).matches()
                     ))
                     .stream()
                 ).collect(Collectors.toSet());

@@ -37,7 +37,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConditionTests {
+public class ConditionCacheTests {
 
     @Test
     void cachedConditionMarkerIsRespectedByReferenceDeclarations() {
@@ -68,17 +68,17 @@ public class ConditionTests {
     void cacheableConditionResultsAreCachedByMatcher() {
         ConditionMatcher matcher = new ConditionMatcher(() -> null);
         // Have to use reference matching, as application is unavailable for introspection.
-        ClassModel classModel = ClassFileUtilities.getClassModel(ConditionTests.class).get();
+        ClassModel classModel = ClassFileUtilities.getClassModel(ConditionCacheTests.class).get();
         MethodModel methodModel = ClassFileUtilities.getMethod(
                 classModel,
                 "conditionalMethod"
         ).get();
 
-        boolean matchedOnce = matcher.match(methodModel);
+        boolean matchedOnce = matcher.match(methodModel).matches();
         assertThat(matchedOnce).isTrue();
 
         Assertions.assertThatCode(() -> {
-            boolean matchedTwice = matcher.match(methodModel);
+            boolean matchedTwice = matcher.match(methodModel).matches();
             assertThat(matchedTwice).isTrue();
         }).doesNotThrowAnyException();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ package org.dockbox.hartshorn.inject.condition;
  * @author Guus Lieben
  */
 public final class ConditionResult {
+
+    private static final ConditionResult MATCHED = new ConditionResult(true, null);
 
     private final boolean matches;
     private final String message;
@@ -67,12 +69,12 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new matched {@link ConditionResult}. The message will be {@code null}.
+     * Returns a successful {@link ConditionResult}. The message will be {@code null}.
      *
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult matched() {
-        return new ConditionResult(true, null);
+        return MATCHED;
     }
 
     /**
@@ -96,7 +98,7 @@ public final class ConditionResult {
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult notFound(String what, String name) {
-        return new ConditionResult(false, "Could not find " + what + ": " + name);
+        return new ConditionResult(false, "Could not find " + what + " '" + name + "'");
     }
 
     /**
@@ -110,7 +112,7 @@ public final class ConditionResult {
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult found(String what, String name, String value) {
-        return new ConditionResult(false, "Found " + what + " " + name + " with value " + value);
+        return new ConditionResult(false, "Found " + what + " '" + name + "' with value " + value);
     }
 
     /**
@@ -123,7 +125,7 @@ public final class ConditionResult {
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult found(String what, String name) {
-        return new ConditionResult(false, "Found " + what + " " + name);
+        return new ConditionResult(false, "Found " + what + " '" + name + "'");
     }
 
     /**
