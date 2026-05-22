@@ -28,6 +28,8 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.classfile.Annotation;
 import java.lang.classfile.AttributedElement;
@@ -60,6 +62,8 @@ import java.util.stream.Collectors;
  */
 public final class ConditionMatcher extends DefaultContext
     implements InjectionApplicationAwareContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConditionMatcher.class);
 
     private record ConditionCacheKey(ConditionContext context, ConditionDeclaration declaration) {}
 
@@ -130,7 +134,10 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public ConditionResult match(AnnotatedElementView annotatedElementContext, ContextView... contexts) {
+    public ConditionResult match(
+            AnnotatedElementView annotatedElementContext,
+            ContextView... contexts
+    ) {
         SequencedCollection<AnnotatedElementView> views = this.includeEnclosingConditions()
             ? this.collectEnclosedViews(annotatedElementContext)
             : List.of(annotatedElementContext);
@@ -147,7 +154,11 @@ public final class ConditionMatcher extends DefaultContext
                 .map(AnnotationConditionDeclaration::new)
                 .collect(Collectors.toSet());
 
-            ConditionResult result = this.matchAnnotatedElement(elementView, declarations, contexts);
+            ConditionResult result = this.matchAnnotatedElement(
+                    elementView,
+                    declarations,
+                    contexts
+            );
             if (!result.matches()) {
                 return result;
             }
@@ -187,7 +198,11 @@ public final class ConditionMatcher extends DefaultContext
                             declaration,
                             element
                     );
-            ConditionResult result = this.matchConditionContext(conditionContext, declaration, contexts);
+            ConditionResult result = this.matchConditionContext(
+                    conditionContext,
+                    declaration,
+                    contexts
+            );
             if (!result.matches()) {
                 return result;
             }
@@ -221,7 +236,11 @@ public final class ConditionMatcher extends DefaultContext
                 annotatedElementContext,
                 declarationContext
             );
-            ConditionResult result = this.matchConditionContext(context, declarationContext, contexts);
+            ConditionResult result = this.matchConditionContext(
+                    context,
+                    declarationContext,
+                    contexts
+            );
             if (!result.matches()) {
                 return result;
             }
@@ -275,6 +294,19 @@ public final class ConditionMatcher extends DefaultContext
                 context.addContext(child);
             }
             result = condition.matches(context);
+
+            if (LOG.isDebugEnabled()) {
+                String location = switch (context) {
+                    case ReferenceConditionContext referenceConditionContext ->
+                            referenceConditionContext.element().toString();
+                    case IntrospectedConditionContext introspectedConditionContext ->
+                            introspectedConditionContext.annotatedElement().qualifiedName();
+                    default -> "unknown context";
+                };
+                LOG.debug("Matched condition {} with context {}: {} ({})",
+                        condition.getClass().getSimpleName(),
+                        location, result.matches(), result.message());
+            }
             if (declarationContext.cacheable()) {
                 this.conditionResultCache.put(cacheKey, result);
             }

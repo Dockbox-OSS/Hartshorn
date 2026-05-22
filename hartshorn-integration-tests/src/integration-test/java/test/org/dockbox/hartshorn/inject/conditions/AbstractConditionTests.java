@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.org.dockbox.hartshorn.inject.conditions;
 
 import org.assertj.core.api.AbstractAssert;
@@ -11,7 +27,6 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.jspecify.annotations.NonNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.classfile.AnnotationElement;
@@ -52,7 +67,7 @@ public class AbstractConditionTests {
         return assertCondition(elementView);
     }
 
-    protected <A extends Annotation> ConditionAssert assertReferenceConditionMatches(
+    protected ConditionAssert assertReferenceConditionMatches(
             Class<?> annotationType,
             Map<String, AnnotationValue> values
     ) {
@@ -60,7 +75,10 @@ public class AbstractConditionTests {
         return assertCondition(elementView);
     }
 
-    private static <A extends Annotation> @NonNull AnnotatedElementView createConditionalView(Class<? extends Condition> conditionType, A metaAnnotation) {
+    private static <A extends Annotation> AnnotatedElementView createConditionalView(
+            Class<? extends Condition> conditionType,
+            A metaAnnotation
+    ) {
         AnnotatedElementView elementView = mock(AnnotatedElementView.class);
         when(elementView.enclosingView()).thenReturn(Option.empty());
         when(elementView.classFileElement()).thenReturn(Option.empty());
@@ -68,7 +86,7 @@ public class AbstractConditionTests {
         return elementView;
     }
 
-    private static <A extends Annotation> @NonNull AnnotatedElementView createReferenceConditionalView(
+    private static AnnotatedElementView createReferenceConditionalView(
             Class<?> annotationType,
             Map<String, AnnotationValue> values
     ) {
@@ -84,20 +102,25 @@ public class AbstractConditionTests {
         return elementView;
     }
 
-    private static <A extends Annotation> void configureAnnotation(Class<? extends Condition> conditionType, A metaAnnotation, AnnotatedElementView elementView) {
+    private static void configureAnnotation(
+            Class<? extends Condition> conditionType,
+            Annotation metaAnnotation,
+            AnnotatedElementView elementView
+    ) {
         ElementAnnotationsIntrospector annotationsIntrospector = mock(
                 ElementAnnotationsIntrospector.class
         );
         RequiresCondition requiresCondition = TypeUtils.annotation(RequiresCondition.class, Map.of(
                 "condition", conditionType
         ));
-        when(annotationsIntrospector.all(RequiresCondition.class)).thenReturn(Set.of(requiresCondition));
+        when(annotationsIntrospector.all(RequiresCondition.class))
+                .thenReturn(Set.of(requiresCondition));
 
-        Class<A> annotationType = (Class<A>) metaAnnotation.annotationType();
+        Class<? extends Annotation> annotationType = metaAnnotation.annotationType();
         when(annotationsIntrospector.all(annotationType))
-                .thenReturn(Set.of(metaAnnotation));
+                .thenReturn(TypeUtils.unchecked(Set.of(metaAnnotation), Set.class));
         when(annotationsIntrospector.get(annotationType))
-                .thenReturn(Option.of(metaAnnotation));
+                .thenReturn(TypeUtils.unchecked(Option.of(metaAnnotation), Option.class));
         when(elementView.annotations()).thenReturn(annotationsIntrospector);
     }
 
