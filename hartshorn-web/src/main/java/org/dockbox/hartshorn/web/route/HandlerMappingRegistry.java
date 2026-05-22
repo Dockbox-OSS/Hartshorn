@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.spec.PathSpec;
 
 /**
- * TODO
+ * Registry for request handlers, identified by their corresponding route mappings.
  *
  * @since 0.7.0
  *
@@ -30,10 +30,15 @@ import org.dockbox.hartshorn.web.spec.PathSpec;
 public interface HandlerMappingRegistry {
 
     /**
-     * TODO
+     * Registers the given {@link RequestHandler} as a handler for the given HTTP method and path
+     * pattern.
      *
+     * @param method the HTTP method to register the handler for
      * @param pathSpec the request mapping to register the handler for
      * @param handler the request handler
+     *
+     * @throws IllegalArgumentException if a handler for the given path pattern and HTTP method is
+     * already registered
      */
     void add(HttpMethod method, PathSpec pathSpec, RequestHandler handler);
 

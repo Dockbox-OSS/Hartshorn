@@ -20,6 +20,17 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 
+/**
+ * Specification for a path part that represents a wildcard match. A wildcard part matches any value
+ * for the corresponding part of a request path, and can optionally capture the matched value as a
+ * path parameter. For example, the path part "{*path}" defines a wildcard that captures the matched
+ * value as a path parameter named {@code path}. A part defined as "*" matches any value but does
+ * not capture it.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class WildcardPathPartSpec implements PathPartSpec {
 
     private final String captureName;
@@ -32,6 +43,17 @@ public class WildcardPathPartSpec implements PathPartSpec {
         this.captureName = captureName;
     }
 
+    /**
+     * Parses the given path part as a wildcard path part specification. A valid wildcard path part
+     * is either a single asterisk ("*"), which matches any value but does not capture it, or a part
+     * that starts with "{*", ends with "}", and contains a non-empty capture name in between, which
+     * matches any value and captures it as a path parameter with the specified name.
+     *
+     * @param part the path part to parse as a wildcard path part specification
+     *
+     * @return an {@link Option} containing a new {@link WildcardPathPartSpec} instance if the given
+     * part is valid, or otherwise an empty {@link Option}
+     */
     public static Option<WildcardPathPartSpec> parse(String part) {
         if (part.equals("*")) {
             return Option.of(new WildcardPathPartSpec());

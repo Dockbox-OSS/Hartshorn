@@ -92,7 +92,8 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
                     .filter(Predicate.not(String::isBlank))
                     .map(pathParser::parse);
 
-            Option<PathSpec> routerPathSpec = routeMethod.declaredBy().annotations().get(Router.class)
+            Option<PathSpec> routerPathSpec = routeMethod.declaredBy().annotations()
+                    .get(Router.class)
                     .map(Router::value)
                     .filter(Predicate.not(String::isBlank))
                     .map(pathParser::parse);

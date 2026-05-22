@@ -125,7 +125,18 @@ public class JettyServerConfiguration {
     }
 
     /**
-     * TODO
+     * Creates a prototype instance of the main Jetty {@link Handler}, which is a
+     * {@link ServletContextHandler} that registers all servlet mappings and filters based on the
+     * provided handler mapping registry and filter collection.
+     *
+     * @param filters A collection of servlet filters to be registered with the server.
+     * @param mappingRegistry The registry containing the servlet mappings to be registered with the
+     * server.
+     * @param pathSpecTransformer The transformer to convert Hartshorn PathSpec instances to Jetty
+     * path specifications.
+     *
+     * @return The main Jetty Handler instance that will handle incoming requests based on the
+     * registered servlet mappings and filters.
      */
     @Prototype
     @SupportPriority

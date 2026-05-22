@@ -39,7 +39,11 @@ public class NoContentMessageConverter implements HttpMessageConverter<Object> {
     }
 
     @Override
-    public boolean supportsResponse(Class<?> type, HttpServletRequest request, HttpServletResponse response) {
+    public boolean supportsResponse(
+            Class<?> type,
+             HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         return type == null;
     }
 

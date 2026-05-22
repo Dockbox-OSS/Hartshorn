@@ -18,7 +18,23 @@ package org.dockbox.hartshorn.web.spec.parser;
 
 import org.dockbox.hartshorn.web.spec.PathSpec;
 
+/**
+ * Interface for parsing path patterns into {@link PathSpec} instances.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface PathParser {
 
+    /**
+     * Parses the given path pattern into a {@link PathSpec} instance.
+     *
+     * @param pattern the path pattern to parse
+     *
+     * @return the parsed {@link PathSpec} instance
+     *
+     * @throws IllegalArgumentException if the given pattern is invalid and cannot be parsed
+     */
     PathSpec parse(String pattern);
 }

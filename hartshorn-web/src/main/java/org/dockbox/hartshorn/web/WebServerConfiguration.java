@@ -138,6 +138,7 @@ public class WebServerConfiguration {
      * @param conversionService the conversion service to use for parameter transformation
      * @param application the current application
      * @param responseHandler the handler for handler responses
+     * @param pathParser the parser for route path patterns
      *
      * @return a new {@link DeclarativeRouterPathConfigurer}
      *
@@ -165,6 +166,8 @@ public class WebServerConfiguration {
     /**
      * Standard response handler driven by configured {@link HttpMessageConverter converters}.
      *
+     * @param fallbackConverter a fallback converter to use when no other converter can handle a
+     * response
      * @param messageConverters type-constrained message converters
      *
      * @return a new {@link SimpleResponseHandler}
@@ -181,6 +184,13 @@ public class WebServerConfiguration {
         );
     }
 
+    /**
+     * Provides a {@link HttpMessageConverter} that can handle responses with no content
+     * ({@code null}).
+     *
+     * @return A message converter that handles responses with no content, writing an empty response
+     * with status code {@link HttpStatus#NO_CONTENT 204 No Content}.
+     */
     @Singleton
     @CompositeMember
     public HttpMessageConverter<?> noContentMessageConverter() {
@@ -241,6 +251,12 @@ public class WebServerConfiguration {
         return new WebServerDiagnosticsReporter(webServer);
     }
 
+    /**
+     * Creates a {@link PathParser} that uses a simple syntax for defining path patterns, with
+     * support for static parts, parameter parts, and wildcard parts.
+     *
+     * @return A path parser for parsing route path patterns.
+     */
     @Singleton
     @SupportPriority
     public PathParser pathParser() {

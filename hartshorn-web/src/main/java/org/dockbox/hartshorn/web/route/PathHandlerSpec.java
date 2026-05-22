@@ -18,6 +18,18 @@ package org.dockbox.hartshorn.web.route;
 
 import org.dockbox.hartshorn.web.HttpMethod;
 
+/**
+ * Specification for a request handler, identified by its corresponding HTTP method. This should
+ * only be used in registries that allow multiple handlers for the same path pattern, but different
+ * HTTP methods.
+ *
+ * @param method the HTTP method that this handler is registered for
+ * @param handler the request handler
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public record PathHandlerSpec(
         HttpMethod method,
         RequestHandler handler

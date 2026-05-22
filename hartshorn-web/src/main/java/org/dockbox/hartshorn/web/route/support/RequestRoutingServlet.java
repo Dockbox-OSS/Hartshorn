@@ -30,7 +30,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO
+ * A servlet that routes incoming HTTP requests to the appropriate request handlers based on the
+ * HTTP method. The provided {@link PathSpec} is used to match the request path and extract any path
+ * parameters, which are then made available to the request handlers via the
+ * {@link RequestAttributes attributes} of the request. If no matching handler is found for the
+ * request, the servlet falls back to the default behavior of the superclass, allowing it to handle
+ * the request as usual.
  *
  * @since 0.7.0
  *
@@ -54,7 +59,10 @@ public class RequestRoutingServlet extends HttpServlet {
     }
 
     /**
-     * TODO
+     * Handles the incoming request by matching the request path against the servlet's path
+     * specification and invoking the corresponding request handler if a match is found. If no match
+     * is found, the provided fallback function is invoked to allow the superclass to handle the
+     * request as usual.
      *
      * @param method the HTTP method of the request
      * @param req the servlet request

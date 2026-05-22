@@ -46,7 +46,7 @@ public class QueryParameterValueParameterLoaderRule<C extends ParameterLoaderCon
     @Override
     protected Option<String> lookupValue(HttpServletRequest request, QueryParameter annotation) {
         String[] parameterValues = request.getParameterValues(annotation.value());
-        if (parameterValues.length == 0) {
+        if (parameterValues == null || parameterValues.length == 0) {
             return Option.empty();
         }
         return Option.of(parameterValues)

@@ -16,15 +16,14 @@
 
 package test.org.dockbox.hartshorn.inject.scope;
 
-import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.inject.scope.ScopedBindingConfiguration.SampleScope;
 

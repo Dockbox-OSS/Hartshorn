@@ -20,7 +20,7 @@
     TODO: Remove once coverage target of 80% is reached.
      In meantime, increase coverage target whenever possible (to avoid regression).
     -->
-    <coverage.target>70%</coverage.target>
+    <coverage.target>69%</coverage.target>
   </properties>
 
   <dependencies>

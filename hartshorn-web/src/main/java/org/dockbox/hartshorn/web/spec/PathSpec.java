@@ -26,6 +26,15 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Specification for a path pattern, consisting of multiple {@link PathPartSpec} instances. This
+ * represents a parsed path pattern, and can be used to match against actual paths and extract path
+ * parameters from incoming requests.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public final class PathSpec {
 
     private final List<PathPartSpec> parts;
@@ -45,18 +54,52 @@ public final class PathSpec {
         this.pathSeparatorPattern = Pattern.quote(String.valueOf(this.pathSeparator));
     }
 
+    /**
+     * Returns the original path pattern string that this {@link PathSpec} represents. This is
+     * constructed from the individual {@link PathPartSpec} instances, and should ideally be
+     * equivalent to the original pattern string that was parsed to create this {@link PathSpec}.
+     *
+     * @return the original path pattern string that this {@link PathSpec} represents
+     */
     public String pattern() {
         return this.pattern;
     }
 
+    /**
+     * Returns the list of {@link PathPartSpec} instances that make up this {@link PathSpec}. Each
+     * {@link PathPartSpec} represents a single part of the path pattern, and can be used to match
+     * against individual parts of a request path and extract path parameters.
+     *
+     * @return the list of {@link PathPartSpec} instances that make up this {@link PathSpec}
+     */
     public List<PathPartSpec> parts() {
         return this.parts;
     }
 
+    /**
+     * Returns the character used as a separator between parts of the path pattern. This is used to
+     * split incoming request paths into parts for matching against the individual
+     * {@link PathPartSpec} instances.
+     *
+     * @return the character used as a separator between parts of the path pattern
+     */
     public char pathSeparator() {
-        return pathSeparator;
+        return this.pathSeparator;
     }
 
+    /**
+     * Determines whether the given path matches this {@link PathSpec}. This is done by splitting
+     * the given path into parts using the path separator, and then matching each part against the
+     * corresponding {@link PathPartSpec} instance in this {@link PathSpec}. If all parts match, any
+     * path parameters extracted from the path are added to the provided map of path parameters.
+     *
+     * @param path the path to match against this {@link PathSpec}
+     * @param pathParameters a map to which any path parameters extracted from the path should be
+     * added if the match is successful
+     *
+     * @return {@code true} if the given path matches this {@link PathSpec}, or {@code false}
+     * otherwise
+     */
     public boolean matches(String path, Map<String, String> pathParameters) {
         String[] parts = StringUtilities.trimWith(
                 this.pathSeparator,
@@ -74,6 +117,20 @@ public final class PathSpec {
         return true;
     }
 
+    /**
+     * Combines this {@link PathSpec} with another {@link PathSpec} to create a new {@link PathSpec}
+     * that represents the combination of both specifications. The given {@link PathSpec} is
+     * appended to the current instance.
+     *
+     * <p>For example, if the current instance represents the pattern <code>"/api"</code> and the
+     * given {@link PathSpec} represents the pattern <code>"/users/{id}"</code>, the resulting
+     * {@link PathSpec} would represent the combined pattern <code>"/api/users/{id}"</code>.
+     *
+     * @param other the {@link PathSpec} to combine with this instance
+     *
+     * @return a new {@link PathSpec} that represents the combination of this instance and the given
+     * {@link PathSpec}
+     */
     public PathSpec combineWith(PathSpec other) {
         if (other.pathSeparator != this.pathSeparator) {
             throw new IllegalArgumentException(

@@ -16,12 +16,22 @@
 
 package org.dockbox.hartshorn.web.spec;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Specification for a path part that represents a request parameter/variable. Parameters can be
+ * defined with or without a RegEx pattern constraint. For example, the path part "{id:\d+}" defines
+ * a parameter named "id" that must match the RegEx pattern "\d+" (i.e. one or more digits). A part
+ * without a pattern, such as "{name}", defines a parameter named "name" that can match any value.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ParameterPathPartSpec implements PathPartSpec {
 
     private final String parameterName;
@@ -32,14 +42,40 @@ public class ParameterPathPartSpec implements PathPartSpec {
         this.pattern = pattern;
     }
 
+    /**
+     * Returns the name of the parameter defined by this path part. This is the name that will be
+     * used to store the value of the parameter in the path parameters map when matching a request
+     * path against this specification.
+     *
+     * @return the name of the parameter defined by this path part
+     */
     public String parameterName() {
-        return parameterName;
+        return this.parameterName;
     }
 
+    /**
+     * Returns the RegEx pattern constraint for this parameter, or {@code null} if no pattern is
+     * defined. If a pattern is defined, the value of this parameter must match the pattern for a
+     * request path to match this specification.
+     *
+     * @return the RegEx pattern constraint for this parameter, or {@code null} if no pattern is
+     * defined
+     */
     public Pattern pattern() {
-        return pattern;
+        return this.pattern;
     }
 
+    /**
+     * Parses the given path part string into a {@link ParameterPathPartSpec} if it is in the
+     * correct format (i.e. starts with <code>"{" and ends with "}"</code>). The content between the
+     * braces is expected to be in the format <code>"{parameterName:pattern}"</code> or just
+     * <code>"{parameterName}"</code>.
+     *
+     * @param part the path part string to parse
+     *
+     * @return an {@link Option} containing the parsed {@link ParameterPathPartSpec} if the input
+     * string is in the correct format, or otherwise an empty {@link Option}
+     */
     public static Option<ParameterPathPartSpec> parse(String part) {
         if (part.startsWith("{") && part.endsWith("}")) {
             if (part.contains("*")) {

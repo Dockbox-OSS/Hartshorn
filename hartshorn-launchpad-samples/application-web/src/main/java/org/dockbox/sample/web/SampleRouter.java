@@ -9,6 +9,8 @@ import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.dockbox.hartshorn.web.GetRoute;
 import org.dockbox.hartshorn.web.Header;
 import org.dockbox.hartshorn.web.HttpStatus;
+import org.dockbox.hartshorn.web.PathParameter;
+import org.dockbox.hartshorn.web.QueryParameter;
 import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.message.RequestAttributes;
 
@@ -43,7 +45,9 @@ public class SampleRouter {
     public ValidationResponseBody validationOutput(
             HttpServletRequest request,
             HttpServletResponse response,
-            @Header("Accept-Encoding") String[] acceptEncoding
+            @Header("Accept-Encoding") String[] acceptEncoding,
+            @PathParameter("param") String parameter,
+            @QueryParameter("test") String testQueryParameter
     ) throws Exception {
         Enumeration<String> headerNames = request.getHeaderNames();
         Map<String, String> headers = new HashMap<>();
@@ -53,11 +57,13 @@ public class SampleRouter {
         }
         return new SampleRouter.ValidationResponseBody(
                 request.getMethod(),
-                request.getPathInfo(),
+                request.getRequestURI(),
                 request.getParameterMap(),
+                testQueryParameter,
                 headers,
                 request.getReader().readAllAsString(),
                 RequestAttributes.pathParameters(request),
+                parameter,
                 acceptEncoding
         );
     }
@@ -66,9 +72,11 @@ public class SampleRouter {
             String method,
             String path,
             Map<String, String[]> queryParameters,
+            String testQueryParameter,
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,
+            String providedPathParameter,
             String[] encodings
     ) {
     }

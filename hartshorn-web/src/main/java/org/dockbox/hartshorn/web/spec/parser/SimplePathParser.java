@@ -25,6 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * A simple implementation of {@link PathParser} that parses path patterns by splitting them into
+ * parts using a specified path separator character, and then parsing each part using a list of
+ * {@link PathPartSpecParser} instances.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class SimplePathParser implements PathParser {
 
     private final List<PathPartSpecParser> partParsers = new ArrayList<>();
@@ -54,6 +63,14 @@ public class SimplePathParser implements PathParser {
         return new PathSpec(specs, pathSeparator);
     }
 
+    /**
+     * Parses a single path part using the registered {@link PathPartSpecParser} instances.
+     *
+     * @param part the path part to parse
+     *
+     * @return an {@link Option} containing the parsed {@link PathPartSpec} instance, or an empty
+     * {@link Option} if the given part is invalid or cannot be parsed
+     */
     protected Option<? extends PathPartSpec> parsePart(String part) {
         for (PathPartSpecParser parser : partParsers) {
             Option<? extends PathPartSpec> parsedPart = parser.parse(part);

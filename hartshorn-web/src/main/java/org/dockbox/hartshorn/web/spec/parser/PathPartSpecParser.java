@@ -19,7 +19,24 @@ package org.dockbox.hartshorn.web.spec.parser;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.spec.PathPartSpec;
 
+/**
+ * Interface for parsing individual path parts into {@link PathPartSpec} instances. This is used by
+ * the {@link SimplePathParser} to parse individual parts of a path pattern, and can be implemented
+ * to support custom path part specifications.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface PathPartSpecParser {
 
+    /**
+     * Parses the given path part into a {@link PathPartSpec} instance.
+     *
+     * @param part the path part to parse
+     *
+     * @return an {@link Option} containing the parsed {@link PathPartSpec} instance, or an empty
+     * {@link Option} if the given part is invalid or cannot be parsed
+     */
     Option<? extends PathPartSpec> parse(String part);
 }

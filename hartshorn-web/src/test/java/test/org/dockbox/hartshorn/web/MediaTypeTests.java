@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MediaTypeTests {
 
@@ -37,12 +38,12 @@ public class MediaTypeTests {
     }
 
     @Test
-    void wildcardTypeWithConcreteSubtypeIsWildcard() {
-        MediaType mediaType = new MediaType("*", "html");
-        assertThat(mediaType.isWildcardType()).isTrue();
-        assertThat(mediaType.isWildcardSubtype()).isFalse();
-        assertThat(mediaType.isConcrete()).isFalse();
-        assertThat(mediaType.toString()).isEqualTo("*/html");
+    void wildcardTypeWithConcreteSubtypeIsInvalid() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> new MediaType("*", "html"))
+                .withMessageContaining(
+                        "A media type with a wildcard type must also have a wildcard subtype"
+                );
     }
 
     @Test

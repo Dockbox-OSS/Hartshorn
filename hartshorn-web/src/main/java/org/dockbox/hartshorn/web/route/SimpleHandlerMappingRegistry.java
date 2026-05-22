@@ -26,8 +26,9 @@ import java.util.Collection;
 /**
  * A simple implementation of {@link HandlerMappingRegistry}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleHandlerMappingRegistry implements HandlerMappingRegistry {
 
@@ -39,7 +40,9 @@ public class SimpleHandlerMappingRegistry implements HandlerMappingRegistry {
         Collection<PathHandlerSpec> handlerSpecs = this.requestMappings.get(pathSpec);
         if (handlerSpecs.stream().anyMatch(spec -> spec.method() == method)) {
             throw new IllegalArgumentException(
-                    "A handler for path '" + pathSpec + "' and method '" + method + "' is already registered"
+                    "A handler for path '%s' and method '%s' is already registered".formatted(
+                            pathSpec, method
+                    )
             );
         }
         this.requestMappings.put(pathSpec, new PathHandlerSpec(method, handler));

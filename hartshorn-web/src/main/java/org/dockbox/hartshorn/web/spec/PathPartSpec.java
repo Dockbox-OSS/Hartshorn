@@ -16,11 +16,42 @@
 
 package org.dockbox.hartshorn.web.spec;
 
+import org.dockbox.hartshorn.web.spec.parser.PathPartSpecParser;
+
 import java.util.Map;
 
+/**
+ * Specification for a single part of a path pattern. This is used by the {@link PathSpec} to match
+ * individual parts of a request path, and can be implemented to support custom path part
+ * specifications.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface PathPartSpec {
 
+    /**
+     * Returns a string representation of this path part specification, which can be used for
+     * debugging purposes or for reconstructing the original path pattern. This should ideally
+     * return a string that, when parsed by the {@link PathPartSpecParser}, would produce an
+     * equivalent {@link PathPartSpec} instance.
+     *
+     * @return a string representation of this path part specification
+     */
     String stringValue();
 
+    /**
+     * Determines whether the given path part matches this path part specification. If the match is
+     * successful, any path parameters extracted from the path part should be added to the provided
+     * map of path parameters.
+     *
+     * @param pathPart the path part to match against this specification
+     * @param pathParameters a map to which any path parameters extracted from the path part should
+     * be added if the match is successful
+     *
+     * @return {@code true} if the given path part matches this specification, or {@code false}
+     * otherwise
+     */
     boolean matches(String pathPart, Map<String, String> pathParameters);
 }
