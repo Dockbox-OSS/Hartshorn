@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.inject.scope;
 
+import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -37,13 +38,15 @@ class ScopeBindingTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void scopeBindingIsNotAccessibleFromApplication() {
+    void scopeBindingIsNotAccessibleFromApplication() throws IllegalScopeException {
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
-        ComponentKey<String> key = ComponentKey.builder(String.class)
-            .scope(scope)
-            .build();
+        this.applicationContext.bind(String.class)
+                .installTo(scope.installableScopeType())
+                .singleton("test");
 
-        this.applicationContext.bind(key).singleton("test");
+        ComponentKey<String> key = ComponentKey.builder(String.class)
+                .scope(scope)
+                .build();
         String value = this.applicationContext.get(key);
         assertThat(value).isEqualTo("test");
 

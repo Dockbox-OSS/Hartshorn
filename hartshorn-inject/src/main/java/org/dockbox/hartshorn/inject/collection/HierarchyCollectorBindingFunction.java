@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,12 +43,12 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFunction<T> {
 
     private final Binder binder;
-    private final CollectionBindingHierarchy<T> hierarchy;
+    private final BindingHierarchy<ComponentCollection<T>> hierarchy;
     private final int priority;
 
     public HierarchyCollectorBindingFunction(
         Binder binder,
-        CollectionBindingHierarchy<T> hierarchy,
+        BindingHierarchy<ComponentCollection<T>> hierarchy,
         int priority
     ) {
         this.binder = binder;
@@ -58,7 +58,12 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder provider(InstantiationStrategy<T> strategy) {
-        this.hierarchy.getOrCreateInstantiationStrategy(this.priority).add(strategy);
+        this.hierarchy.get(this.priority)
+                .ofType(CollectionInstantiationStrategy.class)
+                .peek(collector -> collector.add(strategy))
+                .orElseThrow(() -> {
+                    return new IllegalStateException("Cannot add provider to collection hierarchy: No collection provider found at priority " + this.priority);
+                });
         return this.binder;
     }
 

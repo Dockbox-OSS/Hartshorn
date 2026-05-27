@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.List;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
+
+import java.util.List;
 
 /**
  * A simple implementation of {@link ComponentKeyMatcher} which delegates to either
@@ -67,7 +68,7 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
     }
 
     private boolean isStrict(ComponentKey<?> key) {
-        return key.strict().booleanValue(this.configuration.isStrictMode());
+        return InjectorUtilities.isStrict(key, this.configuration);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.dockbox.hartshorn.util;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Represents a simple tristate, which is either {@code true}, {@code false}, or {@code undefined}
@@ -64,6 +66,19 @@ public enum Tristate {
      */
     public boolean booleanValue(boolean defaultValue) {
         return this == UNDEFINED ? defaultValue : this.booleanValue;
+    }
+
+    /**
+     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED},
+     * the provided default value is returned.
+     *
+     * @param defaultValue the default value supplier to return if this tristate is
+     * {@link #UNDEFINED}
+     *
+     * @return the boolean value of this tristate, or the default value if undefined
+     */
+    public boolean booleanValue(BooleanSupplier defaultValue) {
+        return this == UNDEFINED ? defaultValue.getAsBoolean() : this.booleanValue;
     }
 
     /**

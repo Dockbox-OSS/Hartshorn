@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This
  * provider should be used when backing a {@link CollectionBindingHierarchy}, and should typically
- * be created through {@link CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)}.
+ * be created through {@link CollectionBindingHierarchy#get(int)}.
  *
  * <p>Note that while this type is not type-aware itself, providers that are added to this
  * collection
@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <T> the type of the components
  *
  * @see CollectionBindingHierarchy
- * @see CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)
+ * @see CollectionBindingHierarchy#get(int)
  * 
  * @since 0.5.0
  * 

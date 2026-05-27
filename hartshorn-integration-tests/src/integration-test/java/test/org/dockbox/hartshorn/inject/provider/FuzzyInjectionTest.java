@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -80,16 +79,11 @@ public class FuzzyInjectionTest {
     void customizingEnvironmentStrictModeAffectsLookup() {
         // Could usually be simplified by calling HartshornApplication#createApplication, but as we
         // need to disable base package scanning, we have to go through the 'full' factory setup.
-        ApplicationContext applicationContext = HartshornApplication.create(FuzzyInjectionTest.class, application -> {
-            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
-                constructor.includeBasePackages(false);
-                constructor.environment(ConfigurableApplicationEnvironment.create(environment -> {
-                    environment.injectorConfiguration(ImmutableInjectorConfiguration.create(
-                        ImmutableInjectorConfiguration.Configurer::disableStrictMode
-                    ));
-                }));
-            }));
-        });
+        ApplicationContext applicationContext = HartshornApplication
+                .createApplication(FuzzyInjectionTest.class).initialize(application -> {
+                    application.includeBasePackages(false);
+                    application.disableStrictMode();
+                });
         ApplicationEnvironment environment = applicationContext.environment();
         assertThat(environment.configuration().isStrictMode()).isFalse();
 
@@ -113,7 +107,7 @@ public class FuzzyInjectionTest {
         assertThat(strings)
             .hasSize(1)
             .anySatisfy(s -> assertThat(s).isEqualTo(
-                applicationContext.scope().installableScopeType().name()
+                    ApplicationContext.class.getName()
             ));
 
         ComponentCollection<CharSequence> charSequences = applicationContext.get(
@@ -125,7 +119,7 @@ public class FuzzyInjectionTest {
         assertThat(charSequences)
             .hasSize(1)
             .anySatisfy(s -> assertThat(s).isEqualTo(
-                applicationContext.scope().installableScopeType().name()
+                    ApplicationContext.class.getName()
             ));
     }
 
@@ -143,7 +137,7 @@ public class FuzzyInjectionTest {
         assertThat(strings)
             .hasSize(1)
             .anySatisfy(s -> assertThat(s).isEqualTo(
-                applicationContext.scope().installableScopeType().name()
+                    ApplicationContext.class.getName()
             ));
 
         ComponentCollection<CharSequence> stringsInChild =
@@ -152,7 +146,15 @@ public class FuzzyInjectionTest {
                 .collector()
                 .fuzzy()
                 .build());
-        assertThat(stringsInChild).isEmpty();
+
+        assertThat(stringsInChild)
+            .hasSize(2)
+            .anySatisfy(s -> assertThat(s).isEqualTo(
+                ApplicationContext.class.getName()
+            ))
+            .anySatisfy(s -> assertThat(s).isEqualTo(
+                SampleScope.class.getName()
+            ));
     }
 
     @Test
@@ -168,7 +170,7 @@ public class FuzzyInjectionTest {
         assertThat(strings)
             .hasSize(1)
             .anySatisfy(s -> assertThat(s).isEqualTo(
-                applicationContext.scope().installableScopeType().name()
+                    ApplicationContext.class.getName()
             ));
 
         // Should not match on child scope, as parent scope members are excluded from fuzzy matching
@@ -215,8 +217,6 @@ public class FuzzyInjectionTest {
                     collector.singleton(ApplicationContext.class.getName());
                 });
 
-        // TODO #1167: Issue with scoped bindings and collectors, they're registered
-        //  to the application scope? Should not happen.
         applicationContext.bind(String.class)
             .installTo(DirectScopeKey.of(SampleScope.class))
             .collect(collector -> {

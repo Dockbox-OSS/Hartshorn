@@ -736,8 +736,9 @@ public final class ComponentKey<T> implements Reportable {
                     .selectionStrategy(this.selectionStrategy)
                     .failureStrategy(this.failureStrategy)
                     .postConstructionAllowed(this.postConstructionAllowed);
-            builder.strict = this.strict;
-
+            if (this.strict != Tristate.UNDEFINED) {
+                builder.strict(this.strict.booleanValue());
+            }
             return TypeUtils.unchecked(builder, Builder.class);
         }
 

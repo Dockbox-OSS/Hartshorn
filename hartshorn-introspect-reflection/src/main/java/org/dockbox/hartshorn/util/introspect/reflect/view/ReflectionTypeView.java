@@ -485,7 +485,9 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         if (this.isVoid()) {
             return new WildcardPackageView();
         }
-        return this.introspector.introspect(this.type.getPackage());
+        return this.introspector.introspect(
+                this.elementType().orElse(this).type().getPackage()
+        );
     }
 
     @Override

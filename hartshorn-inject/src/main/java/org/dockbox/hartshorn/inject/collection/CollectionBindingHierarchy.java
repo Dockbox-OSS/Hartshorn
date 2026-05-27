@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,14 @@ package org.dockbox.hartshorn.inject.collection;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The
@@ -28,38 +35,64 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  *
  * @param <T> the type of the elements in the collection
  *
- * @since 0.5.0
- * 
  * @author Guus Lieben
+ *
+ * @since 0.5.0
  */
 public class CollectionBindingHierarchy<T>
-    extends AbstractBindingHierarchy<ComponentCollection<T>> {
+        extends AbstractBindingHierarchy<ComponentCollection<T>> {
 
     public CollectionBindingHierarchy(ComponentKey<ComponentCollection<T>> componentKey) {
         super(componentKey);
     }
 
-    /**
-     * Retrieves the {@link CollectionInstantiationStrategy} for the given priority, or creates a
-     * new one if it does not exist yet.
-     *
-     * @param priority the priority of the instantiation strategy
-     *
-     * @return the instantiation strategy
-     */
-    public CollectionInstantiationStrategy<T> getOrCreateInstantiationStrategy(int priority) {
-        InstantiationStrategy<ComponentCollection<T>> existingStrategy =
-            this.get(priority).orCompute(() -> {
-                InstantiationStrategy<ComponentCollection<T>> collectionStrategy =
-                    new CollectionInstantiationStrategy<>();
-                this.add(priority, collectionStrategy);
-                return collectionStrategy;
-            }).orNull();
-        if (existingStrategy instanceof CollectionInstantiationStrategy<T> collectionProvider) {
-            return collectionProvider;
+    @Override
+    public CollectionBindingHierarchy<T> merge(BindingHierarchy<ComponentCollection<T>> hierarchy) {
+        CollectionBindingHierarchy<T> merged = new CollectionBindingHierarchy<>(this.key());
+        Map<Integer, CollectionInstantiationStrategy<T>> strategies = new HashMap<>();
+        // Collect strategies from current instance
+        for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : this) {
+            strategies.put(entry.getKey(), (CollectionInstantiationStrategy<T>) entry.getValue());
         }
-        else {
-            throw new IllegalStateException("Existing provider is not a CollectionProvider");
+        // Collect and merge strategies from given instance
+        for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : hierarchy) {
+            if (entry.getValue() instanceof CollectionInstantiationStrategy<T> collectionStrategy) {
+                Set<InstantiationStrategy<T>> providers = new HashSet<>(collectionStrategy.providers());
+                if (strategies.containsKey(entry.getKey())) {
+                    providers.addAll(strategies.get(entry.getKey()).providers());
+                }
+                // New strategy to prevent modifications to original hierarchies
+                CollectionInstantiationStrategy<T> strategy = new CollectionInstantiationStrategy<>();
+                strategy.addAll(providers);
+                strategies.put(entry.getKey(), strategy);
+            } else {
+                throw new IllegalArgumentException("Only CollectionInstantiationStrategy instances can be merged into a CollectionBindingHierarchy");
+            }
         }
+        strategies.forEach(merged::add);
+        return merged;
+    }
+
+    @Override
+    public BindingHierarchy<ComponentCollection<T>> add(int priority, InstantiationStrategy<ComponentCollection<T>> strategy) {
+        if (strategy instanceof CollectionInstantiationStrategy<T>) {
+            return super.add(priority, strategy);
+        } else {
+            throw new IllegalArgumentException("Only CollectionInstantiationStrategy instances can be added to a CollectionBindingHierarchy");
+        }
+    }
+
+    @Override
+    public Option<CollectionInstantiationStrategy<T>> get(int priority) {
+        return super.get(priority)
+                .ofType(CollectionInstantiationStrategy.class)
+                // Map due to type parameter
+                .map(strategy -> (CollectionInstantiationStrategy<T>) strategy)
+                .orCompute(() -> {
+                    CollectionInstantiationStrategy<T> collectionStrategy =
+                            new CollectionInstantiationStrategy<>();
+                    this.add(priority, collectionStrategy);
+                    return collectionStrategy;
+                });
     }
 }

@@ -20,11 +20,9 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Priority;
-import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.HierarchyCollectorBindingFunction;
-import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
@@ -84,6 +82,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         this.singletonCache = singletonCache;
 
         this.scope = scope;
+        this.scopeKey = scope.installableScopeType();
+
         this.moduleContext = moduleContext;
         this.bindingAliasNormalizer = bindingAliasNormalizer;
     }
@@ -96,7 +96,9 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
      */
     protected BindingHierarchy<T> hierarchy() {
         if (this.scopeKey != null && !this.moduleContext.isApplicationScope(this.scopeKey)) {
-            return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
+            return new AliasableBindingHierarchyAdapter<>(this.moduleContext.hierarchy(
+                    this.scopeKey, this.hierarchy.key().mutable().scope(this.scope).build()
+            ));
         }
         else {
             return this.hierarchy;
@@ -240,49 +242,32 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
-        BindingHierarchy<T> existingHierarchy = this.hierarchy();
         ComponentKey<ComponentCollection<T>> collectionComponentKey =
             this.createCollectionComponentKey();
 
-        BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy =
-            this.binder.hierarchy(collectionComponentKey);
+        BindingHierarchy<ComponentCollection<T>> existingHierarchy =
+            this.hierarchy(collectionComponentKey);
 
-        while (existingCollectionHierarchy instanceof
-                BindingHierarchyWrapper<ComponentCollection<T>> wrapper) {
-            existingCollectionHierarchy = wrapper.delegate();
-        }
+        HierarchyCollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
+                this.binder,
+                existingHierarchy,
+                this.priority
+        );
+        collector.configure(function);
+        return this.binder;
+    }
 
-        if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T>
-            collectionBindingHierarchy) {
-            Binder updatedBinder = this.binder.bind(collectionBindingHierarchy);
-            CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
-                    updatedBinder,
-                    collectionBindingHierarchy,
-                    this.priority
-            );
-            collector.configure(function);
-            return updatedBinder;
-        } else if (existingCollectionHierarchy instanceof ImmutableCompositeBindingHierarchy<T> compositeHierarchy) {
-            Binder updatedBinder = this.binder.bind(compositeHierarchy);
-            for (CollectionBindingHierarchy<T> hierarchy : compositeHierarchy.hierarchies()) {
-                CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
-                        updatedBinder,
-                        hierarchy,
-                        this.priority
-                );
-                collector.configure(function);
-            }
-            return updatedBinder;
-        } else {
-            throw new IllegalStateException(
-                "Cannot create collector binding function for hierarchy "
-                    + existingHierarchy.key()
-                    + " as it is not a collection binding hierarchy");
+    private <R> BindingHierarchy<R> hierarchy(ComponentKey<R> key) {
+        if (!this.moduleContext.isApplicationScope(this.scopeKey)) {
+            return this.moduleContext.hierarchy(this.scopeKey, key);
         }
+        return this.binder.hierarchy(key);
     }
 
     private ComponentKey<ComponentCollection<T>> createCollectionComponentKey() {
-        return this.hierarchy().key().mutable().collector().build();
+        return this.hierarchy().key().mutable()
+                .scope(this.scope)
+                .collector().build();
     }
 
     /**
