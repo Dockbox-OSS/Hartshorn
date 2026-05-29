@@ -31,6 +31,8 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * @param bannerEnabled {@link InjectorConfiguration#bannerEnabled()}
  * @param isBatchMode {@link InjectorConfiguration#isBatchMode()}
  * @param showStacktraces {@link InjectorConfiguration#showStacktraces()}
+ * @param includeParentScopeForFuzzyMatching
+ * {@link InjectorConfiguration#includeParentScopeForFuzzyMatching()}
  *
  * @since 0.7.0
  *

@@ -16,7 +16,22 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+/**
+ * Wrapper for another {@link BindingHierarchy}. Exposes the underlying delegate for potential
+ * unwrapping.
+ *
+ * @param <C> the type contained by the hierarchy
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface BindingHierarchyWrapper<C> extends BindingHierarchy<C> {
 
+    /**
+     * Returns the underlying delegate of this wrapper.
+     *
+     * @return the underlying delegate of this wrapper
+     */
     BindingHierarchy<C> delegate();
 }

@@ -269,7 +269,9 @@ public class HierarchyCache {
         for (ComponentKeyView<?> compatibleKey : compatibleKeys) {
             BindingHierarchy<?> hierarchy = this.hierarchies.get(compatibleKey);
             if (hierarchy instanceof CollectionBindingHierarchy<?> collectionBindingHierarchy) {
-                composedHierarchy = composedHierarchy.merge((CollectionBindingHierarchy<T>) collectionBindingHierarchy);
+                composedHierarchy = composedHierarchy.merge(
+                    (CollectionBindingHierarchy<T>) collectionBindingHierarchy
+                );
             }
             else {
                 throw new IllegalStateException(

@@ -62,7 +62,10 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
                 .ofType(CollectionInstantiationStrategy.class)
                 .peek(collector -> collector.add(strategy))
                 .orElseThrow(() -> {
-                    return new IllegalStateException("Cannot add provider to collection hierarchy: No collection provider found at priority " + this.priority);
+                    return new IllegalStateException(
+                        "Cannot add provider to collection hierarchy: "
+                            + "No collection provider found at priority " + this.priority
+                    );
                 });
         return this.binder;
     }

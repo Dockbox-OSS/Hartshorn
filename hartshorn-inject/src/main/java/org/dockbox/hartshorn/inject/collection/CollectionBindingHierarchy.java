@@ -35,9 +35,9 @@ import java.util.Set;
  *
  * @param <T> the type of the elements in the collection
  *
- * @author Guus Lieben
- *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class CollectionBindingHierarchy<T>
         extends AbstractBindingHierarchy<ComponentCollection<T>> {
@@ -57,16 +57,21 @@ public class CollectionBindingHierarchy<T>
         // Collect and merge strategies from given instance
         for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : hierarchy) {
             if (entry.getValue() instanceof CollectionInstantiationStrategy<T> collectionStrategy) {
-                Set<InstantiationStrategy<T>> providers = new HashSet<>(collectionStrategy.providers());
+                Set<InstantiationStrategy<T>> providers = new HashSet<>(
+                    collectionStrategy.providers()
+                );
                 if (strategies.containsKey(entry.getKey())) {
                     providers.addAll(strategies.get(entry.getKey()).providers());
                 }
                 // New strategy to prevent modifications to original hierarchies
-                CollectionInstantiationStrategy<T> strategy = new CollectionInstantiationStrategy<>();
+                var strategy = new CollectionInstantiationStrategy<T>();
                 strategy.addAll(providers);
                 strategies.put(entry.getKey(), strategy);
             } else {
-                throw new IllegalArgumentException("Only CollectionInstantiationStrategy instances can be merged into a CollectionBindingHierarchy");
+                throw new IllegalArgumentException(
+                    "Only CollectionInstantiationStrategy instances can be merged"
+                        + " into a CollectionBindingHierarchy"
+                );
             }
         }
         strategies.forEach(merged::add);
@@ -74,11 +79,17 @@ public class CollectionBindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> add(int priority, InstantiationStrategy<ComponentCollection<T>> strategy) {
+    public BindingHierarchy<ComponentCollection<T>> add(
+        int priority,
+        InstantiationStrategy<ComponentCollection<T>> strategy
+    ) {
         if (strategy instanceof CollectionInstantiationStrategy<T>) {
             return super.add(priority, strategy);
         } else {
-            throw new IllegalArgumentException("Only CollectionInstantiationStrategy instances can be added to a CollectionBindingHierarchy");
+            throw new IllegalArgumentException(
+                "Only CollectionInstantiationStrategy instances can be added"
+                    + " to a CollectionBindingHierarchy"
+            );
         }
     }
 
@@ -87,7 +98,9 @@ public class CollectionBindingHierarchy<T>
         return super.get(priority)
                 .ofType(CollectionInstantiationStrategy.class)
                 // Map due to type parameter
-                .map(strategy -> (CollectionInstantiationStrategy<T>) strategy)
+                .map(strategy ->
+                    (CollectionInstantiationStrategy<T>) strategy
+                )
                 .orCompute(() -> {
                     CollectionInstantiationStrategy<T> collectionStrategy =
                             new CollectionInstantiationStrategy<>();
