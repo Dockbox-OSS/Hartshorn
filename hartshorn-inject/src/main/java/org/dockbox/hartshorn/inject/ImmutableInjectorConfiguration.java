@@ -87,7 +87,7 @@ public record ImmutableInjectorConfiguration(
 
         private ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching =
                 PropertyInitializer.booleanProperty("hartshorn.inject.fuzzy-match-with-parent-scopes")
-                        .orElseGet(() -> false);
+                        .orElseGet(() -> true);
 
         private ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor =
                 PropertyInitializer.booleanProperty("hartshorn.inject.allow-single-constructor-fallback")
