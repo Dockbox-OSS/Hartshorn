@@ -16,7 +16,11 @@
 
 package test.org.dockbox.hartshorn.web.jetty;
 
-import org.assertj.core.api.Assertions;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -24,21 +28,22 @@ import org.dockbox.hartshorn.web.GetRoute;
 import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
+import org.dockbox.hartshorn.web.jetty.JettyWebServer;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @UseWebServer
 @HartshornIntegrationTest(includeBasePackages = false)
-public class MainTests {
+public class JettyServerTests {
 
     @Test
     @TestComponents(TestRouter.class)
-    void sampleAssertion(@Inject WebServer server) throws IOException, InterruptedException {
+    void testBasicRequestResponseFlow(
+        @Inject WebServer server
+    ) throws IOException, InterruptedException {
+        assertThat(server).isInstanceOf(JettyWebServer.class);
+
         int port = server.port();
         String response;
         try (HttpClient client = HttpClient.newHttpClient()) {
@@ -47,7 +52,7 @@ public class MainTests {
                     .build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         }
-        Assertions.assertThat(response).isEqualTo("\"hello\"");
+        assertThat(response).isEqualTo("\"hello\"");
     }
 
     @Router
