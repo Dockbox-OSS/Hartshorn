@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.web.spec;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Specification for a path part that represents a request parameter/variable. Parameters can be
@@ -28,14 +27,14 @@ import java.util.regex.Pattern;
  * a parameter named "id" that must match the RegEx pattern "\d+" (i.e. one or more digits). A part
  * without a pattern, such as "{name}", defines a parameter named "name" that can match any value.
  *
+ * @param parameterName the name of the parameter defined by this path part
+ * @param pattern the optional RegEx pattern constraint for this parameter, or {@code null}
+ *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ParameterPathPartSpec implements PathPartSpec {
-
-    private final String parameterName;
-    private final Pattern pattern;
+public record ParameterPathPartSpec(String parameterName, Pattern pattern) implements PathPartSpec {
 
     public ParameterPathPartSpec(String parameterName, @Nullable Pattern pattern) {
         this.parameterName = parameterName;
@@ -49,6 +48,7 @@ public class ParameterPathPartSpec implements PathPartSpec {
      *
      * @return the name of the parameter defined by this path part
      */
+    @Override
     public String parameterName() {
         return this.parameterName;
     }
@@ -61,6 +61,7 @@ public class ParameterPathPartSpec implements PathPartSpec {
      * @return the RegEx pattern constraint for this parameter, or {@code null} if no pattern is
      * defined
      */
+    @Override
     public Pattern pattern() {
         return this.pattern;
     }
@@ -92,7 +93,8 @@ public class ParameterPathPartSpec implements PathPartSpec {
             if (parts.length > 1) {
                 try {
                     pattern = Pattern.compile(parts[1]);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     return Option.empty();
                 }
             }
