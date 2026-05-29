@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHierarchy<C> {
+public class AliasableBindingHierarchyAdapter<C>
+        implements AliasableBindingHierarchy<C>, BindingHierarchyWrapper<C> {
 
     private final Set<ComponentKey<? super C>> aliases = ConcurrentHashMap.newKeySet();
     private final BindingHierarchy<C> delegate;
@@ -98,7 +99,7 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
     }
 
     @Override
-    public Option<InstantiationStrategy<C>> get(int priority) {
+    public Option<? extends InstantiationStrategy<C>> get(int priority) {
         return this.delegate.get(priority);
     }
 
@@ -134,5 +135,10 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
             .field("aliases", this.aliases)
             .field("delegate", this.delegate)
             .describe();
+    }
+
+    @Override
+    public BindingHierarchy<C> delegate() {
+        return this.delegate;
     }
 }

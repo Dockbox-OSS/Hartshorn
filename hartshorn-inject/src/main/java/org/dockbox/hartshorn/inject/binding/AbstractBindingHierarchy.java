@@ -65,7 +65,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
      *
      * @return the map of providers
      */
-    protected NavigableMap<Integer, InstantiationStrategy<T>> priorityProviders() {
+    public NavigableMap<Integer, InstantiationStrategy<T>> priorityProviders() {
         return this.providers;
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public Option<InstantiationStrategy<T>> get(int priority) {
+    public Option<? extends InstantiationStrategy<T>> get(int priority) {
         return Option.of(this.priorityProviders().getOrDefault(priority, null));
     }
 

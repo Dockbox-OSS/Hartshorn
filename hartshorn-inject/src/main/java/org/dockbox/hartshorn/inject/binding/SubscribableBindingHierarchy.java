@@ -41,7 +41,9 @@ import java.util.function.Consumer;
  * @author Guus Lieben
  */
 public class SubscribableBindingHierarchy<C>
-    implements PrunableBindingHierarchy<C>, AliasableBindingHierarchy<C> {
+    implements PrunableBindingHierarchy<C>,
+        AliasableBindingHierarchy<C>,
+        BindingHierarchyWrapper<C> {
 
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
@@ -109,7 +111,7 @@ public class SubscribableBindingHierarchy<C>
     }
 
     @Override
-    public Option<InstantiationStrategy<C>> get(int priority) {
+    public Option<? extends InstantiationStrategy<C>> get(int priority) {
         return this.real().get(priority);
     }
 
@@ -179,5 +181,10 @@ public class SubscribableBindingHierarchy<C>
             return prunableBindingHierarchy.pruneBelow(priority);
         }
         return 0;
+    }
+
+    @Override
+    public BindingHierarchy<C> delegate() {
+        return this.real;
     }
 }

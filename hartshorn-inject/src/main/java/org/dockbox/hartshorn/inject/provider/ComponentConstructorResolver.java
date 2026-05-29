@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
+import org.dockbox.hartshorn.inject.collection.CollectionInstantiationStrategy;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -141,7 +142,7 @@ public final class ComponentConstructorResolver {
         throws MissingInjectConstructorException, NoSuchProviderException {
         BindingHierarchy<C> hierarchy = this.hierarchyLookup.hierarchy(node.componentKey());
         int highestPriority = hierarchy.highestPriority();
-        Option<InstantiationStrategy<C>> providerOption = hierarchy.get(highestPriority);
+        Option<? extends InstantiationStrategy<C>> providerOption = hierarchy.get(highestPriority);
         return providerOption.absent()
             ? this.findConstructorInImplementation(node.type())
             : this.findConstructorInHierarchy(node, providerOption);
@@ -149,12 +150,17 @@ public final class ComponentConstructorResolver {
 
     private <C> Option<ConstructorView<? extends C>> findConstructorInHierarchy(
         TypePathNode<C> node,
-        Option<InstantiationStrategy<C>> providerOption
+        Option<? extends InstantiationStrategy<C>> providerOption
     )
         throws NoSuchProviderException, MissingInjectConstructorException {
         InstantiationStrategy<C> strategy = providerOption.get();
         if (strategy instanceof CompositeInstantiationStrategy<C> composite) {
             strategy = composite.provider();
+        }
+
+        // Component collections are handled by default, no constructor resolution needed.
+        if (strategy instanceof CollectionInstantiationStrategy<?>) {
+            return Option.empty();
         }
 
         if (strategy instanceof TypeAwareInstantiationStrategy<C> typeAwareInstantiationStrategy) {

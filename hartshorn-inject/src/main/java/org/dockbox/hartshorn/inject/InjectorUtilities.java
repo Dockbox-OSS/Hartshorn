@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package org.dockbox.hartshorn.inject;
-
-import org.dockbox.hartshorn.util.Tristate;
 
 /**
  * Utility class for injector-related operations.
@@ -38,14 +36,32 @@ public final class InjectorUtilities {
      * @param configuration the injector configuration
      *
      * @return true if the key should be treated in strict mode, false otherwise
+     *
+     * @see InjectorConfiguration#isStrictMode()
      */
     public static boolean isStrict(ComponentKey<?> key, InjectorConfiguration configuration) {
-        Tristate strict = key.strict();
-        if (strict == Tristate.UNDEFINED) {
-            return configuration.isStrictMode();
-        }
-        else {
-            return strict.booleanValue();
-        }
+        return key.strict().booleanValue(configuration::isStrictMode);
+    }
+
+    /**
+     * Determines whether the given key should include parent scopes when resolving components. If
+     * the key has a defined value for including parent scopes, that value is used. Otherwise, the
+     * global configuration is used if the key is non-strict (fuzzy).
+     *
+     * @param key the component key
+     * @param configuration the injector configuration
+     *
+     * @return true if parent scopes should be included when resolving components for the given
+     * key, false otherwise
+     *
+     * @see InjectorConfiguration#includeParentScopeForFuzzyMatching()
+     */
+    public static boolean includeParentScope(
+            ComponentKey<?> key,
+            InjectorConfiguration configuration
+    ) {
+        return key.includeParentScopes().booleanValue(() ->
+                !isStrict(key, configuration) && configuration.includeParentScopeForFuzzyMatching()
+        );
     }
 }

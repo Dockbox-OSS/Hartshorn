@@ -82,4 +82,14 @@ public interface InjectorConfiguration {
      * @return {@code true} if stack traces should be shown, {@code false} otherwise.
      */
     boolean showStacktraces();
+
+    /**
+     * Indicates whether parent scopes should be included when performing fuzzy matching for
+     * collection hierarchies. This effectively means that, when enabled, composite members from the
+     * parent scope will be included in the collection when fuzzy matching is used to resolve the
+     * hierarchy.
+     *
+     * @return {@code true} if parent scopes should be included, {@code false} otherwise.
+     */
+    boolean includeParentScopeForFuzzyMatching();
 }

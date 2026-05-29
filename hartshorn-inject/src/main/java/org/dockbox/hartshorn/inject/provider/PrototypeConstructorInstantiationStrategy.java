@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,8 +151,9 @@ public final class PrototypeConstructorInstantiationStrategy<C>
     private Option<? extends ConstructorView<? extends C>> optimalConstructor(
         InjectionCapableApplication application
     ) throws ApplicationException {
-        TypeView<? extends C> typeView =
-            application.environment().introspector().introspect(this.type());
+        TypeView<? extends C> typeView = (TypeView<? extends C>) application.environment()
+                .introspector()
+                .introspect(this.componentKey.parameterizedType());
         if (this.optimalConstructor == null) {
             try {
                 this.optimalConstructor = ComponentConstructorResolver.create(application)

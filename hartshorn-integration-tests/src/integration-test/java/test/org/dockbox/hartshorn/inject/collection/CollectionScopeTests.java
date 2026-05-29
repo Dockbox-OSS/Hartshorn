@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class CollectionScopeTests {
         assertThat(hierarchy.size()).isOne();
 
         int highestPriority = hierarchy.highestPriority();
-        Option<InstantiationStrategy<ComponentCollection<String>>> candidateProvider =
+        Option<? extends InstantiationStrategy<ComponentCollection<String>>> candidateProvider =
             hierarchy.get(highestPriority);
         assertThat(candidateProvider).present();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
         ElementAnnotationsIntrospector annotations = view.annotations();
         this.configureQualifiers(builder, annotations);
         this.configureStrict(builder, annotations);
+        this.configureParentScopeInclusion(builder, annotations);
         this.configureAutoEnabling(builder, annotations);
         this.configurePriority(builder, view, scope);
 
@@ -159,6 +160,23 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
     }
 
     /**
+     * Configures the parent scope inclusion of the given {@link ComponentKey.Builder} based on
+     * available metadata.
+     *
+     * @param builder the builder to configure
+     * @param annotations the annotations to configure the builder with
+     */
+    protected void configureParentScopeInclusion(
+        ComponentKey.Builder<?> builder,
+        ElementAnnotationsIntrospector annotations
+    ) {
+        Tristate includeParentScopes = this.includeParentScopes(annotations);
+        if (includeParentScopes != Tristate.UNDEFINED) {
+            builder.includeParentScopes(includeParentScopes.booleanValue());
+        }
+    }
+
+    /**
      * Determines the strictness of the given {@link ComponentKey.Builder} based on available
      * metadata. If the strictness cannot be determined, {@link Tristate#UNDEFINED} is returned.
      *
@@ -169,6 +187,20 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
     protected Tristate isStrict(ElementAnnotationsIntrospector annotations) {
         return annotations.get(Strict.class).map(Strict::value)
             .map(Tristate::valueOf)
+            .orElse(Tristate.UNDEFINED);
+    }
+
+    /**
+     * Determines the parent scope inclusion of the given {@link ComponentKey.Builder} based on
+     * available metadata. If the parent scope inclusion cannot be determined,
+     * {@link Tristate#UNDEFINED} is returned.
+     *
+     * @param annotations the annotations to determine the parent scope inclusion from
+     * @return the parent scope inclusion of the key, or {@link Tristate#UNDEFINED} if it cannot be
+     * determined
+     */
+    protected Tristate includeParentScopes(ElementAnnotationsIntrospector annotations) {
+        return annotations.get(Strict.class).map(Strict::includeParentScope)
             .orElse(Tristate.UNDEFINED);
     }
 

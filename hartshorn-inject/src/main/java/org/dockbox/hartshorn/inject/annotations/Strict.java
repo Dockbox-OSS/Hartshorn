@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 /**
  * Indicates that an injection lookup should be strict, meaning that it should only return a value
@@ -58,4 +59,16 @@ public @interface Strict {
      * @return {@code true} if strict mode should be enabled, {@code false} otherwise.
      */
     boolean value() default true;
+
+    /**
+     * Whether parent scopes should be included when resolving components for the annotated key. If
+     * not defined, the global configuration is used.
+     *
+     * @return a tristate indicating whether parent scopes should be included when resolving
+     * components for the annotated key, or {@link Tristate#UNDEFINED} to use the global
+     * configuration.
+     *
+     * @see InjectorConfiguration#includeParentScopeForFuzzyMatching()
+     */
+    Tristate includeParentScope() default Tristate.UNDEFINED;
 }

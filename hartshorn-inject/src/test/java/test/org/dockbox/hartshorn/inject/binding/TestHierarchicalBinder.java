@@ -71,7 +71,7 @@ public class TestHierarchicalBinder extends SimpleHierarchicalBinder {
 
     @Override
     protected Option<ScopeModuleContext> resolveScopeModuleContext() {
-        return Option.empty();
+        return Option.of(new ScopeModuleContext(this.scope.installableScopeType()));
     }
 
     protected InjectorConfiguration configuration() {

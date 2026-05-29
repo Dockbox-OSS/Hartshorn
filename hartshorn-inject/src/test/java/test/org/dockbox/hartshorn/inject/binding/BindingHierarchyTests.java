@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ class BindingHierarchyTests {
 
         assertThat(hierarchy.size()).isEqualTo(3);
 
-        Option<InstantiationStrategy<Contract>> priorityZero = hierarchy.get(0);
+        Option<? extends InstantiationStrategy<Contract>> priorityZero = hierarchy.get(0);
         assertThat(priorityZero)
                 .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
                 .matches(Option::present)
@@ -95,7 +95,7 @@ class BindingHierarchyTests {
                 .extracting(PrototypeConstructorInstantiationStrategy::type)
                 .isSameAs(ImplementationA.class);
 
-        Option<InstantiationStrategy<Contract>> priorityOne = hierarchy.get(1);
+        Option<? extends InstantiationStrategy<Contract>> priorityOne = hierarchy.get(1);
         assertThat(priorityOne)
                 .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
                 .matches(Option::present)
@@ -106,7 +106,7 @@ class BindingHierarchyTests {
                 .extracting(PrototypeConstructorInstantiationStrategy::type)
                 .isSameAs(ImplementationB.class);
 
-        Option<InstantiationStrategy<Contract>> priorityTwo = hierarchy.get(2);
+        Option<? extends InstantiationStrategy<Contract>> priorityTwo = hierarchy.get(2);
         assertThat(priorityTwo)
                 .asInstanceOf(InstanceOfAssertFactories.type(Option.class))
                 .matches(Option::present)
@@ -128,7 +128,7 @@ class BindingHierarchyTests {
         assertThat(hierarchy).isNotNull();
         assertThat(hierarchy.size()).isOne();
 
-        Option<InstantiationStrategy<LocalContract>> provider =
+        Option<? extends InstantiationStrategy<LocalContract>> provider =
             hierarchy.get(Priority.DEFAULT_PRIORITY);
         assertThat(provider.present()).isTrue();
 

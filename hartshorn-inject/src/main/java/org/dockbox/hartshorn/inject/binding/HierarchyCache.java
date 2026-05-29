@@ -23,8 +23,6 @@ import org.dockbox.hartshorn.inject.InjectorUtilities;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
-import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.collections.AbstractNavigableMultiMap;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
@@ -33,7 +31,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -148,13 +145,8 @@ public class HierarchyCache {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
             // the application context. This is useful for components that are not explicitly
             // scoped, but are still accessed through a scope.
-            if (useGlobalIfAbsent && this.globalBinder != this.binder) {
-                ComponentKey<T> unscopedKey = key.mutable()
-                    // Need to drop the scope, otherwise we risk the global binder being an
-                    // orchestrator which delegates based on the scope of the key, which would
-                    // defeat the point of attempting a top-level lookup.
-                    .scope(null)
-                    .build();
+            if (useGlobalIfAbsent && isInChildScope()) {
+                ComponentKey<T> unscopedKey = getUnscopedKey(key);
                 return this.globalBinder.hierarchy(unscopedKey);
             }
             return new AliasableBindingHierarchyAdapter<>(
@@ -166,10 +158,13 @@ public class HierarchyCache {
     @Nullable
     private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key) {
         final BindingHierarchy<?> hierarchy;
-        // Collection components can always be created, as they may contain 0-N elements.
-        if (this.isCollectionComponentKey(key) && key.strict() == Tristate.UNDEFINED) {
-            hierarchy =
-                new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
+        // Strict collection components can always be created, as they may contain 0-N elements.
+        if (this.isCollectionComponentKey(key)
+                && InjectorUtilities.isStrict(key, this.configuration)) {
+            hierarchy = new CollectionBindingHierarchy<>(
+                    TypeUtils.unchecked(key, ComponentKey.class)
+            );
+            this.put(hierarchy);
         }
         else if (InjectorUtilities.isStrict(key, this.configuration)) {
             // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead,
@@ -184,7 +179,6 @@ public class HierarchyCache {
         return hierarchy;
     }
 
-
     @Nullable
     private <T> BindingHierarchy<?> fuzzyMatchHierarchy(ComponentKey<T> key) {
         Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
@@ -195,8 +189,19 @@ public class HierarchyCache {
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
-            return this.composeCollectionHierarchy(TypeUtils.unchecked(key, ComponentKey.class),
-                compatibleKeys);
+            BindingHierarchy<?> currentScopeHierarchy = this.composeCollectionHierarchy(
+                    TypeUtils.unchecked(key, ComponentKey.class), compatibleKeys
+            );
+            boolean inChildScope = isInChildScope();
+            if (inChildScope && InjectorUtilities.includeParentScope(key, this.configuration)) {
+                // Create unscoped key, perform fuzzy match on global too
+                ComponentKey<T> unscopedKey = getUnscopedKey(key);
+                BindingHierarchy<?> globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
+                currentScopeHierarchy = currentScopeHierarchy.merge(
+                        TypeUtils.unchecked(globalHierarchy, BindingHierarchy.class)
+                );
+            }
+            return currentScopeHierarchy;
         }
         else {
             if (compatibleKeys.size() == 1) {
@@ -213,6 +218,19 @@ public class HierarchyCache {
 
     private boolean isCollectionComponentKey(ComponentKey<?> key) {
         return ComponentCollection.class.isAssignableFrom(key.type());
+    }
+
+    private static <T> @NonNull ComponentKey<T> getUnscopedKey(ComponentKey<T> key) {
+        return key.mutable()
+                // Need to drop the scope, otherwise we risk the global binder being an
+                // orchestrator which delegates based on the scope of the key, which would
+                // defeat the point of attempting a top-level lookup.
+                .scope(null)
+                .build();
+    }
+
+    private boolean isInChildScope() {
+        return this.globalBinder.scope() != this.binder.scope();
     }
 
     @Nullable
@@ -247,20 +265,41 @@ public class HierarchyCache {
             ComponentKey<ComponentCollection<T>> key,
             Set<ComponentKeyView<?>> compatibleKeys
     ) {
-        Set<CollectionBindingHierarchy<?>> hierarchies = new HashSet<>();
+        CollectionBindingHierarchy<T> composedHierarchy = new CollectionBindingHierarchy<>(key);
         for (ComponentKeyView<?> compatibleKey : compatibleKeys) {
             BindingHierarchy<?> hierarchy = this.hierarchies.get(compatibleKey);
             if (hierarchy instanceof CollectionBindingHierarchy<?> collectionBindingHierarchy) {
-                hierarchies.add(collectionBindingHierarchy);
+                composedHierarchy = composedHierarchy.merge(
+                    (CollectionBindingHierarchy<T>) collectionBindingHierarchy
+                );
             }
             else {
-                throw new IllegalStateException("Found incompatible hierarchy for key "
-                    + compatibleKey
-                    + ". Expected CollectionBindingHierarchy, but found "
-                    + hierarchy.getClass().getSimpleName());
+                throw new IllegalStateException(
+                        ("Found incompatible hierarchy for key %s. Expected " +
+                                "CollectionBindingHierarchy or " +
+                                "ImmutableCompositeBindingHierarchy, but found %s")
+                                .formatted(compatibleKey, hierarchy.getClass().getSimpleName()));
             }
         }
-        return new ImmutableCompositeBindingHierarchy<>(key,
-            TypeUtils.unchecked(hierarchies, Collection.class));
+
+        if (key.scope().present()
+                && InjectorUtilities.includeParentScope(key, this.configuration)) {
+            ComponentKey<ComponentCollection<T>> unscopedKey = key.mutable()
+                    // Need to drop the scope, otherwise we risk the global binder being an
+                    // orchestrator which delegates based on the scope of the key, which would
+                    // defeat the point of attempting a top-level lookup.
+                    .scope(null)
+                    .build();
+            var globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
+            while (globalHierarchy instanceof BindingHierarchyWrapper<ComponentCollection<T>>
+                    wrapper) {
+                globalHierarchy = wrapper.delegate();
+            }
+            if (globalHierarchy instanceof CollectionBindingHierarchy<T>
+                    collectionBindingHierarchy) {
+                composedHierarchy = composedHierarchy.merge(collectionBindingHierarchy);
+            }
+        }
+        return composedHierarchy;
     }
 }
