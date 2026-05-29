@@ -25,10 +25,11 @@
     <jackson.version>3.1.0</jackson.version>
     <jakarta.annotations.version>3.0.0</jakarta.annotations.version>
     <jakarta.inject.version>2.0.1</jakarta.inject.version>
+    <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
     <javassist.version>3.30.2-GA</javassist.version>
     <javax.inject.version>1</javax.inject.version>
     <javax.annotations.version>1.3.2</javax.annotations.version>
-    <jetty.version>12.1.7</jetty.version>
+    <jetty.version>12.1.9</jetty.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>6.0.3</junit.version>
     <logback.version>1.5.32</logback.version>
@@ -166,6 +167,11 @@
         <version>${jakarta.inject.version}</version>
       </dependency>
       <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta.servlet.version}</version>
+      </dependency>
+      <dependency>
         <groupId>javax.inject</groupId>
         <artifactId>javax.inject</artifactId>
         <version>${javax.inject.version}</version>
@@ -178,6 +184,11 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.ee10</groupId>
+        <artifactId>jetty-ee10-servlet</artifactId>
         <version>${jetty.version}</version>
       </dependency>
       <dependency>

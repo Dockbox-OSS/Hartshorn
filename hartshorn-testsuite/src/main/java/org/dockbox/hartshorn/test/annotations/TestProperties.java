@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@ import java.lang.annotation.Target;
 /**
  * Arguments to be passed to the application context when running the test. Each argument is
  * equivalent to a single CLI argument passed to the application.
+ *
+ * <p>For example, the following annotation would set the {@code hartshorn.web.port} property to
+ * {@code 8081} when running the test:
+ * <pre>{@code
+ * @TestProperties("hartshorn.web.port=8081")
+ * }</pre>
  *
  * @since 0.4.12
  *

@@ -37,8 +37,19 @@ public class WebServerBootstrap implements LifecycleObserver {
     public void onStarted(ApplicationContext applicationContext) {
         try {
             WebServer webServer = applicationContext.get(WebServer.class);
-            webServer.start();
-            LOG.info("Web server started on port {}", webServer.port());
+            if (webServer.running()) {
+                LOG.warn(
+                        "Web server is already running on port {}, skipping lifecycle start",
+                        webServer.port()
+                );
+                return;
+            }
+            else {
+                long startTime = System.currentTimeMillis();
+                webServer.start();
+                long duration = System.currentTimeMillis() - startTime;
+                LOG.info("Web server started on port {} in {} ms", webServer.port(), duration);
+            }
         }
         catch (ServerException e) {
             applicationContext.handle("Failed to start web server", e);

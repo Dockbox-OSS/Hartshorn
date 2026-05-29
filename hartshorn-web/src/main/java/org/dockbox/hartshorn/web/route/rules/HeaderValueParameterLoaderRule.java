@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.web.route.rules;
 
-import org.dockbox.hartshorn.util.introspect.convert.AdditionalTargetTypeContext;
+import jakarta.servlet.http.HttpServletRequest;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.rest.Header;
+import org.dockbox.hartshorn.web.Header;
 
 /**
  * A {@link ParameterLoaderRule} that loads parameter values from HTTP headers using the
@@ -36,32 +35,27 @@ import org.dockbox.hartshorn.web.rest.Header;
  * @author Guus Lieben
  */
 public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
-        implements ParameterLoaderRule<C> {
+        extends AbstractWebRequestParameterLoaderRule<Header, C> {
 
-    private final WebRequest request;
-    private final ConversionService conversionService;
-
-    public HeaderValueParameterLoaderRule(WebRequest request, ConversionService conversionService) {
-        this.request = request;
-        this.conversionService = conversionService;
+    public HeaderValueParameterLoaderRule(
+            HttpServletRequest request,
+            ConversionService conversionService
+    ) {
+        super(Header.class, request, conversionService);
     }
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, C context, Object... args) {
-        return parameter.annotations().has(Header.class);
-    }
-
-    @Override
-    public <T> Option<T> load(ParameterView<T> parameter, int index, C context, Object... args) {
-        Header header = parameter.annotations().get(Header.class).orElseThrow(() -> {
-            return new IllegalStateException("Parameter is not annotated with @Header");
-        });
-        String value = this.request.headers().get(header.value()).orNull();
-        T result = this.conversionService.convert(
-                value,
-                parameter.type().type(),
-                new AdditionalTargetTypeContext<>(parameter.type())
+    protected Option<String> lookupValue(HttpServletRequest request, Header annotation) {
+        Iterable<String> headers = CollectionUtilities.iterableOf(
+                request.getHeaders(annotation.value())
         );
-        return Option.of(result);
+        return Option.of(headers)
+                .map(values -> String.join(",", values))
+                .filter(value -> !value.isEmpty());
+    }
+
+    @Override
+    protected String getDefaultValue(Header annotation) {
+        return annotation.defaultValue();
     }
 }

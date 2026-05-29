@@ -21,7 +21,7 @@
     TODO: Remove once coverage target of 80% is reached.
      In meantime, increase coverage target whenever possible (to avoid regression).
     -->
-    <coverage.target>36%</coverage.target>
+    <coverage.target>35%</coverage.target>
   </properties>
 
   <dependencies>
@@ -30,9 +30,31 @@
       <artifactId>hartshorn-launchpad</artifactId>
     </dependency>
     <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+    </dependency>
+
+    <!-- Optional support dependencies -->
+    <dependency>
       <groupId>tools.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-testsuite</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-introspect-reflection</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

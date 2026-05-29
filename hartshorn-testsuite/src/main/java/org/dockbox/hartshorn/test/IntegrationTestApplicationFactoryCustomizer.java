@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyReg
 import org.dockbox.hartshorn.profiles.support.CompositeProfileNameResolver;
 import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
+import org.dockbox.hartshorn.launchpad.test.ApplicationTestManager;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
@@ -68,7 +69,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
 
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
                 environment.applicationContext(SimpleApplicationContext.create(
-                    this.applicationCustomizer::customizeApplication
+                    application -> {
+                        application.defaultBindings(bindings -> {
+                            bindings.bind(ApplicationTestManager.class)
+                                    .lazySingleton(ApplicationTestManager.class);
+                        });
+                        this.applicationCustomizer.customizeApplication(application);
+                    }
                 ));
 
                 environment.propertyRegistryFactory(

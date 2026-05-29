@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,6 +171,7 @@ public final class ObjectDescriber<T> {
     private String describeValue(Object value, boolean includeTypeName) {
         return switch (value) {
             case null -> "null";
+            case String string -> "\"%s\"".formatted(string);
             // DescribeAsObject is a marker interface for objects that should be described using
             // their own toString() method, rather than a custom case below. E.g. BindingHierarchy
             // is an Iterable, but should be described using its own toString() method.

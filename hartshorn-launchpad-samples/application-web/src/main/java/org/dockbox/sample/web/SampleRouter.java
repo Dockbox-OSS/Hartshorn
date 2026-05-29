@@ -1,24 +1,24 @@
 package org.dockbox.sample.web;
 
-import org.dockbox.hartshorn.inject.annotations.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap;
+import org.dockbox.hartshorn.web.GetRoute;
+import org.dockbox.hartshorn.web.Header;
 import org.dockbox.hartshorn.web.HttpStatus;
-import org.dockbox.hartshorn.web.message.ResponseWriter;
-import org.dockbox.hartshorn.web.message.WebRequest;
-import org.dockbox.hartshorn.web.message.WebResponse;
-import org.dockbox.hartshorn.web.rest.GetRoute;
-import org.dockbox.hartshorn.web.rest.Header;
-import org.dockbox.hartshorn.web.rest.RestRouter;
+import org.dockbox.hartshorn.web.PathParameter;
+import org.dockbox.hartshorn.web.QueryParameter;
+import org.dockbox.hartshorn.web.Router;
+import org.dockbox.hartshorn.web.message.RequestAttributes;
 
-import java.nio.ByteBuffer;
-import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
-@RestRouter
+@Router("/api")
 public class SampleRouter {
 
     @GetRoute("/error")
@@ -29,45 +29,54 @@ public class SampleRouter {
     @GetRoute("/report")
     public void writeReport(
             Reportable reportable,
-            WebResponse response,
+            HttpServletResponse response,
             DiagnosticsReportCollector collector
     ) throws Exception {
         DiagnosticsReport diagnosticsReport = collector.report(reportable);
         String serializedReport = diagnosticsReport.serialize(
                 new ObjectMapperReportSerializer.JsonReportSerializer()
         );
-        response.status(HttpStatus.OK);
-        response.headers().set("Content-Type", "application/json");
-        response.write(ByteBuffer.wrap(serializedReport.getBytes()));
+        response.setStatus(HttpStatus.OK.code());
+        response.setHeader("Content-Type", "application/json");
+        response.getOutputStream().write(serializedReport.getBytes());
     }
 
     @GetRoute("/validate/{param}")
-    public void validationOutput(
-            WebRequest request,
-            WebResponse response,
-            @Named("json") ResponseWriter<Object> responseWriter,
-            @Header("Accept-Encoding") String[] acceptEncoding
+    public ValidationResponseBody validationOutput(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Header("Accept-Encoding") String[] acceptEncoding,
+            @PathParameter("param") String parameter,
+            @QueryParameter("test") String testQueryParameter
     ) throws Exception {
-        SampleRouter.ValidationResponseBody body = new SampleRouter.ValidationResponseBody(
-                request.method().name(),
-                request.path(),
-                ((StandardMultiMap) request.query().asMultiMap()).map(),
-                request.headers().asMap(),
-                request.body().asString(),
-                request.pathParameters().asMap(),
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Map<String, String> headers = new HashMap<>();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            headers.put(headerName, request.getHeader(headerName));
+        }
+        return new SampleRouter.ValidationResponseBody(
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getParameterMap(),
+                testQueryParameter,
+                headers,
+                request.getReader().readAllAsString(),
+                RequestAttributes.pathParameters(request),
+                parameter,
                 acceptEncoding
         );
-        response.status(HttpStatus.OK);
-        response.write(responseWriter, body);
     }
 
-    private record ValidationResponseBody(
+    public record ValidationResponseBody(
             String method,
             String path,
-            Map<String, Collection<String>> queryParameters,
+            Map<String, String[]> queryParameters,
+            String testQueryParameter,
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,
+            String providedPathParameter,
             String[] encodings
     ) {
     }

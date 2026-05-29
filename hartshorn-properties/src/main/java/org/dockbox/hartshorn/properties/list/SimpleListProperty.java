@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.properties.Property;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,8 +58,7 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ValueProperty> values() {
         return this.elements().stream()
-            .filter(ValueProperty.class::isInstance)
-            .map(ValueProperty.class::cast)
+            .gather(StreamGatherers.filterByType(ValueProperty.class))
             .toList();
     }
 
@@ -70,8 +70,7 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ObjectProperty> objects() {
         return this.elements().stream()
-            .filter(ObjectProperty.class::isInstance)
-            .map(ObjectProperty.class::cast)
+            .gather(StreamGatherers.filterByType(ObjectProperty.class))
             .toList();
     }
 
@@ -83,8 +82,7 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ListProperty> lists() {
         return this.elements().stream()
-            .filter(ListProperty.class::isInstance)
-            .map(ListProperty.class::cast)
+            .gather(StreamGatherers.filterByType(ListProperty.class))
             .toList();
     }
 

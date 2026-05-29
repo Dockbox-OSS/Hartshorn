@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,15 @@ class ObjectDescriberTest {
     void style() {
         String description = ObjectDescriber.of(new Object(), new TestObjectDescriptionStyle())
             .field("field1", "value1")
-            .field("field2", "value2")
+            .field("field2", 2)
             .describe();
 
         String[] descriptionElements = description.split("\\+");
         assertThat(descriptionElements.length).isEqualTo(5);
         assertThat(descriptionElements[0]).isEqualTo(TestObjectDescriptionStyle.START);
-        assertThat(descriptionElements[1]).isEqualTo("FIELD:field1:value1");
+        assertThat(descriptionElements[1]).isEqualTo("FIELD:field1:\"value1\"");
         assertThat(descriptionElements[2]).isEqualTo(TestObjectDescriptionStyle.FIELD_SEPARATOR);
-        assertThat(descriptionElements[3]).isEqualTo("FIELD:field2:value2");
+        assertThat(descriptionElements[3]).isEqualTo("FIELD:field2:2");
         assertThat(descriptionElements[4]).isEqualTo(TestObjectDescriptionStyle.END);
     }
 

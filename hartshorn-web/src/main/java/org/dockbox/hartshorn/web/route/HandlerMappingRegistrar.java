@@ -1,0 +1,110 @@
+/*
+ * Copyright 2019-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.web.route;
+
+import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.spec.PathSpec;
+
+/**
+ * Interface for registering request handlers, identified by their corresponding route mappings.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
+public interface HandlerMappingRegistrar {
+
+    /**
+     * Registers the given {@link RequestHandler} as a handler for the given HTTP method and
+     * path pattern.
+     *
+     * @param method the HTTP method to register the handler for
+     * @param mapping the request mapping to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     *
+     * @throws IllegalArgumentException if a handler for the given path pattern and HTTP method is
+     * already registered
+     */
+    HandlerMappingRegistrar add(HttpMethod method, PathSpec mapping, RequestHandler handler);
+
+    /**
+     * Registers the given {@link RequestHandler} as a {@link HttpMethod#GET GET} handler for the
+     * given path pattern.
+     *
+     * @param pathPattern the path pattern to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     */
+    default HandlerMappingRegistrar get(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.GET, pathPattern, handler);
+    }
+
+    /**
+     * Registers the given {@link RequestHandler} as a {@link HttpMethod#POST POST} handler for the
+     * given path pattern.
+     *
+     * @param pathPattern the path pattern to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     */
+    default HandlerMappingRegistrar post(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.POST, pathPattern, handler);
+    }
+
+    /**
+     * Registers the given {@link RequestHandler} as a {@link HttpMethod#PUT PUT} handler for the
+     * given path pattern.
+     *
+     * @param pathPattern the path pattern to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     */
+    default HandlerMappingRegistrar put(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.PUT, pathPattern, handler);
+    }
+
+    /**
+     * Registers the given {@link RequestHandler} as a {@link HttpMethod#DELETE DELETE} handler for
+     * the given path pattern.
+     *
+     * @param pathPattern the path pattern to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     */
+    default HandlerMappingRegistrar delete(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.DELETE, pathPattern, handler);
+    }
+
+    /**
+     * Registers the given {@link RequestHandler} as a {@link HttpMethod#PATCH PATCH} handler for
+     * the given path pattern.
+     *
+     * @param pathPattern the path pattern to register the handler for
+     * @param handler the request handler
+     *
+     * @return this registrar, for chaining
+     */
+    default HandlerMappingRegistrar patch(PathSpec pathPattern, RequestHandler handler) {
+        return add(HttpMethod.PATCH, pathPattern, handler);
+    }
+}

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.collections.GathererUtilities;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.IOException;
@@ -392,7 +392,7 @@ public final class ClassFileUtilities {
         Class<T> type
     ) {
         return getAnnotationValues(annotation, name).stream()
-                .gather(GathererUtilities.filterByType(type))
+                .gather(StreamGatherers.filterByType(type))
                 .toList();
     }
 

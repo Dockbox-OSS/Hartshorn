@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import jakarta.servlet.Filter;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
@@ -27,19 +29,33 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.ServerPortProvider;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-import org.dockbox.hartshorn.web.filter.RequestFilterChain;
-import org.dockbox.hartshorn.web.jetty.route.JettyRequestHandler;
+import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
+import org.dockbox.hartshorn.web.route.PathHandlerSpec;
+import org.dockbox.hartshorn.web.route.RequestHandler;
+import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
+import org.dockbox.hartshorn.web.spec.PathSpec;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Configuration class for setting up a Jetty web server within the Hartshorn framework.
@@ -60,6 +76,7 @@ public class JettyServerConfiguration {
      * @return The WebServer instance.
      */
     @Singleton
+    @SupportPriority
     public WebServer webServer(Server server) {
         return new JettyWebServer(server);
     }
@@ -68,29 +85,38 @@ public class JettyServerConfiguration {
      * Creates a prototype instance of the Jetty {@link Server}. Unlike {@link WebServer}, the
      * backing Jetty Server is not a singleton, allowing for multiple server instances if needed.
      *
-     * @param chain The request filter chain.
+     * @param serverHandler The main (servlet) handler for the server.
      * @param threadPool The thread pool for the server.
      * @param scheduler The scheduler for the server.
      * @param bufferPool The byte buffer pool for the server.
      * @param customizers A collection of customizers to configure the server.
-     * @param port The port on which the server will listen.
+     * @param portProvider The provider for the server port.
      *
      * @return The Jetty Server instance.
      */
     @Prototype
+    @SupportPriority
     public Server jettyServer(
-            RequestFilterChain chain,
+            Handler serverHandler,
             @Named("jettyServerThreadPool") ThreadPool threadPool,
             @Named("jettyServerScheduler") Scheduler scheduler,
             @Named("jettyServerBufferPool") ByteBufferPool bufferPool,
             @Fuzzy ComponentCollection<Customizer<Server>> customizers,
-            @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
+            ServerPortProvider portProvider
     ) {
         Server server = new Server(threadPool, scheduler, bufferPool);
-        server.setHandler(new JettyRequestHandler(chain));
+        server.setHandler(serverHandler);
 
-        ServerConnector connector = new ServerConnector(server);
-        connector.setPort(port);
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        ServerConnector connector = new ServerConnector(
+                server,
+                new HttpConnectionFactory(httpConfig)
+        );
+
+        // Jetty defines 0 as dynamic port selection, but we want to allow for -1 as well, as it is
+        // a common convention for dynamic port selection in other frameworks. If a higher value is
+        // provided, it will be used as the port number instead of dynamic selection.
+        connector.setPort(Math.max(0, portProvider.port()));
         server.addConnector(connector);
 
         customizers.forEach(customizer -> customizer.configure(server));
@@ -99,12 +125,52 @@ public class JettyServerConfiguration {
     }
 
     /**
+     * Creates a prototype instance of the main Jetty {@link Handler}, which is a
+     * {@link ServletContextHandler} that registers all servlet mappings and filters based on the
+     * provided handler mapping registry and filter collection.
+     *
+     * @param filters A collection of servlet filters to be registered with the server.
+     * @param mappingRegistry The registry containing the servlet mappings to be registered with the
+     * server.
+     * @param pathSpecTransformer The transformer to convert Hartshorn PathSpec instances to Jetty
+     * path specifications.
+     *
+     * @return The main Jetty Handler instance that will handle incoming requests based on the
+     * registered servlet mappings and filters.
+     */
+    @Prototype
+    @SupportPriority
+    public Handler serverHandler(
+            @Fuzzy ComponentCollection<Filter> filters,
+            HandlerMappingRegistry mappingRegistry,
+            JettyPathSpecTransformer pathSpecTransformer
+    ) {
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        MultiMap<PathSpec, PathHandlerSpec> mappings = mappingRegistry.mappings();
+        for (PathSpec pathSpec : mappings.keySet()) {
+            Map<HttpMethod, RequestHandler> handlerMap = mappings.get(pathSpec).stream()
+                    .collect(Collectors.toMap(
+                            PathHandlerSpec::method,
+                            PathHandlerSpec::handler
+                    ));
+            RequestRoutingServlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
+            String jettyPathSpec = pathSpecTransformer.toJettyPathSpec(pathSpec);
+            context.addServlet(servlet, jettyPathSpec);
+        }
+        filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
+        return context;
+    }
+
+    /**
      * Default Jetty thread pool configuration, active when no custom thread pool is provided.
      *
      * @return The default Jetty ThreadPool instance.
      */
     @Prototype
+    @Named("jettyServerThreadPool")
     @RequiresAbsentBinding(value = ThreadPool.class, name = "jettyServerThreadPool")
+    @SupportPriority
     public ThreadPool jettyServerThreadPool() {
         return new QueuedThreadPool();
     }
@@ -121,6 +187,7 @@ public class JettyServerConfiguration {
     @Prototype
     @Named("jettyServerThreadPool")
     @RequiresProperty(name = "hartshorn.web.jetty.threadpool")
+    @SupportPriority
     public ThreadPool jettyServerCustomThreadPool(
             ComponentProvider componentProvider,
             @PropertyValue(name = "hartshorn.web.jetty.threadpool")
@@ -135,7 +202,9 @@ public class JettyServerConfiguration {
      * @return The default Jetty Scheduler instance.
      */
     @Prototype
+    @Named("jettyServerScheduler")
     @RequiresAbsentBinding(value = Scheduler.class, name = "jettyServerScheduler")
+    @SupportPriority
     public Scheduler jettyServerScheduler() {
         return new ScheduledExecutorScheduler();
     }
@@ -151,6 +220,7 @@ public class JettyServerConfiguration {
     @Prototype
     @Named("jettyServerScheduler")
     @RequiresProperty(name = "hartshorn.web.jetty.scheduler")
+    @SupportPriority
     public Scheduler jettyServerCustomScheduler(
             ComponentProvider componentProvider,
             @PropertyValue(name = "hartshorn.web.jetty.scheduler")
@@ -165,7 +235,9 @@ public class JettyServerConfiguration {
      * @return The default Jetty ByteBufferPool instance.
      */
     @Prototype
+    @Named("jettyServerBufferPool")
     @RequiresAbsentBinding(value = ByteBufferPool.class, name = "jettyServerBufferPool")
+    @SupportPriority
     public ByteBufferPool jettyServerBufferPool() {
         return new ArrayByteBufferPool();
     }
@@ -182,6 +254,7 @@ public class JettyServerConfiguration {
     @Prototype
     @Named("jettyServerBufferPool")
     @RequiresProperty(name = "hartshorn.web.jetty.bufferpool")
+    @SupportPriority
     public ByteBufferPool jettyServerCustomBufferPool(
             ComponentProvider componentProvider,
             @PropertyValue(name = "hartshorn.web.jetty.bufferpool")

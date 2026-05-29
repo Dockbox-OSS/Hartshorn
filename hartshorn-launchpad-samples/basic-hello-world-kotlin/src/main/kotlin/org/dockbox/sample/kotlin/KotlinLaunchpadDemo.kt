@@ -3,7 +3,8 @@ package org.dockbox.sample.kotlin
 import org.dockbox.hartshorn.inject.provider.get
 import org.dockbox.hartshorn.launchpad.HartshornApplication
 
-fun main(args: Array<String>) {
-  val application = HartshornApplication.create(*args)
-  application.get<GreetingAction>().greet()
+fun main(vararg args: String) {
+  HartshornApplication.create(*args).apply {
+    get<GreetingAction>().greet()
+  }
 }

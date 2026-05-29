@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
 import java.lang.classfile.MethodModel;
@@ -119,7 +118,7 @@ public class ReflectionMethodView<Parent, ReturnType>
                 .filter(method -> method.name().equals(this.name()))
                 .filter(method -> method.parameters().matches(parameters))
                 .filter(method -> method.returnType().isParentOf(this.returnType().type()))
-                .collect(CollectorUtilities.toOption());
+                .collect(Option.collector());
     }
 
     @Override

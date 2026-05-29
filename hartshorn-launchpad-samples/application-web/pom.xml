@@ -28,5 +28,9 @@
       <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-web-jetty</artifactId>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
   </dependencies>
 </project>

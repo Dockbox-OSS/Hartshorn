@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -267,8 +268,7 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
     protected static SequencedSet<String> getSources(String name) {
         Set<PropertyRegistryPathLoader> loaders = getActivePathLoaders();
         Set<String> extensions = loaders.stream()
-                .filter(FilePropertyRegistryLoader.class::isInstance)
-                .map(FilePropertyRegistryLoader.class::cast)
+                .gather(StreamGatherers.filterByType(FilePropertyRegistryLoader.class))
                 .flatMap(loader -> loader.supportedExtensions().stream())
                 .collect(Collectors.toSet());
 

@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * Represents a view of a type parameter, whether it is a {@link #isWildcard() wildcard},
@@ -316,7 +316,7 @@ public interface TypeParameterView extends AnnotatedElementView {
      * resolves the input parameter on the consuming type. For example, given the following type
      * declaration:
      *
-     * <pre>{@code List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</pre>
+     * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;}</code></pre>
      *
      * <p>Given that the current type parameter is {@code E<sub>2</sub>}, the resolved input
      * type parameter is {@code E} on {@code Collection}, and not {@code E<sub>1</sub>} on

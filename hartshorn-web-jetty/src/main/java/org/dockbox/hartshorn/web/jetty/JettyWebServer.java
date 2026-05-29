@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 import org.dockbox.hartshorn.web.ServerException;
 import org.dockbox.hartshorn.web.WebServer;
 import org.dockbox.hartshorn.web.jetty.report.NetworkConnectorReporter;
@@ -74,7 +76,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
     @Override
     public int port() {
         return getNetworkConnectors().stream()
-            .collect(CollectorUtilities.toOption())
+            .collect(Option.collector())
             .map(NetworkConnector::getLocalPort)
             .orElseThrow(() -> new IllegalStateException(
                 "No network connector available to determine port"
@@ -83,8 +85,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
 
     private List<NetworkConnector> getNetworkConnectors() {
         return Arrays.stream(this.jettyServer.getConnectors())
-                .filter(NetworkConnector.class::isInstance)
-                .map(NetworkConnector.class::cast)
+                .gather(StreamGatherers.filterByType(NetworkConnector.class))
                 .toList();
     }
 
@@ -98,5 +99,12 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         if (handler instanceof Reportable reportable) {
             collector.property("handler").writeDelegate(reportable);
         }
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("jettyServer", this.jettyServer)
+                .describe();
     }
 }
