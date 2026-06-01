@@ -395,6 +395,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
                 StackTraceElement target = Arrays.stream(stackTrace)
                     .filter(element -> !skip.contains(element.getClassName()))
                     .filter(element -> !element.getClassName().contains("lambda$"))
+                    .filter(element -> !element.getClassName().contains("$lambda"))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
                         "Could not deduce main class, no suitable stack trace element found"));
