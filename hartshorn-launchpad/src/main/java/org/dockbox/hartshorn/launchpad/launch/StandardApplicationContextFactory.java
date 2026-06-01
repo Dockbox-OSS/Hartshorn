@@ -131,6 +131,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         }
         this.finalizeContext(applicationContext);
 
+        // Any relevant contexts should've been copied to the application at this point, anything
+        // else should be expired before releasing.
+        applicationContext.expireContext(bootstrapContext);
+
         return applicationContext;
     }
 

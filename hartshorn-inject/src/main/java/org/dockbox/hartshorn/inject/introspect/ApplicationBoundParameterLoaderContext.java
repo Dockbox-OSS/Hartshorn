@@ -140,6 +140,16 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
+    public <C extends ContextView> void expireContext(C context) {
+        this.context.expireContext(context);
+    }
+
+    @Override
+    public <C extends ContextView> void expireContext(String name, C context) {
+        this.context.expireContext(name, context);
+    }
+
+    @Override
     public ContextView contextView() {
         return this.context.contextView();
     }

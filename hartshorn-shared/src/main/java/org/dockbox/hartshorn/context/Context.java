@@ -45,6 +45,25 @@ public interface Context extends ContextView {
     <C extends ContextView> void addContext(String name, C context);
 
     /**
+     * Removes the given context from the current context. If the context is not present, this
+     * method does nothing.
+     *
+     * @param context The context to remove.
+     * @param <C> The type of the context.
+     */
+    <C extends ContextView> void expireContext(C context);
+
+    /**
+     * Removes the given context from the current context. If the context is not present, this
+     * method does nothing.
+     *
+     * @param name The name of the context.
+     * @param context The context to remove.
+     * @param <C> The type of the context.
+     */
+    <C extends ContextView> void expireContext(String name, C context);
+
+    /**
      * Returns a view of the current context. This view is read-only and does not allow for
      * modification of the context.
      *
