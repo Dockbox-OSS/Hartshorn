@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.launchpad.HartshornApplication;
 
 public class JavaLaunchpadDemo {
 
-    public static void main(String[] args) {
+    void main(String[] args) {
         HartshornApplication.create(args);
     }
 

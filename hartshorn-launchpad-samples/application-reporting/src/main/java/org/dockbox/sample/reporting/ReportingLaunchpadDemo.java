@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.reporting.UseReporting;
 @UseReporting
 public class ReportingLaunchpadDemo {
 
-    public static void main(String[] args) {
+    void main(String[] args) {
         ApplicationContext applicationContext = HartshornApplication.create(args);
         applicationContext.bind(String.class)
             .priority(100)
