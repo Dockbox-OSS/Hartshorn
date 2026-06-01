@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
@@ -46,24 +47,36 @@ public class ReportingConfiguration {
 
     /**
      * Configures a global {@link Reportable} capable of reporting on the entire application. This
-     * reporter aggregates all {@link CategorizedDiagnosticsReporter categorized reporters} that are
-     * registered in the application context.
+     * reporter follows the {@link AggregateReporterConfiguration}.
      *
-     * @param diagnosticsReporters All reporters that are registered in the application context
-     *
-     * @return a global reporter that aggregates all reporters that are registered in the
-     * application context
+     * @return a global reporter that aggregates all configured reporters
      *
      * @see AggregateDiagnosticsReporter
      */
     @Prototype
     @SupportPriority
-    public Reportable applicationReportable(
+    public Reportable applicationReportable(AggregateReporterConfiguration configuration) {
+        return new AggregateDiagnosticsReporter(configuration);
+    }
+
+    /**
+     * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration aggregates
+     * all {@link CategorizedDiagnosticsReporter categorized reporters} that are registered in the
+     * application context.
+     *
+     * @param diagnosticsReporters All reporters that are registered in the application context
+     *
+     * @return a configuration for an {@link AggregateDiagnosticsReporter} that aggregates all
+     * given reporters
+     */
+    @Singleton
+    @SupportPriority
+    public AggregateReporterConfiguration aggregateReporterConfiguration(
             @Fuzzy ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters
     ) {
-        var reporter = new AggregateDiagnosticsReporter();
-        reporter.configuration().addAll(diagnosticsReporters);
-        return reporter;
+        AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
+        configuration.addAll(diagnosticsReporters);
+        return configuration;
     }
 
     /**

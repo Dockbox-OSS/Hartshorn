@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.reporting.component;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.application.AbstractProcessingPriorityReportable;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 
 import java.util.Collection;
@@ -30,7 +31,7 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public class ComponentProcessorsReportable implements Reportable {
+public class ComponentProcessorsReportable extends AbstractProcessingPriorityReportable {
 
     private final NavigableMultiMap<Integer, ? extends ComponentProcessor> processors;
 
@@ -47,7 +48,7 @@ public class ComponentProcessorsReportable implements Reportable {
             .map(processor -> (Reportable) processorCollector -> {
                 processorCollector.property("name")
                     .writeString(processor.getClass().getCanonicalName());
-                processorCollector.property("priority").writeInt(processor.priority());
+                reportPriority(processorCollector, processor.priority());
             }).toArray(Reportable[]::new);
 
         propertyCollector.property("processors").writeDelegates(reportables);

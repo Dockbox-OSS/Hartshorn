@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
@@ -25,9 +23,11 @@ import org.dockbox.hartshorn.inject.condition.RequiresCondition;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.reporting.AnnotationReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.AnnotationReporter;
+
+import java.util.Set;
 
 /**
  * A reportable that reports the contents of a {@link ComponentContainer} instance. This includes
@@ -113,8 +113,7 @@ class ComponentContainerReporter implements Reportable {
         }
 
         componentCollector.property("stereotype")
-            .writeString(ComponentDiagnosticsReporter.stereotype(this.container)
-                .getCanonicalName());
+            .writeString(ComponentDiagnosticsReporter.stereotype(this.container));
         componentCollector.property("package").writeDelegate(this.container.type().packageInfo());
     }
 

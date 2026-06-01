@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ObserverDiagnosticsReporter implements Reportable {
+public class ObserverDiagnosticsReporter extends AbstractProcessingPriorityReportable {
 
     private final Introspector introspector;
     private final Observer observer;
@@ -43,7 +43,7 @@ public class ObserverDiagnosticsReporter implements Reportable {
     public void report(DiagnosticsPropertyCollector collector) {
         TypeView<Observer> type = this.introspector.introspect(this.observer);
         collector.property("type").writeDelegate(type);
-        collector.property("priority").writeInt(this.observer.priority());
+        reportPriority(collector, this.observer.priority());
 
         if (observer instanceof Reportable reportable) {
             // Delegate further reporting to the observer itself. Allowed to override
