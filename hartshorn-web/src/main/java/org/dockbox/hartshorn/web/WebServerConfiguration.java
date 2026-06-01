@@ -58,8 +58,6 @@ import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.slf4j.Logger;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.dataformat.xml.XmlMapper;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -280,54 +278,43 @@ public class WebServerConfiguration {
      */
     @Configuration
     @RequiresClass(classes = ObjectMapper.class)
-    public static class JacksonResponseWriterConfiguration {
+    public static class JacksonHttpMessageConverterConfiguration {
 
         /**
-         * Creates a {@link HttpMessageConverter} that uses a {@link JsonMapper} to serialize
-         * objects to JSON.
+         * Creates a {@link HttpMessageConverter} that uses a {@link ObjectMapper} to serialize
+         * objects to the dataformat supported by the mapper.
          *
-         * @param jsonMapper The object mapper to use for serialization.
+         * @param objectMapper The object mapper to use for serialization.
          *
          * @return A response writer backed by Jackson.
          */
         @Singleton
         @RequiresProperty(
-                name = "hartshorn.web.default-response.format",
-                withValue = "jackson-json",
+                name = "hartshorn.web.support.jackson.enabled",
+                withValue = "true",
                 matchIfMissing = true
         )
-        public HttpMessageConverter<?> jacksonResponseHandler(JsonMapper jsonMapper) {
-            return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
+        public HttpMessageConverter<?> jacksonResponseHandler(ObjectMapper objectMapper) {
+            return new JacksonHttpMessageConverter(
+                    objectMapper,
+                    this.resolveMediaType(objectMapper)
+            );
         }
-    }
 
-    /**
-     * Jackson-based XML mapping configuration.
-     *
-     * @since 0.7.0
-     *
-     * @author Guus Lieben
-     */
-    @Configuration
-    @RequiresClass(classes = XmlMapper.class)
-    public static class JacksonXmlResponseWriterConfiguration {
-
-        /**
-         * Creates a {@link HttpMessageConverter} that uses a {@link XmlMapper} to serialize
-         * objects to XML.
-         *
-         * @param xmlMapper The XML mapper to use for serialization.
-         *
-         * @return A response writer for XML objects.
-         */
-        @Singleton
-        @RequiresProperty(
-                name = "hartshorn.web.default-response.format",
-                withValue = "jackson-xml",
-                matchIfMissing = true
-        )
-        public HttpMessageConverter<?> jacksonXmlResponseHandler(XmlMapper xmlMapper) {
-            return new JacksonHttpMessageConverter(xmlMapper, MediaTypes.APPLICATION_XML);
+        // TODO: This is a bit hacky, needs improvement.
+        private MediaType resolveMediaType(ObjectMapper objectMapper) {
+            Objects.requireNonNull(objectMapper, "ObjectMapper must not be null");
+            return switch (objectMapper.getClass().getSimpleName()) {
+                case "XmlMapper" -> MediaTypes.APPLICATION_XML;
+                case "JsonMapper" -> MediaTypes.APPLICATION_JSON;
+                default -> {
+                    throw new IllegalArgumentException(
+                            "Unsupported ObjectMapper type: %s".formatted(
+                                    objectMapper.getClass().getName()
+                            )
+                    );
+                }
+            };
         }
     }
 }
