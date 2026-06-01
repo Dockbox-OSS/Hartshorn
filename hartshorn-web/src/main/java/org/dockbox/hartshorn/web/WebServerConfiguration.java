@@ -248,8 +248,11 @@ public class WebServerConfiguration {
      */
     @Singleton
     @CompositeMember
-    public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
-        return new WebServerDiagnosticsReporter(webServer);
+    public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(
+            WebServer webServer,
+            HandlerMappingRegistry handlerMappingRegistry
+    ) {
+        return new WebServerDiagnosticsReporter(webServer, handlerMappingRegistry);
     }
 
     /**
