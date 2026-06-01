@@ -114,7 +114,8 @@ public class EnvironmentTypeCollector {
         return ClassFileUtilities.getClassModel(
                 reference.qualifiedName()
         ).orElseThrow(() -> new IllegalStateException(
-                "Could not load class model for type reference: " + reference
+                "Could not load class model for type reference: %s. Is it on the classpath?"
+                        .formatted(reference.qualifiedName())
         ));
     }
 }
