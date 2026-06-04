@@ -55,6 +55,26 @@ public final class PathSpec {
     }
 
     /**
+     * Returns an empty {@link PathSpec} with no parts and a default path separator of
+     * <code>'/'</code>.
+     *
+     * @return an empty {@link PathSpec}
+     */
+    public static PathSpec empty() {
+        return empty('/');
+    }
+
+    /**
+     * Returns an empty {@link PathSpec} with no parts and the specified path separator.
+     *
+     * @param pathSeparator the character to use as a path separator
+     * @return an empty {@link PathSpec} with the specified path separator
+     */
+    public static PathSpec empty(char pathSeparator) {
+        return new PathSpec(List.of(), pathSeparator);
+    }
+
+    /**
      * Returns the original path pattern string that this {@link PathSpec} represents. This is
      * constructed from the individual {@link PathPartSpec} instances, and should ideally be
      * equivalent to the original pattern string that was parsed to create this {@link PathSpec}.
@@ -143,6 +163,28 @@ public final class PathSpec {
                 other.parts()
         );
         return new PathSpec(parts, this.pathSeparator);
+    }
+
+    /**
+     * Combines multiple {@link PathSpec} instances into a single {@link PathSpec} that represents
+     * the combination of all the given specifications.
+     *
+     * @param pathSpecs the {@link PathSpec} instances to combine
+     * @return a new {@link PathSpec} that represents the combination of all the given
+     * specifications
+     *
+     * @see #combineWith(PathSpec)
+     */
+    public static PathSpec combineAll(PathSpec... pathSpecs) {
+        if (pathSpecs.length == 0) {
+            return PathSpec.empty();
+        }
+        PathSpec combinedSpec = pathSpecs[0];
+        for (int i = 1; i < pathSpecs.length; i++) {
+            PathSpec next = pathSpecs[i];
+            combinedSpec = combinedSpec.combineWith(next);
+        }
+        return combinedSpec;
     }
 
     @Override

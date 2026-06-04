@@ -36,6 +36,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -324,6 +326,29 @@ public final class CollectionUtilities {
         return iterableOf(enumeration.asIterator());
     }
 
+    /**
+     * Returns a {@link Stream} that wraps the given {@link Iterator}, to allow the iterator to be
+     * used in stream operations.
+     *
+     * @param iterator The iterator to wrap
+     * @return A stream that wraps the given iterator
+     * @param <T> The type of the elements in the iterator
+     */
+    public static <T> Stream<T> streamOf(Iterator<T> iterator) {
+        return StreamSupport.stream(iterableOf(iterator).spliterator(), false);
+    }
+
+    /**
+     * Returns a {@link Stream} that wraps the given {@link Enumeration}, to allow the enumeration
+     * to be used in stream operations.
+     *
+     * @param enumeration The enumeration to wrap
+     * @return A stream that wraps the given enumeration
+     * @param <T> The type of the elements in the enumeration
+     */
+    public static <T> Stream<T> streamOf(Enumeration<T> enumeration) {
+        return streamOf(enumeration.asIterator());
+    }
     /**
      * Creates a new {@link SequencedSet} containing the given values, in the order they are
      * provided.

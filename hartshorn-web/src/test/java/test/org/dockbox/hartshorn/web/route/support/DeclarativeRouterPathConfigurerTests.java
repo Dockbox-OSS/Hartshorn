@@ -56,10 +56,11 @@ public class DeclarativeRouterPathConfigurerTests {
         SimpleComponentRegistry componentRegistry = new SimpleComponentRegistry(
                 SimpleComponentKeyMatcher.StrictComponentKeyMatcher.INSTANCE
         );
-        TypeView<TestRouter> view = introspector.introspect(TestRouter.class);
+        TypeView<TestRouter> view = this.introspector.introspect(TestRouter.class);
         componentRegistry.addCustomContainer(new AnnotatedComponentContainer<>(view));
 
         RouterCustomizer configurer = new DeclarativeRouterPathConfigurer(
+                PathSpec.empty(),
                 componentRegistry, null, null, null,
                 new SimplePathParser('/', List.of(
                         StaticPathPartSpec::parse

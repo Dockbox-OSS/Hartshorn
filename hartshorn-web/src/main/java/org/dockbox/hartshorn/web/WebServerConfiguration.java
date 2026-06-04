@@ -54,6 +54,7 @@ import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.spec.ParameterPathPartSpec;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
@@ -134,6 +135,7 @@ public class WebServerConfiguration {
     /**
      * Customizer to capture and register all {@link HttpRoute HTTP routes}.
      *
+     * @param basePath the base path to prefix all routes with
      * @param componentRegistry the component registry to use for component discovery
      * @param conversionService the conversion service to use for parameter transformation
      * @param application the current application
@@ -148,6 +150,7 @@ public class WebServerConfiguration {
     @CompositeMember
     @SupportPriority
     public RouterCustomizer declarativeRouterPathConfigurer(
+            PathSpec basePath,
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
             InjectionCapableApplication application,
@@ -155,12 +158,26 @@ public class WebServerConfiguration {
             PathParser pathParser
     ) {
         return new DeclarativeRouterPathConfigurer(
+                basePath,
                 componentRegistry,
                 conversionService,
                 application,
                 responseHandler,
                 pathParser
         );
+    }
+
+    @Singleton
+    @SupportPriority
+    public PathSpec basePathSpec(
+            @PropertyValue(name = "hartshorn.web.route.base-path")
+            String basePath,
+            PathParser pathParser
+    ) {
+        if (basePath.isEmpty()) {
+            return PathSpec.empty();
+        }
+        return pathParser.parse(basePath);
     }
 
     /**
