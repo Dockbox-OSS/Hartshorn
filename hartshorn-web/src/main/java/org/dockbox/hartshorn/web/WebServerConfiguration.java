@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.web.response.ResponseHandler;
 import org.dockbox.hartshorn.web.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.response.support.JacksonHttpMessageConverter;
 import org.dockbox.hartshorn.web.response.support.NoContentMessageConverter;
+import org.dockbox.hartshorn.web.response.support.RawContentMessageConverter;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
@@ -194,6 +195,19 @@ public class WebServerConfiguration {
     @CompositeMember
     public HttpMessageConverter<?> noContentMessageConverter() {
         return new NoContentMessageConverter();
+    }
+
+    /**
+     * Provides a {@link HttpMessageConverter} that can handle raw content, such as byte arrays or
+     * strings, writing it directly to the response output stream without any additional processing.
+     *
+     * @return A message converter that handles raw content, writing it directly to the response
+     * output stream.
+     */
+    @Singleton
+    @CompositeMember
+    public HttpMessageConverter<?> rawContentMessageConverter() {
+        return new RawContentMessageConverter();
     }
 
     /**
