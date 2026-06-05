@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Router("/api")
+@Router("/sample")
 public class SampleRouter {
 
     @GetRoute("/error")
