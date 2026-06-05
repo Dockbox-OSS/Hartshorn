@@ -47,6 +47,21 @@ public class MediaTypes {
     public static final MediaType APPLICATION_JSON = new MediaType("application", "json");
 
     /**
+     * String representation of the {@code application/yaml} media type.
+     * @see #APPLICATION_YAML
+     */
+    public static final String APPLICATION_YAML_VALUE = "application/yaml";
+
+    /**
+     * {@link MediaType} representation of the {@code application/yaml} media type.
+     *
+     * @see <a href="https://www.iana.org/assignments/media-types/application/yaml">
+     * IANA: application/yaml
+     * </a>
+     */
+    public static final MediaType APPLICATION_YAML = new MediaType("application", "yaml");
+
+    /**
      * String representation of the {@code application/xml} media type.
      * @see #APPLICATION_XML
      */

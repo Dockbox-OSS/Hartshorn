@@ -38,6 +38,7 @@ import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
@@ -59,6 +60,7 @@ import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
+import org.dockbox.hartshorn.web.support.jackson.JacksonObjectMapperMediaTypeRegistry;
 import org.slf4j.Logger;
 import tools.jackson.databind.ObjectMapper;
 
@@ -76,6 +78,10 @@ import java.util.Objects;
 @Configuration
 @RequiresActivator(UseWebServer.class)
 public class WebServerConfiguration {
+
+    private static final String FORMAT_NAME_JSON = "JSON";
+    private static final String FORMAT_NAME_XML = "XML";
+    private static final String FORMAT_NAME_YAML = "YAML";
 
     /**
      * Creates a {@link RequestLoggingFilter} if request logging is enabled via configuration.
@@ -301,7 +307,7 @@ public class WebServerConfiguration {
     }
 
     /**
-     * Jackson-based JSON mapping configuration.
+     * Jackson-based object mapping configuration.
      *
      * @since 0.7.0
      *
@@ -316,6 +322,8 @@ public class WebServerConfiguration {
          * objects to the dataformat supported by the mapper.
          *
          * @param objectMapper The object mapper to use for serialization.
+         * @param mediaTypeRegistry The registry to use for determining the media type based on the
+         * format name of the object mapper's token stream factory.
          *
          * @return A response writer backed by Jackson.
          */
@@ -325,26 +333,60 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
-        public HttpMessageConverter<?> jacksonResponseHandler(ObjectMapper objectMapper) {
-            return new JacksonHttpMessageConverter(
-                    objectMapper,
-                    this.resolveMediaType(objectMapper)
-            );
+        public HttpMessageConverter<?> jacksonResponseHandler(
+                ObjectMapper objectMapper,
+                JacksonObjectMapperMediaTypeRegistry mediaTypeRegistry
+        ) {
+            String formatName = objectMapper.tokenStreamFactory().getFormatName();
+            MediaType mediaType = mediaTypeRegistry.getMediaTypeForFormat(
+                    formatName
+            ).orElseThrow(() -> new IllegalArgumentException(
+                    "Unsupported ObjectMapper format: %s".formatted(formatName)
+            ));
+            return new JacksonHttpMessageConverter(objectMapper, mediaType);
         }
 
-        // TODO: This is a bit hacky, needs improvement.
-        private MediaType resolveMediaType(ObjectMapper objectMapper) {
-            Objects.requireNonNull(objectMapper, "ObjectMapper must not be null");
-            return switch (objectMapper.getClass().getSimpleName()) {
-                case "XmlMapper" -> MediaTypes.APPLICATION_XML;
-                case "JsonMapper" -> MediaTypes.APPLICATION_JSON;
-                default -> {
-                    throw new IllegalArgumentException(
-                            "Unsupported ObjectMapper type: %s".formatted(
-                                    objectMapper.getClass().getName()
-                            )
-                    );
-                }
+        /**
+         * Creates a {@link JacksonObjectMapperMediaTypeRegistry} and applies all registered
+         * customizers to provide default mappings.
+         *
+         * @param customizers The collection of customizers for the media type registry.
+         *
+         * @return A configured JacksonObjectMapperMediaTypeRegistry.
+         */
+        @Singleton
+        @SupportPriority
+        public JacksonObjectMapperMediaTypeRegistry jacksonObjectMapperMediaTypeRegistry(
+                @Fuzzy
+                ComponentCollection<Customizer<JacksonObjectMapperMediaTypeRegistry>> customizers
+        ) {
+            var registry = new JacksonObjectMapperMediaTypeRegistry();
+            for (Customizer<JacksonObjectMapperMediaTypeRegistry> customizer : customizers) {
+                customizer.configure(registry);
+            }
+            return registry;
+        }
+
+        /**
+         * Provides default mappings between ObjectMapper format names and media types.
+         *
+         * @return A customizer that registers default format name to media type mappings for
+         * Jackson ObjectMappers.
+         *
+         * @see #FORMAT_NAME_JSON
+         * @see MediaTypes#APPLICATION_JSON
+         * @see #FORMAT_NAME_XML
+         * @see MediaTypes#APPLICATION_XML
+         * @see #FORMAT_NAME_YAML
+         * @see MediaTypes#APPLICATION_YAML
+         */
+        @Singleton
+        @CompositeMember
+        public Customizer<JacksonObjectMapperMediaTypeRegistry> defaultFormatCustomizer() {
+            return registry -> {
+                registry.addMapping(FORMAT_NAME_JSON, MediaTypes.APPLICATION_JSON);
+                registry.addMapping(FORMAT_NAME_XML, MediaTypes.APPLICATION_XML);
+                registry.addMapping(FORMAT_NAME_YAML, MediaTypes.APPLICATION_YAML);
             };
         }
     }
