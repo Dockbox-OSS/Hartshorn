@@ -60,7 +60,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that invokes the given initializer, ignoring the input value.
      */
     static <I, T> ContextualInitializer<I, T> of(Initializer<T> initializer) {
-        return (input) -> initializer.initialize();
+        return _ -> initializer.initialize();
     }
 
     /**
@@ -90,7 +90,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that will always return the given object.
      */
     static <I, T> ContextualInitializer<I, T> of(T object) {
-        return (input) -> object;
+        return _ -> object;
     }
 
     /**
