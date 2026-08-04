@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * A {@link MethodInvoker} that uses reflection to invoke methods. This requires the method to be
@@ -40,14 +40,15 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
     public Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable {
         Option<Method> jlrMethod = method.method();
         if (jlrMethod.absent()) {
+            assert false : "Method " + method.name() + " is not available for invocation";
             return null;
         }
-
-        // Do not use explicit casting here, as it will cause a ClassCastException if the method
-        // returns a primitive type. Instead, use the inferred type from the method view.
         try {
+            boolean primitive = method.returnType().isPrimitive();
+            Object result = jlrMethod.get().invoke(instance, args);
             //noinspection unchecked
-            return Option.of((T) jlrMethod.get().invoke(instance, args));
+            T checkedResult = primitive ? (T) result : method.returnType().cast(result);
+            return Option.of(checkedResult);
         }
         catch (InvocationTargetException e) {
             throw e.getCause();
