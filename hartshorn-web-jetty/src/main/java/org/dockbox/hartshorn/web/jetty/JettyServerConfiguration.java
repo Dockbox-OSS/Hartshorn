@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.web.jetty;
 
 import jakarta.servlet.Filter;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
@@ -29,17 +30,12 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.ServerPortProvider;
+import org.dockbox.hartshorn.web.ServletRegistrar;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
-import org.dockbox.hartshorn.web.route.PathHandlerSpec;
-import org.dockbox.hartshorn.web.route.RequestHandler;
-import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
-import org.dockbox.hartshorn.web.spec.PathSpec;
+import org.dockbox.hartshorn.web.error.RequestErrorHandler;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -54,9 +50,6 @@ import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * Configuration class for setting up a Jetty web server within the Hartshorn framework.
  *
@@ -67,6 +60,10 @@ import java.util.stream.Collectors;
 @Configuration
 @RequiresActivator(UseWebServer.class)
 public class JettyServerConfiguration {
+
+    private static final String SERVER_THREAD_POOL = "jettyServerThreadPool";
+    private static final String SERVER_SCHEDULER = "jettyServerScheduler";
+    private static final String SERVER_BUFFER_POOL = "jettyServerBufferPool";
 
     /**
      * Creates a singleton instance of {@link WebServer}, wrapping the Jetty web server.
@@ -98,9 +95,9 @@ public class JettyServerConfiguration {
     @SupportPriority
     public Server jettyServer(
             Handler serverHandler,
-            @Named("jettyServerThreadPool") ThreadPool threadPool,
-            @Named("jettyServerScheduler") Scheduler scheduler,
-            @Named("jettyServerBufferPool") ByteBufferPool bufferPool,
+            @Named(SERVER_THREAD_POOL) ThreadPool threadPool,
+            @Named(SERVER_SCHEDULER) Scheduler scheduler,
+            @Named(SERVER_BUFFER_POOL) ByteBufferPool bufferPool,
             @Fuzzy ComponentCollection<Customizer<Server>> customizers,
             ServerPortProvider portProvider
     ) {
@@ -124,16 +121,22 @@ public class JettyServerConfiguration {
         return server;
     }
 
+
+    @Singleton
+    @CompositeMember
+    @SupportPriority
+    public Customizer<Server> errorHandlerCustomizer(RequestErrorHandler<Throwable> errorHandler) {
+        return server -> {
+            server.setErrorHandler(new JettyErrorHandlerAdapter(errorHandler));
+        };
+    }
+
     /**
      * Creates a prototype instance of the main Jetty {@link Handler}, which is a
      * {@link ServletContextHandler} that registers all servlet mappings and filters based on the
-     * provided handler mapping registry and filter collection.
+     * provided customizers.
      *
-     * @param filters A collection of servlet filters to be registered with the server.
-     * @param mappingRegistry The registry containing the servlet mappings to be registered with the
-     * server.
-     * @param pathSpecTransformer The transformer to convert Hartshorn PathSpec instances to Jetty
-     * path specifications.
+     * @param customizers A collection of customizers to configure the servlet context handler.
      *
      * @return The main Jetty Handler instance that will handle incoming requests based on the
      * registered servlet mappings and filters.
@@ -141,25 +144,33 @@ public class JettyServerConfiguration {
     @Prototype
     @SupportPriority
     public Handler serverHandler(
-            @Fuzzy ComponentCollection<Filter> filters,
-            HandlerMappingRegistry mappingRegistry,
+            @Fuzzy ComponentCollection<Customizer<ServletRegistrar>> customizers,
             JettyPathSpecTransformer pathSpecTransformer
     ) {
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
-        MultiMap<PathSpec, PathHandlerSpec> mappings = mappingRegistry.mappings();
-        for (PathSpec pathSpec : mappings.keySet()) {
-            Map<HttpMethod, RequestHandler> handlerMap = mappings.get(pathSpec).stream()
-                    .collect(Collectors.toMap(
-                            PathHandlerSpec::method,
-                            PathHandlerSpec::handler
-                    ));
-            RequestRoutingServlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
-            String jettyPathSpec = pathSpecTransformer.toJettyPathSpec(pathSpec);
-            context.addServlet(servlet, jettyPathSpec);
-        }
-        filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
+
+        JettyServletRegistrar registrar = new JettyServletRegistrar(context, pathSpecTransformer);
+        customizers.forEach(customizer -> customizer.configure(registrar));
+
         return context;
+    }
+
+    /**
+     * Customizer to apply all global filters to the {@link ServletContextHandler}.
+     *
+     * @param filters A collection of all registered filters to be applied to the servlet context.
+     * @return A customizer that adds all filters to the servlet context handler.
+     */
+    @Prototype
+    @CompositeMember
+    @SupportPriority
+    public Customizer<ServletContextHandler> contextFilterCustomizer(
+            @Fuzzy ComponentCollection<Filter> filters
+    ) {
+        return context -> {
+            filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
+        };
     }
 
     /**
@@ -168,8 +179,8 @@ public class JettyServerConfiguration {
      * @return The default Jetty ThreadPool instance.
      */
     @Prototype
-    @Named("jettyServerThreadPool")
-    @RequiresAbsentBinding(value = ThreadPool.class, name = "jettyServerThreadPool")
+    @Named(SERVER_THREAD_POOL)
+    @RequiresAbsentBinding(value = ThreadPool.class, name = SERVER_THREAD_POOL)
     @SupportPriority
     public ThreadPool jettyServerThreadPool() {
         return new QueuedThreadPool();
@@ -185,7 +196,7 @@ public class JettyServerConfiguration {
      * @return The custom Jetty ThreadPool instance.
      */
     @Prototype
-    @Named("jettyServerThreadPool")
+    @Named(SERVER_THREAD_POOL)
     @RequiresProperty(name = "hartshorn.web.jetty.threadpool")
     @SupportPriority
     public ThreadPool jettyServerCustomThreadPool(
@@ -202,8 +213,8 @@ public class JettyServerConfiguration {
      * @return The default Jetty Scheduler instance.
      */
     @Prototype
-    @Named("jettyServerScheduler")
-    @RequiresAbsentBinding(value = Scheduler.class, name = "jettyServerScheduler")
+    @Named(SERVER_SCHEDULER)
+    @RequiresAbsentBinding(value = Scheduler.class, name = SERVER_SCHEDULER)
     @SupportPriority
     public Scheduler jettyServerScheduler() {
         return new ScheduledExecutorScheduler();
@@ -218,7 +229,7 @@ public class JettyServerConfiguration {
      * @return The custom Jetty Scheduler instance.
      */
     @Prototype
-    @Named("jettyServerScheduler")
+    @Named(SERVER_SCHEDULER)
     @RequiresProperty(name = "hartshorn.web.jetty.scheduler")
     @SupportPriority
     public Scheduler jettyServerCustomScheduler(
@@ -235,8 +246,8 @@ public class JettyServerConfiguration {
      * @return The default Jetty ByteBufferPool instance.
      */
     @Prototype
-    @Named("jettyServerBufferPool")
-    @RequiresAbsentBinding(value = ByteBufferPool.class, name = "jettyServerBufferPool")
+    @Named(SERVER_BUFFER_POOL)
+    @RequiresAbsentBinding(value = ByteBufferPool.class, name = SERVER_BUFFER_POOL)
     @SupportPriority
     public ByteBufferPool jettyServerBufferPool() {
         return new ArrayByteBufferPool();
@@ -252,7 +263,7 @@ public class JettyServerConfiguration {
      * @return The custom Jetty ByteBufferPool instance.
      */
     @Prototype
-    @Named("jettyServerBufferPool")
+    @Named(SERVER_BUFFER_POOL)
     @RequiresProperty(name = "hartshorn.web.jetty.bufferpool")
     @SupportPriority
     public ByteBufferPool jettyServerCustomBufferPool(

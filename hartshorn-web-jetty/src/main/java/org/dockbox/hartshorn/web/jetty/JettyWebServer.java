@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -24,10 +26,14 @@ import org.dockbox.hartshorn.util.stream.StreamGatherers;
 import org.dockbox.hartshorn.web.ServerException;
 import org.dockbox.hartshorn.web.WebServer;
 import org.dockbox.hartshorn.web.jetty.report.NetworkConnectorReporter;
+import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -99,6 +105,35 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         if (handler instanceof Reportable reportable) {
             collector.property("handler").writeDelegate(reportable);
         }
+        else if (handler instanceof ServletContextHandler servletContextHandler) {
+            // Don't include non-reportable servlets, to reduce noise.
+            List<Reportable> servlets = getReportableServlets(servletContextHandler);
+            collector.property("servlets").writeDelegates(servlets.stream()
+                    .map(servlet -> (Reportable) servletCollector -> {
+                        servletCollector.property(servlet.getClass().getName()).writeDelegate(servlet);
+                    })
+                    .toArray(Reportable[]::new)
+            );
+        }
+    }
+
+    private static List<Reportable> getReportableServlets(
+            ServletContextHandler servletContextHandler
+    ) {
+        List<Reportable> servlets = new ArrayList<>();
+        for (ServletHolder servletHolder : servletContextHandler.getServletHandler().getServlets()) {
+            try {
+                Servlet servlet = servletHolder.getServlet();
+                if (!(servlet instanceof RequestRoutingServlet)
+                        && servlet instanceof Reportable reportable) {
+                    servlets.add(reportable);
+                }
+            }
+            catch (ServletException e) {
+                throw new RuntimeException("Failed to retrieve servlet from holder", e);
+            }
+        }
+        return servlets;
     }
 
     @Override
