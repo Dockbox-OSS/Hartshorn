@@ -7,3 +7,6 @@ hartshorn:
       format: jackson-json
     route:
       base-path: /api
+    resources:
+      static:
+        path: /public
