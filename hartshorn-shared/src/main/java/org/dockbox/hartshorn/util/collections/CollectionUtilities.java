@@ -278,10 +278,7 @@ public final class CollectionUtilities {
      * @param <T> The type of the elements in the iterator
      */
     public static <T> void indexed(Iterator<T> iterator, BiConsumer<Integer, T> consumer) {
-        int index = 0;
-        while (iterator.hasNext()) {
-            consumer.accept(index++, iterator.next());
-        }
+        indexed(iterableOf(iterator), consumer);
     }
 
     /**
