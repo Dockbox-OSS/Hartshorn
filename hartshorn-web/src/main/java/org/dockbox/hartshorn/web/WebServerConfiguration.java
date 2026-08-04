@@ -241,8 +241,8 @@ public class WebServerConfiguration {
      */
     @Singleton
     @CompositeMember
-    public LifecycleObserver webServerBootstrap() {
-        return new WebServerBootstrap();
+    public LifecycleObserver webServerBootstrap(WebServer server) {
+        return new WebServerBootstrap(server);
     }
 
     /**
