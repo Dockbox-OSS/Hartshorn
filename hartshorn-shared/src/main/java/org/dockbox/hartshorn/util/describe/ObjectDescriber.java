@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.describe;
 
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Arrays;
@@ -135,15 +136,13 @@ public final class ObjectDescriber<T> {
     private String describeArrayLikeValue(Collection<?> elements, boolean includeTypeName) {
         StringBuilder builder = new StringBuilder();
         this.style.describeArrayStart(builder, elements, elements.size(), includeTypeName);
-        int i = 0;
-        for (Object element : elements) {
+        CollectionUtilities.indexed(elements, (index, element) -> {
             String value = describeValue(element, includeTypeName);
-            this.style.describeArrayElement(builder, elements, i, value);
-            if (i < elements.size() - 1) {
-                this.style.describeArrayElementSeparator(builder, elements, i);
+            this.style.describeArrayElement(builder, elements, index, value);
+            if (index < elements.size() - 1) {
+                this.style.describeArrayElementSeparator(builder, elements, index);
             }
-            i++;
-        }
+        });
         this.style.describeArrayEnd(builder, elements);
         return builder.toString();
     }
