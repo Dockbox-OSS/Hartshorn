@@ -67,11 +67,10 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
             typeView.methods().annotatedWithAny(this.annotations);
 
         for (MethodView<T, ?> annotatedMethod : annotatedMethods) {
-            Object[] arguments = this.contextAdapter
-                .scope(scope)
-                .loadParameters(annotatedMethod);
             try {
-                annotatedMethod.invoke(instance, arguments);
+                this.contextAdapter
+                        .scope(scope)
+                        .invoke(annotatedMethod, instance);
             }
             catch (ApplicationException e) {
                 throw e;
