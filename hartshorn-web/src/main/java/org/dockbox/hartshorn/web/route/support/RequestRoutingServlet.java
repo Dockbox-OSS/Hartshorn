@@ -88,8 +88,10 @@ public class RequestRoutingServlet extends HttpServlet {
                 this.handlers.get(method).handle(req, resp);
                 resp.flushBuffer();
             } catch (Exception e) {
-                // TODO: Allow custom error handling
-                throw new ServletException("Failed to handle request", e);
+                // Propagate the exception as a ServletException to indicate that the request
+                // handling failed. This will be captured at a higher level to allow proper
+                // handling.
+                throw new ServletException(e);
             }
         }
         else {

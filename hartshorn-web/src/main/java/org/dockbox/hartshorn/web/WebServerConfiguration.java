@@ -37,9 +37,15 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.web.error.ConfigurableRequestErrorHandler;
+import org.dockbox.hartshorn.web.error.ErrorHandlerRegistry;
+import org.dockbox.hartshorn.web.error.RequestErrorHandler;
+import org.dockbox.hartshorn.web.error.SimpleErrorHandlerRegistry;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
 import org.dockbox.hartshorn.web.response.HttpMessageConverter;
@@ -50,22 +56,28 @@ import org.dockbox.hartshorn.web.response.support.NoContentMessageConverter;
 import org.dockbox.hartshorn.web.response.support.RawContentMessageConverter;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
+import org.dockbox.hartshorn.web.route.PathHandlerSpec;
+import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
+import org.dockbox.hartshorn.web.route.support.RequestRoutingServlet;
 import org.dockbox.hartshorn.web.spec.ParameterPathPartSpec;
 import org.dockbox.hartshorn.web.spec.PathSpec;
 import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
+import org.dockbox.hartshorn.web.support.servlet.StaticResourceServlet;
 import org.dockbox.hartshorn.web.support.jackson.JacksonObjectMapperMediaTypeRegistry;
 import org.slf4j.Logger;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Configuration class for setting up the web server components, including request filters,
@@ -314,6 +326,109 @@ public class WebServerConfiguration {
                 ParameterPathPartSpec::parse,
                 StaticPathPartSpec::parse
         ));
+    }
+
+    /**
+     * Customizer to register a static resource servlet for serving static files from the configured
+     * location (from {@code hartshorn.web.resources.static-location}), exposed on the configured
+     * path (from {@code hartshorn.web.resources.static-path-pattern}). The configured path should
+     * be a valid path pattern for the configured {@link PathParser}.
+     *
+     * @param resourceLookup The resource lookup to resolve static files
+     * @param staticPath The static path on which static files are exposed. Not affected by the API
+     *                   base path ({@link #basePathSpec(String, PathParser)})
+     * @param pathParser The parser for the static path pattern
+     * @param staticLocation The base location to look for static files, e.g., {@code
+     * classpath:static}
+     *
+     * @return A customizer that registers the static resource servlet to the servlet context
+     * handler.
+     */
+    @Prototype
+    @CompositeMember
+    @SupportPriority
+    public Customizer<ServletRegistrar> contextStaticPathCustomizer(
+            ResourceLookup resourceLookup,
+            @PropertyValue(
+                    name = "hartshorn.web.resources.static.path",
+                    defaultValue = "/static"
+            )
+            String staticPath,
+            PathParser pathParser,
+            @PropertyValue(
+                    name = "hartshorn.web.resources.static.location",
+                    defaultValue = "classpath:static"
+            )
+            String staticLocation
+    ) {
+        if (!staticPath.endsWith("/*")) {
+            // Ensure capture at end to allow all static resources to be provided.
+            staticPath = staticPath + "/*";
+        }
+        PathSpec pathSpec = pathParser.parse(staticPath);
+        return context -> {
+            StaticResourceServlet servlet = new StaticResourceServlet(
+                    resourceLookup,
+                    staticLocation
+            );
+            context.register(pathSpec, servlet);
+        };
+    }
+
+    /**
+     * Customizer to register all servlet mappings based on the provided
+     * {@link HandlerMappingRegistry}. For each unique mapping, a new {@link RequestRoutingServlet}
+     * is created and registered with the servlet registrar.
+     *
+     * @param mappingRegistry The registry containing all path specifications and their
+     * corresponding request handlers.
+     *
+     * @return A customizer that registers all servlet mappings to the servlet registrar.
+     */
+    @Prototype
+    @CompositeMember
+    @SupportPriority
+    public Customizer<ServletRegistrar> contextCustomizer(
+            HandlerMappingRegistry mappingRegistry
+    ) {
+        return context -> {
+            MultiMap<PathSpec, PathHandlerSpec> mappings = mappingRegistry.mappings();
+            for (PathSpec pathSpec : mappings.keySet()) {
+                Map<HttpMethod, RequestHandler> handlerMap = mappings.get(pathSpec).stream()
+                        .collect(Collectors.toMap(
+                                PathHandlerSpec::method,
+                                PathHandlerSpec::handler
+                        ));
+                RequestRoutingServlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
+                context.register(pathSpec, servlet);
+            }
+        };
+    }
+
+    @Singleton
+    @SupportPriority
+    public ErrorHandlerRegistry errorHandlerRegistry(
+            @Fuzzy ComponentCollection<Customizer<ErrorHandlerRegistry>> customizers
+    ) {
+        ErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
+        for (Customizer<ErrorHandlerRegistry> customizer : customizers) {
+            customizer.configure(registry);
+        }
+        return registry;
+    }
+
+    @Singleton
+    @SupportPriority
+    public RequestErrorHandler<Throwable> defaultRequestErrorHandler(
+            ErrorHandlerRegistry errorHandlerRegistry
+    ) {
+        return new ConfigurableRequestErrorHandler(
+                errorHandlerRegistry,
+                (exception, _, response) -> {
+                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.code());
+                    response.getWriter().write("Internal Server Error: " + exception.getMessage());
+                    response.flushBuffer();
+                });
     }
 
     /**
