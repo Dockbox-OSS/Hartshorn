@@ -44,6 +44,16 @@ public class WildcardPathPartSpec implements PathPartSpec {
     }
 
     /**
+     * Returns the name of the path parameter that this wildcard part captures, or {@code null} if
+     * this wildcard part does not capture a parameter.
+     *
+     * @return the name of the path parameter that this wildcard part captures, or {@code null}
+     */
+    public String captureName() {
+        return captureName;
+    }
+
+    /**
      * Parses the given path part as a wildcard path part specification. A valid wildcard path part
      * is either a single asterisk ("*"), which matches any value but does not capture it, or a part
      * that starts with "{*", ends with "}", and contains a non-empty capture name in between, which
