@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,22 +34,29 @@ public class WebServerBootstrap implements LifecycleObserver {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebServerBootstrap.class);
 
+    private final WebServer server;
+
+    public WebServerBootstrap(WebServer server) {
+        this.server = server;
+    }
+
     @Override
     public void onStarted(ApplicationContext applicationContext) {
         try {
-            WebServer webServer = applicationContext.get(WebServer.class);
-            if (webServer.running()) {
+            if (this.server.running()) {
                 LOG.warn(
                         "Web server is already running on port {}, skipping lifecycle start",
-                        webServer.port()
+                        this.server.port()
                 );
-                return;
             }
             else {
-                long startTime = System.currentTimeMillis();
-                webServer.start();
-                long duration = System.currentTimeMillis() - startTime;
-                LOG.info("Web server started on port {} in {} ms", webServer.port(), duration);
+                Timer timer = Timer.start();
+                this.server.start();
+                LOG.info(
+                        "Web server started on port {} in {} ms",
+                        this.server.port(),
+                        timer.stop().toMillis()
+                );
             }
         }
         catch (ServerException e) {
@@ -59,8 +67,12 @@ public class WebServerBootstrap implements LifecycleObserver {
     @Override
     public void onExit(ApplicationContext applicationContext) {
         try {
-            WebServer webServer = applicationContext.get(WebServer.class);
-            webServer.stop();
+            if (!this.server.running()) {
+                LOG.warn("Web server is already stopped, skipping lifecycle stop");
+            }
+            else {
+                this.server.stop();
+            }
         }
         catch (ServerException e) {
             applicationContext.handle("Failed to stop web server", e);

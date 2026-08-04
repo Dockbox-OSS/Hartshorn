@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
 import org.dockbox.hartshorn.launchpad.InvalidActivationSourceException;
+import org.dockbox.hartshorn.util.Timer;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
@@ -29,7 +30,6 @@ import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Modifier;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -175,13 +175,11 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         this.state = FactoryState.CREATING;
 
         this.startupLogger.logStartup();
-        long applicationStartTimestamp = System.currentTimeMillis();
-        ApplicationContext applicationContext = this.applicationContextFactory.createContext();
-        long applicationStartedTimestamp = System.currentTimeMillis();
-
-        Duration startupTime =
-            Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
-        this.startupLogger.logStarted(startupTime);
+        Timer.Timing<ApplicationContext> timing = Timer.execute(
+                this.applicationContextFactory::createContext
+        );
+        ApplicationContext applicationContext = timing.result();
+        this.startupLogger.logStarted(timing.duration());
 
         this.state = FactoryState.WAITING;
 

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
+import org.dockbox.hartshorn.util.Timer;
 import org.jspecify.annotations.NonNull;
 
 import java.io.File;
@@ -168,12 +169,12 @@ public final class ClassPathScanner {
     ) throws ClassPathWalkingException {
         this.classNames.clear();
 
-        long start = System.currentTimeMillis();
+        Timer timer = Timer.start();
         for (URLClassLoader classLoader : this.classLoaders) {
             this.scanClassLoaderResources(handler, classLoader);
         }
 
-        this.scanTime = System.currentTimeMillis() - start;
+        this.scanTime = timer.stop().toMillis();
         return this;
     }
 
