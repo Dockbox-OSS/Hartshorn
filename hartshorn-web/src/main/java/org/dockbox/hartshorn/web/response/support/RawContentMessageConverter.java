@@ -29,9 +29,9 @@ import java.nio.ByteBuffer;
  * A {@link HttpMessageConverter} which allows writing raw content to the response, without any
  * additional processing. This converter does not assume any specific content type.
  *
- * @author Guus Lieben
- *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class RawContentMessageConverter implements HttpMessageConverter<Object> {
 

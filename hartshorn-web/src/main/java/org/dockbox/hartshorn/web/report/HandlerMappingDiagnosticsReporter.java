@@ -24,6 +24,14 @@ import org.dockbox.hartshorn.web.spec.PathSpec;
 
 import java.util.Collection;
 
+/**
+ * A diagnostics reporter for a {@link PathSpec} and its associated {@link PathHandlerSpec}s. This
+ * reporter will report the path pattern and the handlers associated with the path.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class HandlerMappingDiagnosticsReporter implements Reportable {
 
     private final PathSpec pathSpec;

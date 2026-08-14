@@ -49,6 +49,8 @@ public class ReportingConfiguration {
      * Configures a global {@link Reportable} capable of reporting on the entire application. This
      * reporter follows the {@link AggregateReporterConfiguration}.
      *
+     * @param configuration the configuration for the aggregate reporter
+     *
      * @return a global reporter that aggregates all configured reporters
      *
      * @see AggregateDiagnosticsReporter

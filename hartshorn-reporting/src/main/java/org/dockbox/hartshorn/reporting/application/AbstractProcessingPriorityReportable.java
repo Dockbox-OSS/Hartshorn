@@ -20,8 +20,25 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
+/**
+ * An abstract base class for {@link Reportable} implementations that need to report a processing
+ * priority. This class provides a utility method to report the priority in a human-readable manner,
+ * mapping the integer priority values to their corresponding display names, if applicable.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractProcessingPriorityReportable implements Reportable {
 
+    /**
+     * Reports the given processing priority to the provided {@link DiagnosticsPropertyCollector}.
+     * If the given priority has a corresponding display name, it will be included in the report.
+     * Otherwise, only the integer value will be reported.
+     *
+     * @param collector the diagnostics property collector to report to
+     * @param priority the processing priority to report
+     */
     protected void reportPriority(DiagnosticsPropertyCollector collector, int priority) {
         collector.property("priority").writeDelegate(priorityCollector -> {
             priorityCollector.property("value").writeInt(priority);
@@ -30,6 +47,13 @@ public abstract class AbstractProcessingPriorityReportable implements Reportable
         });
     }
 
+    /**
+     * Returns the display name for the given processing priority. If the priority does not have a
+     * corresponding display name, this method returns {@code null}.
+     *
+     * @param priority the processing priority to get the display name for
+     * @return the display name for the given processing priority, or {@code null} if none exists
+     */
     protected String priorityDisplayName(int priority) {
         return switch (priority) {
             case ProcessingPriority.HIGHEST_PRECEDENCE -> "highest";

@@ -328,8 +328,9 @@ public final class CollectionUtilities {
      * used in stream operations.
      *
      * @param iterator The iterator to wrap
-     * @return A stream that wraps the given iterator
      * @param <T> The type of the elements in the iterator
+     *
+     * @return A stream that wraps the given iterator
      */
     public static <T> Stream<T> streamOf(Iterator<T> iterator) {
         return StreamSupport.stream(iterableOf(iterator).spliterator(), false);
@@ -340,8 +341,9 @@ public final class CollectionUtilities {
      * to be used in stream operations.
      *
      * @param enumeration The enumeration to wrap
-     * @return A stream that wraps the given enumeration
      * @param <T> The type of the elements in the enumeration
+     *
+     * @return A stream that wraps the given enumeration
      */
     public static <T> Stream<T> streamOf(Enumeration<T> enumeration) {
         return streamOf(enumeration.asIterator());

@@ -173,6 +173,14 @@ public class WebServerConfiguration {
         );
     }
 
+    /**
+     * Creates a {@link PathSpec} from the configured base path for the web server.
+     *
+     * @param basePath the base path to prefix all routes with, retrieved from configuration
+     * @param pathParser the parser for route path patterns
+     *
+     * @return a {@link PathSpec} representing the base path for the web server
+     */
     @Singleton
     @SupportPriority
     public PathSpec basePathSpec(
@@ -237,6 +245,8 @@ public class WebServerConfiguration {
      * Creates a {@link WebServerBootstrap} lifecycle observer to handle web server startup and
      * shutdown.
      *
+     * @param server The web server to bootstrap and manage the lifecycle of.
+     *
      * @return A web server bootstrap lifecycle observer.
      */
     @Singleton
@@ -278,6 +288,7 @@ public class WebServerConfiguration {
      * server.
      *
      * @param webServer The web server to report diagnostics for.
+     * @param handlerMappingRegistry The handler mapping registry to report diagnostics for.
      *
      * @return A web server diagnostics reporter.
      */

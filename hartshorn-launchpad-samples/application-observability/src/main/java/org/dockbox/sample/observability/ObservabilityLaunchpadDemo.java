@@ -1,5 +1,10 @@
+package org.dockbox.sample.observability;
+
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 
-void main(String[] args) {
-    HartshornApplication.createApplication(args).initialize(app -> app.includeBasePackages(true));
+public class ObservabilityLaunchpadDemo {
+
+    void main(String[] args) {
+        HartshornApplication.create(args);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,8 +69,9 @@ public class HartshornAssertions {
      * any raw type. Type arguments are not supported.
      *
      * @param type the type to create an {@link InstanceOfAssertFactory} for
-     * @return a new {@link InstanceOfAssertFactory} for the given type
      * @param <T> the type to create an {@link InstanceOfAssertFactory} for
+     *
+     * @return a new {@link InstanceOfAssertFactory} for the given type
      */
     public static <T> InstanceOfAssertFactory<T, ObjectAssert<T>> ofType(Class<T> type) {
         return new InstanceOfAssertFactory<>(
