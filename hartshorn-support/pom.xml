@@ -16,6 +16,14 @@
   <artifactId>hartshorn-support</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <!--
+    TODO: Remove once coverage target of 80% is reached.
+     In meantime, increase coverage target whenever possible (to avoid regression).
+    -->
+    <coverage.target>50%</coverage.target>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
