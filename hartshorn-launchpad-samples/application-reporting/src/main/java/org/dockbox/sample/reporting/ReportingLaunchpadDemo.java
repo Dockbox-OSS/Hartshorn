@@ -15,6 +15,5 @@ public class ReportingLaunchpadDemo {
         applicationContext.bind(String.class)
             .priority(50)
             .singleton("Hello 50");
-        System.out.println();
     }
 }

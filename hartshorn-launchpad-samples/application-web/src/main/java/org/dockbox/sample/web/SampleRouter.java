@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.ReportSerializer;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMapCollector;
@@ -34,13 +34,12 @@ public class SampleRouter {
     public String writeReport(
             Reportable reportable,
             HttpServletResponse response,
-            DiagnosticsReportCollector collector
+            DiagnosticsReportCollector collector,
+            ReportSerializer<String> serializer
     ) throws Exception {
         DiagnosticsReport diagnosticsReport = collector.report(reportable);
         response.setHeader("Content-Type", "application/json");
-        return diagnosticsReport.serialize(
-                new ObjectMapperReportSerializer.JsonReportSerializer()
-        );
+        return diagnosticsReport.serialize(serializer);
     }
 
     @GetRoute("/validate/{param}")

@@ -7,8 +7,8 @@ import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
+import org.dockbox.hartshorn.reporting.ReportSerializer;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -20,17 +20,20 @@ public class ApplicationReportingStarter implements ApplicationStarter {
 
     private final Reportable reportable;
     private final DiagnosticsReportCollector reportCollector;
+    private final ReportSerializer<String> serializer;
     private final FileSystemProvider fileSystemProvider;
     private final Logger logger;
 
     public ApplicationReportingStarter(
         Reportable reportable,
         DiagnosticsReportCollector reportCollector,
+        ReportSerializer<String> serializer,
         FileSystemProvider fileSystemProvider,
         Logger logger
     ) {
         this.reportable = reportable;
         this.reportCollector = reportCollector;
+        this.serializer = serializer;
         this.fileSystemProvider = fileSystemProvider;
         this.logger = logger;
     }
@@ -39,8 +42,7 @@ public class ApplicationReportingStarter implements ApplicationStarter {
     public void run(ApplicationContext applicationContext) {
         DiagnosticsReport diagnosticsReport = this.reportCollector.report(this.reportable);
         try {
-            String serializedReport =
-                diagnosticsReport.serialize(new ObjectMapperReportSerializer.JsonReportSerializer());
+            String serializedReport = diagnosticsReport.serialize(this.serializer);
             Path targetFile = this.fileSystemProvider.applicationPath()
                 .resolve("hartshorn-launchpad-samples")
                 .resolve("application-reporting")

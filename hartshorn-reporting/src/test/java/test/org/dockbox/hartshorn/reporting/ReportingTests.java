@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package test.org.dockbox.hartshorn.reporting;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.ReportSerializer;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.UseReporting;
-import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer.JsonReportSerializer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,8 +52,9 @@ class ReportingTests {
     }
 
     @Test
-    void systemReporterCreatesNonNullReportWithCustomReportable()
-        throws Exception {
+    void systemReporterCreatesNonNullReportWithCustomReportable(
+            @Inject ReportSerializer<String> serializer
+    ) throws Exception {
         // Given
         Reportable configurable = this.applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector =
@@ -62,9 +62,8 @@ class ReportingTests {
 
         // When
         DiagnosticsReport report = collector.report(configurable);
-        String serialized = report.serialize(new JsonReportSerializer());
+        String serialized = report.serialize(serializer);
 
-        assertThat(serialized)
-                .isNotEmpty();
+        assertThat(serialized).isNotEmpty();
     }
 }

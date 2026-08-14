@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
@@ -31,7 +32,9 @@ import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporte
 import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Default configuration for reporting. This provides default implementations for common reporters
@@ -164,5 +167,34 @@ public class ReportingConfiguration {
     @SupportPriority
     public DiagnosticsReportCollector diagnosticsReportCollector() {
         return new StandardDiagnosticsReportCollector();
+    }
+
+    /**
+     * Jackson support for reporting serialization.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    @Configuration
+    @RequiresClass(classes = ObjectMapper.class)
+    public static class JacksonReportingConfiguration {
+
+        /**
+         * Configures a {@link ReportSerializer} that uses Jackson's {@link ObjectMapper} to
+         * serialize {@link DiagnosticsReport} instances to whichever format the mapper is
+         * configured to output.
+         *
+         * @param objectMapper the object mapper to use for serialization
+         *
+         * @return a report serializer that uses Jackson's object mapper
+         */
+        @Singleton
+        @SupportPriority
+        public ReportSerializer<String> objectMapperReportSerializer(
+                ObjectMapper objectMapper
+        ) {
+            return new ObjectMapperReportSerializer(objectMapper);
+        }
     }
 }
