@@ -150,29 +150,10 @@ up a new module.
 
 ### Setting up the project
 
-As Hartshorn uses Maven, we need to set up a new Maven module. This is done by simply creating a
-`pom.xml` file in the root of the module directory. You can also generate the project with
-`mvn archetype:generate` if you have Maven installed locally.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-platform-support</artifactId> <!-- Or alternatives, see below. -->
-        <version>${revision}</version> <!-- Version is managed in the root POM. Individual modules should never deviate from this. -->
-        <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
-    </parent>
-
-    <name>Hartshorn TheModuleName</name>
-    <description>A very awesome module solving a problem, or providing cool stuff somebody wants or needs</description>
-    <artifactId>hartshorn-module-name</artifactId>
-    <packaging>jar</packaging>
-</project>
-```
+As Hartshorn uses Maven, we need to set up a new Maven module. To do so, you can use the 
+[Hartshorn archetype generator](hartshorn-archetype/GenerateModule.ps1) to create a new module. This will set
+up the module, and ensure it is registered in various places. For more information, refer to its 
+[documentation](hartshorn-archetype/README.md).
 
 ### Choosing the right parent module
 
@@ -228,40 +209,3 @@ should promote the required test dependencies to the `compile` scope, rather tha
     <scope>compile</scope>
 </dependency>
 ```
-
-## Registering the module
-
-Once you have set up the Maven module, you need to register it with the Hartshorn build
-configuration. This needs to be done in various places:
-
-- The `modules` configuration in the root POM file. See [pom.xml](./pom.xml).
-  ```xml
-  <modules>
-    <module>hartshorn-module-name</module>
-  </modules>
-  ```
-- The `dependenyManagement` configuration in the BOM file.
-  See [hartshorn-bom/pom.xml](./hartshorn-bom/pom.xml).
-  ```xml
-  <dependency>
-      <groupId>org.dockbox.hartshorn</groupId>
-      <artifactId>hartshorn-module-name</artifactId>
-      <version>${revision}</version>
-  </dependency>
-  ```
-- The `dependencies` configuration in the assembly POM file. This does not require the version to be
-  defined, as the assembly POM imports the Hartshorn BOM.
-  See [hartshorn-assembly/pom.assembly.xml](./hartshorn-assembly/pom.assembly.xml).
-    ```xml
-    <dependency>
-        <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-module-name</artifactId>
-    </dependency>
-    ```
-- The `start_paths` configuration in Antora playbooks.
-  See [hartshorn-assembly/antora/playbook-local.yml](./hartshorn-assembly/antora/playbook-local.yml)
-  and [hartshorn-assembly/antora/playbook-release.yml](./hartshorn-assembly/antora/playbook-release.yml).
-  ```yaml
-  start_paths:
-    - hartshorn-module-name/src/main/docs
-  ```
