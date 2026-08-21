@@ -154,7 +154,6 @@ public class WebServerConfiguration {
      */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public RouterCustomizer declarativeRouterPathConfigurer(
             PathSpec basePath,
             ComponentRegistry componentRegistry,
@@ -344,6 +343,7 @@ public class WebServerConfiguration {
                 withValue = "true",
                 matchIfMissing = true
         )
+        @SupportPriority
         public HttpMessageConverter<?> jacksonResponseHandler(
                 ObjectMapper objectMapper,
                 JacksonObjectMapperMediaTypeRegistry mediaTypeRegistry

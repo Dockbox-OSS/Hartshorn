@@ -42,6 +42,7 @@
         <module>hartshorn-assembly/pom.platform.updates.xml</module>
         <module>hartshorn-bom</module>
         <module>hartshorn-assembly/pom.platform.support.xml</module>
+        <module>hartshorn-assembly/architecture-rules</module>
 
         <!-- Individually deployable modules -->
         <module>hartshorn-shared</module>
