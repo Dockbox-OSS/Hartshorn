@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build Antora documentation" type="js.build_tools.npm" folderName="Documentation">
+    <package-json value="$PROJECT_DIR$/hartshorn-assembly/antora/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="antora" />
+    </scripts>
+    <arguments value="playbook-local.yml" />
+    <node-interpreter value="project" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

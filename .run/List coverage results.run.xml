@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="List coverage results" type="PowerShellRunType" factoryName="PowerShell" folderName="Testing" scriptUrl="$PROJECT_DIR$/hartshorn-assembly/ListCoverageResults.ps1" executablePath="$PROJECT_DIR$/../../../../Program Files/PowerShell/7/pwsh.exe">
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>
