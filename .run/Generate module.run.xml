@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate module" type="PowerShellRunType" factoryName="PowerShell" folderName="Maintenance" scriptUrl="$PROJECT_DIR$/hartshorn-archetype/GenerateModule.ps1" executablePath="$PROJECT_DIR$/../../../../Program Files/PowerShell/7/pwsh.exe">
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>
