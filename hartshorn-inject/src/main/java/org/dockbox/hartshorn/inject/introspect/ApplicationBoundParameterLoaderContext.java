@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,6 +137,16 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     @Override
     public <C extends ContextView> void addContext(String name, C context) {
         this.context.addContext(name, context);
+    }
+
+    @Override
+    public <C extends ContextView> void expireContext(C context) {
+        this.context.expireContext(context);
+    }
+
+    @Override
+    public <C extends ContextView> void expireContext(String name, C context) {
+        this.context.expireContext(name, context);
     }
 
     @Override

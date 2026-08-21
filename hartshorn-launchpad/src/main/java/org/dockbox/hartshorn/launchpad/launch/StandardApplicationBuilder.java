@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
 import org.dockbox.hartshorn.launchpad.InvalidActivationSourceException;
+import org.dockbox.hartshorn.util.Timer;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
@@ -29,7 +30,6 @@ import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Modifier;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -41,18 +41,12 @@ import java.util.Set;
  * responsible for the creation-, initialization- and configuration of the context. The builder will
  * provide the required build context to the factory.
  *
- * <p>The creation of new applications is thread-safe through synchronization of the
- * {@link #create()} method. That is,
- * multiple threads may call {@link #create()} concurrently, but only one thread will be able to
- * create a new application at a time. However, it should be noted that the builder is re-entrant.
- * That is, a single instance of this class may be used to create multiple applications with the
- * same configuration.
- *
- * <p>It is possible to create multiple instances of this class, and use them concurrently. However,
- * this is only recommended
- * if the instances are configured to create different types of applications. If multiple instances
- * are used to create the same type of application, it is recommended to re-use a single builder
- * instance.
+ * <p>This implementation is re-entrant, meaning a single instance of this class may be used to
+ * create multiple applications with the same configuration. However, it is not supported to do so
+ * concurrently, due to the internal state of the factory. If concurrent creation of applications
+ * is required, it is recommended to create multiple instances of this builder, or to use a
+ * different implementation of {@link ApplicationBuilder} that supports concurrent creation of
+ * applications.
  *
  * @see ApplicationContextFactory
  * 
@@ -97,7 +91,6 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         "jdk."
     );
 
-    private final ApplicationBuildContext buildContext;
     private final ApplicationContextFactory applicationContextFactory;
     private final ApplicationStartupLogger startupLogger;
 
@@ -122,14 +115,15 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
         SingleElementContext<? extends Class<?>> initializerContext =
             new ApplicationInitializerContext<>(mainClass).initializeInitial();
-        this.buildContext = new ApplicationBuildContext(
-            mainClass,
-            configurer.arguments.initialize(initializerContext),
-            configurer.applicationName.initialize(initializerContext)
+
+        ApplicationBuildContext buildContext = new ApplicationBuildContext(
+                mainClass,
+                configurer.arguments.initialize(initializerContext),
+                configurer.applicationName.initialize(initializerContext)
         );
 
         SingleElementContext<ApplicationBuildContext> buildInitializerContext =
-            initializerContext.transform(this.buildContext);
+            initializerContext.transform(buildContext);
         this.applicationContextFactory =
             configurer.applicationContextFactory.initialize(buildInitializerContext);
 
@@ -181,13 +175,11 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         this.state = FactoryState.CREATING;
 
         this.startupLogger.logStartup();
-        long applicationStartTimestamp = System.currentTimeMillis();
-        ApplicationContext applicationContext = this.applicationContextFactory.createContext();
-        long applicationStartedTimestamp = System.currentTimeMillis();
-
-        Duration startupTime =
-            Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
-        this.startupLogger.logStarted(startupTime);
+        Timer.Timing<ApplicationContext> timing = Timer.execute(
+                this.applicationContextFactory::createContext
+        );
+        ApplicationContext applicationContext = timing.result();
+        this.startupLogger.logStarted(timing.duration());
 
         this.state = FactoryState.WAITING;
 
@@ -395,6 +387,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
                 StackTraceElement target = Arrays.stream(stackTrace)
                     .filter(element -> !skip.contains(element.getClassName()))
                     .filter(element -> !element.getClassName().contains("lambda$"))
+                    .filter(element -> !element.getClassName().contains("$lambda"))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
                         "Could not deduce main class, no suitable stack trace element found"));

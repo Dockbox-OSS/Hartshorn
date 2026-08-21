@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 
 public class ScopesLaunchpadDemo {
 
-    public static void main(String[] args) {
+    void main(String[] args) {
         HartshornApplication.create(args);
     }
 

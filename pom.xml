@@ -64,6 +64,7 @@
         <module>hartshorn-web-jetty</module>
         <module>hartshorn-test-assertions</module>
         <module>hartshorn-testsuite</module>
+        <module>hartshorn-support</module>
         <module>hartshorn-launchpad-kotlin-extensions</module>
         <module>hartshorn-launchpad-starter</module>
         <module>hartshorn-launchpad-samples</module>

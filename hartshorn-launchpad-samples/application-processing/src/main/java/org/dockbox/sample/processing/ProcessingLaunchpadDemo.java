@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 @UseCustomProcessors
 public class ProcessingLaunchpadDemo {
 
-    public static void main(String[] args) {
+    void main(String[] args) {
         HartshornApplication.create(args);
     }
 

@@ -5,3 +5,5 @@ hartshorn:
       enabled: true
     default-response:
       format: jackson-json
+    route:
+      base-path: /api

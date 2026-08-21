@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,29 @@ public abstract class DefaultContext implements Context {
         }
         else if (context != null) {
             this.namedContexts().put(name, context);
+        }
+    }
+
+    @Override
+    public <C extends ContextView> void expireContext(C context) {
+        if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
+            this.namedContexts().remove(named.name(), context);
+        }
+        else if (context != null) {
+            this.unnamedContexts().remove(context);
+        }
+    }
+
+    @Override
+    public <C extends ContextView> void expireContext(String name, C context) {
+        if (context instanceof NamedContext named && !named.name().equals(name)) {
+            throw new IllegalArgumentException(("Context name does not match the provided name. " +
+                "Context name: %s, provided name: %s. Either use only the name of the " +
+                "context, or encapsulate the context so the appropriate name is used."
+            ).formatted(named.name(), name));
+        }
+        else if (context != null) {
+            this.namedContexts().remove(name, context);
         }
     }
 

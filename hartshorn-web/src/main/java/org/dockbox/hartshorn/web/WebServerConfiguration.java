@@ -38,6 +38,7 @@ import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.web.filter.RequestLoggingFilter;
 import org.dockbox.hartshorn.web.report.WebServerDiagnosticsReporter;
@@ -46,6 +47,7 @@ import org.dockbox.hartshorn.web.response.ResponseHandler;
 import org.dockbox.hartshorn.web.response.SimpleResponseHandler;
 import org.dockbox.hartshorn.web.response.support.JacksonHttpMessageConverter;
 import org.dockbox.hartshorn.web.response.support.NoContentMessageConverter;
+import org.dockbox.hartshorn.web.response.support.RawContentMessageConverter;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.HandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.RouterCustomizer;
@@ -53,13 +55,14 @@ import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistrar;
 import org.dockbox.hartshorn.web.route.SimpleHandlerMappingRegistry;
 import org.dockbox.hartshorn.web.route.support.DeclarativeRouterPathConfigurer;
 import org.dockbox.hartshorn.web.spec.ParameterPathPartSpec;
+import org.dockbox.hartshorn.web.spec.PathSpec;
 import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
+import org.dockbox.hartshorn.web.support.jackson.JacksonObjectMapperMediaTypeRegistry;
 import org.slf4j.Logger;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -75,6 +78,10 @@ import java.util.Objects;
 @Configuration
 @RequiresActivator(UseWebServer.class)
 public class WebServerConfiguration {
+
+    private static final String FORMAT_NAME_JSON = "JSON";
+    private static final String FORMAT_NAME_XML = "XML";
+    private static final String FORMAT_NAME_YAML = "YAML";
 
     /**
      * Creates a {@link RequestLoggingFilter} if request logging is enabled via configuration.
@@ -134,6 +141,7 @@ public class WebServerConfiguration {
     /**
      * Customizer to capture and register all {@link HttpRoute HTTP routes}.
      *
+     * @param basePath the base path to prefix all routes with
      * @param componentRegistry the component registry to use for component discovery
      * @param conversionService the conversion service to use for parameter transformation
      * @param application the current application
@@ -148,6 +156,7 @@ public class WebServerConfiguration {
     @CompositeMember
     @SupportPriority
     public RouterCustomizer declarativeRouterPathConfigurer(
+            PathSpec basePath,
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
             InjectionCapableApplication application,
@@ -155,12 +164,34 @@ public class WebServerConfiguration {
             PathParser pathParser
     ) {
         return new DeclarativeRouterPathConfigurer(
+                basePath,
                 componentRegistry,
                 conversionService,
                 application,
                 responseHandler,
                 pathParser
         );
+    }
+
+    /**
+     * Creates a {@link PathSpec} from the configured base path for the web server.
+     *
+     * @param basePath the base path to prefix all routes with, retrieved from configuration
+     * @param pathParser the parser for route path patterns
+     *
+     * @return a {@link PathSpec} representing the base path for the web server
+     */
+    @Singleton
+    @SupportPriority
+    public PathSpec basePathSpec(
+            @PropertyValue(name = "hartshorn.web.route.base-path")
+            String basePath,
+            PathParser pathParser
+    ) {
+        if (basePath.isEmpty()) {
+            return PathSpec.empty();
+        }
+        return pathParser.parse(basePath);
     }
 
     /**
@@ -198,15 +229,30 @@ public class WebServerConfiguration {
     }
 
     /**
+     * Provides a {@link HttpMessageConverter} that can handle raw content, such as byte arrays or
+     * strings, writing it directly to the response output stream without any additional processing.
+     *
+     * @return A message converter that handles raw content, writing it directly to the response
+     * output stream.
+     */
+    @Singleton
+    @CompositeMember
+    public HttpMessageConverter<?> rawContentMessageConverter() {
+        return new RawContentMessageConverter();
+    }
+
+    /**
      * Creates a {@link WebServerBootstrap} lifecycle observer to handle web server startup and
      * shutdown.
+     *
+     * @param server The web server to bootstrap and manage the lifecycle of.
      *
      * @return A web server bootstrap lifecycle observer.
      */
     @Singleton
     @CompositeMember
-    public LifecycleObserver webServerBootstrap() {
-        return new WebServerBootstrap();
+    public LifecycleObserver webServerBootstrap(WebServer server) {
+        return new WebServerBootstrap(server);
     }
 
     /**
@@ -242,13 +288,17 @@ public class WebServerConfiguration {
      * server.
      *
      * @param webServer The web server to report diagnostics for.
+     * @param handlerMappingRegistry The handler mapping registry to report diagnostics for.
      *
      * @return A web server diagnostics reporter.
      */
     @Singleton
     @CompositeMember
-    public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(WebServer webServer) {
-        return new WebServerDiagnosticsReporter(webServer);
+    public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(
+            WebServer webServer,
+            HandlerMappingRegistry handlerMappingRegistry
+    ) {
+        return new WebServerDiagnosticsReporter(webServer, handlerMappingRegistry);
     }
 
     /**
@@ -268,62 +318,87 @@ public class WebServerConfiguration {
     }
 
     /**
-     * Jackson-based JSON mapping configuration.
+     * Jackson-based object mapping configuration.
      *
      * @since 0.7.0
      *
      * @author Guus Lieben
      */
     @Configuration
-    @RequiresClass(classes = JsonMapper.class)
-    public static class JacksonJsonResponseWriterConfiguration {
+    @RequiresClass(classes = ObjectMapper.class)
+    public static class JacksonHttpMessageConverterConfiguration {
 
         /**
-         * Creates a {@link HttpMessageConverter} that uses a {@link JsonMapper} to serialize
-         * objects to JSON.
+         * Creates a {@link HttpMessageConverter} that uses a {@link ObjectMapper} to serialize
+         * objects to the dataformat supported by the mapper.
          *
-         * @param jsonMapper The JSON mapper to use for serialization.
+         * @param objectMapper The object mapper to use for serialization.
+         * @param mediaTypeRegistry The registry to use for determining the media type based on the
+         * format name of the object mapper's token stream factory.
          *
-         * @return A response writer for JSON objects.
+         * @return A response writer backed by Jackson.
          */
         @Singleton
         @RequiresProperty(
-                name = "hartshorn.web.default-response.format",
-                withValue = "jackson-json",
+                name = "hartshorn.web.support.jackson.enabled",
+                withValue = "true",
                 matchIfMissing = true
         )
-        public HttpMessageConverter<?> jacksonResponseHandler(JsonMapper jsonMapper) {
-            return new JacksonHttpMessageConverter(jsonMapper, MediaTypes.APPLICATION_JSON);
+        public HttpMessageConverter<?> jacksonResponseHandler(
+                ObjectMapper objectMapper,
+                JacksonObjectMapperMediaTypeRegistry mediaTypeRegistry
+        ) {
+            String formatName = objectMapper.tokenStreamFactory().getFormatName();
+            MediaType mediaType = mediaTypeRegistry.getMediaTypeForFormat(
+                    formatName
+            ).orElseThrow(() -> new IllegalArgumentException(
+                    "Unsupported ObjectMapper format: %s".formatted(formatName)
+            ));
+            return new JacksonHttpMessageConverter(objectMapper, mediaType);
         }
-    }
-
-    /**
-     * Jackson-based XML mapping configuration.
-     *
-     * @since 0.7.0
-     *
-     * @author Guus Lieben
-     */
-    @Configuration
-    @RequiresClass(classes = XmlMapper.class)
-    public static class JacksonXmlResponseWriterConfiguration {
 
         /**
-         * Creates a {@link HttpMessageConverter} that uses a {@link XmlMapper} to serialize
-         * objects to XML.
+         * Creates a {@link JacksonObjectMapperMediaTypeRegistry} and applies all registered
+         * customizers to provide default mappings.
          *
-         * @param xmlMapper The XML mapper to use for serialization.
+         * @param customizers The collection of customizers for the media type registry.
          *
-         * @return A response writer for XML objects.
+         * @return A configured JacksonObjectMapperMediaTypeRegistry.
          */
         @Singleton
-        @RequiresProperty(
-                name = "hartshorn.web.default-response.format",
-                withValue = "jackson-xml",
-                matchIfMissing = true
-        )
-        public HttpMessageConverter<?> jacksonXmlResponseHandler(XmlMapper xmlMapper) {
-            return new JacksonHttpMessageConverter(xmlMapper, MediaTypes.APPLICATION_XML);
+        @SupportPriority
+        public JacksonObjectMapperMediaTypeRegistry jacksonObjectMapperMediaTypeRegistry(
+                @Fuzzy
+                ComponentCollection<Customizer<JacksonObjectMapperMediaTypeRegistry>> customizers
+        ) {
+            var registry = new JacksonObjectMapperMediaTypeRegistry();
+            for (Customizer<JacksonObjectMapperMediaTypeRegistry> customizer : customizers) {
+                customizer.configure(registry);
+            }
+            return registry;
+        }
+
+        /**
+         * Provides default mappings between ObjectMapper format names and media types.
+         *
+         * @return A customizer that registers default format name to media type mappings for
+         * Jackson ObjectMappers.
+         *
+         * @see #FORMAT_NAME_JSON
+         * @see MediaTypes#APPLICATION_JSON
+         * @see #FORMAT_NAME_XML
+         * @see MediaTypes#APPLICATION_XML
+         * @see #FORMAT_NAME_YAML
+         * @see MediaTypes#APPLICATION_YAML
+         */
+        @Singleton
+        @CompositeMember
+        public Customizer<JacksonObjectMapperMediaTypeRegistry> defaultFormatCustomizer() {
+            return registry -> {
+                registry.addMapping(FORMAT_NAME_JSON, MediaTypes.APPLICATION_JSON);
+                registry.addMapping(FORMAT_NAME_XML, MediaTypes.APPLICATION_XML);
+                registry.addMapping(FORMAT_NAME_YAML, MediaTypes.APPLICATION_YAML);
+            };
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class PropertiesLaunchpadDemo {
 
-    public static void main(String[] args) throws ApplicationException {
+    void main(String[] args) throws ApplicationException {
         // Uses properties defined in application.yml, and application-demo.yml due to the demo profile being active
         // via hartshorn.profiles in application.yml.
         HartshornApplication.create(args).close();

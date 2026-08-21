@@ -1,0 +1,3 @@
+org.dockbox.hartshorn.support.jackson.JacksonSupportConfiguration
+org.dockbox.hartshorn.support.jackson.JacksonSupportConfiguration$JacksonJsonSupportConfiguration
+org.dockbox.hartshorn.support.jackson.JacksonSupportConfiguration$JacksonSupportModuleConfiguration

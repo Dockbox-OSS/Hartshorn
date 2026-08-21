@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that invokes the given initializer, ignoring the input value.
      */
     static <I, T> ContextualInitializer<I, T> of(Initializer<T> initializer) {
-        return (input) -> initializer.initialize();
+        return _ -> initializer.initialize();
     }
 
     /**
@@ -90,7 +90,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that will always return the given object.
      */
     static <I, T> ContextualInitializer<I, T> of(T object) {
-        return (input) -> object;
+        return _ -> object;
     }
 
     /**

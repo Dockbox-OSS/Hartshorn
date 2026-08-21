@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.reporting.component;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
@@ -27,6 +28,7 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.jspecify.annotations.NonNull;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,11 @@ public class ComponentDiagnosticsReporter
 
     public static final String COMPONENTS_CATEGORY = "components";
 
+    private static final String STEREOTYPE_COMPONENT = "component";
+    private static final String STEREOTYPE_CONFIGURATION = "configuration";
+    private static final String STEREOTYPE_ROUTER = "router";
+    private static final String STEREOTYPE_MAIN = "main";
+
     private final ComponentReportingConfiguration configuration =
         new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
@@ -71,7 +78,7 @@ public class ComponentDiagnosticsReporter
                 componentRegistry.containers().stream()
                     .collect(Collectors.groupingBy(container -> {
                         return switch (this.configuration.groupBy()) {
-                            case STEREOTYPE -> stereotype(container).getCanonicalName();
+                            case STEREOTYPE -> stereotype(container);
                             case PACKAGE -> container.type().packageInfo().name();
                             default -> throw new IllegalStateException("Unexpected value: "
                                 + this.configuration.groupBy());
@@ -103,13 +110,22 @@ public class ComponentDiagnosticsReporter
      *
      * @return the stereotype of the given container
      */
-    public static Class<?> stereotype(ComponentContainer<?> container) {
-        if (container instanceof ApplicationMainComponentContainer<?> mainComponentContainer) {
-            return mainComponentContainer.type().type();
+    public static String stereotype(ComponentContainer<?> container) {
+        if (container instanceof ApplicationMainComponentContainer<?>) {
+            return STEREOTYPE_MAIN;
         }
         else {
             Component component = container.type().annotations().get(Component.class).get();
-            return component.annotationType();
+            Class<? extends Annotation> annotationType = component.annotationType();
+            if (Configuration.class.getCanonicalName().equals(annotationType.getCanonicalName())) {
+                return STEREOTYPE_CONFIGURATION;
+            }
+            else if ("org.dockbox.hartshorn.web.Router".equals(annotationType.getCanonicalName())) {
+                return STEREOTYPE_ROUTER;
+            }
+            else {
+                return STEREOTYPE_COMPONENT;
+            }
         }
     }
 

@@ -23,10 +23,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.Timer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.time.Duration;
 
 /**
  * A request filter that logs incoming requests and outgoing responses.
@@ -67,9 +69,9 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
             FilterChain chain
     ) throws IOException, ServletException {
         this.logInboundRequest(request);
-        long startTime = System.currentTimeMillis();
+        Timer timer = Timer.start();
         chain.doFilter(request, response);
-        long duration = System.currentTimeMillis() - startTime;
+        Duration duration = timer.stop();
         if (this.includeResponse) {
             this.logOutboundRequest(request, response, duration);
         }
@@ -102,7 +104,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
     private void logOutboundRequest(
             HttpServletRequest request,
             HttpServletResponse response,
-            long duration
+            Duration duration
     ) {
         StringBuilder logMessage = new StringBuilder("Outgoing response: ")
                 .append(request.getMethod())
@@ -118,7 +120,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
         }
 
         if (this.includeDuration) {
-            logMessage.append(" [Duration: ").append(duration).append(" ms]");
+            logMessage.append(" [Duration: ").append(duration.toMillis()).append(" ms]");
         }
 
         this.logger.info(logMessage.toString());

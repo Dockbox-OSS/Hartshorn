@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.reporting.serialize;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.dataformat.xml.XmlMapper;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.ReportSerializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A {@link ReportSerializer} which uses Jackson's {@link ObjectMapper} to serialize a
@@ -37,66 +35,23 @@ import org.dockbox.hartshorn.reporting.ReportSerializer;
  *
  * @author Guus Lieben
  */
-public abstract class ObjectMapperReportSerializer implements ReportSerializer<String> {
+public class ObjectMapperReportSerializer implements ReportSerializer<String> {
+
+    private final ObjectMapper objectMapper;
+
+    public ObjectMapperReportSerializer(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public String serialize(DiagnosticsReport report) throws ReportSerializationException {
         try {
             JsonNode node = report.root().accept(new NodeToJacksonVisitor());
-            return this.objectMapper()
+            return this.objectMapper
                     .writerWithDefaultPrettyPrinter()
                     .writeValueAsString(node);
         } catch (JacksonException e) {
             throw new ReportSerializationException(e);
-        }
-    }
-
-    /**
-     * Returns the {@link ObjectMapper} that is used to serialize the report. The returned value is
-     * not required to be thread-safe. The returned value is not required to be the same instance on
-     * each invocation.
-     *
-     * @return the object mapper to use
-     */
-    protected abstract ObjectMapper objectMapper();
-
-    /**
-     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to XML. This
-     * serializer uses Jackson's {@link XmlMapper} to serialize the report.
-     *
-     * @see DiagnosticsReport
-     * @see ReportSerializer
-     * @see ObjectMapper
-     *
-     * @since 0.5.0
-     *
-     * @author Guus Lieben
-     */
-    public static class XMLReportSerializer extends ObjectMapperReportSerializer {
-
-        @Override
-        protected ObjectMapper objectMapper() {
-            return new XmlMapper();
-        }
-    }
-
-    /**
-     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to JSON. This
-     * serializer uses Jackson's {@link JsonMapper} to serialize the report.
-     *
-     * @see DiagnosticsReport
-     * @see ReportSerializer
-     * @see ObjectMapper
-     *
-     * @since 0.5.0
-     *
-     * @author Guus Lieben
-     */
-    public static class JsonReportSerializer extends ObjectMapperReportSerializer {
-
-        @Override
-        protected ObjectMapper objectMapper() {
-            return new JsonMapper();
         }
     }
 }

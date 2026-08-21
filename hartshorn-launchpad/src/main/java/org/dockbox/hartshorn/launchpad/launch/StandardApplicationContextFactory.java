@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import java.util.function.Predicate;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
@@ -59,6 +58,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
  * this factory.
  *
  * @since 0.4.11
- * 
+ *
  * @author Guus Lieben
  */
 public class StandardApplicationContextFactory implements ApplicationContextFactory {
@@ -130,6 +130,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             activatingApplicationContext.loadContext();
         }
         this.finalizeContext(applicationContext);
+
+        // Any relevant contexts should've been copied to the application at this point, anything
+        // else should be expired before releasing.
+        applicationContext.expireContext(bootstrapContext);
 
         return applicationContext;
     }
@@ -271,11 +275,13 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             this.initializerContext.transform(bootstrapContext)
         ));
 
-        ClassPathScannerTypeReferenceCollector collector =
-            new ClassPathScannerTypeReferenceCollector(includePackages);
-        collector.excludePackages(excludePackages);
+        if (!includePackages.isEmpty()) {
+            ClassPathScannerTypeReferenceCollector collector =
+                    new ClassPathScannerTypeReferenceCollector(includePackages);
+            collector.excludePackages(excludePackages);
 
-        collectorContext.register(collector);
+            collectorContext.register(collector);
+        }
 
         Set<Class<?>> standaloneComponents = Set.copyOf(this.configurer.standaloneComponents
             .initialize(this.initializerContext.transform(bootstrapContext))
@@ -300,15 +306,24 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         ApplicationBootstrapContext bootstrapContext,
         Set<Annotation> activators
     ) {
-        Set<String> prefixes = new HashSet<>();
-        prefixes.addAll(this.configurer.includePackages.initialize(
-            this.initializerContext.transform(bootstrapContext)
+        Set<String> prefixes = new HashSet<>(this.configurer.includePackages.initialize(
+                this.initializerContext.transform(bootstrapContext)
         ));
 
         // Application may prefer to use alternative packages for scanning. This is configured by
         // the application bootstrap context.
         if (bootstrapContext.includeBasePackages()) {
-            prefixes.add(bootstrapContext.mainClass().getPackageName());
+            if (bootstrapContext.mainClass().getPackageName().isEmpty()) {
+                this.buildContext.logger().warn(
+                        "Base package scanning is active, but main class is in unnamed package. " +
+                        "Will not include base package of main class during classpath scan. " +
+                        "This may lead to components not being registered if no other packages " +
+                        "are included explicitly."
+                );
+            }
+            else {
+                prefixes.add(bootstrapContext.mainClass().getPackageName());
+            }
         }
 
         for (Annotation moduleActivator : activators) {
@@ -411,7 +426,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
 
         private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages =
-            ContextualInitializer.of(true);
+            ContextualInitializer.of(context -> !context.mainClass().getPackageName().isEmpty());
         // checkstyle:on LineLength
 
         /**

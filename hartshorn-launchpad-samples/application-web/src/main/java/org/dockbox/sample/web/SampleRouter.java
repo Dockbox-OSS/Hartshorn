@@ -4,21 +4,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.ReportSerializer;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMapCollector;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 import org.dockbox.hartshorn.web.GetRoute;
 import org.dockbox.hartshorn.web.Header;
-import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.PathParameter;
 import org.dockbox.hartshorn.web.QueryParameter;
 import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.message.RequestAttributes;
 
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@Router("/api")
+@Router("/sample")
 public class SampleRouter {
 
     @GetRoute("/error")
@@ -27,18 +31,15 @@ public class SampleRouter {
     }
 
     @GetRoute("/report")
-    public void writeReport(
+    public String writeReport(
             Reportable reportable,
             HttpServletResponse response,
-            DiagnosticsReportCollector collector
+            DiagnosticsReportCollector collector,
+            ReportSerializer<String> serializer
     ) throws Exception {
         DiagnosticsReport diagnosticsReport = collector.report(reportable);
-        String serializedReport = diagnosticsReport.serialize(
-                new ObjectMapperReportSerializer.JsonReportSerializer()
-        );
-        response.setStatus(HttpStatus.OK.code());
         response.setHeader("Content-Type", "application/json");
-        response.getOutputStream().write(serializedReport.getBytes());
+        return diagnosticsReport.serialize(serializer);
     }
 
     @GetRoute("/validate/{param}")
@@ -49,17 +50,22 @@ public class SampleRouter {
             @PathParameter("param") String parameter,
             @QueryParameter("test") String testQueryParameter
     ) throws Exception {
-        Enumeration<String> headerNames = request.getHeaderNames();
-        Map<String, String> headers = new HashMap<>();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            headers.put(headerName, request.getHeader(headerName));
-        }
+        Map<String, String> headers = CollectionUtilities.streamOf(request.getHeaderNames())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        request::getHeader
+                ));
+        MultiMap<String, String> parameters = EntryStream.of(request.getParameterMap())
+                .flatMapValues(Arrays::stream)
+                .collect(MultiMapCollector.toMultiMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
         return new SampleRouter.ValidationResponseBody(
                 request.getMethod(),
                 request.getRequestURI(),
-                request.getParameterMap(),
                 testQueryParameter,
+                parameters,
                 headers,
                 request.getReader().readAllAsString(),
                 RequestAttributes.pathParameters(request),
@@ -71,8 +77,8 @@ public class SampleRouter {
     public record ValidationResponseBody(
             String method,
             String path,
-            Map<String, String[]> queryParameters,
             String testQueryParameter,
+            MultiMap<String, String> queryParameters,
             Map<String, String> headers,
             String body,
             Map<String, String> pathParameters,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactory;
+import org.assertj.core.api.ObjectAssert;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Function;
@@ -61,5 +62,22 @@ public class HartshornAssertions {
     public static <E> OptionAssert<E> assertThat(Option<E> option) {
         Assertions.assertThat(option).isNotNull();
         return new OptionAssert<>(option);
+    }
+
+    /**
+     * Creates a new {@link InstanceOfAssertFactory} for the given type, which can be used with
+     * any raw type. Type arguments are not supported.
+     *
+     * @param type the type to create an {@link InstanceOfAssertFactory} for
+     * @param <T> the type to create an {@link InstanceOfAssertFactory} for
+     *
+     * @return a new {@link InstanceOfAssertFactory} for the given type
+     */
+    public static <T> InstanceOfAssertFactory<T, ObjectAssert<T>> ofType(Class<T> type) {
+        return new InstanceOfAssertFactory<>(
+                type,
+                new Class[0],
+                Assertions::assertThat
+        );
     }
 }

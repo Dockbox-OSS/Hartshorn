@@ -8,7 +8,9 @@ import org.dockbox.hartshorn.web.UseWebServer;
 @UseReporting
 public class SampleWebApplication {
 
-    static void main(String[] args) {
-        HartshornApplication.create(args);
+    void main(String[] args) {
+        HartshornApplication.createApplication(args).initialize(application -> {
+            application.includeBasePackages(false);
+        });
     }
 }

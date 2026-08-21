@@ -43,6 +43,7 @@ import java.util.function.Predicate;
  */
 public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
 
+    private final PathSpec basePath;
     private final ComponentRegistry componentRegistry;
     private final ConversionService conversionService;
     private final InjectionCapableApplication application;
@@ -50,12 +51,14 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
     private final PathParser pathParser;
 
     public DeclarativeRouterPathConfigurer(
+            PathSpec basePath,
             ComponentRegistry componentRegistry,
             ConversionService conversionService,
             InjectionCapableApplication application,
             ResponseHandler responseHandler,
             PathParser pathParser
     ) {
+        this.basePath = basePath;
         this.componentRegistry = componentRegistry;
         this.conversionService = conversionService;
         this.application = application;
@@ -88,25 +91,20 @@ public class DeclarativeRouterPathConfigurer implements RouterCustomizer {
                                     HttpRoute.class.getSimpleName()
                             )
                     ));
-            Option<PathSpec> routePathSpec = Option.of(httpRoute.path())
-                    .filter(Predicate.not(String::isBlank))
-                    .map(pathParser::parse);
 
-            Option<PathSpec> routerPathSpec = routeMethod.declaredBy().annotations()
+            PathSpec routePathSpec = Option.of(httpRoute.path())
+                    .filter(Predicate.not(String::isBlank))
+                    .map(pathParser::parse)
+                    .orElseGet(() -> PathSpec.empty(basePath.pathSeparator()));
+
+            PathSpec routerPathSpec = routeMethod.declaredBy().annotations()
                     .get(Router.class)
                     .map(Router::value)
                     .filter(Predicate.not(String::isBlank))
-                    .map(pathParser::parse);
+                    .map(pathParser::parse)
+                    .orElseGet(() -> PathSpec.empty(basePath.pathSeparator()));
 
-            PathSpec pathSpec = routePathSpec
-                    .map(spec -> routerPathSpec
-                            .map(router -> router.combineWith(spec))
-                            .orElse(spec)
-                    )
-                    .orComputeFlat(() -> routerPathSpec)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "Expected either the router or the route to declare a path"
-                    ));
+            PathSpec pathSpec = PathSpec.combineAll(basePath, routerPathSpec, routePathSpec);
             routes.add(httpRoute.method(), pathSpec, handler);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,18 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Default configuration for reporting. This provides default implementations for common reporters
@@ -46,24 +50,38 @@ public class ReportingConfiguration {
 
     /**
      * Configures a global {@link Reportable} capable of reporting on the entire application. This
-     * reporter aggregates all {@link CategorizedDiagnosticsReporter categorized reporters} that are
-     * registered in the application context.
+     * reporter follows the {@link AggregateReporterConfiguration}.
      *
-     * @param diagnosticsReporters All reporters that are registered in the application context
+     * @param configuration the configuration for the aggregate reporter
      *
-     * @return a global reporter that aggregates all reporters that are registered in the
-     * application context
+     * @return a global reporter that aggregates all configured reporters
      *
      * @see AggregateDiagnosticsReporter
      */
     @Prototype
     @SupportPriority
-    public Reportable applicationReportable(
+    public Reportable applicationReportable(AggregateReporterConfiguration configuration) {
+        return new AggregateDiagnosticsReporter(configuration);
+    }
+
+    /**
+     * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration aggregates
+     * all {@link CategorizedDiagnosticsReporter categorized reporters} that are registered in the
+     * application context.
+     *
+     * @param diagnosticsReporters All reporters that are registered in the application context
+     *
+     * @return a configuration for an {@link AggregateDiagnosticsReporter} that aggregates all
+     * given reporters
+     */
+    @Singleton
+    @SupportPriority
+    public AggregateReporterConfiguration aggregateReporterConfiguration(
             @Fuzzy ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters
     ) {
-        var reporter = new AggregateDiagnosticsReporter();
-        reporter.configuration().addAll(diagnosticsReporters);
-        return reporter;
+        AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
+        configuration.addAll(diagnosticsReporters);
+        return configuration;
     }
 
     /**
@@ -149,5 +167,34 @@ public class ReportingConfiguration {
     @SupportPriority
     public DiagnosticsReportCollector diagnosticsReportCollector() {
         return new StandardDiagnosticsReportCollector();
+    }
+
+    /**
+     * Jackson support for reporting serialization.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    @Configuration
+    @RequiresClass(classes = ObjectMapper.class)
+    public static class JacksonReportingConfiguration {
+
+        /**
+         * Configures a {@link ReportSerializer} that uses Jackson's {@link ObjectMapper} to
+         * serialize {@link DiagnosticsReport} instances to whichever format the mapper is
+         * configured to output.
+         *
+         * @param objectMapper the object mapper to use for serialization
+         *
+         * @return a report serializer that uses Jackson's object mapper
+         */
+        @Singleton
+        @SupportPriority
+        public ReportSerializer<String> objectMapperReportSerializer(
+                ObjectMapper objectMapper
+        ) {
+            return new ObjectMapperReportSerializer(objectMapper);
+        }
     }
 }

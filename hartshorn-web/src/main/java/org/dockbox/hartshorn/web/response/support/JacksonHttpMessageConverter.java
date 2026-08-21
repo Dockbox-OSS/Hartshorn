@@ -66,7 +66,6 @@ public class JacksonHttpMessageConverter implements HttpMessageConverter<Object>
         return this.contentType.isCompatibleWith(mediaType);
     }
 
-
     @Override
     public Option<Object> read(Class<?> type, HttpServletRequest request) throws Exception {
         return Option.of(objectMapper.readValue(request.getInputStream(), type));

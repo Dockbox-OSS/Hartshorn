@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,25 @@ public interface Context extends ContextView {
      * @param <C> The type of the context.
      */
     <C extends ContextView> void addContext(String name, C context);
+
+    /**
+     * Removes the given context from the current context. If the context is not present, this
+     * method does nothing.
+     *
+     * @param context The context to remove.
+     * @param <C> The type of the context.
+     */
+    <C extends ContextView> void expireContext(C context);
+
+    /**
+     * Removes the given context from the current context. If the context is not present, this
+     * method does nothing.
+     *
+     * @param name The name of the context.
+     * @param context The context to remove.
+     * @param <C> The type of the context.
+     */
+    <C extends ContextView> void expireContext(String name, C context);
 
     /**
      * Returns a view of the current context. This view is read-only and does not allow for
