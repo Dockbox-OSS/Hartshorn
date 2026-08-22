@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.lang.reflect.Method;
 
 /**
  * Thrown by {@link MethodInterceptorPostProcessor} when a method does meet compatibility
@@ -30,7 +29,7 @@ import java.lang.reflect.Method;
  *
  * @author Guus Lieben
  */
-public class ProxyMethodBindingException extends RuntimeException {
+public class ProxyMethodBindingException extends ApplicationRuntimeException {
 
     public ProxyMethodBindingException(MethodProxyContext<?> context) {
         this(context.method());
@@ -38,9 +37,5 @@ public class ProxyMethodBindingException extends RuntimeException {
 
     public ProxyMethodBindingException(MethodView<?, ?> method) {
         super("Could not bind proxy to " + method.name() + " because preconditions failed");
-    }
-
-    public ProxyMethodBindingException(Method method) {
-        super("Could not bind proxy to " + method.getName() + " because preconditions failed");
     }
 }

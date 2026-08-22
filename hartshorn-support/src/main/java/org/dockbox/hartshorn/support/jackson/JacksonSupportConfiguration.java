@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.support.jackson;
 
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -61,6 +62,7 @@ public class JacksonSupportConfiguration {
      * @return a configured {@link ObjectMapper} instance
      */
     @Singleton
+    @SupportPriority
     public ObjectMapper objectMapper(
             MapperBuilder<?, ?> builder,
             @Fuzzy ComponentCollection<Customizer<MapperBuilder<?, ?>>> customizers
@@ -136,6 +138,7 @@ public class JacksonSupportConfiguration {
          * @return a {@link MapperBuilder} for JSON with auto-discovered modules
          */
         @Singleton
+        @SupportPriority
         public MapperBuilder<?, ?> jsonObjectMapperBuilder() {
             return JsonMapper.builder().findAndAddModules();
         }
