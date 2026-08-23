@@ -1,7 +1,7 @@
 <p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-icon.png" height="125" /></p>
 <h1 align="center">Hartshorn Framework</h1>
 <p align="center">
-<img src="https://img.shields.io/badge/JDK-21-438EAA?style=for-the-badge">
+<img src="https://img.shields.io/badge/JDK-25-438EAA?style=for-the-badge">
 <img src="https://img.shields.io/github/v/release/Dockbox-OSS/Hartshorn?style=for-the-badge&color=438EAA">
 </p>
 
