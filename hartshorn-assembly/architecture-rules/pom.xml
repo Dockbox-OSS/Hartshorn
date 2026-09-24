@@ -16,6 +16,10 @@
     <artifactId>hartshorn-architecture-rules</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>

@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  release:
+    name: Release to OSSRH / Maven Central
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 25
+          distribution: temurin
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+      - name: Publish to Maven Central Staging
+        run: |
+          REVISION="${GITHUB_REF_NAME#release/}"
+          REVISION="${REVISION#v}"
+          mvn clean deploy -P ci,staging -Dstaging=true -DskipTests -Drevision="${REVISION}"
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
