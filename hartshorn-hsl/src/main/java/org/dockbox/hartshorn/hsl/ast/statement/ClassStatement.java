@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,33 +64,74 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
 
     private final Token name;
     private final VariableExpression superClass;
-    private final ConstructorStatement constructor;
-    private final List<FunctionStatement> methods;
-    private final List<FieldStatement> fields;
+    private final List<ClassMemberStatement> members;
     private final boolean isDynamic;
 
     public ClassStatement(
         Token name,
-        VariableExpression superClass, ConstructorStatement constructor,
-        List<FunctionStatement> methods, List<FieldStatement> fields,
+        VariableExpression superClass,
+        List<ClassMemberStatement> members,
+        boolean isDynamic
+    ) {
+        this(name, false, name, superClass, members, isDynamic);
+    }
+
+    public ClassStatement(
+        ASTNode at,
+        boolean finalized,
+        Token name,
+        VariableExpression superClass,
+        List<ClassMemberStatement> members,
+        boolean isDynamic
+    ) {
+        super(at, finalized);
+        this.name = name;
+        this.superClass = superClass;
+        this.members = members;
+        this.isDynamic = isDynamic;
+    }
+
+    public ClassStatement(
+        Token name,
+        VariableExpression superClass,
+        ConstructorStatement constructor,
+        List<FunctionStatement> methods,
+        List<FieldStatement> fields,
         boolean isDynamic
     ) {
         this(name, false, name, superClass, constructor, methods, fields, isDynamic);
     }
 
     public ClassStatement(
-        ASTNode at, boolean finalized, Token name,
-        VariableExpression superClass, ConstructorStatement constructor,
-        List<FunctionStatement> methods, List<FieldStatement> fields,
+        ASTNode at,
+        boolean finalized,
+        Token name,
+        VariableExpression superClass,
+        ConstructorStatement constructor,
+        List<FunctionStatement> methods,
+        List<FieldStatement> fields,
         boolean isDynamic
     ) {
-        super(at, finalized);
-        this.name = name;
-        this.superClass = superClass;
-        this.constructor = constructor;
-        this.methods = methods;
-        this.fields = fields;
-        this.isDynamic = isDynamic;
+        this(at, finalized, name, superClass,
+            combineMembers(constructor, methods, fields), isDynamic);
+    }
+
+    private static List<ClassMemberStatement> combineMembers(
+        ConstructorStatement constructor,
+        List<FunctionStatement> methods,
+        List<FieldStatement> fields
+    ) {
+        List<ClassMemberStatement> members = new ArrayList<>();
+        if (fields != null) {
+            members.addAll(fields);
+        }
+        if (constructor != null) {
+            members.add(constructor);
+        }
+        if (methods != null) {
+            members.addAll(methods);
+        }
+        return members;
     }
 
     @Override
@@ -107,12 +149,35 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     }
 
     /**
+     * Returns the list of all members declared within this class body.
+     *
+     * @return the list of class member statements
+     */
+    public List<ClassMemberStatement> members() {
+        return this.members;
+    }
+
+    /**
+     * Returns the list of members of the specified type defined in the class.
+     *
+     * @param <T> the member type
+     * @param type the class of the member type to filter
+     * @return the list of matching member statements
+     */
+    public <T extends ClassMemberStatement> List<T> members(Class<T> type) {
+        return this.members.stream()
+            .filter(type::isInstance)
+            .map(type::cast)
+            .toList();
+    }
+
+    /**
      * Returns the constructor of the class, if any.
      *
      * @return the constructor statement, or null if there is no explicit constructor
      */
     public ConstructorStatement constructor() {
-        return this.constructor;
+        return this.members(ConstructorStatement.class).stream().findFirst().orElse(null);
     }
 
     /**
@@ -121,7 +186,7 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
      * @return the list of function statements representing the methods
      */
     public List<FunctionStatement> methods() {
-        return this.methods;
+        return this.members(FunctionStatement.class);
     }
 
     /**
@@ -130,7 +195,7 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
      * @return the list of field statements representing the fields
      */
     public List<FieldStatement> fields() {
-        return this.fields;
+        return this.members(FieldStatement.class);
     }
 
     /**

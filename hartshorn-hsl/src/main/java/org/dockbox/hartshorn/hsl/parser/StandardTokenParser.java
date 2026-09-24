@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package org.dockbox.hartshorn.hsl.parser;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.MutableExpressionParserChain;
 import org.dockbox.hartshorn.hsl.parser.expression.SimpleExpressionParserChain;
+import org.dockbox.hartshorn.hsl.parser.statement.ClassMemberParser;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -36,10 +38,11 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,7 +72,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     private final List<Token> tokens;
 
     private final Set<StatementParser<? extends Statement>> statementParsers =
-        ConcurrentHashMap.newKeySet();
+        Collections.synchronizedSet(new LinkedHashSet<>());
+    private final Set<ClassMemberParser<?>> classMemberParsers =
+        Collections.synchronizedSet(new LinkedHashSet<>());
     private final MutableExpressionParserChain expressionParserChain;
     private final TokenStepValidator validator;
     private final TokenRegistry tokenRegistry;
@@ -96,6 +101,19 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
             this.statementParsers.add(parser);
         }
         return this;
+    }
+
+    @Override
+    public StandardTokenParser classMemberParser(ClassMemberParser<?> parser) {
+        if (parser != null) {
+            this.classMemberParsers.add(parser);
+        }
+        return this;
+    }
+
+    @Override
+    public Set<ClassMemberParser<?>> classMemberParsers() {
+        return Collections.unmodifiableSet(this.classMemberParsers);
     }
 
     @Override
@@ -238,6 +256,37 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     @Override
     public <T extends Statement> Option<StatementParser<T>> firstCompatibleParser(Class<T> type) {
         return Option.of(this.compatibleParserStream(type).findFirst());
+    }
+
+    @Override
+    public <T extends Statement & ClassMemberStatement>
+    Set<ClassMemberParser<T>> compatibleMemberParsers(Class<T> type) {
+        return this.compatibleMemberParserStream(type)
+            .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public <T extends Statement & ClassMemberStatement>
+    Option<ClassMemberParser<T>> firstCompatibleMemberParser(Class<T> type) {
+        return Option.of(this.compatibleMemberParserStream(type).findFirst());
+    }
+
+    private <T extends Statement & ClassMemberStatement>
+    Stream<ClassMemberParser<T>> compatibleMemberParserStream(Class<T> type) {
+        if (ClassMemberStatement.class.isAssignableFrom(type)) {
+            return this.compatibleMemberParserStream(this.classMemberParsers, type);
+        }
+        return Stream.empty();
+    }
+
+    private <T extends Statement & ClassMemberStatement>
+    Stream<ClassMemberParser<T>> compatibleMemberParserStream(
+        Collection<ClassMemberParser<?>> parsers,
+        Class<T> type
+    ) {
+        return parsers.stream()
+            .filter(parser -> parser.types().contains(type))
+            .map(parser -> TypeUtils.unchecked(parser, ClassMemberParser.class));
     }
 
     private <T extends Statement> Stream<StatementParser<T>> compatibleParserStream(Class<T> type) {

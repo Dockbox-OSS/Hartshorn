@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,11 +75,15 @@ public class DefaultScriptStatementsParserCustomizer implements ParserCustomizer
 
     @Override
     public void configure(TokenParser target) {
+        // Class member parsers
+        target.classMemberParser(new ConstructorStatementParser());
+        target.classMemberParser(new FunctionStatementParser());
+        target.classMemberParser(new FieldStatementParser());
+
         // Statement parsers
         target.statementParser(new BlockStatementParser());
         target.statementParser(new BreakStatementParser());
-        target.statementParser(new ClassStatementParser(new FieldStatementParser()));
-        target.statementParser(new ConstructorStatementParser());
+        target.statementParser(new ClassStatementParser());
         target.statementParser(new ContinueStatementParser());
         target.statementParser(new DoWhileStatementParser());
         target.statementParser(new FinalDeclarationStatementParser());

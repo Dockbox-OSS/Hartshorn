@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,13 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterState;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.interpreter.statement.ClassMemberInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.statement.StatementInterpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.ClassMemberParser;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.SimpleScriptRuntime;
@@ -360,6 +363,30 @@ public class HSLTestHelper {
          */
         public Builder statementParser(StatementParser<?> parser) {
             return this.parser(parsers -> parsers.statementParser(parser));
+        }
+
+        /**
+         * Adds a class member parser to the current parser configuration.
+         *
+         * @param parser the class member parser to add
+         *
+         * @return this builder
+         */
+        public Builder classMemberParser(ClassMemberParser<?> parser) {
+            return this.parser(parsers -> parsers.classMemberParser(parser));
+        }
+
+        /**
+         * Adds a class member interpreter to the current interpreter configuration.
+         *
+         * @param memberInterpreter the class member interpreter to add
+         *
+         * @return this builder
+         */
+        public Builder classMemberInterpreter(ClassMemberInterpreter<?> memberInterpreter) {
+            return this.customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+                context.interpreter().state().memberInterpreter(memberInterpreter);
+            }));
         }
 
         public Builder customize(CodeCustomizer codeCustomizer) {

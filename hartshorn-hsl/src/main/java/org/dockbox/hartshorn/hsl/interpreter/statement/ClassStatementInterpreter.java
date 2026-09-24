@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,20 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFieldMemberFunction;
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Interpreter for {@link ClassStatement} nodes.
@@ -46,6 +41,39 @@ import java.util.Map;
  * @author Guus Lieben
  */
 public class ClassStatementInterpreter implements StatementInterpreter<ClassStatement> {
+
+    private final Set<ClassMemberInterpreter<?>> memberInterpreters =
+        Collections.synchronizedSet(new LinkedHashSet<>());
+
+    public ClassStatementInterpreter() {
+        this.memberInterpreter(new ConstructorMemberInterpreter());
+        this.memberInterpreter(new MethodMemberInterpreter());
+        this.memberInterpreter(new FieldMemberInterpreter());
+    }
+
+    /**
+     * Registers a class member interpreter to be used when interpreting class body members.
+     *
+     * @param memberInterpreter the member interpreter to register
+     * @return this interpreter, for chaining
+     */
+    public ClassStatementInterpreter memberInterpreter(
+        ClassMemberInterpreter<?> memberInterpreter
+    ) {
+        if (memberInterpreter != null) {
+            this.memberInterpreters.add(memberInterpreter);
+        }
+        return this;
+    }
+
+    /**
+     * Returns the set of registered class member interpreters.
+     *
+     * @return the set of registered class member interpreters
+     */
+    public Set<ClassMemberInterpreter<?>> memberInterpreters() {
+        return Collections.unmodifiableSet(this.memberInterpreters);
+    }
 
     @Override
     public Void interpret(ClassStatement node, Interpreter interpreter) {
@@ -88,18 +116,17 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
                 .define(ObjectTokenType.SUPER.representation(), superClassReference);
         }
 
-        Map<String, VirtualFunction> methods = this.methodsToVirtualFunctions(node, interpreter);
-        VirtualFunction constructor = this.constructorToVirtualFunction(node, interpreter);
-        Map<String, VirtualProperty> fields = this.fieldsToVirtualProperties(node, interpreter);
-        VirtualClass virtualClass =
+        VirtualClassBuilder builder =
             new VirtualClassBuilder(node.name(), interpreter.visitingScope())
                 .superClass(superClassReference)
                 .dynamic(node.isDynamic())
-                .isFinal(node.isFinal())
-                .constructor(constructor)
-                .methods(methods)
-                .fields(fields)
-                .build();
+                .isFinal(node.isFinal());
+
+        for (ClassMemberStatement member : node.members()) {
+            this.interpretMember(member, interpreter, builder);
+        }
+
+        VirtualClass virtualClass = builder.build();
 
         if (superClassReference != null) {
             interpreter.enterScope(interpreter.visitingScope().enclosing());
@@ -108,50 +135,47 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
         interpreter.visitingScope().enclosing().assign(node.name(), virtualClass);
     }
 
-    private VirtualFunction constructorToVirtualFunction(
-        ClassStatement node,
-        Interpreter interpreter
+    @SuppressWarnings("unchecked")
+    private <T extends ClassMemberStatement> void interpretMember(
+        T member,
+        Interpreter interpreter,
+        VirtualClassBuilder builder
     ) {
-        VirtualFunction constructor = null;
-        if (node.constructor() != null) {
-            constructor =
-                new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
-        }
-        return constructor;
-    }
-
-    private Map<String, VirtualProperty> fieldsToVirtualProperties(
-        ClassStatement node,
-        Interpreter interpreter
-    ) {
-        Map<String, VirtualProperty> properties = new LinkedHashMap<>();
-        for (FieldStatement field : node.fields()) {
-            VirtualProperty virtualProperty = new VirtualProperty(field);
-            FieldGetStatement getter = field.getter();
-            if (getter != null) {
-                virtualProperty.getter(new VirtualFieldMemberFunction(getter,
-                    new VariableScope(interpreter.visitingScope())));
+        for (ClassMemberInterpreter<?> memberInterpreter : this.memberInterpreters) {
+            if (memberInterpreter.types().contains(member.getClass())) {
+                ((ClassMemberInterpreter<T>) memberInterpreter)
+                    .interpret(member, interpreter, builder);
+                return;
             }
-            FieldSetStatement setter = field.setter();
-            if (setter != null) {
-                virtualProperty.setter(new VirtualFieldMemberFunction(setter,
-                    new VariableScope(interpreter.visitingScope())));
+        }
+        for (ClassMemberInterpreter<?> memberInterpreter : this.memberInterpreters) {
+            for (Class<?> type : memberInterpreter.types()) {
+                if (type.isInstance(member)) {
+                    ((ClassMemberInterpreter<T>) memberInterpreter)
+                        .interpret(member, interpreter, builder);
+                    return;
+                }
             }
-            properties.put(field.name().lexeme(), virtualProperty);
         }
-        return properties;
-    }
-
-    private Map<String, VirtualFunction> methodsToVirtualFunctions(
-        ClassStatement node,
-        Interpreter interpreter
-    ) {
-        Map<String, VirtualFunction> methods = new LinkedHashMap<>();
-        for (FunctionStatement method : node.methods()) {
-            VirtualFunction function =
-                new VirtualFunction(method, interpreter.visitingScope(), false);
-            methods.put(method.name().lexeme(), function);
+        if (interpreter.state() != null) {
+            for (ClassMemberInterpreter<?> memberInterpreter :
+                    interpreter.state().memberInterpreters()) {
+                if (memberInterpreter.types().contains(member.getClass())) {
+                    ((ClassMemberInterpreter<T>) memberInterpreter)
+                        .interpret(member, interpreter, builder);
+                    return;
+                }
+            }
+            for (ClassMemberInterpreter<?> memberInterpreter :
+                    interpreter.state().memberInterpreters()) {
+                for (Class<?> type : memberInterpreter.types()) {
+                    if (type.isInstance(member)) {
+                        ((ClassMemberInterpreter<T>) memberInterpreter)
+                            .interpret(member, interpreter, builder);
+                        return;
+                    }
+                }
+            }
         }
-        return methods;
     }
 }

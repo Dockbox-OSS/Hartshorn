@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -30,7 +27,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ClassTokenType;
-import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
@@ -40,20 +36,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A parser for class statements, including support for parsing fields, methods, and constructors
- * within the class body.
+ * A parser for class statements, which dynamically delegates parsing of class body members
+ * to registered {@link ClassMemberParser} instances.
  *
  * @since 0.4.13
  * 
  * @author Guus Lieben
  */
 public class ClassStatementParser implements StatementParser<ClassStatement> {
-
-    private final FieldStatementParser fieldParser;
-
-    public ClassStatementParser(FieldStatementParser fieldParser) {
-        this.fieldParser = fieldParser;
-    }
 
     @Override
     public Option<? extends ClassStatement> parse(
@@ -75,64 +65,42 @@ public class ClassStatementParser implements StatementParser<ClassStatement> {
 
             validator.expectBefore(block.open(), "class body");
 
-            List<FunctionStatement> methods = new ArrayList<>();
-            List<FieldStatement> fields = new ArrayList<>();
-            ConstructorStatement constructor = null;
+            List<ClassMemberStatement> members = new ArrayList<>();
             while (!parser.check(block.close()) && !parser.isAtEnd()) {
-                Statement declaration = this.classBodyStatement(parser, validator);
-                switch (declaration) {
-                    case ConstructorStatement constructorStatement ->
-                        constructor = constructorStatement;
-                    case FunctionStatement function -> methods.add(function);
-                    case FieldStatement field -> fields.add(field);
-                    case null -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                ClassMemberStatement member = this.parseMember(parser, validator);
+                if (member == null) {
+                    throw ScriptEvaluationError.builder(Phase.PARSING)
                         .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
-                            parser.tokenRegistry().literals().nullLiteral().representation())
-                        .at(parser.peek())
-                        .build();
-                    default -> throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
-                            declaration.getClass().getSimpleName())
+                            parser.peek().type().representation())
                         .at(parser.peek())
                         .build();
                 }
+                members.add(member);
             }
 
             validator.expectAfter(block.close(), "class body");
 
-            return Option.of(new ClassStatement(name,
+            return Option.of(new ClassStatement(
+                name,
                 superClass,
-                constructor,
-                methods,
-                fields,
-                isDynamic));
+                members,
+                isDynamic
+            ));
         }
         return Option.empty();
     }
 
-    private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
-        if (parser.check(FunctionTokenType.CONSTRUCTOR)) {
-            return this.handleDelegate(parser,
-                validator,
-                parser.firstCompatibleParser(ConstructorStatement.class));
+    private ClassMemberStatement parseMember(
+        TokenParser parser,
+        TokenStepValidator validator
+    ) throws ScriptEvaluationError {
+        for (ClassMemberParser<?> memberParser : parser.classMemberParsers()) {
+            Option<?> statement = memberParser.parse(parser, validator);
+            if (statement.present() && statement.get() instanceof ClassMemberStatement member) {
+                return member;
+            }
         }
-        else if (parser.check(FunctionTokenType.FUNCTION)) {
-            return this.handleDelegate(parser,
-                validator,
-                parser.firstCompatibleParser(FunctionStatement.class));
-        }
-        else {
-            return this.handleDelegate(parser, validator, Option.of(this.fieldParser));
-        }
-    }
-
-    private <T extends Statement> T handleDelegate(
-        TokenParser parser, TokenStepValidator validator,
-        Option<StatementParser<T>> statement
-    ) {
-        return statement
-            .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-            .orNull();
+        return null;
     }
 
     @Override
