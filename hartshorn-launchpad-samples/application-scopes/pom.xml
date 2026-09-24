@@ -14,4 +14,8 @@
   <name>Hartshorn Sample: Scopes</name>
   <artifactId>hartshorn-sample-scopes</artifactId>
   <packaging>jar</packaging>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 </project>

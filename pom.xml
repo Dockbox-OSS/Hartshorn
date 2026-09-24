@@ -23,6 +23,9 @@
     <jacoco.skip>false</jacoco.skip>
     <javadoc.skip>false</javadoc.skip>
 
+    <!-- Deployment configuration -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
   </properties>
