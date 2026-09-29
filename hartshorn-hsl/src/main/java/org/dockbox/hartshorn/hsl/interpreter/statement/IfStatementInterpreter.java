@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 
 /**
@@ -35,7 +35,7 @@ public class IfStatementInterpreter implements StatementInterpreter<IfStatement>
         Object conditionResult = interpreter.evaluate(node.condition());
         VariableScope previous = interpreter.visitingScope();
 
-        if (InterpreterUtilities.isTruthy(conditionResult)) {
+        if (CodeExecutionUtilities.isTruthy(conditionResult)) {
             VariableScope thenVariableScope = new VariableScope(previous);
             interpreter.enterScope(thenVariableScope);
             interpreter.execute(node.thenBranch(), thenVariableScope);

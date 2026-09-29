@@ -110,7 +110,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
         final Object value,
         VariableScope fromScope
     ) {
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
             .at(name)
             .build();
@@ -122,7 +122,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
             return this.values.length;
         }
         else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(
                     DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y,
                     "read",

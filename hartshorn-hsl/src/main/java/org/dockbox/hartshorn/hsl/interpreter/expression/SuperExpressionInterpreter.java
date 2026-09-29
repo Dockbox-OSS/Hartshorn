@@ -46,7 +46,7 @@ public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, Su
         MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNDEFINED_PROPERTY, node.method().lexeme())
                 .at(node)
                 .build();

@@ -67,7 +67,7 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
                 return TypeUtils.unchecked(existingClass, ExternalClass.class);
             }
             else {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
                     .virtualPosition()
                     .build();

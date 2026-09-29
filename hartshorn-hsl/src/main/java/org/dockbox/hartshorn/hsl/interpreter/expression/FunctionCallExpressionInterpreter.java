@@ -59,7 +59,7 @@ public class FunctionCallExpressionInterpreter
         // Can't call non-callable nodes..
         Token openParenthesis = node.openParenthesis();
         if (!(callee instanceof CallableNode function)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(openParenthesis)
                 .message(DiagnosticMessage.NON_CALLABLE_CALLEE, callee)
                 .build();
@@ -77,7 +77,7 @@ public class FunctionCallExpressionInterpreter
             }
         }
         catch (ApplicationException e) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(openParenthesis)
                 .cause(e)
                 .build();

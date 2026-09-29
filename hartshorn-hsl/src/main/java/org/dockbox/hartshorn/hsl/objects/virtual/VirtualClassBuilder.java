@@ -121,7 +121,7 @@ public class VirtualClassBuilder {
      */
     public VirtualClassBuilder method(String name, VirtualFunction function) {
         if (this.methods.containsKey(name)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.DUPLICATE_X_DEFINITION,
                     "method",
                     this.name.lexeme(),
@@ -159,7 +159,7 @@ public class VirtualClassBuilder {
      */
     public VirtualClassBuilder field(String name, VirtualProperty property) {
         if (this.fields.containsKey(name)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.DUPLICATE_X_DEFINITION,
                     "field",
                     this.name.lexeme(),
@@ -195,7 +195,7 @@ public class VirtualClassBuilder {
 
     private void getter(VirtualFieldMemberFunction getter) {
         if (!getter.declaration().parameters().isEmpty()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme())
                 .at(getter.name())
                 .build();
@@ -204,7 +204,7 @@ public class VirtualClassBuilder {
             this.fields.get(getter.name().lexeme()).getter(getter);
             return;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR,
                 "getter",
                 getter.name().lexeme())
@@ -214,7 +214,7 @@ public class VirtualClassBuilder {
 
     private void setter(VirtualFieldMemberFunction setter) {
         if (setter.hasBody() && setter.declaration().parameters().size() != 1) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH,
                     setter.name().lexeme(),
                     setter.declaration().parameters().size()
@@ -225,7 +225,7 @@ public class VirtualClassBuilder {
             this.fields.get(setter.name().lexeme()).setter(setter);
             return;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR,
                 "setter",
                 setter.name().lexeme())

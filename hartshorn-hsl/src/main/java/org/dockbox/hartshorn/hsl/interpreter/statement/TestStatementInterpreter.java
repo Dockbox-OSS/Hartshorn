@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -47,10 +47,10 @@ public class TestStatementInterpreter implements StatementInterpreter<TestStatem
         }
         catch (Yield yield) {
             Object value = yield.value();
-            boolean truthy = InterpreterUtilities.isTruthy(value);
+            boolean truthy = CodeExecutionUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
                     .at(node)
                     .build();

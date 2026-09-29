@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link ForEachStatement} nodes.
@@ -34,7 +34,7 @@ public class ForEachStatementInterpreter implements StatementInterpreter<ForEach
         interpreter.withNextScope(() -> {
             Object collection = interpreter.evaluate(node.collection());
             Iterable<?> iterable =
-                InterpreterUtilities.checkIterable(node.collection(), collection);
+                CodeExecutionUtilities.checkIterable(node.collection(), collection);
             interpreter.visitingScope().define(node.selector().name().lexeme(), null);
 
             for (Object item : iterable) {

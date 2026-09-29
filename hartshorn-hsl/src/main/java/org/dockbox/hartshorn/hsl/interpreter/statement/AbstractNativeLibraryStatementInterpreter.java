@@ -62,7 +62,7 @@ public abstract class AbstractNativeLibraryStatementInterpreter {
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE,
                         moduleName,
                         functionName)

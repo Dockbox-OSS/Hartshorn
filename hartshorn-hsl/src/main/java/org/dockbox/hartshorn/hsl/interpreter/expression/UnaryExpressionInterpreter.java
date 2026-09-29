@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -48,32 +48,32 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
             newValue = switch (arithmeticTokenType) {
                 case MINUS -> {
                     Number rightNumber =
-                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield -rightNumber.doubleValue();
                 }
                 case PLUS_PLUS -> {
                     Number rightNumber =
-                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() + 1;
                 }
                 case MINUS_MINUS -> {
                     Number rightNumber =
-                        InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() - 1;
                 }
                 default -> null;
             };
         }
         else if (type == BaseTokenType.BANG) {
-            newValue = !InterpreterUtilities.isTruthy(right);
+            newValue = !CodeExecutionUtilities.isTruthy(right);
         }
         else if (type == BitwiseTokenType.COMPLEMENT) {
-            Number rightNumber = InterpreterUtilities.checkNumberOperand(node.operator(), right);
+            Number rightNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
             int value = rightNumber.intValue();
             newValue = (double) ~value;
         }
         else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
                 .at(node.operator())
                 .build();

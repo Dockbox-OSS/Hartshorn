@@ -43,7 +43,7 @@ public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetE
             return value;
         }
 
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.NON_PROPERTY_CONTAINER, object)
             .at(node)
             .build();

@@ -66,7 +66,7 @@ public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type,
         List<Object> arguments
     ) throws ApplicationException {
         if (instance != null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
                 .at(at)
                 .build();
@@ -82,14 +82,14 @@ public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type,
                 throw e;
             }
             catch (Throwable throwable) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
                     .at(at)
                     .cause(throwable)
                     .build();
             }
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.MISSING_CONSTRUCTOR_WITH_PARAMETERS,
                 this.type.name(),
                 arguments)

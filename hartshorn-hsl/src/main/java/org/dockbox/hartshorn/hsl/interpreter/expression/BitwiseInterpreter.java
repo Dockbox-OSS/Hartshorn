@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -62,14 +62,14 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
                     case COMPLEMENT -> ~iLeft;
                 };
             }
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
                 .at(operator)
                 .build();
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
             .at(operator)
             .build();
@@ -90,6 +90,6 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
             int iRight = nright.intValue();
             return iLeft ^ iRight;
         }
-        return InterpreterUtilities.isTruthy(left) ^ InterpreterUtilities.isTruthy(right);
+        return CodeExecutionUtilities.isTruthy(left) ^ CodeExecutionUtilities.isTruthy(right);
     }
 }

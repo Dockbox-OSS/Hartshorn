@@ -60,7 +60,7 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
         int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
                 .at(indexExpression)
                 .build();

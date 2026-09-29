@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -63,6 +66,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
+    private SymbolTable symbolTable;
+    private CompiledScript compiledScript;
+    private ExecutionMode executionMode = ExecutionMode.INTERPRETED;
 
     public ScriptContext(ScriptRuntime runtime, String source) {
         super(runtime.applicationContext());
@@ -299,6 +305,66 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     /**
+     * The symbol table used for identifier resolution and scope tracking.
+     *
+     * @return The symbol table.
+     */
+    public SymbolTable symbolTable() {
+        return this.symbolTable != null ? this.symbolTable : this.interpreter;
+    }
+
+    /**
+     * Sets the symbol table used for identifier resolution.
+     *
+     * @param symbolTable The symbol table.
+     * @return The current context.
+     */
+    public ScriptContext symbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+        return this;
+    }
+
+    /**
+     * The compiled script instance, if the script has been compiled.
+     *
+     * @return The compiled script.
+     */
+    public CompiledScript compiledScript() {
+        return this.compiledScript;
+    }
+
+    /**
+     * Sets the compiled script instance.
+     *
+     * @param compiledScript The compiled script.
+     * @return The current context.
+     */
+    public ScriptContext compiledScript(CompiledScript compiledScript) {
+        this.compiledScript = compiledScript;
+        return this;
+    }
+
+    /**
+     * The execution mode configured for this script context.
+     *
+     * @return The execution mode.
+     */
+    public ExecutionMode executionMode() {
+        return this.executionMode;
+    }
+
+    /**
+     * Sets the execution mode for this script context.
+     *
+     * @param executionMode The execution mode.
+     * @return The current context.
+     */
+    public ScriptContext executionMode(ExecutionMode executionMode) {
+        this.executionMode = executionMode;
+        return this;
+    }
+
+    /**
      * The runtime that is executing the script. This runtime provides the environment in which the
      * script is executed, including configuration options, external modules, and global variables.
      *
@@ -330,12 +396,18 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
 
     @Override
     public <T> Option<T> result(String id, Class<T> type) {
-        return Option.of(this.results.get(id)).ofType(type);
+        return this.result(id).ofType(type);
     }
 
     @Override
     public Option<?> result(String id) {
-        return Option.of(this.results.get(id));
+        if (this.results.containsKey(id)) {
+            return Option.of(this.results.get(id));
+        }
+        if (this.interpreter != null && this.interpreter.global() != null) {
+            return Option.of(this.interpreter.global().values().get(id));
+        }
+        return Option.empty();
     }
 
     @Override

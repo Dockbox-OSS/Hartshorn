@@ -190,7 +190,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         List<Object> arguments
     ) throws ApplicationException {
         if (instance != null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(at)
                 .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
                 .build();

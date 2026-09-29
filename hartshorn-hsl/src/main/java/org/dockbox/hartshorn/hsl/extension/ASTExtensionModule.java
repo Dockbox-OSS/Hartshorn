@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
@@ -82,4 +83,6 @@ public sealed interface ASTExtensionModule<T extends ASTNode & CustomASTNode<T, 
      * @return The interpreter that is responsible for interpreting the node.
      */
     ASTNodeInterpreter<R, T> interpreter();
+
+    ASTNodeCompiler<T> compiler();
 }

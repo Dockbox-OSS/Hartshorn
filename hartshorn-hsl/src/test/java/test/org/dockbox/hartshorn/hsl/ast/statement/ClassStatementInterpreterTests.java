@@ -174,7 +174,7 @@ class ClassStatementInterpreterTests {
                 capture(Person())
                 """)
             .withCaptureModule()
-            .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+            .customize(CodeCustomizer.of(Phase.EXECUTING, context -> {
                 context.runtime().imports(ExternalThing.class);
             }))
             .statementParser(new ClassStatementParser())

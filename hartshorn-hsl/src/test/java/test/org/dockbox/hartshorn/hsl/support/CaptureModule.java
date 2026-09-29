@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.hsl.support;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.extension.CustomStatement;
 import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.extension.StatementModule;
@@ -96,6 +97,12 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
             CaptureModule.this.capturedValue = interpreter.evaluate(node.expression());
             return null;
         };
+    }
+
+    @Override
+    public ASTNodeCompiler<CaptureStatement> compiler() {
+        // TODO: Implement compilation
+        return null;
     }
 
     public Object capturedValue() {

@@ -43,7 +43,7 @@ public class ReturnStatementInterpreter implements StatementInterpreter<ReturnSt
             case RETURN -> throw new Return(value);
             case YIELD -> throw new Yield(value);
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNSUPPORTED_RETURN_TYPE, node.returnType())
             .at(node)
             .build();
