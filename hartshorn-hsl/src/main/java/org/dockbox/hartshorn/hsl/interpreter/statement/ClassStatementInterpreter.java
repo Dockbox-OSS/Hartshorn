@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
@@ -32,17 +29,21 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Interpreter for {@link ClassStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class ClassStatementInterpreter implements StatementInterpreter<ClassStatement> {
 
     private final Set<ClassMemberInterpreter<?>> memberInterpreters =
-            Collections.synchronizedSet(new LinkedHashSet<>());
+        Collections.synchronizedSet(new LinkedHashSet<>());
 
     public ClassStatementInterpreter() {
         this.memberInterpreter(new ConstructorMemberInterpreter());
@@ -56,7 +57,9 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
      * @param memberInterpreter the member interpreter to register
      * @return this interpreter, for chaining
      */
-    public ClassStatementInterpreter memberInterpreter(ClassMemberInterpreter<?> memberInterpreter) {
+    public ClassStatementInterpreter memberInterpreter(
+        ClassMemberInterpreter<?> memberInterpreter
+    ) {
         if (memberInterpreter != null) {
             this.memberInterpreters.add(memberInterpreter);
         }
@@ -80,33 +83,41 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
         if (superClassExpression != null) {
             superClass = interpreter.evaluate(superClassExpression);
             if (!(superClass instanceof ClassReference classReference)) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
-                        .at(superClassExpression)
-                        .build();
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
+                    .at(superClassExpression)
+                    .build();
             }
             if (classReference.isFinal()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
-                        .at(superClassExpression)
-                        .build();
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
+                    .at(superClassExpression)
+                    .build();
             }
         }
 
         interpreter.visitingScope().define(node.name().lexeme(), null);
         ClassReference superClassReference = (ClassReference) superClass;
-        interpreter.withNextScope(() -> this.visitClassScope(node, interpreter, superClassReference));
+        interpreter.withNextScope(() -> this.visitClassScope(node,
+            interpreter,
+            superClassReference));
 
         return null;
     }
 
-    private void visitClassScope(ClassStatement node, Interpreter interpreter, ClassReference superClassReference) {
+    private void visitClassScope(
+        ClassStatement node,
+        Interpreter interpreter,
+        ClassReference superClassReference
+    ) {
         if (node.superClass() != null) {
             interpreter.enterScope(new VariableScope(interpreter.visitingScope()));
-            interpreter.visitingScope().define(ObjectTokenType.SUPER.representation(), superClassReference);
+            interpreter.visitingScope()
+                .define(ObjectTokenType.SUPER.representation(), superClassReference);
         }
 
-        VirtualClassBuilder builder = new VirtualClassBuilder(node.name(), interpreter.visitingScope())
+        VirtualClassBuilder builder =
+            new VirtualClassBuilder(node.name(), interpreter.visitingScope())
                 .superClass(superClassReference)
                 .dynamic(node.isDynamic())
                 .isFinal(node.isFinal());
@@ -126,17 +137,22 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
 
     @SuppressWarnings("unchecked")
     private <T extends ClassMemberStatement> void interpretMember(
-            T member, Interpreter interpreter, VirtualClassBuilder builder) {
+        T member,
+        Interpreter interpreter,
+        VirtualClassBuilder builder
+    ) {
         for (ClassMemberInterpreter<?> memberInterpreter : this.memberInterpreters) {
             if (memberInterpreter.types().contains(member.getClass())) {
-                ((ClassMemberInterpreter<T>) memberInterpreter).interpret(member, interpreter, builder);
+                ((ClassMemberInterpreter<T>) memberInterpreter)
+                    .interpret(member, interpreter, builder);
                 return;
             }
         }
         for (ClassMemberInterpreter<?> memberInterpreter : this.memberInterpreters) {
             for (Class<?> type : memberInterpreter.types()) {
                 if (type.isInstance(member)) {
-                    ((ClassMemberInterpreter<T>) memberInterpreter).interpret(member, interpreter, builder);
+                    ((ClassMemberInterpreter<T>) memberInterpreter)
+                        .interpret(member, interpreter, builder);
                     return;
                 }
             }
@@ -145,7 +161,8 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
             for (ClassMemberInterpreter<?> memberInterpreter :
                     interpreter.state().memberInterpreters()) {
                 if (memberInterpreter.types().contains(member.getClass())) {
-                    ((ClassMemberInterpreter<T>) memberInterpreter).interpret(member, interpreter, builder);
+                    ((ClassMemberInterpreter<T>) memberInterpreter)
+                        .interpret(member, interpreter, builder);
                     return;
                 }
             }
@@ -153,7 +170,8 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
                     interpreter.state().memberInterpreters()) {
                 for (Class<?> type : memberInterpreter.types()) {
                     if (type.isInstance(member)) {
-                        ((ClassMemberInterpreter<T>) memberInterpreter).interpret(member, interpreter, builder);
+                        ((ClassMemberInterpreter<T>) memberInterpreter)
+                            .interpret(member, interpreter, builder);
                         return;
                     }
                 }

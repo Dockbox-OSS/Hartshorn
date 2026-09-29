@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
@@ -26,15 +24,18 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Tuple;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+
 /**
- * Utilities for interpreters, providing common functionality that should remain consistent across
- * different implementations of the interpreter.
+ * Utilities for HSL executions, providing common functionality that should remain consistent across
+ * different implementations and execution strategies.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
-public final class InterpreterUtilities {
+public final class CodeExecutionUtilities {
 
     /**
      * Determines the "truthiness" of an object according to HSL's rules. If a value is null or
@@ -45,7 +46,7 @@ public final class InterpreterUtilities {
      * @return true if the object is "truthy", false if it is "falsy"
      */
     public static boolean isTruthy(Object object) {
-        object = InterpreterUtilities.unwrap(object);
+        object = CodeExecutionUtilities.unwrap(object);
         if (object == null) {
             return false;
         }
@@ -110,10 +111,10 @@ public final class InterpreterUtilities {
         if (operand instanceof Number number) {
             return number;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
-                .at(operator)
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
+            .at(operator)
+            .build();
     }
 
     /**
@@ -128,14 +129,18 @@ public final class InterpreterUtilities {
      *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */
-    public static Tuple<Number, Number> checkNumberOperands(Token operator, Object left, Object right) {
+    public static Tuple<Number, Number> checkNumberOperands(
+        Token operator,
+        Object left,
+        Object right
+    ) {
         if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
             return new Tuple<>(leftNumber, rightNumber);
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
-                .at(operator)
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
+            .at(operator)
+            .build();
     }
 
     /**
@@ -147,17 +152,19 @@ public final class InterpreterUtilities {
      * @return the collection cast to an {@link Iterable} if it is valid
      */
     public static Iterable<?> checkIterable(ASTNode at, Object collection) {
-        collection = InterpreterUtilities.unwrap(collection);
+        collection = CodeExecutionUtilities.unwrap(collection);
 
         if (collection instanceof Iterable<?> collectionIterable) {
             return collectionIterable;
-        } else if (collection != null && collection.getClass().isArray()) {
+        }
+        else if (collection != null && collection.getClass().isArray()) {
             return Arrays.asList((Object[]) collection);
-        } else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
-                    .at(at)
-                    .build();
+        }
+        else {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                .at(at)
+                .build();
         }
     }
 }

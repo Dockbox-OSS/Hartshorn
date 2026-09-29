@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
@@ -31,55 +28,17 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  *
  * @see ExecutableScript
  * @see ValidateExpressionRuntime
+ * @see CompiledExpressionScript
+ * @see InterpretedExpressionScript
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public class ExpressionScript extends ExecutableScript {
+public abstract class ExpressionScript extends ExecutableScript {
 
     protected ExpressionScript(ApplicationContext context, String source) {
         super(context, source);
-    }
-
-    /**
-     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
-     *
-     * @param context the application context
-     * @param source the source of the script
-     *
-     * @return the created script
-     */
-    public static ExpressionScript of(ApplicationContext context, String source) {
-        return new ExpressionScript(context, source);
-    }
-
-    /**
-     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
-     *
-     * @param context the application context
-     * @param path the path to the source of the script
-     *
-     * @return the created script
-     *
-     * @throws IOException if the source cannot be read
-     */
-    public static ExpressionScript of(ApplicationContext context, Path path) throws IOException {
-        return of(context, sourceFromPath(path));
-    }
-
-    /**
-     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
-     *
-     * @param context the application context
-     * @param file the file containing the source of the script
-     *
-     * @return the created script
-     *
-     * @throws IOException if the source cannot be read
-     */
-    public static ExpressionScript of(ApplicationContext context, File file) throws IOException {
-        return of(context, file.toPath());
     }
 
     /**
@@ -89,6 +48,7 @@ public class ExpressionScript extends ExecutableScript {
      */
     public boolean valid() {
         ScriptContext context = this.evaluate();
+
         return valid(context);
     }
 

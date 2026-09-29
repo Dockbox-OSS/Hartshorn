@@ -49,11 +49,14 @@ public enum Phase {
      */
     SEMANTIC_ANALYSIS,
     /**
-     * Performed by the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter}, to execute the
-     * {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} output of the
-     * {@link org.dockbox.hartshorn.hsl.parser.TokenParser}. This is the phase in which the script
-     * gets executed, and results are generated. This is the fourth and last step of the script
-     * evaluation process.
+     * Performed to compile the script AST into a loadable and executable
+     * {@link org.dockbox.hartshorn.hsl.CompiledScript}.
      */
-    INTERPRETING,
+    COMPILING,
+    /**
+     * Performed by the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter} (in case of
+     * {@link ExecutionMode#INTERPRETED}) or the JVM (in case of {@link ExecutionMode#COMPILED}). This is the phase in
+     * which the script gets executed, and results are generated.
+     */
+    EXECUTING,
 }

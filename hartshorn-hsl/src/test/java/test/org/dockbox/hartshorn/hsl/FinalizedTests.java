@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
-import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -29,6 +27,8 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 class FinalizedTests {
@@ -38,21 +38,19 @@ class FinalizedTests {
 
     @Test
     void cannotExtendFinalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final class User { }
             class Admin extends User { }
             """);
-        ScriptAssertions.assertEvaluationFails(
-                script,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
-                        .argument("User")
-                        .build());
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
+            .argument("User")
+            .build());
     }
 
     @Test
     void canExtendNonFinalExternalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             class Admin extends User { }
             """);
         script.runtime().imports(User.class);
@@ -61,84 +59,75 @@ class FinalizedTests {
 
     @Test
     void cannotExtendFinalExternalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             class Admin extends FinalUser { }
             """);
         script.runtime().imports(FinalUser.class);
-        ScriptAssertions.assertEvaluationFails(
-                script,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
-                        .argument("FinalUser")
-                        .build());
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
+            .argument("FinalUser")
+            .build());
     }
 
     @Test
     void cannotReassignFinalVariables() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final var x = 1;
             x = 2;
             """);
-        ScriptAssertions.assertEvaluationFails(
-                script,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
-                        .argument("variable")
-                        .argument("x")
-                        .build());
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("variable")
+            .argument("x")
+            .build());
     }
 
     @Test
     void cannotReassignFinalFunctions() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final function x() { }
             function x() { }
             """);
-        ScriptAssertions.assertEvaluationFails(
-                script,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
-                        .argument("function")
-                        .argument("x")
-                        .build());
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("function")
+            .argument("x")
+            .build());
     }
 
     @Test
     void cannotReassignFinalClasses() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final class User { }
             class User { }
             """);
-        ScriptAssertions.assertEvaluationFails(
-                script,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
-                        .argument("class")
-                        .argument("User")
-                        .build());
+        ScriptAssertions.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("class")
+            .argument("User")
+            .build());
     }
 
     @Test
     void cannotReassignFinalNativeFunctions() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final native function a:x();
             function x() { }
             """);
         // Do not evaluate, as the native function does not exist in the current environment.
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
-                .isThrownBy(script::resolve)
-                .actual();
-        ScriptAssertions.assertEvaluationError(
-                error,
-                FormattedDiagnostic.builder()
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
-                        .argument("native function")
-                        .argument("x")
-                        .build());
+        ScriptEvaluationError error =
+            assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::resolve).actual();
+        ScriptAssertions.assertEvaluationError(error, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("native function")
+            .argument("x")
+            .build());
         ScriptAssertions.assertEvaluationFailedAtPosition(error, 2, 9);
     }
 
-    public static class User {}
+    public static class User {
+    }
 
-    public static final class FinalUser {}
+    public static final class FinalUser {
+    }
 }

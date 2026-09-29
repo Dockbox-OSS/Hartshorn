@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link ElvisExpression} nodes.
@@ -33,7 +33,7 @@ public class ElvisExpressionInterpreter implements ASTNodeInterpreter<Object, El
     @Override
     public Object interpret(ElvisExpression node, Interpreter interpreter) {
         Object condition = interpreter.evaluate(node.condition());
-        if (InterpreterUtilities.isTruthy(condition)) {
+        if (CodeExecutionUtilities.isTruthy(condition)) {
             return condition;
         }
         return interpreter.evaluate(node.rightExpression());

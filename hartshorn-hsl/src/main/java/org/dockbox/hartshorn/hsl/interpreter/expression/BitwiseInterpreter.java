@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
  * @param <T> the type of AST node this interpreter can handle
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
@@ -62,17 +62,17 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
                     case COMPLEMENT -> ~iLeft;
                 };
             }
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
-                    .at(operator)
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
+                .at(operator)
+                .build();
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
-                .at(operator)
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
+            .at(operator)
+            .build();
     }
 
     /**
@@ -90,6 +90,6 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
             int iRight = nright.intValue();
             return iLeft ^ iRight;
         }
-        return InterpreterUtilities.isTruthy(left) ^ InterpreterUtilities.isTruthy(right);
+        return CodeExecutionUtilities.isTruthy(left) ^ CodeExecutionUtilities.isTruthy(right);
     }
 }

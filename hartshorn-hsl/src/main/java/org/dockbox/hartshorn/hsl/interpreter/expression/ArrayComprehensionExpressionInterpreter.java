@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link ArrayComprehensionExpression}s
@@ -38,7 +38,7 @@ public class ArrayComprehensionExpressionInterpreter
     public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
         Object collection = interpreter.evaluate(node.collection());
-        Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
+        Iterable<?> iterable = CodeExecutionUtilities.checkIterable(node.collection(), collection);
         interpreter.withNextScope(() -> {
             interpreter.visitingScope().define(node.selector().lexeme(), null);
             interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
@@ -53,7 +53,7 @@ public class ArrayComprehensionExpressionInterpreter
 
             if (node.condition() != null) {
                 Object condition = interpreter.evaluate(node.condition());
-                if (!InterpreterUtilities.isTruthy(condition)) {
+                if (!CodeExecutionUtilities.isTruthy(condition)) {
                     if (node.elseExpression() != null) {
                         Object elseValue = interpreter.evaluate(node.elseExpression());
                         values.add(elseValue);

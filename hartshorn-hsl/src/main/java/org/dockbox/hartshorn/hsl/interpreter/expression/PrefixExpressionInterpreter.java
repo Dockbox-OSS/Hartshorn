@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -26,6 +24,9 @@ import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interpreter for {@link PrefixExpression} nodes.
@@ -38,21 +39,20 @@ public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, P
 
     @Override
     public Object interpret(PrefixExpression node, Interpreter interpreter) {
-        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.prefixOperatorName());
+        CallableNode value =
+            (CallableNode) interpreter.visitingScope().get(node.prefixOperatorName());
         List<Object> args = new ArrayList<>();
         args.add(interpreter.evaluate(node.rightExpression()));
         try {
             return value.call(node.prefixOperatorName(), interpreter, null, args);
-        } catch (ApplicationException e) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(
-                            DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
-                            "prefix",
-                            node.prefixOperatorName().lexeme(),
-                            e.getMessage())
-                    .cause(e)
-                    .at(node)
-                    .build();
+        }
+        catch (ApplicationException e) {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
+                    "prefix", node.prefixOperatorName().lexeme(), e.getMessage())
+                .cause(e)
+                .at(node)
+                .build();
         }
     }
 }

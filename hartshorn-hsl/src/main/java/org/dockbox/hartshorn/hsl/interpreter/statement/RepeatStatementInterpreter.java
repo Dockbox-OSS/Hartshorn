@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,23 +38,24 @@ public class RepeatStatementInterpreter implements StatementInterpreter<RepeatSt
             Object value = interpreter.evaluate(node.value());
 
             if (!(value instanceof Number number)) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
-                        .at(node.value())
-                        .build();
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
+                    .at(node.value())
+                    .build();
             }
             if (number.doubleValue() < 0) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
-                        .at(node.value())
-                        .build();
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
+                    .at(node.value())
+                    .build();
             }
 
             int counter = number.intValue();
             for (int i = 0; i < counter; i++) {
                 try {
                     interpreter.execute(node.body());
-                } catch (FlowControlKeyword keyword) {
+                }
+                catch (FlowControlKeyword keyword) {
                     if (keyword.moveType() == FlowControlKeyword.MoveType.BREAK) {
                         break;
                     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link ForEachStatement} nodes.
@@ -33,7 +33,8 @@ public class ForEachStatementInterpreter implements StatementInterpreter<ForEach
     public Void interpret(ForEachStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             Object collection = interpreter.evaluate(node.collection());
-            Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
+            Iterable<?> iterable =
+                CodeExecutionUtilities.checkIterable(node.collection(), collection);
             interpreter.visitingScope().define(node.selector().name().lexeme(), null);
 
             for (Object item : iterable) {

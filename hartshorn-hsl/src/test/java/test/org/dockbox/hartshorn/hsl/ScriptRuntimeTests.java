@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
@@ -47,6 +47,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ScriptRuntimeTests {
@@ -57,29 +59,37 @@ public class ScriptRuntimeTests {
     @SuppressWarnings("StreamResourceLeak")
     public static Stream<Arguments> scripts() throws IOException {
         Path resources = Paths.get("src", "test", "resources");
-        BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) ->
-                attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");
+        BiPredicate<Path, BasicFileAttributes> filter =
+            (path, attributes) -> attributes.isRegularFile() && path.getFileName()
+                .toString()
+                .endsWith(".hsl");
         return Files.find(resources, 5, filter).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
-        return Arrays.stream(Phase.values()).map(Arguments::of);
+        return Stream.of(
+            Phase.TOKENIZING,
+            Phase.PARSING,
+            Phase.SEMANTIC_ANALYSIS,
+            Phase.EXECUTING
+        ).map(Arguments::of);
     }
 
     public static Stream<Arguments> bitwise() {
         return Stream.of(
-                Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
-                Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
-                Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
-                Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
-                Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
-                Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7));
+            Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
+            Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
+            Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
+            Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
+            Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
+            Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
+        );
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
     void predefinedScript(Path path) throws Exception {
-        this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
+        this.assertNoErrorsReported(InterpretedScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
@@ -102,7 +112,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void expressionWithGlobal() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "a == 12");
+        InterpretedExpressionScript expression = InterpretedExpressionScript.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
@@ -110,7 +120,7 @@ public class ScriptRuntimeTests {
     @Test
     void expressionWithGlobalFunctionAccess() {
         String expression = "context != null && context.environment() != null";
-        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        InterpretedExpressionScript script = InterpretedExpressionScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertValid(script);
     }
@@ -118,17 +128,18 @@ public class ScriptRuntimeTests {
     @Test
     void scriptWithGlobalFunctionAccess() {
         String expression = "context.environment().configuration().isBatchMode()";
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);
     }
 
     @Test
     void expressionWithNativeAccess() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "isClosed() == false");
-        expression
-                .runtime()
-                .module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
+        InterpretedExpressionScript expression =
+            InterpretedExpressionScript.of(this.applicationContext, "isClosed() == false");
+        expression.runtime()
+            .module("application",
+                new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
 
@@ -136,13 +147,13 @@ public class ScriptRuntimeTests {
     void multilineWithComments() {
         String expression = """
             print("Hello world!");
-
+            
             # This is a comment
             print("Hello world 2!");
-
+            
             // This is also a comment, print("Hello world 3!");
             print("Hello world 4!");
-
+            
             /* This is a multi-line comment
             see?!
             */
@@ -177,13 +188,16 @@ public class ScriptRuntimeTests {
         ScriptContext context = this.assertNoErrorsReported(expression);
 
         Map<String, Object> results = context.interpreter().global().values();
-        assertThat(results).containsEntry("a", 12.0d).containsEntry("b", 13.0d).containsEntry("c", 25.0d);
+        assertThat(results)
+                .containsEntry("a", 12.0d)
+                .containsEntry("b", 13.0d)
+                .containsEntry("c", 25.0d);
     }
 
     @ParameterizedTest
     @MethodSource("phases")
     void phaseCustomizers(Phase phase) {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, "1 == 1");
 
         AtomicBoolean called = new AtomicBoolean(false);
         CodeCustomizer customizer = CodeCustomizer.of(phase, context -> called.set(true));
@@ -198,7 +212,9 @@ public class ScriptRuntimeTests {
         String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
         ScriptContext context = this.assertNoErrorsReported(expression);
         Object result = context.interpreter().global().values().get("result");
-        assertThat(result).isNotNull().isEqualTo(expected);
+        assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -215,7 +231,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void interpreterCanBeReused() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             var x = 1;
             test ("Variable has not been modified") {
                 yield x == 1;
@@ -227,7 +243,7 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertValid(String expression) {
-        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        InterpretedExpressionScript script = InterpretedExpressionScript.of(this.applicationContext, expression);
         return this.assertValid(script);
     }
 
@@ -238,7 +254,7 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertNoErrorsReported(String expression) {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, expression);
         return this.assertNoErrorsReported(script);
     }
 

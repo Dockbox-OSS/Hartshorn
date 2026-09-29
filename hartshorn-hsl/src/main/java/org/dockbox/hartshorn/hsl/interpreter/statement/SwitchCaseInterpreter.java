@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,17 @@ public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
         interpreter.withNextScope(() -> {
             try {
                 interpreter.execute(node.body());
-            } catch (FlowControlKeyword keyword) {
+            }
+            catch (FlowControlKeyword keyword) {
                 if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .message(
-                                    DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
-                                    keyword.moveType().name().toLowerCase(),
-                                    "switch case")
-                            .at(keyword.origin())
-                            .build();
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                        .message(
+                            DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
+                            keyword.moveType().name().toLowerCase(),
+                            "switch case"
+                        )
+                        .at(keyword.origin())
+                        .build();
                 }
             }
         });

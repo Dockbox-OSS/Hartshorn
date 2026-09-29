@@ -16,15 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interpreters are responsible for evaluating expressions and executing statements. They maintain
@@ -39,10 +43,10 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  * Each interpreter maintains its own state, including variable scopes and function call stacks.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
-public interface Interpreter {
+public interface Interpreter extends SymbolTable {
 
     /**
      * Evaluates the given expression and returns the result. The type of the result depends on the
@@ -104,6 +108,11 @@ public interface Interpreter {
      * @param depth the depth in the variable scope hierarchy where the expression is defined
      */
     void resolve(Expression expression, int depth);
+
+    @Override
+    default Map<String, NativeModule> externalModules() {
+        return this.state().externalModules();
+    }
 
     /**
      * Returns the current variable scope being visited by the interpreter. This scope represents

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.extension;
 
-import static org.assertj.core.api.Assertions.fail;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
 import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -28,12 +26,16 @@ import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.assertj.core.api.Assertions.fail;
+
 public class AtNameModule implements ExpressionModule<AtNameExpression> {
 
     public static final TokenType TOKEN_TYPE = SimpleTokenType.builder()
-            .characters(SimpleTokenCharacter.of('@', true))
-            .tokenName("AT")
-            .build();
+        .characters(SimpleTokenCharacter.of('@', true))
+        .tokenName("AT")
+        .build();
 
     private final AtomicBoolean resolverAccessed = new AtomicBoolean(false);
 
@@ -54,6 +56,11 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
     @Override
     public ASTNodeInterpreter<Object, AtNameExpression> interpreter() {
         return (node, adapter) -> node.identifier().lexeme();
+    }
+
+    @Override
+    public ASTNodeCompiler<AtNameExpression> compiler() {
+        throw new UnsupportedOperationException("AtNameExpression compilation not implemented. Out of scope.");
     }
 
     @Override

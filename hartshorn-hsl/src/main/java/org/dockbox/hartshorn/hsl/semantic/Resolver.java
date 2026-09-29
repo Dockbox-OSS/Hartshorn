@@ -232,10 +232,23 @@ public interface Resolver {
     Map<String, String> peekFinal();
 
     /**
-     * Returns the interpreter that is used by this resolver. The interpreter is used by the
-     * resolver to create- and pre-populate runtime scopes with all built-in functions and classes.
+     * Returns the symbol table used by this resolver to resolve expressions and modules.
      *
-     * @return The interpreter that is used by this resolver
+     * @return The symbol table used by this resolver
      */
-    Interpreter interpreter();
+    SymbolTable symbolTable();
+
+    /**
+     * Returns the interpreter that is used by this resolver, if one is present.
+     *
+     * @return The interpreter that is used by this resolver, or null if using a standalone symbol table
+     * @deprecated Use {@link #symbolTable()} instead.
+     */
+    @Deprecated(since = "0.7.0")
+    default Interpreter interpreter() {
+        if (this.symbolTable() instanceof Interpreter interpreter) {
+            return interpreter;
+        }
+        return null;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.List;
-import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
@@ -26,6 +24,9 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a function that is ambiguous due to multiple libraries with the same name being
@@ -42,29 +43,36 @@ import org.dockbox.hartshorn.util.ApplicationException;
 public record AmbiguousNativeLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
-            throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    )
+        throws ApplicationException {
 
         List<NativeLibrary> applicableLibraries = this.libraries.stream()
-                .filter(library -> library.declaration().params().size() == arguments.size())
-                .filter(library -> {
-                    Class<?>[] parameterTypes =
-                            arguments.stream().map(Object::getClass).toArray(Class[]::new);
-                    return library.declaration().method().parameters().matches(parameterTypes);
-                })
-                .toList();
+            .filter(library -> library.declaration().params().size() == arguments.size())
+            .filter(library -> {
+                Class<?>[] parameterTypes =
+                    arguments.stream().map(Object::getClass).toArray(Class[]::new);
+                return library.declaration().method().parameters().matches(parameterTypes);
+            })
+            .toList();
 
         if (applicableLibraries.isEmpty()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
-                    .at(at)
-                    .build();
-        } else if (applicableLibraries.size() > 1) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
-                    .at(at)
-                    .build();
-        } else {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
+                .at(at)
+                .build();
+        }
+        else if (applicableLibraries.size() > 1) {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
+                .at(at)
+                .build();
+        }
+        else {
             CallableNode callableNode = applicableLibraries.getFirst();
             return callableNode.call(at, interpreter, instance, arguments);
         }

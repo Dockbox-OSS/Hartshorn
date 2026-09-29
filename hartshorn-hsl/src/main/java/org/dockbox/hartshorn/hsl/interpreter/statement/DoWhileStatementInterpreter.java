@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link DoWhileStatement} nodes.
  *
  * @since 0.5.0
- *
+ * 
  * @author Guus Lieben
  */
 public class DoWhileStatementInterpreter implements StatementInterpreter<DoWhileStatement> {
@@ -36,12 +36,14 @@ public class DoWhileStatementInterpreter implements StatementInterpreter<DoWhile
             do {
                 try {
                     interpreter.execute(node.body());
-                } catch (FlowControlKeyword keyword) {
+                }
+                catch (FlowControlKeyword keyword) {
                     if (keyword.moveType() == FlowControlKeyword.MoveType.BREAK) {
                         break;
                     }
                 }
-            } while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition())));
+            }
+            while (CodeExecutionUtilities.isTruthy(interpreter.evaluate(node.condition())));
         });
         return null;
     }

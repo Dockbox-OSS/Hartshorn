@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -36,6 +34,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods are
  * pre-filtered based on their access-level. The methods are provided as
@@ -52,7 +53,7 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  * instance is {@code null}, the method must be static.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public abstract class AbstractNativeModule implements NativeModule {
@@ -75,10 +76,14 @@ public abstract class AbstractNativeModule implements NativeModule {
     protected abstract Object instance();
 
     @Override
-    public Object call(Token at, Interpreter interpreter, NativeFunctionStatement function, List<Object> arguments)
-            throws NativeExecutionException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        NativeFunctionStatement function,
+        List<Object> arguments
+    ) throws NativeExecutionException {
         TypeView<?> typeView =
-                this.applicationContext().environment().introspector().introspect(this.moduleClass());
+            this.applicationContext().environment().introspector().introspect(this.moduleClass());
         TypeView<Object> type = TypeUtils.unchecked(typeView, TypeView.class);
         MethodView<Object, ?> method;
         if (function.method() == null) {
@@ -86,20 +91,21 @@ public abstract class AbstractNativeModule implements NativeModule {
             if (arguments.isEmpty()) {
                 Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
                 if (methodViewOption.absent()) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .at(at)
-                            .message(
-                                    DiagnosticMessage.MODULE_X_CANNOT_FIND_Y_Z,
-                                    this.moduleClass().getSimpleName(),
-                                    "function",
-                                    functionName)
-                            .build();
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                        .at(at)
+                        .message(DiagnosticMessage.MODULE_X_CANNOT_FIND_Y_Z,
+                            this.moduleClass().getSimpleName(),
+                            "function",
+                            functionName)
+                        .build();
                 }
                 method = methodViewOption.get();
-            } else {
+            }
+            else {
                 method = ExecutableLookup.method(at, type, functionName, arguments);
             }
-        } else {
+        }
+        else {
             method = TypeUtils.unchecked(function.method(), MethodView.class);
         }
 
@@ -115,41 +121,47 @@ public abstract class AbstractNativeModule implements NativeModule {
                 Object instance = this.instance();
                 Object[] argumentsArray = arguments.toArray(Object[]::new);
                 Object result = (instance == null
-                                ? method.invokeStatic(argumentsArray)
-                                : method.invoke(instance, argumentsArray))
-                        .orNull();
+                    ? method.invokeStatic(argumentsArray)
+                    : method.invoke(instance, argumentsArray)
+                ).orNull();
                 ExternalClass<?> externalClass =
-                        interpreter.state().externalClassRegistry().defineClass(method.returnType());
-                return new ExternalInstance(result, TypeUtils.unchecked(externalClass, ExternalClass.class));
-            } catch (Throwable e) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(at)
-                        .message(
-                                DiagnosticMessage.ERROR_WHILE_INVOKING_NATIVE_METHOD,
-                                function.name().lexeme(),
-                                e.getMessage())
-                        .cause(e)
-                        .build();
+                    interpreter.state().externalClassRegistry().defineClass(method.returnType());
+                return new ExternalInstance(result,
+                    TypeUtils.unchecked(externalClass, ExternalClass.class));
             }
-        } else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            catch (Throwable e) {
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(at)
-                    .message(
-                            DiagnosticMessage.UNSUPPORTED_MODULE_FUNCTION,
-                            function.name().lexeme(),
-                            this.moduleClass().getSimpleName())
+                    .message(DiagnosticMessage.ERROR_WHILE_INVOKING_NATIVE_METHOD,
+                        function.name().lexeme(),
+                        e.getMessage())
+                    .cause(e)
                     .build();
+            }
+        }
+        else {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .at(at)
+                .message(DiagnosticMessage.UNSUPPORTED_MODULE_FUNCTION,
+                    function.name().lexeme(),
+                    this.moduleClass().getSimpleName())
+                .build();
         }
     }
 
     @Override
-    public List<NativeFunctionStatement> supportedFunctions(Token moduleName, Interpreter interpreter) {
+    public List<NativeFunctionStatement> supportedFunctions(
+        Token moduleName,
+        Interpreter interpreter
+    ) {
         if (this.supportedFunctions == null) {
             List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
             TokenType identifier = interpreter.tokenRegistry().literals().identifier();
-            TypeView<?> typeView =
-                    this.applicationContext().environment().introspector().introspect(this.moduleClass());
+            TypeView<?> typeView = this.applicationContext()
+                .environment()
+                .introspector()
+                .introspect(this.moduleClass());
             for (MethodView<?, ?> method : typeView.methods().all()) {
                 if (!method.modifiers().isPublic()) {
                     continue;
@@ -158,18 +170,20 @@ public abstract class AbstractNativeModule implements NativeModule {
                     continue;
                 }
 
-                Token token = Token.of(identifier, method.name()).virtual().build();
+                Token token = Token.of(identifier, method.name())
+                    .virtual()
+                    .build();
 
                 List<Parameter> parameters = new ArrayList<>();
                 for (ParameterView<?> parameter : method.parameters().all()) {
                     Token parameterName = Token.of(identifier)
-                            .lexeme(parameter.name())
-                            .virtual()
-                            .build();
+                        .lexeme(parameter.name())
+                        .virtual()
+                        .build();
                     parameters.add(new Parameter(parameterName));
                 }
                 NativeFunctionStatement functionStatement =
-                        new NativeFunctionStatement(token, moduleName, method, parameters);
+                    new NativeFunctionStatement(token, moduleName, method, parameters);
                 functionStatements.add(functionStatement);
             }
             this.supportedFunctions = functionStatements;

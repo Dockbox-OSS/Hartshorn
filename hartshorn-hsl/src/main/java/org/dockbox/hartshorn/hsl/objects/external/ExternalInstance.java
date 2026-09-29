@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -34,6 +33,8 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL runtime.
  * This instance can be used to access properties of the instance. The instance needs to be made
@@ -41,7 +42,7 @@ import org.jspecify.annotations.Nullable;
  * {@link ScriptRuntime#global(Map)}, where the instance is made available globally to the runtime.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ExternalInstance implements ExternalObjectReference {
@@ -51,12 +52,11 @@ public class ExternalInstance implements ExternalObjectReference {
 
     public <T> ExternalInstance(T instance, ExternalClass<T> type) {
         if (instance != null && !type.type().isInstance(instance)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(
-                            DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X,
-                            type.name(),
-                            instance.getClass().getName())
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X,
+                    type.name(),
+                    instance.getClass().getName())
+                .build();
         }
         this.instance = instance;
         this.type = type;
@@ -72,25 +72,32 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
-        Option<FieldView<?, ?>> field =
-                this.type.type().fields().named(name.lexeme()).map(f -> TypeUtils.unchecked(f, FieldView.class));
+    public void set(
+        final Interpreter interpreter,
+        final Token name,
+        final Object value,
+        VariableScope fromScope
+    ) {
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+            .named(name.lexeme())
+            .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 field.get().set(this.instance(), value);
-            } catch (Throwable throwable) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(
-                                DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
-                                StandardPropertyAccessVerifier.WRITE_ACTION,
-                                name.lexeme(),
-                                this.type().name(),
-                                throwable.getMessage())
-                        .cause(throwable)
-                        .build();
             }
-        } else {
+            catch (Throwable throwable) {
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .at(name)
+                    .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                        StandardPropertyAccessVerifier.WRITE_ACTION,
+                        name.lexeme(),
+                        this.type().name(),
+                        throwable.getMessage())
+                    .cause(throwable)
+                    .build();
+            }
+        }
+        else {
             throw this.propertyDoesNotExist(name);
         }
     }
@@ -98,52 +105,58 @@ public class ExternalInstance implements ExternalObjectReference {
     @Override
     public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
         Object[] methods = this.type.type().methods().all().stream()
-                .filter(method -> method.name().equals(name.lexeme()))
-                .toArray();
+            .filter(method -> method.name().equals(name.lexeme()))
+            .toArray();
 
-        if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(name)
-                    .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_CALL, name.lexeme())
-                    .build();
+        if (methods.length > 1 && !interpreter.executionOptions()
+            .permitAmbiguousExternalFunctions()) {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .at(name)
+                .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_CALL, name.lexeme())
+                .build();
         }
 
         if (methods.length > 0) {
             return new ExternalFunction(this.type, name.lexeme());
         }
 
-        Option<FieldView<?, ?>> field =
-                this.type.type().fields().named(name.lexeme()).map(f -> TypeUtils.unchecked(f, FieldView.class));
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+            .named(name.lexeme())
+            .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 return field.get().get(this.instance());
-            } catch (Throwable throwable) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(
-                                DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
-                                StandardPropertyAccessVerifier.READ_ACTION,
-                                name.lexeme(),
-                                this.type().name(),
-                                throwable.getMessage())
-                        .cause(throwable)
-                        .build();
             }
-        } else {
+            catch (Throwable throwable) {
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                    .at(name)
+                    .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                        StandardPropertyAccessVerifier.READ_ACTION,
+                        name.lexeme(),
+                        this.type().name(),
+                        throwable.getMessage()
+                    )
+                    .cause(throwable)
+                    .build();
+            }
+        }
+        else {
             throw this.propertyDoesNotExist(name);
         }
     }
 
     private ScriptEvaluationError propertyDoesNotExist(Token name) {
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(name)
-                .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type.name())
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .at(name)
+            .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type.name())
+            .build();
     }
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this).field("instance", this.instance).describe();
+        return ObjectDescriber.of(this)
+            .field("instance", this.instance)
+            .describe();
     }
 
     @NonNull

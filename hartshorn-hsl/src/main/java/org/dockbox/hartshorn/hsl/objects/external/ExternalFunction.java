@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
@@ -33,6 +32,8 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods are
@@ -80,86 +81,92 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
     }
 
     private MethodView<?, ?> method(Token at, List<Object> arguments) {
-        Option<MethodView<?, ?>> zeroParameterMethod = this.type()
-                .methods()
-                .named(this.methodName)
-                .map(method -> TypeUtils.unchecked(method, MethodView.class));
+        Option<MethodView<?, ?>> zeroParameterMethod = this.type().methods()
+            .named(this.methodName)
+            .map(method -> TypeUtils.unchecked(method, MethodView.class));
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
-        MethodView<?, ?> executable = ExecutableLookup.executable(
-                this.type().methods().all().stream()
-                        .filter(method -> method.name().equals(this.methodName))
-                        .filter(method -> method.parameters().count() == arguments.size())
-                        .toList(),
-                arguments);
+        MethodView<?, ?> executable =
+            ExecutableLookup.executable(this.type().methods().all().stream()
+                .filter(method -> method.name().equals(this.methodName))
+                .filter(method -> method.parameters().count() == arguments.size())
+                .toList(), arguments);
         if (executable != null) {
             return executable;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, this.methodName, arguments, this.type.name())
-                .at(at)
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS,
+                this.methodName,
+                arguments,
+                this.type.name())
+            .at(at)
+            .build();
     }
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
-            throws ApplicationException {
+    public Object call(
+        Token at,
+        Interpreter interpreter,
+        InstanceReference instance,
+        List<Object> arguments
+    ) throws ApplicationException {
         if (this.instance != null && instance != this.instance) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ILLEGAL_METHOD_BINDING_CALL, this.instance, instance)
-                    .at(at)
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.ILLEGAL_METHOD_BINDING_CALL, this.instance, instance)
+                .at(at)
+                .build();
         }
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NON_EXTERNAL_OBJECT_CALL, this.methodName)
-                    .at(at)
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.NON_EXTERNAL_OBJECT_CALL, this.methodName)
+                .at(at)
+                .build();
         }
         if (!this.type().isInstance(externalObjectReference.externalObject())) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(
-                            DiagnosticMessage.INCORRECT_INSTANCE_TYPE_FOR_FUNCTION,
-                            this.methodName,
-                            this.type.name(),
-                            instance.type().name())
-                    .at(at)
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.INCORRECT_INSTANCE_TYPE_FOR_FUNCTION,
+                    this.methodName,
+                    this.type.name(),
+                    instance.type().name())
+                .at(at)
+                .build();
         }
 
         MethodView<?, ?> method = this.method(at, arguments);
         try {
             return method.invoke(externalObjectReference.externalObject(), arguments)
-                    .map(object -> {
-                        TypeView<?> resultType = interpreter
-                                .applicationContext()
-                                .environment()
-                                .introspector()
-                                .introspect(object);
-                        ExternalClass<?> resultExternalClass =
-                                interpreter.state().externalClassRegistry().defineClass(resultType);
-                        return new ExternalInstance(TypeUtils.unchecked(object, Object.class), resultExternalClass);
-                    })
-                    .orNull();
-        } catch (ApplicationException e) {
+                .map(object -> {
+                    TypeView<?> resultType = interpreter.applicationContext()
+                        .environment()
+                        .introspector()
+                        .introspect(object);
+                    ExternalClass<?> resultExternalClass =
+                        interpreter.state().externalClassRegistry().defineClass(resultType);
+                    return new ExternalInstance(TypeUtils.unchecked(object, Object.class),
+                        resultExternalClass);
+                })
+                .orNull();
+        }
+        catch (ApplicationException e) {
             throw e;
-        } catch (Throwable throwable) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
-                    .at(at)
-                    .cause(throwable)
-                    .build();
+        }
+        catch (Throwable throwable) {
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                .at(at)
+                .cause(throwable)
+                .build();
         }
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type().qualifiedName())
-                .field("methodName", this.methodName)
-                .field("instance", this.instance)
-                .describe();
+            .field("type", this.type().qualifiedName())
+            .field("methodName", this.methodName)
+            .field("instance", this.instance)
+            .describe();
     }
 
     @Override
@@ -174,13 +181,14 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 break;
             }
             classReference = classReference.superClass();
-        } while (classReference != null);
+        }
+        while (classReference != null);
 
         if (externalClass == null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name())
-                    .virtualPosition()
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                .message(DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name())
+                .virtualPosition()
+                .build();
         }
 
         return new ExternalFunction(externalClass, this.methodName, instance);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2026 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
@@ -40,26 +40,28 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
         Object left = interpreter.evaluate(node.leftExpression());
         TokenType type = node.operator().type();
         if (type == ConditionTokenType.AND) {
-            if (!InterpreterUtilities.isTruthy(left)) {
+            if (!CodeExecutionUtilities.isTruthy(left)) {
                 return false;
             }
             // Don't evaluate right if left is not truthy
             Object right = interpreter.evaluate(node.rightExpression());
-            return InterpreterUtilities.isTruthy(right);
-        } else if (type == ConditionTokenType.OR) {
-            if (InterpreterUtilities.isTruthy(left)) {
+            return CodeExecutionUtilities.isTruthy(right);
+        }
+        else if (type == ConditionTokenType.OR) {
+            if (CodeExecutionUtilities.isTruthy(left)) {
                 return true;
             }
             // No need to evaluate right if left is already truthy
             Object right = interpreter.evaluate(node.rightExpression());
-            return InterpreterUtilities.isTruthy(right);
-        } else if (type == BitwiseTokenType.XOR) {
+            return CodeExecutionUtilities.isTruthy(right);
+        }
+        else if (type == BitwiseTokenType.XOR) {
             Object right = interpreter.evaluate(node.rightExpression());
             return this.xor(left, right);
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
-                .at(node.operator())
-                .build();
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
+            .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
+            .at(node.operator())
+            .build();
     }
 }

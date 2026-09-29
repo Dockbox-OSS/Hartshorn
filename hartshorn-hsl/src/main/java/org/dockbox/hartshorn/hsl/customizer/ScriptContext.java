@@ -16,22 +16,26 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
@@ -40,7 +44,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * during the script's execution, though some runtimes may not support this.
  *
  * @since 0.4.12
- *
+ * 
  * @author Guus Lieben
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
@@ -62,6 +66,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
+    private SymbolTable symbolTable;
+    private CompiledScript compiledScript;
+    private ExecutionMode executionMode = ExecutionMode.INTERPRETED;
 
     public ScriptContext(ScriptRuntime runtime, String source) {
         super(runtime.applicationContext());
@@ -298,6 +305,66 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     /**
+     * The symbol table used for identifier resolution and scope tracking.
+     *
+     * @return The symbol table.
+     */
+    public SymbolTable symbolTable() {
+        return this.symbolTable != null ? this.symbolTable : this.interpreter;
+    }
+
+    /**
+     * Sets the symbol table used for identifier resolution.
+     *
+     * @param symbolTable The symbol table.
+     * @return The current context.
+     */
+    public ScriptContext symbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+        return this;
+    }
+
+    /**
+     * The compiled script instance, if the script has been compiled.
+     *
+     * @return The compiled script.
+     */
+    public CompiledScript compiledScript() {
+        return this.compiledScript;
+    }
+
+    /**
+     * Sets the compiled script instance.
+     *
+     * @param compiledScript The compiled script.
+     * @return The current context.
+     */
+    public ScriptContext compiledScript(CompiledScript compiledScript) {
+        this.compiledScript = compiledScript;
+        return this;
+    }
+
+    /**
+     * The execution mode configured for this script context.
+     *
+     * @return The execution mode.
+     */
+    public ExecutionMode executionMode() {
+        return this.executionMode;
+    }
+
+    /**
+     * Sets the execution mode for this script context.
+     *
+     * @param executionMode The execution mode.
+     * @return The current context.
+     */
+    public ScriptContext executionMode(ExecutionMode executionMode) {
+        this.executionMode = executionMode;
+        return this;
+    }
+
+    /**
      * The runtime that is executing the script. This runtime provides the environment in which the
      * script is executed, including configuration options, external modules, and global variables.
      *
@@ -329,12 +396,18 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
 
     @Override
     public <T> Option<T> result(String id, Class<T> type) {
-        return Option.of(this.results.get(id)).ofType(type);
+        return this.result(id).ofType(type);
     }
 
     @Override
     public Option<?> result(String id) {
-        return Option.of(this.results.get(id));
+        if (this.results.containsKey(id)) {
+            return Option.of(this.results.get(id));
+        }
+        if (this.interpreter != null && this.interpreter.global() != null) {
+            return Option.of(this.interpreter.global().values().get(id));
+        }
+        return Option.empty();
     }
 
     @Override
