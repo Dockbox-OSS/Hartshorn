@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import org.dockbox.hartshorn.hsl.compiler.ScriptCompiler;
+import org.dockbox.hartshorn.hsl.compiler.StandardScriptCompiler;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
@@ -25,11 +27,13 @@ import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.semantic.SimpleResolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 
@@ -67,6 +71,17 @@ public class ScriptLanguageConfiguration {
     }
 
     /**
+     * Provides a standard script compiler for bytecode compilation.
+     *
+     * @return the standard script compiler
+     */
+    @Singleton
+    @SupportPriority
+    public ScriptCompiler scriptCompiler() {
+        return new StandardScriptCompiler();
+    }
+
+    /**
      * Provides a standard resolver for script semantics.
      *
      * @param interpreter the interpreter related to the resolver
@@ -75,8 +90,23 @@ public class ScriptLanguageConfiguration {
      */
     @Prototype
     @SupportPriority
+    @RequiresAbsentBinding(SymbolTable.class)
     public Resolver resolver(Interpreter interpreter) {
         return new SimpleResolver(interpreter);
+    }
+
+    /**
+     * Provides a standard resolver for script semantics.
+     *
+     * @param symbolTable the symbol table related to the resolver
+     *
+     * @return the standard resolver
+     */
+    @Prototype
+    @SupportPriority
+    @RequiresAbsentBinding(Resolver.class)
+    public Resolver resolver(SymbolTable symbolTable) {
+        return new SimpleResolver(symbolTable);
     }
 
     /**

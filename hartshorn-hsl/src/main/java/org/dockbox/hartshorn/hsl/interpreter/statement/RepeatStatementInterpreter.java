@@ -38,13 +38,13 @@ public class RepeatStatementInterpreter implements StatementInterpreter<RepeatSt
             Object value = interpreter.evaluate(node.value());
 
             if (!(value instanceof Number number)) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
                     .at(node.value())
                     .build();
             }
             if (number.doubleValue() < 0) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
                     .at(node.value())
                     .build();

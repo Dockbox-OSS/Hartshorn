@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.util.Tuple;
 
 /**
@@ -34,10 +34,10 @@ public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, Ra
 
     @Override
     public Object interpret(RangeExpression node, Interpreter interpreter) {
-        Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
-        Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
+        Object start = CodeExecutionUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
+        Object end = CodeExecutionUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
-        Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+        Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(
             node.operator(),
             start,
             end

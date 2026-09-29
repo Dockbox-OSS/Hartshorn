@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SimpleResolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -73,6 +75,20 @@ public interface ScriptComponentFactory {
      * @return a new resolver instance
      */
     Resolver resolver(Interpreter interpreter);
+
+    /**
+     * Creates a new resolver instance for the given symbol table.
+     *
+     * @param symbolTable the symbol table to use
+     *
+     * @return a new resolver instance
+     */
+    default Resolver resolver(SymbolTable symbolTable) {
+        if (symbolTable instanceof Interpreter interpreter) {
+            return this.resolver(interpreter);
+        }
+        return new SimpleResolver(symbolTable);
+    }
 
     /**
      * Creates a new interpreter instance for the given result collector, modules, token registry

@@ -64,7 +64,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             superClass = superClass.superClass();
         }
         if (superClass == null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
                 .at(virtualClass.constructor().declaration())
                 .build();
@@ -72,7 +72,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         this.firstExternalClass =
             TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
                 .at(virtualClass.constructor().declaration())
                 .build();
@@ -97,7 +97,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         VirtualFunction virtualConstructor
     ) throws ApplicationException {
         if (this.instance != null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.BACKING_INSTANCE_ALREADY_CREATED)
                 .at(at)
                 .build();
@@ -112,7 +112,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             throw e;
         }
         catch (Throwable throwable) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
                 .at(at)
                 .cause(throwable)
@@ -144,7 +144,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     field.get().set(this.instance, value);
                 }
                 catch (Throwable throwable) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(name)
                         .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
                             StandardPropertyAccessVerifier.WRITE_ACTION,
@@ -157,7 +157,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                 }
             }
             else {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(name)
                     .message(DiagnosticMessage.UNDEFINED_PROPERTY,
                         name.lexeme(),
@@ -185,7 +185,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     return field.get().get(this.instance);
                 }
                 catch (Throwable throwable) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(name)
                         .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
                             StandardPropertyAccessVerifier.READ_ACTION,
@@ -198,7 +198,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                 }
             }
             else {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(name)
                     .message(DiagnosticMessage.UNDEFINED_PROPERTY,
                         name.lexeme(),
@@ -215,7 +215,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
 
     private void checkInstance(Token position) {
         if (this.instance == null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(position)
                 .message(DiagnosticMessage.DEFERRED_INSTANCE_EAGER_ACCESS,
                     this.typeName())

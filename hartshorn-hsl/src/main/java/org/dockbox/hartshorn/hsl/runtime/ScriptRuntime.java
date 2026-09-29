@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,14 @@ import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
  * @author Guus Lieben
  */
 public interface ScriptRuntime extends ScriptConditionContext, ApplicationContextCarrier {
+
+    /**
+     * Creates a new script context for the given source code.
+     *
+     * @param source the source code
+     * @return the newly created script context
+     */
+    ScriptContext createScriptContext(String source);
 
     /**
      * Executes the given script in its entirety, and returns the context that was created during
@@ -91,4 +99,56 @@ public interface ScriptRuntime extends ScriptConditionContext, ApplicationContex
      * @return the context that was created during the execution
      */
     ScriptContext runOnly(ScriptContext context, Phase only);
+
+    /**
+     * Executes the given script in its entirety using the active {@link #executionMode()}, and
+     * returns the resulting context.
+     *
+     * @param source the source code to execute
+     * @return the executed script context
+     */
+    default ScriptContext execute(String source) {
+        return this.runUntil(source, Phase.EXECUTING);
+    }
+
+    /**
+     * Executes the given script context in its entirety using the active {@link #executionMode()},
+     * and returns the resulting context.
+     *
+     * @param context the context to execute
+     * @return the executed script context
+     */
+    default ScriptContext execute(ScriptContext context) {
+        return this.runUntil(context, Phase.EXECUTING);
+    }
+
+    /**
+     * Returns the active execution mode for this runtime.
+     *
+     * @return the execution mode
+     */
+    ExecutionMode executionMode();
+
+    /**
+     * Sets the active execution mode for this runtime.
+     *
+     * @param executionMode the execution mode
+     * @return this runtime instance
+     */
+    ScriptRuntime executionMode(ExecutionMode executionMode);
+
+    /**
+     * Returns the execution strategy used to execute scripts.
+     *
+     * @return the execution strategy
+     */
+    ScriptExecutionStrategy executionStrategy();
+
+    /**
+     * Sets the execution strategy used to execute scripts.
+     *
+     * @param executionStrategy the execution strategy
+     * @return this runtime instance
+     */
+    ScriptRuntime executionStrategy(ScriptExecutionStrategy executionStrategy);
 }

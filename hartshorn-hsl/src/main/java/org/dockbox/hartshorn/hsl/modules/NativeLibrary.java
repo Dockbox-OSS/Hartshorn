@@ -79,7 +79,7 @@ public class NativeLibrary implements CallableNode {
         String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(at)
                 .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
                 .build();

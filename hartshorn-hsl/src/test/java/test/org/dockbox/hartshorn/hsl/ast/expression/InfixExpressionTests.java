@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
 import org.dockbox.hartshorn.hsl.parser.expression.InfixExpressionParser;
@@ -57,7 +57,7 @@ class InfixExpressionTests {
             .defineLocal("or", (CallableNode) (_, _, _, arguments) -> {
                 Object left = arguments.getFirst();
                 Object right = arguments.getLast();
-                return InterpreterUtilities.isTruthy(left) ? left : right;
+                return CodeExecutionUtilities.isTruthy(left) ? left : right;
             })
             .build();
 
@@ -105,7 +105,7 @@ class InfixExpressionTests {
         helper.parse();
 
         ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
-        assertThat(error.phase()).isEqualTo(Phase.INTERPRETING);
+        assertThat(error.phase()).isEqualTo(Phase.EXECUTING);
         ScriptAssertions.assertEvaluationError(
             error,
             FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "or")

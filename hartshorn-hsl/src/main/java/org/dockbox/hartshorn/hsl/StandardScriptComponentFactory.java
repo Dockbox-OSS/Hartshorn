@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.semantic.SimpleResolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -55,6 +56,11 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
     @Override
     public Resolver resolver(Interpreter interpreter) {
         return new SimpleResolver(interpreter);
+    }
+
+    @Override
+    public Resolver resolver(SymbolTable symbolTable) {
+        return new SimpleResolver(symbolTable);
     }
 
     @Override

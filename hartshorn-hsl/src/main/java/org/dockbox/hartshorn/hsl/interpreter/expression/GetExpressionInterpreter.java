@@ -50,7 +50,7 @@ public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetE
             }
             return result;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.NON_PROPERTY_CONTAINER, object)
             .at(node)
             .build();

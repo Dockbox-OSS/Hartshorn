@@ -61,13 +61,13 @@ public record AmbiguousNativeLibraryFunction(Set<NativeLibrary> libraries) imple
             .toList();
 
         if (applicableLibraries.isEmpty()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
                 .at(at)
                 .build();
         }
         else if (applicableLibraries.size() > 1) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
                 .at(at)
                 .build();

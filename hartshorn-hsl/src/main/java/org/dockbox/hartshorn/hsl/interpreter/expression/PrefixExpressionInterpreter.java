@@ -47,7 +47,7 @@ public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, P
             return value.call(node.prefixOperatorName(), interpreter, null, args);
         }
         catch (ApplicationException e) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
                     "prefix", node.prefixOperatorName().lexeme(), e.getMessage())
                 .cause(e)

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
@@ -36,15 +36,15 @@ public class SwitchStatementInterpreter implements StatementInterpreter<SwitchSt
     @Override
     public Void interpret(SwitchStatement node, Interpreter interpreter) {
         Object value = interpreter.evaluate(node.expression());
-        value = InterpreterUtilities.unwrap(value);
+        value = CodeExecutionUtilities.unwrap(value);
         for (SwitchCase switchCase : node.cases()) {
             if (switchCase.isDefault()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.UNEXPECTED_DEFAULT_CASE)
                     .at(switchCase)
                     .build();
             }
-            if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
+            if (CodeExecutionUtilities.isEqual(value, switchCase.expression().value())) {
                 interpreter.execute(switchCase);
                 return null;
             }
