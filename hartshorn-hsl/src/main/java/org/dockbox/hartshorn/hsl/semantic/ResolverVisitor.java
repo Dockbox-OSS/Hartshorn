@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
@@ -484,14 +485,16 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         this.resolver.beginScope();
         this.resolver.peekScope().put(ObjectTokenType.THIS.representation(), true);
         this.resolver.peekFinal().put(ObjectTokenType.THIS.representation(), "instance variable");
-        for (FieldStatement field : statement.fields()) {
-            this.resolve(field);
-        }
-        for (FunctionStatement method : statement.methods()) {
-            this.resolver.resolveFunction(method, FunctionType.CLASS_FUNCTION);
-        }
-        if (statement.constructor() != null) {
-            this.resolver.resolveFunction(statement.constructor(), FunctionType.INITIALIZER);
+        for (ClassMemberStatement member : statement.members()) {
+            switch (member) {
+                case FieldStatement field -> this.resolve(field);
+                case FunctionStatement method ->
+                    this.resolver.resolveFunction(method, FunctionType.CLASS_FUNCTION);
+                case ConstructorStatement constructor ->
+                    this.resolver.resolveFunction(constructor, FunctionType.INITIALIZER);
+                case Statement s -> this.resolve(s);
+                default -> member.accept(this);
+            }
         }
         this.resolver.define(statement.name());
         this.resolver.endScope();

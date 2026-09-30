@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.dockbox.hartshorn.hsl.parser;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.ClassMemberParser;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -57,6 +59,25 @@ public interface TokenParser extends Context {
      * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(StatementParser)
      */
     TokenParser statementParser(StatementParser<? extends Statement> parser);
+
+    /**
+     * Adds a class member parser to the runtime, which can be used to parse members inside a
+     * class body in the script.
+     *
+     * @param parser the parser to add
+     *
+     * @return the current parser, for chaining
+     *
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#classMemberParser(ClassMemberParser)
+     */
+    TokenParser classMemberParser(ClassMemberParser<?> parser);
+
+    /**
+     * Returns all registered class member parsers.
+     *
+     * @return all registered class member parsers
+     */
+    Set<ClassMemberParser<?>> classMemberParsers();
 
     /**
      * Adds an expression parser to the runtime, which can be used to parse expressions in the
@@ -200,4 +221,27 @@ public interface TokenParser extends Context {
      * no compatible parser is found
      */
     <T extends Statement> Option<StatementParser<T>> firstCompatibleParser(Class<T> type);
+
+    /**
+     * Looks up all class member parsers that are compatible with the given type.
+     *
+     * @param <T> the type of member statement to find compatible parsers for
+     * @param type the type of member statement to find compatible parsers for
+     *
+     * @return all class member parsers that are compatible with the given type
+     */
+    <T extends Statement & ClassMemberStatement>
+    Set<ClassMemberParser<T>> compatibleMemberParsers(Class<T> type);
+
+    /**
+     * Looks up the first class member parser that is compatible with the given type.
+     *
+     * @param <T> the type of member statement to find a compatible parser for
+     * @param type the type of member statement to find a compatible parser for
+     *
+     * @return the first class member parser that is compatible with the given type, or
+     * {@link Option#empty()} if no compatible parser is found
+     */
+    <T extends Statement & ClassMemberStatement>
+    Option<ClassMemberParser<T>> firstCompatibleMemberParser(Class<T> type);
 }

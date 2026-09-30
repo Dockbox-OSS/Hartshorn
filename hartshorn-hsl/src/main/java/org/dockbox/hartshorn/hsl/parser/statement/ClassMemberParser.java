@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.ast.statement;
+package org.dockbox.hartshorn.hsl.parser.statement;
 
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 
 /**
- * An abstract class representing a function definition. This may represent any functionality that
- * can be executed, such as a method or constructor.
+ * A parser for class body member AST nodes.
  *
- * @see FunctionStatement
- * @see ConstructorStatement
- * @see NativeFunctionStatement
+ * @param <T> the type of statement this parser can parse
  *
- * @since 0.4.12
+ * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public abstract class Function extends FinalizableStatement implements ClassMemberStatement {
-
-    protected Function(Token at) {
-        this(at, false);
-    }
-
-    protected Function(ASTNode at, boolean finalized) {
-        super(at, finalized);
-    }
+public interface ClassMemberParser<T extends Statement & ClassMemberStatement>
+    extends StatementParser<T> {
 }

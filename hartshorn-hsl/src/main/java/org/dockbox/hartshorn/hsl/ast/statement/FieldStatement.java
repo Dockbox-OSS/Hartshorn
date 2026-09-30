@@ -42,7 +42,8 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  *
  * @author Guus Lieben
  */
-public class FieldStatement extends FinalizableStatement implements MemberStatement, NamedNode {
+public class FieldStatement extends FinalizableStatement
+    implements ClassMemberStatement, MemberStatement, NamedNode {
 
     private final Token modifier;
     private final Token name;

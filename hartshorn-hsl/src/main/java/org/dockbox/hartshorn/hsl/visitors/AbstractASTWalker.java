@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
@@ -362,13 +363,11 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
 
     @Override
     public R visit(ClassStatement statement) {
-        statement.superClass().accept(this);
-        for (FieldStatement field : statement.fields()) {
-            field.accept(this);
+        if (statement.superClass() != null) {
+            statement.superClass().accept(this);
         }
-        statement.constructor().accept(this);
-        for (FunctionStatement method : statement.methods()) {
-            method.accept(this);
+        for (ClassMemberStatement member : statement.members()) {
+            member.accept(this);
         }
         return null;
     }

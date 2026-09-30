@@ -42,7 +42,8 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * 
  * @author Guus Lieben
  */
-public class ConstructorStatement extends ParametricExecutableBodyStatement {
+public class ConstructorStatement extends ParametricExecutableBodyStatement
+    implements ClassMemberStatement {
 
     private final Token keyword;
 

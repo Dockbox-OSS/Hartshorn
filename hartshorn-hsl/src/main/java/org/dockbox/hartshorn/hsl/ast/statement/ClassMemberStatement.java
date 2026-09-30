@@ -16,28 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * An abstract class representing a function definition. This may represent any functionality that
- * can be executed, such as a method or constructor.
+ * Represents an AST statement that is allowable directly within a class declaration body.
  *
- * @see FunctionStatement
- * @see ConstructorStatement
- * @see NativeFunctionStatement
- *
- * @since 0.4.12
+ * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public abstract class Function extends FinalizableStatement implements ClassMemberStatement {
+public interface ClassMemberStatement {
 
-    protected Function(Token at) {
-        this(at, false);
-    }
-
-    protected Function(ASTNode at, boolean finalized) {
-        super(at, finalized);
-    }
+    /**
+     * Accepts a visitor that implements the {@link StatementVisitor} interface.
+     *
+     * @param visitor the visitor to accept
+     * @param <R> the return type of the visitor
+     * @return the result of the visitor's operation
+     */
+    <R> R accept(StatementVisitor<R> visitor);
 }

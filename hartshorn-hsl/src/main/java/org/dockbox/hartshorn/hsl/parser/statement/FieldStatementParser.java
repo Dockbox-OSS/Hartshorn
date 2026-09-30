@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ import java.util.Set;
  * 
  * @author Guus Lieben
  */
-public class FieldStatementParser extends AbstractBodyStatementParser<FieldStatement> {
+public class FieldStatementParser extends AbstractBodyStatementParser<FieldStatement>
+    implements ClassMemberParser<FieldStatement> {
 
     @Override
     public Option<? extends FieldStatement> parse(
@@ -56,6 +57,9 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
             parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
         boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
         TokenType identifier = parser.tokenRegistry().literals().identifier();
+        if (modifier == null && !isFinal && !parser.check(identifier)) {
+            return Option.empty();
+        }
         Token name = validator.expect(identifier, "variable name");
 
         Expression initializer = null;
@@ -154,7 +158,6 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
 
     @Override
     public Set<Class<? extends FieldStatement>> types() {
-        // Only for direct use, should not be used for dynamic parsing
-        return Set.of();
+        return Set.of(FieldStatement.class);
     }
 }
