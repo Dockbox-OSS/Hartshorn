@@ -8,7 +8,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-staging</artifactId>
     <version>${revision}</version>
-    <relativePath>../hartshorn-assembly/pom.staging.xml</relativePath>
+    <relativePath>../hartshorn-assembly/hartshorn-staging</relativePath>
   </parent>
 
   <name>Hartshorn common BOM</name>
@@ -16,7 +16,6 @@
 
   <artifactId>hartshorn-bom</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
 
   <properties>
     <!-- Versions in alphabetical order -->
