@@ -6,9 +6,9 @@
 
   <parent>
     <groupId>org.dockbox.hartshorn</groupId>
-    <artifactId>hartshorn-staging</artifactId>
+    <artifactId>hartshorn-platform-build</artifactId>
     <version>${revision}</version>
-    <relativePath>../hartshorn-staging</relativePath>
+    <relativePath>../hartshorn-platform-build</relativePath>
   </parent>
 
   <artifactId>hartshorn-platform-support</artifactId>
@@ -33,13 +33,13 @@
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
     <plugin.versions.version>2.18.0</plugin.versions.version>
-    <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
-    <plugin.license.version>5.0.0</plugin.license.version>
-    <plugin.owasp.version>12.2.0</plugin.owasp.version>
+    <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
+    <plugin.license.version>5.1.2</plugin.license.version>
+    <plugin.owasp.version>13.0.0</plugin.owasp.version>
     <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
     <!-- Plugin dependencies, in alphabetical order -->
-    <checkstyle.version>10.21.1</checkstyle.version>
+    <checkstyle.version>14.3.0</checkstyle.version>
 
     <!-- Only enable through profile below -->
     <argLine.errorprone/>

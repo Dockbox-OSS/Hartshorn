@@ -41,7 +41,6 @@
       <modules>
         <!-- Platform and base modules -->
         <module>hartshorn-assembly/hartshorn-platform-build</module>
-        <module>hartshorn-assembly/hartshorn-staging</module>
         <module>hartshorn-assembly/hartshorn-platform-updates</module>
         <module>hartshorn-bom</module>
         <module>hartshorn-assembly/hartshorn-platform-support</module>

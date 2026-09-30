@@ -6,9 +6,9 @@
 
   <parent>
     <groupId>org.dockbox.hartshorn</groupId>
-    <artifactId>hartshorn-staging</artifactId>
+    <artifactId>hartshorn-platform-build</artifactId>
     <version>${revision}</version>
-    <relativePath>../hartshorn-assembly/hartshorn-staging</relativePath>
+    <relativePath>../hartshorn-assembly/hartshorn-platform-build</relativePath>
   </parent>
 
   <name>Hartshorn common BOM</name>
