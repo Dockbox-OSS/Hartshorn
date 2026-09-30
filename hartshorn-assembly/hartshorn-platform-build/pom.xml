@@ -77,6 +77,7 @@
     <plugin.source.version>3.4.0</plugin.source.version>
     <plugin.staging.version>1.7.0</plugin.staging.version>
     <plugin.openrewrite.version>6.46.1</plugin.openrewrite.version>
+    <plugin.versions.version>2.22.0</plugin.versions.version>
   </properties>
 
   <profiles>
@@ -166,6 +167,11 @@
           <groupId>org.openrewrite.maven</groupId>
           <artifactId>rewrite-maven-plugin</artifactId>
           <version>${plugin.openrewrite.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${plugin.versions.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -401,6 +407,28 @@
           <serverId>ossrh</serverId>
           <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>false</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+      <!-- Dependency version upgrades -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <configuration>
+          <ignoredVersions>
+            <ignoredVersion>.*-[Aa][Ll][Pp][Hh][Aa].*</ignoredVersion>
+            <ignoredVersion>.*-[Bb][Ee][Tt][Aa].*</ignoredVersion>
+            <ignoredVersion>.*-[Rr][Cc].*</ignoredVersion>
+            <ignoredVersion>.*-[Mm][Rr]?.*</ignoredVersion>
+            <ignoredVersion>.*-[Ee][Aa].*</ignoredVersion>
+          </ignoredVersions>
+          <generateBackupPoms>false</generateBackupPoms>
+
+          <!--
+          Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
+          instead of being directly updated by the versions plugin.
+          -->
+          <excludeProperties>plugin.kotlin.version,plugin.errorprone.version</excludeProperties>
         </configuration>
       </plugin>
     </plugins>

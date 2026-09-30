@@ -27,7 +27,7 @@
     <maven.deploy.skip>true</maven.deploy.skip>
 
     <!-- Maven plugin versions, in alphabetical order -->
-    <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
+    <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
   </properties>
 
   <profiles>
@@ -41,7 +41,6 @@
       <modules>
         <!-- Platform and base modules -->
         <module>hartshorn-assembly/hartshorn-platform-build</module>
-        <module>hartshorn-assembly/hartshorn-platform-updates</module>
         <module>hartshorn-bom</module>
         <module>hartshorn-assembly/hartshorn-platform-support</module>
         <module>hartshorn-assembly/architecture-rules</module>
