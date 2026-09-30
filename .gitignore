@@ -19,5 +19,9 @@ logs/
 *.log.*
 *.tmp
 
-# Generated directories
+# OS Specific files
+.DS_Store
+
+# Generated directories and files
 hartshorn-assembly/distributions
+**/.flattened-pom.xml

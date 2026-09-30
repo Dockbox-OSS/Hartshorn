@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-platform-support</artifactId>
-        <relativePath>../pom.platform.support.xml</relativePath>
+        <relativePath>../hartshorn-platform-support</relativePath>
         <version>${revision}</version>
     </parent>
 

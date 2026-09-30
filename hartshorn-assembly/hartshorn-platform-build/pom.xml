@@ -30,7 +30,7 @@
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.buildhelper.version>3.6.1</plugin.buildhelper.version>
     <plugin.compiler.version>3.14.1</plugin.compiler.version>
-    <plugin.flatten.version>1.7.0</plugin.flatten.version>
+    <plugin.flatten.version>1.8.0</plugin.flatten.version>
     <plugin.gmaven.version>4.2.1</plugin.gmaven.version>
     <plugin.jar.version>3.5.0</plugin.jar.version>
     <plugin.javadoc.version>3.12.0</plugin.javadoc.version>

@@ -8,7 +8,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-staging</artifactId>
     <version>${revision}</version>
-    <relativePath>pom.staging.xml</relativePath>
+    <relativePath>../hartshorn-staging</relativePath>
   </parent>
 
   <artifactId>hartshorn-platform-support</artifactId>

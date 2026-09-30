@@ -8,12 +8,11 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-staging</artifactId>
     <version>${revision}</version>
-    <relativePath>pom.staging.xml</relativePath>
+    <relativePath>../hartshorn-staging</relativePath>
   </parent>
 
   <artifactId>hartshorn-platform-updates</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
 
   <name>Hartshorn Platform Updates</name>
   <description>Common parent POM for Hartshorn modules which require update automation</description>
