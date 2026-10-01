@@ -6,9 +6,9 @@
 
   <parent>
     <groupId>org.dockbox.hartshorn</groupId>
-    <artifactId>hartshorn-staging</artifactId>
+    <artifactId>hartshorn-platform-build</artifactId>
     <version>${revision}</version>
-    <relativePath>pom.staging.xml</relativePath>
+    <relativePath>../hartshorn-platform-build</relativePath>
   </parent>
 
   <artifactId>hartshorn-platform-support</artifactId>
@@ -32,14 +32,13 @@
 
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-    <plugin.versions.version>2.18.0</plugin.versions.version>
-    <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
-    <plugin.license.version>5.0.0</plugin.license.version>
-    <plugin.owasp.version>12.2.0</plugin.owasp.version>
+    <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
+    <plugin.license.version>5.1.2</plugin.license.version>
+    <plugin.owasp.version>13.0.0</plugin.owasp.version>
     <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
     <!-- Plugin dependencies, in alphabetical order -->
-    <checkstyle.version>10.21.1</checkstyle.version>
+    <checkstyle.version>14.3.0</checkstyle.version>
 
     <!-- Only enable through profile below -->
     <argLine.errorprone/>
@@ -292,11 +291,6 @@
       <!-- Plugin management, in alphabetical order of version property -->
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>${plugin.versions.version}</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>${plugin.checkstyle.version}</version>
@@ -434,23 +428,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- Dependency version upgrades -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <configuration>
-          <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*
-          </ignoredVersions>
-          <generateBackupPoms>false</generateBackupPoms>
-
-          <!--
-          Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
-          instead of being directly updated by the versions plugin.
-          -->
-          <excludeProperties>plugin.kotlin.version,plugin.errorprone.version</excludeProperties>
-        </configuration>
       </plugin>
 
       <!-- Standard build configurations -->

@@ -8,7 +8,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-platform-build</artifactId>
     <version>${revision}</version>
-    <relativePath>hartshorn-assembly/pom.platform.build.xml</relativePath>
+    <relativePath>hartshorn-assembly/hartshorn-platform-build</relativePath>
   </parent>
 
   <name>Hartshorn</name>
@@ -23,8 +23,11 @@
     <jacoco.skip>false</jacoco.skip>
     <javadoc.skip>false</javadoc.skip>
 
+    <!-- Deployment configuration -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+
     <!-- Maven plugin versions, in alphabetical order -->
-    <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
+    <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
   </properties>
 
   <profiles>
@@ -37,11 +40,9 @@
       </activation>
       <modules>
         <!-- Platform and base modules -->
-        <module>hartshorn-assembly/pom.platform.build.xml</module>
-        <module>hartshorn-assembly/pom.staging.xml</module>
-        <module>hartshorn-assembly/pom.platform.updates.xml</module>
+        <module>hartshorn-assembly/hartshorn-platform-build</module>
         <module>hartshorn-bom</module>
-        <module>hartshorn-assembly/pom.platform.support.xml</module>
+        <module>hartshorn-assembly/hartshorn-platform-support</module>
         <module>hartshorn-assembly/architecture-rules</module>
 
         <!-- Individually deployable modules -->

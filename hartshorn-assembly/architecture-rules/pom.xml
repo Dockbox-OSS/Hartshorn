@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-platform-support</artifactId>
-        <relativePath>../pom.platform.support.xml</relativePath>
+        <relativePath>../hartshorn-platform-support</relativePath>
         <version>${revision}</version>
     </parent>
 
@@ -15,6 +15,10 @@
     <description>Architecture rules for Hartshorn</description>
     <artifactId>hartshorn-architecture-rules</artifactId>
     <packaging>jar</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>

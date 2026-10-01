@@ -8,10 +8,14 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-launchpad-starter</artifactId>
     <version>${revision}</version>
-    <relativePath>../../hartshorn-launchpad-starter/pom.xml</relativePath>
+    <relativePath>../../hartshorn-launchpad-starter</relativePath>
   </parent>
 
   <name>Hartshorn Sample: Hello World (Java)</name>
   <artifactId>hartshorn-sample-hello-world-java</artifactId>
   <packaging>jar</packaging>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 </project>
