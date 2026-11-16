@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Checkstyle" type="MavenRunConfiguration" factoryName="Maven" folderName="Verification">
+  <configuration default="false" name="Check codestyle" type="MavenRunConfiguration" factoryName="Maven" folderName="Verification">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -16,7 +16,7 @@
               <option value="-DskipTests" />
               <option value="-P" />
               <option value="ci" />
-              <option value="-Dcheckstyle.skip=false" />
+              <option value="-Dspotless.skip=false" />
               <option value="-Derrorprone.skip=false" />
             </list>
           </option>
