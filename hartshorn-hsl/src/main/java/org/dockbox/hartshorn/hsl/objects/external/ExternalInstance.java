@@ -52,7 +52,7 @@ public class ExternalInstance implements ExternalObjectReference {
 
     public <T> ExternalInstance(T instance, ExternalClass<T> type) {
         if (instance != null && !type.type().isInstance(instance)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.OBJECT_NOT_INSTANCE_OF_X,
                     type.name(),
                     instance.getClass().getName())
@@ -86,7 +86,7 @@ public class ExternalInstance implements ExternalObjectReference {
                 field.get().set(this.instance(), value);
             }
             catch (Throwable throwable) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(name)
                     .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
                         StandardPropertyAccessVerifier.WRITE_ACTION,
@@ -110,7 +110,7 @@ public class ExternalInstance implements ExternalObjectReference {
 
         if (methods.length > 1 && !interpreter.executionOptions()
             .permitAmbiguousExternalFunctions()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(name)
                 .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_CALL, name.lexeme())
                 .build();
@@ -128,7 +128,7 @@ public class ExternalInstance implements ExternalObjectReference {
                 return field.get().get(this.instance());
             }
             catch (Throwable throwable) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(name)
                     .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
                         StandardPropertyAccessVerifier.READ_ACTION,
@@ -146,7 +146,7 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     private ScriptEvaluationError propertyDoesNotExist(Token name) {
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .at(name)
             .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type.name())
             .build();

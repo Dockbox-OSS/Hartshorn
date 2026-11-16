@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,8 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
     private final ApplicationContext applicationContext;
 
     private ParserCustomizer parserCustomizer;
+    private ExecutionMode executionMode = ExecutionMode.INTERPRETED;
+    private ScriptExecutionStrategy executionStrategy;
 
     public SimpleScriptRuntime(
         ApplicationContext applicationContext,
@@ -100,13 +102,41 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
 
     @Override
     public ScriptContext interpret(String source) {
-        return this.runUntil(source, Phase.INTERPRETING);
+        return this.runUntil(source, Phase.EXECUTING);
     }
 
     @Override
     public ScriptContext runUntil(String source, Phase until) {
         ScriptContext context = this.createScriptContext(source);
         return this.runUntil(context, until);
+    }
+
+    @Override
+    public ExecutionMode executionMode() {
+        return this.executionMode;
+    }
+
+    @Override
+    public ScriptRuntime executionMode(ExecutionMode executionMode) {
+        this.executionMode = executionMode;
+        return this;
+    }
+
+    @Override
+    public ScriptExecutionStrategy executionStrategy() {
+        if (this.executionStrategy == null) {
+            if (this.executionMode == ExecutionMode.COMPILED) {
+                return new org.dockbox.hartshorn.hsl.compiler.CompiledExecutionStrategy(this);
+            }
+            return new InterpretedExecutionStrategy(this);
+        }
+        return this.executionStrategy;
+    }
+
+    @Override
+    public ScriptRuntime executionStrategy(ScriptExecutionStrategy executionStrategy) {
+        this.executionStrategy = executionStrategy;
+        return this;
     }
 
     @Override
@@ -120,8 +150,8 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
             if (until.ordinal() >= Phase.SEMANTIC_ANALYSIS.ordinal()) {
                 this.resolve(context);
             }
-            if (until.ordinal() >= Phase.INTERPRETING.ordinal()) {
-                this.interpret(context);
+            if (until == Phase.EXECUTING || until == Phase.COMPILING) {
+                this.execute(context);
             }
         }
         catch (ScriptEvaluationError e) {
@@ -143,9 +173,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
                 case TOKENIZING -> this.tokenize(context);
                 case PARSING -> this.parse(context);
                 case SEMANTIC_ANALYSIS -> this.resolve(context);
-                case INTERPRETING -> this.interpret(context);
-                default ->
-                    throw new IllegalArgumentException("Unsupported standalone phase: " + only);
+                case COMPILING, EXECUTING -> this.execute(context);
             }
         }
         catch (ScriptEvaluationError e) {
@@ -224,10 +252,26 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
      * @param context the context in which the resolution is performed
      */
     protected void resolve(ScriptContext context) {
-        context.resolver(this.factory.resolver(context.interpreter()));
-        context.interpreter().restore();
+        if (context.symbolTable() == null && context.interpreter() != null) {
+            context.symbolTable(context.interpreter());
+        }
+        context.resolver(this.factory.resolver(context.symbolTable()));
+        if (context.interpreter() != null) {
+            context.interpreter().restore();
+        }
         this.customizePhase(Phase.SEMANTIC_ANALYSIS, context);
         context.resolver().resolve(context.statements());
+    }
+
+    /**
+     * Executes the statements that are stored in the given context using the active
+     * {@link #executionStrategy()}.
+     *
+     * @param context the context in which execution is performed
+     * @return the executed context
+     */
+    public ScriptContext execute(ScriptContext context) {
+        return this.executionStrategy().execute(context);
     }
 
     /**
@@ -237,13 +281,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
      * @param context the context in which the interpretation is performed
      */
     protected void interpret(ScriptContext context) {
-        Interpreter interpreter = context.interpreter();
-        // Interpreter modification is not allowed at this point, as it was restored before
-        // the resolve phase.
-        this.customizePhase(Phase.INTERPRETING, context);
-        interpreter.state().global(this.globalVariables());
-        interpreter.state().externalClassRegistry().defineClasses(this.imports());
-        interpreter.interpret(context.statements());
+        this.execute(context);
     }
 
     /**
@@ -253,7 +291,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
      * @param phase the phase that is being customized
      * @param context the context in which the customization is performed
      */
-    protected void customizePhase(Phase phase, ScriptContext context) {
+    public void customizePhase(Phase phase, ScriptContext context) {
         for (CodeCustomizer customizer : this.customizers()) {
             if (customizer.phase() == phase) {
                 customizer.call(context);

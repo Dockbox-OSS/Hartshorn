@@ -37,7 +37,6 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterState;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassMemberInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.statement.StatementInterpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
@@ -157,6 +156,9 @@ public class HSLTestHelper {
      */
     public static Builder of(ApplicationContext applicationContext, String source) {
         return new Builder(applicationContext, source)
+            .customize(CodeCustomizer.of(Phase.EXECUTING, context -> {
+                context.outputCapture(new TestScriptOutputCapture());
+            }))
             .extensions(extensions -> {
                 extensions.expressionModules(new CheckpointModule());
             });
@@ -248,12 +250,12 @@ public class HSLTestHelper {
     }
 
     public HSLTestHelper interpret() {
-        this.context.runtime().runUntil(this.context, Phase.INTERPRETING);
+        this.context.runtime().runUntil(this.context, Phase.EXECUTING);
         return this;
     }
 
     public HSLTestHelper interpretOnly() {
-        this.context.runtime().runOnly(this.context, Phase.INTERPRETING);
+        this.context.runtime().runOnly(this.context, Phase.EXECUTING);
         return this;
     }
 
@@ -274,6 +276,15 @@ public class HSLTestHelper {
 
     public CheckpointModule checkpoints() {
         return this.findExtensionModule(CheckpointModule.class);
+    }
+
+    public TestScriptOutputCapture outputCapture() {
+        if (this.context.outputCapture() instanceof TestScriptOutputCapture capture) {
+            return capture;
+        }
+        throw new IllegalStateException(
+            "Output capture was modified and is no longer a TestScriptOutputCapture"
+        );
     }
 
     public <T extends ASTExtensionModule<?, ?>> T findExtensionModule(Class<T> type) {
@@ -384,7 +395,7 @@ public class HSLTestHelper {
          * @return this builder
          */
         public Builder classMemberInterpreter(ClassMemberInterpreter<?> memberInterpreter) {
-            return this.customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+            return this.customize(CodeCustomizer.of(Phase.EXECUTING, context -> {
                 context.interpreter().state().memberInterpreter(memberInterpreter);
             }));
         }
@@ -407,7 +418,7 @@ public class HSLTestHelper {
             Object value,
             Function<Interpreter, VariableScope> scopeSelector
         ) {
-            return this.customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+            return this.customize(CodeCustomizer.of(Phase.EXECUTING, context -> {
                 Interpreter interpreter = context.interpreter();
                 scopeSelector.apply(interpreter).define(name, value);
             }));

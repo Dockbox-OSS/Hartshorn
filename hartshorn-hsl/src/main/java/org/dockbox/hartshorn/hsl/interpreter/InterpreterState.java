@@ -277,7 +277,7 @@ public class InterpreterState {
                 return externalClass.get();
             }
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
             .at(name)
             .build();

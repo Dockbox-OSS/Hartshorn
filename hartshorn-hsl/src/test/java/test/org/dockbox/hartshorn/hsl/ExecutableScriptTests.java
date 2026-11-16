@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,14 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import org.dockbox.hartshorn.hsl.CompiledExpressionScript;
+import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -34,20 +39,59 @@ class ExecutableScriptTests {
     private ApplicationContext context;
 
     @Test
-    void hslScriptCanEvaluate() {
-        String expression = "var a = 1";
-        ExecutableScript script = ExecutableScript.of(this.context, expression);
+    void interpretedScriptEvaluatesCorrectly() {
+        String expression = "var a = 1;";
+        InterpretedScript script = InterpretedScript.of(this.context, expression);
+        assertThat(script.mode()).isEqualTo(ExecutionMode.INTERPRETED);
         ScriptContext scriptContext = script.evaluate();
         Object result = scriptContext.interpreter().global().values().get("a");
-        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(1.0d);
     }
 
     @Test
-    void hslScriptCanResolveWithoutEvaluate() {
-        String expression = "var a = 1";
-        ExecutableScript script = ExecutableScript.of(this.context, expression);
+    void compiledScriptEvaluatesCorrectly() {
+        String expression = "var a = 42;";
+        CompiledScript script = CompiledScript.of(this.context, expression);
+        assertThat(script.mode()).isEqualTo(ExecutionMode.COMPILED);
+        ScriptContext scriptContext = script.evaluate();
+        assertThat(scriptContext.result("a").get()).isEqualTo(42.0d);
+    }
+
+    @Test
+    void compiledScriptCanCompileDirectly() {
+        String expression = "var a = 100;";
+        CompiledScript script = CompiledScript.of(this.context, expression);
+        CompiledScript compiled = script.compile();
+        ScriptContext result = compiled.execute();
+        assertThat(result.result("a").get()).isEqualTo(100.0d);
+    }
+
+    @Test
+    void interpretedScriptCanResolveWithoutEvaluate() {
+        String expression = "var a = 1;";
+        InterpretedScript script = InterpretedScript.of(this.context, expression);
         ScriptContext scriptContext = script.resolve();
         Object result = scriptContext.interpreter().global().values().get("a");
         assertThat(result).isNull();
+    }
+
+    @Test
+    void compiledScriptCanResolveWithoutEvaluate() {
+        String expression = "var a = 1;";
+        CompiledScript script = CompiledScript.of(this.context, expression);
+        ScriptContext scriptContext = script.resolve();
+        assertThat(scriptContext.statements()).isNotEmpty();
+    }
+
+    @Test
+    void expressionScriptsValidateCorrectly() {
+        InterpretedExpressionScript interpreted = InterpretedExpressionScript.of(this.context, "1 + 1 == 2");
+        assertThat(interpreted.mode()).isEqualTo(ExecutionMode.INTERPRETED);
+        assertThat(interpreted.valid()).isTrue();
+
+        CompiledExpressionScript compiled = CompiledExpressionScript.of(this.context, "1 + 1 == 2");
+        assertThat(compiled.mode()).isEqualTo(ExecutionMode.COMPILED);
+        compiled.execute();
+        assertThat(compiled.valid()).isTrue();
     }
 }

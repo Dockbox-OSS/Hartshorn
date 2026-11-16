@@ -28,14 +28,14 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
- * Utilities for interpreters, providing common functionality that should remain consistent across
- * different implementations of the interpreter.
+ * Utilities for HSL executions, providing common functionality that should remain consistent across
+ * different implementations and execution strategies.
  *
  * @since 0.5.0
  * 
  * @author Guus Lieben
  */
-public final class InterpreterUtilities {
+public final class CodeExecutionUtilities {
 
     /**
      * Determines the "truthiness" of an object according to HSL's rules. If a value is null or
@@ -46,7 +46,7 @@ public final class InterpreterUtilities {
      * @return true if the object is "truthy", false if it is "falsy"
      */
     public static boolean isTruthy(Object object) {
-        object = InterpreterUtilities.unwrap(object);
+        object = CodeExecutionUtilities.unwrap(object);
         if (object == null) {
             return false;
         }
@@ -111,7 +111,7 @@ public final class InterpreterUtilities {
         if (operand instanceof Number number) {
             return number;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
             .at(operator)
             .build();
@@ -137,7 +137,7 @@ public final class InterpreterUtilities {
         if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
             return new Tuple<>(leftNumber, rightNumber);
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
             .at(operator)
             .build();
@@ -152,7 +152,7 @@ public final class InterpreterUtilities {
      * @return the collection cast to an {@link Iterable} if it is valid
      */
     public static Iterable<?> checkIterable(ASTNode at, Object collection) {
-        collection = InterpreterUtilities.unwrap(collection);
+        collection = CodeExecutionUtilities.unwrap(collection);
 
         if (collection instanceof Iterable<?> collectionIterable) {
             return collectionIterable;
@@ -161,7 +161,7 @@ public final class InterpreterUtilities {
             return Arrays.asList((Object[]) collection);
         }
         else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
                 .at(at)
                 .build();

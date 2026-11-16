@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
@@ -39,11 +39,11 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
     @Override
     public Object interpret(PostfixExpression node, Interpreter interpreter) {
         Object left = interpreter.evaluate(node.leftExpression());
-        Number leftNumber = InterpreterUtilities.checkNumberOperand(node.operator(), left);
+        Number leftNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), left);
 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
                 .at(node.operator())
                 .build();
@@ -51,7 +51,7 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
         double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> leftNumber.doubleValue() + 1;
             case MINUS_MINUS -> leftNumber.doubleValue() - 1;
-            default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            default -> throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
                 .at(node.operator())
                 .build();

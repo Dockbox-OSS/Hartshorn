@@ -95,7 +95,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         if (executable != null) {
             return executable;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS,
                 this.methodName,
                 arguments,
@@ -112,19 +112,19 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         List<Object> arguments
     ) throws ApplicationException {
         if (this.instance != null && instance != this.instance) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_METHOD_BINDING_CALL, this.instance, instance)
                 .at(at)
                 .build();
         }
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.NON_EXTERNAL_OBJECT_CALL, this.methodName)
                 .at(at)
                 .build();
         }
         if (!this.type().isInstance(externalObjectReference.externalObject())) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.INCORRECT_INSTANCE_TYPE_FOR_FUNCTION,
                     this.methodName,
                     this.type.name(),
@@ -152,7 +152,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             throw e;
         }
         catch (Throwable throwable) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
                 .at(at)
                 .cause(throwable)
@@ -185,7 +185,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         while (classReference != null);
 
         if (externalClass == null) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name())
                 .virtualPosition()
                 .build();

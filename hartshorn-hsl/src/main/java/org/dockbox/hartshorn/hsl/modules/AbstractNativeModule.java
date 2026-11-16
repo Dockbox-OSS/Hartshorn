@@ -91,7 +91,7 @@ public abstract class AbstractNativeModule implements NativeModule {
             if (arguments.isEmpty()) {
                 Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
                 if (methodViewOption.absent()) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(at)
                         .message(DiagnosticMessage.MODULE_X_CANNOT_FIND_Y_Z,
                             this.moduleClass().getSimpleName(),
@@ -130,7 +130,7 @@ public abstract class AbstractNativeModule implements NativeModule {
                     TypeUtils.unchecked(externalClass, ExternalClass.class));
             }
             catch (Throwable e) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(at)
                     .message(DiagnosticMessage.ERROR_WHILE_INVOKING_NATIVE_METHOD,
                         function.name().lexeme(),
@@ -140,7 +140,7 @@ public abstract class AbstractNativeModule implements NativeModule {
             }
         }
         else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(at)
                 .message(DiagnosticMessage.UNSUPPORTED_MODULE_FUNCTION,
                     function.name().lexeme(),

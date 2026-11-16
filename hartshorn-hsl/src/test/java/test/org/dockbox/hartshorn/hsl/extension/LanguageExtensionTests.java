@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.hsl.extension;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -46,7 +47,7 @@ class LanguageExtensionTests {
 
     @Test
     void languageExtensionCanInject() {
-        ExpressionScript script = ExpressionScript.of(
+        ExpressionScript script = InterpretedExpressionScript.of(
             this.applicationContext,
             "(@hello == \"hello\") && (@world == \"world\")"
         );

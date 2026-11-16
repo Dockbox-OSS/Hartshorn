@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,31 +22,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 
 /**
- * Represents a single executable HSL script. This is a wrapper around the HSL runtime and provides
- * a simple {@link ScriptContext} tracking the state of the execution. This class is ensured to be
- * thread-safe and should not be shared between threads.
+ * Base representation of a single executable HSL script. This is a wrapper around the HSL runtime
+ * and provides a {@link ScriptContext} tracking the state of the execution.
  *
- * <p>It is recommended to use this class to execute HSL scripts, as it provides a simple and
- * consistent API for executing HSL scripts. The exposed {@link #runtime() script runtime} should
- * not be configured through this class, and should instead be configured through a
- * {@link org.dockbox.hartshorn.inject.annotations.configuration.Configuration configuration
- * class}.
+ * <p>Specific execution modes are separated into {@link CompiledScript} and {@link InterpretedScript}.
  *
  * @see ScriptRuntime
  * @see ScriptContext
+ * @see CompiledScript
+ * @see InterpretedScript
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public class ExecutableScript extends DefaultApplicationAwareContext {
+public abstract class ExecutableScript extends DefaultApplicationAwareContext {
 
     private final String source;
 
@@ -59,53 +57,14 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     }
 
     /**
-     * Creates a new {@link ExecutableScript} from the given source and the given
-     * {@link ApplicationContext}.
+     * Returns the execution mode for this script.
      *
-     * @param context The application context to use for execution
-     * @param source The source of the script
-     *
-     * @return A new {@link ExecutableScript} instance
+     * @return the execution mode
      */
-    public static ExecutableScript of(ApplicationContext context, String source) {
-        return new ExecutableScript(context, source);
-    }
+    public abstract ExecutionMode mode();
 
     /**
-     * Creates a new {@link ExecutableScript} from the given source and the given {@link Path}. The
-     * source is read from the file. This method will throw an {@link IOException} if the file
-     * cannot be read.
-     *
-     * @param context The application context to use for execution
-     * @param path The path to the file containing the source
-     *
-     * @return A new {@link ExecutableScript} instance
-     *
-     * @throws IOException If the file cannot be read
-     */
-    public static ExecutableScript of(ApplicationContext context, Path path) throws IOException {
-        return of(context, sourceFromPath(path));
-    }
-
-    /**
-     * Creates a new {@link ExecutableScript} from the given source and the given {@link File}. The
-     * source is read from the file. This method will throw an {@link IOException} if the file
-     * cannot be read.
-     *
-     * @param context The application context to use for execution
-     * @param file The file containing the source
-     *
-     * @return A new {@link ExecutableScript} instance
-     *
-     * @throws IOException If the file cannot be read
-     */
-    public static ExecutableScript of(ApplicationContext context, File file) throws IOException {
-        return of(context, file.toPath());
-    }
-
-    /**
-     * Reads the source from the given {@link Path} and returns it as a string. This method will
-     * throw an {@link IOException} if the file cannot be read.
+     * Reads the source from the given {@link Path} and returns it as a string.
      *
      * @param path The path to the file containing the source
      *
@@ -120,8 +79,7 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
 
     /**
      * Creates a new {@link ScriptRuntime} instance. This method is called when the runtime is not
-     * yet created. This method can be overridden to provide a custom runtime, but should not be
-     * called by any method other than {@link #getOrCreateRuntime()}.
+     * yet created.
      *
      * @return A new {@link ScriptRuntime} instance
      */
@@ -137,13 +95,25 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     protected ScriptRuntime getOrCreateRuntime() {
         if (this.runtime == null) {
             this.runtime = this.createRuntime();
+            this.runtime.executionMode(this.mode());
         }
         return this.runtime;
     }
 
     /**
-     * Resolves the script. This method will run the script until semantics have been resolved. The
-     * script will not be interpreted. This method will return the resolved {@link ScriptContext}.
+     * Sets the script runtime.
+     *
+     * @param runtime the script runtime
+     */
+    protected void runtime(ScriptRuntime runtime) {
+        this.runtime = runtime;
+        if (runtime != null) {
+            runtime.executionMode(this.mode());
+        }
+    }
+
+    /**
+     * Resolves the script. This method will run the script until semantics have been resolved.
      *
      * @return The resolved {@link ScriptContext}
      */
@@ -153,22 +123,11 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     }
 
     /**
-     * Evaluates the script. This method will run the script until it has been interpreted. If the
-     * script has not yet been resolved, this method will first resolve the script. This method will
-     * immediately proceed to interpretation if the script has already been resolved.
+     * Evaluates the script according to the configured execution mode.
      *
      * @return The evaluated {@link ScriptContext}
      */
-    public ScriptContext evaluate() {
-        if (this.context != null) {
-            this.context = this.getOrCreateRuntime().runOnly(this.context, Phase.INTERPRETING);
-        }
-        else {
-            this.context = this.resolve();
-            this.context = this.evaluate();
-        }
-        return this.context;
-    }
+    public abstract ScriptContext evaluate();
 
     /**
      * Returns the source of the script.
@@ -187,6 +146,15 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
      */
     public ScriptContext scriptContext() {
         return this.context;
+    }
+
+    /**
+     * Sets the context of the script.
+     *
+     * @param context the context of the script
+     */
+    protected void scriptContext(ScriptContext context) {
+        this.context = context;
     }
 
     /**

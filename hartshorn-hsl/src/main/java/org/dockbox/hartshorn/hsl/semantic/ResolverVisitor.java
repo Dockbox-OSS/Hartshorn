@@ -526,7 +526,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ModuleStatement statement) {
-        Map<String, NativeModule> modules = this.resolver.interpreter().state().externalModules();
+        Map<String, NativeModule> modules = this.resolver.symbolTable().externalModules();
         String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)

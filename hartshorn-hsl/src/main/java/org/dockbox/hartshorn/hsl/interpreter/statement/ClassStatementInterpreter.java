@@ -83,13 +83,13 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
         if (superClassExpression != null) {
             superClass = interpreter.evaluate(superClassExpression);
             if (!(superClass instanceof ClassReference classReference)) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
                     .at(superClassExpression)
                     .build();
             }
             if (classReference.isFinal()) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
                     .at(superClassExpression)
                     .build();

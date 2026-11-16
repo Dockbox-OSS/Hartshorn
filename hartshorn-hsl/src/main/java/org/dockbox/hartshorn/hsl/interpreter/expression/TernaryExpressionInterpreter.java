@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 
 /**
  * Interpreter for {@link TernaryExpression} nodes.
@@ -33,7 +33,7 @@ public class TernaryExpressionInterpreter implements ASTNodeInterpreter<Object, 
     @Override
     public Object interpret(TernaryExpression node, Interpreter interpreter) {
         Object condition = interpreter.evaluate(node.condition());
-        if (InterpreterUtilities.isTruthy(condition)) {
+        if (CodeExecutionUtilities.isTruthy(condition)) {
             return interpreter.evaluate(node.firstExpression());
         }
         return interpreter.evaluate(node.secondExpression());

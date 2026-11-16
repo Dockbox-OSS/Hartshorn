@@ -75,7 +75,7 @@ public class VariableScope {
         if (this.enclosing != null) {
             return this.enclosing.get(name);
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
             .at(name)
             .build();
@@ -112,7 +112,7 @@ public class VariableScope {
             this.enclosing.assign(name, value);
             return;
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
             .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
             .at(name)
             .build();
@@ -198,7 +198,7 @@ public class VariableScope {
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
                     .at(name)
                     .build();
