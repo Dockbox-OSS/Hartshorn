@@ -156,6 +156,9 @@ public class HSLTestHelper {
      */
     public static Builder of(ApplicationContext applicationContext, String source) {
         return new Builder(applicationContext, source)
+            .customize(CodeCustomizer.of(Phase.EXECUTING, context -> {
+                context.outputCapture(new TestScriptOutputCapture());
+            }))
             .extensions(extensions -> {
                 extensions.expressionModules(new CheckpointModule());
             });
@@ -273,6 +276,15 @@ public class HSLTestHelper {
 
     public CheckpointModule checkpoints() {
         return this.findExtensionModule(CheckpointModule.class);
+    }
+
+    public TestScriptOutputCapture outputCapture() {
+        if (this.context.outputCapture() instanceof TestScriptOutputCapture capture) {
+            return capture;
+        }
+        throw new IllegalStateException(
+            "Output capture was modified and is no longer a TestScriptOutputCapture"
+        );
     }
 
     public <T extends ASTExtensionModule<?, ?>> T findExtensionModule(Class<T> type) {
