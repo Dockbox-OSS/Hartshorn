@@ -17,6 +17,11 @@
     <java.version>25</java.version>
     <hartshorn.version>${project.version}</hartshorn.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.outputTimestamp>2026-01-01T00:00:00Z</project.build.outputTimestamp>
+
+    <!-- Maven plugin versions, in alphabetical order -->
+    <plugin.compiler.version>3.16.0</plugin.compiler.version>
+    <plugin.flatten.version>1.8.0</plugin.flatten.version>
   </properties>
 
   <dependencyManagement>
@@ -74,9 +79,34 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${plugin.flatten.version}</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>${plugin.compiler.version}</version>
         <configuration>
           <release>${java.version}</release>
           <fork>false</fork>

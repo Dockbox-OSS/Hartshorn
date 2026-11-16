@@ -8,12 +8,16 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-platform-support</artifactId>
     <version>${revision}</version>
-    <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
+    <relativePath>../hartshorn-assembly/hartshorn-platform-support</relativePath>
   </parent>
 
   <name>Hartshorn Integration Tests</name>
   <artifactId>hartshorn-integration-tests</artifactId>
   <packaging>jar</packaging>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>
