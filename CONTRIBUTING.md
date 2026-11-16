@@ -77,33 +77,17 @@ the [Pull Request Template](https://github.com/Dockbox-OSS/Hartshorn/blob/develo
 
 ## Code Style
 
-We maintain a consistent code style to ensure readability and maintainability. Our code style is
-based on the [Square code style](https://github.com/square/java-code-styles), with a few minor
-changes. Please follow the code style guidelines below when contributing to Hartshorn.
+Hartshorn uses the [Palantir Java Format](https://github.com/palantir/palantir-java-format), which is enforced by the
+Spotless plugin. If you are using IntelliJ, you can install the 
+[palantir-java-format](https://plugins.jetbrains.com/plugin/13180-palantir-java-format) plugin to automatically format 
+your code.
 
-| Rule                                             | Motivation                                       |
-|--------------------------------------------------|--------------------------------------------------|
-| Indent with 4 spaces                             | Consistency with the existing codebase.          |
-| Hard wrap at 140 columns                         | The default 100 column limit is too restrictive. |
-| Place `else`, `catch`, etc. on new lines         | Improved readability and Git blaming             |
-| Use braces around loops (`for`, `while`)         | Improved readability and Git blaming             |
-| Always wrap enum constants                       | Improved readability and Git blaming             |
-| Wrap annotations on classes, methods, and fields | Improved readability and Git blaming             |
-
-## Code Inspections
-
-We encourage the use of code inspections to maintain code quality. Please ensure the following
-inspections are enabled:
-
-| Inspection                                     | Enabled | Motivation                                                                                                |
-|------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------|
-| Warn about use of 'System.out' or 'System.err' | Yes     | Prevent accidental use of `System.out` and `System.err`. Encourage the use of logging instead.            |
-| Warn when a type may be weakened               | Yes     | Encourage APIs to support as many implementations as possible.                                            | 
-| AutoCloseable used without try-with-resources  | No      | `ApplicationContext` is `AutoCloseable` but should not be used with try-with-resources in most scenarios. |
-| String literal may be equals qualifier         | Yes     | Prevents preventable NPEs by swapping x.equals("string") to "string".equals(x)                            |
-| Missorted modifiers                            | Yes     | This is a common mistake, and should be avoided.                                                          |
-| Unqualified method or field access             | Yes     | Being more explicit when calling methods or accessing fields is often clearer.                            |
-| Unused return value                            | No      | Some methods may not be used internally, but are exposed for external use.                                |
+## Scripting utilities
+Hartshorn has a set of scripting utilities that can be used to automate common tasks. For example, 
+[listing coverage results](hartshorn-assembly/ListCoverageResults.ps1) and 
+[generating new modules](hartshorn-archetype/GenerateModule.ps1) (also see 'Setting up new modules' below). If your
+contribution involves scripting, please ensure that the scripts use PowerShell and follow best practices for 
+scripting in PowerShell. Bash, Python, and other scripting languages are not supported and will not be accepted.
 
 ## Documentation
 

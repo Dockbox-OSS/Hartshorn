@@ -22,7 +22,8 @@
     Feature toggles for CI, defaults to opt-out behavior.
     Use the 'ci' profile to disable by default, making this opt-in instead.
     -->
-    <checkstyle.skip>false</checkstyle.skip>
+    <spotless.check.skip>true</spotless.check.skip>
+    <spotless.apply.skip>false</spotless.apply.skip>
     <owasp.skip>false</owasp.skip>
     <license-check.skip>false</license-check.skip>
     <errorprone.skip>false</errorprone.skip>
@@ -31,14 +32,11 @@
     <javadoc.skip>false</javadoc.skip>
 
     <!-- Maven plugin versions, in alphabetical order -->
-    <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
+    <plugin.spotless.version>3.10.4</plugin.spotless.version>
     <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
     <plugin.license.version>5.1.2</plugin.license.version>
     <plugin.owasp.version>13.0.0</plugin.owasp.version>
     <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
-
-    <!-- Plugin dependencies, in alphabetical order -->
-    <checkstyle.version>14.3.0</checkstyle.version>
 
     <!-- Only enable through profile below -->
     <argLine.errorprone/>
@@ -54,7 +52,8 @@
       <!-- CI profile, so we can opt-in to goals, instead of having to opt-out -->
       <id>ci</id>
       <properties>
-        <checkstyle.skip>true</checkstyle.skip>
+        <spotless.check.skip>true</spotless.check.skip>
+        <spotless.apply.skip>true</spotless.apply.skip>
         <owasp.skip>true</owasp.skip>
         <license-check.skip>true</license-check.skip>
         <errorprone.skip>true</errorprone.skip>
@@ -291,9 +290,9 @@
       <!-- Plugin management, in alphabetical order of version property -->
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${plugin.checkstyle.version}</version>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${plugin.spotless.version}</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -394,37 +393,36 @@
 
       <!-- Code style -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
         <configuration>
-          <skip>${checkstyle.skip}</skip>
-          <configLocation>src/checkstyle/checkstyle.xml</configLocation>
-          <consoleOutput>true</consoleOutput>
-          <failsOnError>true</failsOnError>
-          <failOnViolation>true</failOnViolation>
-          <violationSeverity>warning</violationSeverity>
-          <linkXRef>false</linkXRef>
-          <includeTestSourceDirectory>false</includeTestSourceDirectory>
-          <configLocation>
-            ${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/checkstyle.xml
-          </configLocation>
-          <suppressionsLocation>
-            ${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/suppressions.xml
-          </suppressionsLocation>
+          <java>
+            <palantirJavaFormat>
+              <version>2.102.0</version>
+              <style>PALANTIR</style>
+              <formatJavadoc>false</formatJavadoc>
+            </palantirJavaFormat>
+          </java>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>${checkstyle.version}</version>
-          </dependency>
-        </dependencies>
         <executions>
           <execution>
             <id>validate</id>
             <phase>validate</phase>
+            <configuration>
+              <skip>${spotless.check.skip}</skip>
+            </configuration>
             <goals>
               <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>format</id>
+            <phase>process-sources</phase>
+            <configuration>
+              <skip>${spotless.apply.skip}</skip>
+            </configuration>
+            <goals>
+              <goal>apply</goal>
             </goals>
           </execution>
         </executions>
