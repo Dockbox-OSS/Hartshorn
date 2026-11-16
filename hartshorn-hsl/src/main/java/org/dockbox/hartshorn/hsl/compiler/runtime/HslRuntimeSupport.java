@@ -684,4 +684,31 @@ public final class HslRuntimeSupport {
     public static void addGlobalResult(ScriptContext context, Object value) {
         context.addResult(value);
     }
+
+
+    /**
+     * Standardized 'to string' function for given objects, converting nulls to "null" and handling
+     * special cases such as doubles ending with ".0".
+     *
+     * @param object The object to stringify.
+     *
+     * @return The string representation of the object.
+     */
+    public static String stringify(Object object) {
+        if (object == null) {
+            return LiteralTokenType.NULL.representation();
+        }
+        // Hack. Work around Java adding ".0" to integer-valued doubles.
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+
+        return object.toString()
+            .replaceAll("\\\\n", "\n")
+            .replaceAll("\\\\t", "\t");
+    }
 }
