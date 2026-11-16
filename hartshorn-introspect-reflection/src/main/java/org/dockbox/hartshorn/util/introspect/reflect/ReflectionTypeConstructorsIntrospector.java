@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -81,6 +82,9 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
                 .map(constructor -> (Constructor<T>) constructor)
                 .map(this.introspector::introspect)
                 .collect(Collectors.toList());
+            this.defaultConstructor()
+                .filter(Predicate.not(this.constructors::contains))
+                .peek(this.constructors::add);
         }
         return this.constructors;
     }
