@@ -26,7 +26,15 @@ jobs:
         run: |
           REVISION="${GITHUB_REF_NAME#release/}"
           REVISION="${REVISION#v}"
-          mvn clean deploy -P ci,staging -Dstaging=true -DskipTests -Drevision="${REVISION}"
+          mvn clean verify \
+            org.apache.maven.plugins:maven-gpg-plugin:3.2.8:sign \
+            org.sonatype.central:central-publishing-maven-plugin:0.9.0:publish \
+            -P ci \
+            -DskipTests \
+            -Drevision="${REVISION}" \
+            -DpublishingServerId=ossrh \
+            -DautoPublish=false \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
