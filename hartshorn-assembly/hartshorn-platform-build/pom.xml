@@ -69,77 +69,17 @@
     <plugin.deploy.version>3.2.0</plugin.deploy.version>
     <plugin.flatten.version>1.8.0</plugin.flatten.version>
     <plugin.gmaven.version>5.1.0</plugin.gmaven.version>
-    <plugin.gpg.version>3.2.8</plugin.gpg.version>
     <plugin.jar.version>3.5.1</plugin.jar.version>
     <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
     <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
     <plugin.scala.version>4.10.0</plugin.scala.version>
     <plugin.source.version>3.4.0</plugin.source.version>
-    <plugin.staging.version>1.7.0</plugin.staging.version>
     <plugin.openrewrite.version>6.46.1</plugin.openrewrite.version>
     <plugin.versions.version>2.22.0</plugin.versions.version>
+
+    <!-- Deployment behaviors -->
+    <maven.deploy.skip>false</maven.deploy.skip>
   </properties>
-
-  <profiles>
-    <profile>
-      <id>staging</id>
-      <activation>
-        <property>
-          <name>staging</name>
-          <value>true</value>
-        </property>
-      </activation>
-
-      <distributionManagement>
-        <repository>
-          <id>ossrh</id>
-          <name>OSSRH Staging</name>
-          <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-          <layout>default</layout>
-          <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-
-      <build>
-        <plugins>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <gpgArguments>
-                    <arg>--pinentry-mode</arg>
-                    <arg>loopback</arg>
-                  </gpgArguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- Deployment configuration -->
-          <plugin>
-            <groupId>org.sonatype.central</groupId>
-            <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.9.0</version>
-            <extensions>true</extensions>
-            <configuration>
-              <publishingServerId>central</publishingServerId>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
   <build>
     <testResources>
@@ -205,23 +145,24 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>${plugin.deploy.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>${plugin.gpg.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>${plugin.source.version}</version>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${plugin.staging.version}</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.2.8</version>
+          <configuration>
+            <skip>${maven.deploy.skip}</skip>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.11.0</version>
+          <configuration>
+            <skipPublishing>${maven.deploy.skip}</skipPublishing>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -372,7 +313,7 @@
         </dependencies>
       </plugin>
 
-      <!-- Distribution staging -->
+      <!-- Sources and JavaDocs -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
