@@ -121,10 +121,16 @@ public class JettyServerConfiguration {
         return server;
     }
 
-
+    /**
+     * Customizer to attach the global {@link RequestErrorHandler} to Jetty's {@link Server}.
+     *
+     * @param errorHandler the global request error handler
+     * @return a customizer that attaches the error handler to the server
+     *
+     * @see JettyErrorHandlerAdapter
+     */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public Customizer<Server> errorHandlerCustomizer(RequestErrorHandler<Throwable> errorHandler) {
         return server -> {
             server.setErrorHandler(new JettyErrorHandlerAdapter(errorHandler));
@@ -137,6 +143,7 @@ public class JettyServerConfiguration {
      * provided customizers.
      *
      * @param customizers A collection of customizers to configure the servlet context handler.
+     * @param pathSpecTransformer A transformer to modify path specifications for servlet mappings.
      *
      * @return The main Jetty Handler instance that will handle incoming requests based on the
      * registered servlet mappings and filters.
@@ -150,7 +157,7 @@ public class JettyServerConfiguration {
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
 
-        JettyServletRegistrar registrar = new JettyServletRegistrar(context, pathSpecTransformer);
+        ServletRegistrar registrar = new JettyServletRegistrar(context, pathSpecTransformer);
         customizers.forEach(customizer -> customizer.configure(registrar));
 
         return context;
@@ -164,7 +171,6 @@ public class JettyServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    @SupportPriority
     public Customizer<ServletContextHandler> contextFilterCustomizer(
             @Fuzzy ComponentCollection<Filter> filters
     ) {

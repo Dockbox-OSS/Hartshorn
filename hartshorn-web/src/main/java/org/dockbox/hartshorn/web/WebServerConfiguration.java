@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.web;
 
 import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -346,7 +347,6 @@ public class WebServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    @SupportPriority
     public Customizer<ServletRegistrar> contextStaticPathCustomizer(
             ResourceLookup resourceLookup,
             @PropertyValue(
@@ -367,7 +367,7 @@ public class WebServerConfiguration {
         }
         PathSpec pathSpec = pathParser.parse(staticPath);
         return context -> {
-            StaticResourceServlet servlet = new StaticResourceServlet(
+            Servlet servlet = new StaticResourceServlet(
                     resourceLookup,
                     staticLocation
             );
@@ -387,7 +387,6 @@ public class WebServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    @SupportPriority
     public Customizer<ServletRegistrar> contextCustomizer(
             HandlerMappingRegistry mappingRegistry
     ) {
@@ -399,12 +398,19 @@ public class WebServerConfiguration {
                                 PathHandlerSpec::method,
                                 PathHandlerSpec::handler
                         ));
-                RequestRoutingServlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
+                Servlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
                 context.register(pathSpec, servlet);
             }
         };
     }
 
+    /**
+     * Global registry for {@link RequestErrorHandler}s. Can be customized by registering additional
+     * handlers or overriding existing ones.
+     *
+     * @param customizers A list of customizers to modify the error handler registry.
+     * @return A global registry for request error handlers.
+     */
     @Singleton
     @SupportPriority
     public ErrorHandlerRegistry errorHandlerRegistry(
@@ -417,6 +423,14 @@ public class WebServerConfiguration {
         return registry;
     }
 
+    /**
+     * Creates a {@link RequestErrorHandler} that handles exceptions thrown during request
+     * processing. Exact error handling depends on the exception type and configured
+     * {@link ErrorHandlerRegistry}.
+     *
+     * @param errorHandlerRegistry The registry containing all registered error handlers.
+     * @return A request error handler that delegates to the registered error handlers.
+     */
     @Singleton
     @SupportPriority
     public RequestErrorHandler<Throwable> defaultRequestErrorHandler(

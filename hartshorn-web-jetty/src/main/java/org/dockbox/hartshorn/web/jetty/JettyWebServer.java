@@ -81,7 +81,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
 
     @Override
     public int port() {
-        return getNetworkConnectors().stream()
+        return this.getNetworkConnectors().stream()
             .collect(Option.collector())
             .map(NetworkConnector::getLocalPort)
             .orElseThrow(() -> new IllegalStateException(
@@ -97,7 +97,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("connectors").writeDelegates(getNetworkConnectors().stream()
+        collector.property("connectors").writeDelegates(this.getNetworkConnectors().stream()
                 .map(NetworkConnectorReporter::new)
                 .toArray(Reportable[]::new));
 
@@ -110,7 +110,9 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
             List<Reportable> servlets = getReportableServlets(servletContextHandler);
             collector.property("servlets").writeDelegates(servlets.stream()
                     .map(servlet -> (Reportable) servletCollector -> {
-                        servletCollector.property(servlet.getClass().getName()).writeDelegate(servlet);
+                        servletCollector
+                            .property(servlet.getClass().getName())
+                            .writeDelegate(servlet);
                     })
                     .toArray(Reportable[]::new)
             );
@@ -121,7 +123,8 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
             ServletContextHandler servletContextHandler
     ) {
         List<Reportable> servlets = new ArrayList<>();
-        for (ServletHolder servletHolder : servletContextHandler.getServletHandler().getServlets()) {
+        for (ServletHolder servletHolder
+            : servletContextHandler.getServletHandler().getServlets()) {
             try {
                 Servlet servlet = servletHolder.getServlet();
                 if (!(servlet instanceof RequestRoutingServlet)
