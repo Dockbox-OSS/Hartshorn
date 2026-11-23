@@ -347,6 +347,11 @@ public class WebServerConfiguration {
      */
     @Prototype
     @CompositeMember
+    @RequiresProperty(
+            name = "hartshorn.web.resources.static.enabled",
+            withValue = "true",
+            matchIfMissing = true
+    )
     public Customizer<ServletRegistrar> contextStaticPathCustomizer(
             ResourceLookup resourceLookup,
             @PropertyValue(

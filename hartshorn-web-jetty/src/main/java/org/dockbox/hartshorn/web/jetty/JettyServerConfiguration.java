@@ -143,6 +143,8 @@ public class JettyServerConfiguration {
      * provided customizers.
      *
      * @param customizers A collection of customizers to configure the servlet context handler.
+     * @param filterCustomizers A collection of customizers to configure the servlet context
+     * handler.
      * @param pathSpecTransformer A transformer to modify path specifications for servlet mappings.
      *
      * @return The main Jetty Handler instance that will handle incoming requests based on the
@@ -152,10 +154,12 @@ public class JettyServerConfiguration {
     @SupportPriority
     public Handler serverHandler(
             @Fuzzy ComponentCollection<Customizer<ServletRegistrar>> customizers,
+            @Fuzzy ComponentCollection<Customizer<ServletContextHandler>> filterCustomizers,
             JettyPathSpecTransformer pathSpecTransformer
     ) {
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
+        filterCustomizers.forEach(customizer -> customizer.configure(context));
 
         ServletRegistrar registrar = new JettyServletRegistrar(context, pathSpecTransformer);
         customizers.forEach(customizer -> customizer.configure(registrar));

@@ -22,6 +22,7 @@ import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ObjectAssert;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.net.http.HttpResponse;
 import java.util.function.Function;
 
 /**
@@ -79,5 +80,10 @@ public class HartshornAssertions {
                 new Class[0],
                 Assertions::assertThat
         );
+    }
+
+    public static <T> HttpResponseAssert<T> assertThat(HttpResponse<T> response) {
+        Assertions.assertThat(response).isNotNull();
+        return HttpResponseAssert.assertThat(response);
     }
 }
