@@ -82,8 +82,16 @@ public class HartshornAssertions {
         );
     }
 
+    /**
+     * Creates a new assertion for the given non-null {@link HttpResponse}.
+     *
+     * @param response the non-null {@link HttpResponse}
+     * @param <T> the response type
+     *
+     * @return a new {@link HttpResponseAssert}
+     */
     public static <T> HttpResponseAssert<T> assertThat(HttpResponse<T> response) {
         Assertions.assertThat(response).isNotNull();
-        return HttpResponseAssert.assertThat(response);
+        return new HttpResponseAssert<>(response);
     }
 }

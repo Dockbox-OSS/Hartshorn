@@ -24,71 +24,157 @@ import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Custom assertions for {@link HttpResponse} instances.
+ *
+ * @param <T> the response type
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class HttpResponseAssert<T> extends AbstractAssert<HttpResponseAssert<T>, HttpResponse<T>> {
 
     protected HttpResponseAssert(HttpResponse<T> actual) {
         super(actual, HttpResponseAssert.class);
     }
 
-    public static <T> HttpResponseAssert<T> assertThat(HttpResponse<T> actual) {
-        return new HttpResponseAssert<>(actual);
-    }
-
+    /**
+     * Asserts that the response has the given status code.
+     *
+     * @param expected the expected status code
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasStatusCode(int expected) {
         isNotNull();
-        Assertions.assertThat(actual.statusCode()).as("HTTP response status code").isEqualTo(expected);
+        Assertions.assertThat(actual.statusCode())
+                .as("HTTP response status code")
+                .isEqualTo(expected);
         return myself;
     }
 
+    /**
+     * Asserts that the response has a successful status code (2xx).
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasSuccessfulStatus() {
         isNotNull();
-        Assertions.assertThat(actual.statusCode()).as("HTTP response status code").isBetween(200, 299);
+        Assertions.assertThat(actual.statusCode())
+                .as("HTTP response status code")
+                .isBetween(200, 299);
         return myself;
     }
 
+    /**
+     * Asserts that the response has a client error status code (4xx).
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasClientErrorStatus() {
         isNotNull();
-        Assertions.assertThat(actual.statusCode()).as("HTTP response status code").isBetween(400, 499);
+        Assertions.assertThat(actual.statusCode())
+                .as("HTTP response status code")
+                .isBetween(400, 499);
         return myself;
     }
 
+    /**
+     * Asserts that the response has a server error status code (5xx).
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasServerErrorStatus() {
         isNotNull();
-        Assertions.assertThat(actual.statusCode()).as("HTTP response status code").isBetween(500, 599);
+        Assertions.assertThat(actual.statusCode())
+                .as("HTTP response status code")
+                .isBetween(500, 599);
 
         return myself;
     }
 
+    /**
+     * Asserts that the response has the given header.
+     *
+     * @param name the header name
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasHeader(String name) {
         isNotNull();
-        Assertions.assertThat(actual.headers().allValues(name)).as("HTTP response header '%s'", name).isNotEmpty();
+        Assertions.assertThat(actual.headers().allValues(name))
+                .as("HTTP response header '%s'", name)
+                .isNotEmpty();
         return myself;
     }
 
+    /**
+     * Asserts that the response has the given header with the given value.
+     *
+     * @param name the header name
+     * @param expectedValue the expected header value
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasHeader(String name, String expectedValue) {
         isNotNull();
-        Assertions.assertThat(actual.headers().allValues(name)).as("HTTP response header '%s'", name).contains(expectedValue);
+        Assertions.assertThat(actual.headers().allValues(name))
+                .as("HTTP response header '%s'", name)
+                .contains(expectedValue);
         return myself;
     }
 
+    /**
+     * Asserts that the response does not have the given header.
+     *
+     * @param name the header name
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> doesNotHaveHeader(String name) {
         isNotNull();
-        Assertions.assertThat(actual.headers().allValues(name)).as("HTTP response header '%s'", name).isEmpty();
+        Assertions.assertThat(actual.headers().allValues(name))
+                .as("HTTP response header '%s'", name)
+                .isEmpty();
         return myself;
     }
 
+    /**
+     * Asserts that the response has the given body.
+     *
+     * @param expected the expected body
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasBody(T expected) {
         isNotNull();
-        Assertions.assertThat(actual.body()).as("HTTP response body").isEqualTo(expected);
+        Assertions.assertThat(actual.body())
+                .as("HTTP response body")
+                .isEqualTo(expected);
         return myself;
     }
 
+    /**
+     * Asserts that the response does not have a body.
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> hasNoBody() {
         isNotNull();
-        Assertions.assertThat(actual.body()).as("HTTP response body").isNull();
+        Assertions.assertThat(actual.body())
+                .as("HTTP response body")
+                .isNull();
         return myself;
     }
 
+    /**
+     * Asserts that the response satisfies the given assertion.
+     *
+     * @param assertion the assertion to apply to the response body
+     *
+     * @return the current assertion, for fluent expressions
+     */
     public HttpResponseAssert<T> satisfiesBody(Consumer<? super T> assertion) {
         isNotNull();
         Objects.requireNonNull(assertion, "assertion");
@@ -96,6 +182,11 @@ public class HttpResponseAssert<T> extends AbstractAssert<HttpResponseAssert<T>,
         return myself;
     }
 
+    /**
+     * Returns an assertion on the response body.
+     *
+     * @return an assertion on the response body
+     */
     public ObjectAssert<T> body() {
         isNotNull();
         return Assertions.assertThat(actual.body()).as("HTTP response body");
