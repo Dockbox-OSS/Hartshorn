@@ -133,6 +133,11 @@
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-web-test-fixtures</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-support</artifactId>
         <version>${revision}</version>
       </dependency>

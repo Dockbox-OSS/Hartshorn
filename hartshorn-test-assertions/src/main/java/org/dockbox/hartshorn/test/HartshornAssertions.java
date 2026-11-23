@@ -22,6 +22,7 @@ import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ObjectAssert;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.net.http.HttpResponse;
 import java.util.function.Function;
 
 /**
@@ -79,5 +80,18 @@ public class HartshornAssertions {
                 new Class[0],
                 Assertions::assertThat
         );
+    }
+
+    /**
+     * Creates a new assertion for the given non-null {@link HttpResponse}.
+     *
+     * @param response the non-null {@link HttpResponse}
+     * @param <T> the response type
+     *
+     * @return a new {@link HttpResponseAssert}
+     */
+    public static <T> HttpResponseAssert<T> assertThat(HttpResponse<T> response) {
+        Assertions.assertThat(response).isNotNull();
+        return new HttpResponseAssert<>(response);
     }
 }

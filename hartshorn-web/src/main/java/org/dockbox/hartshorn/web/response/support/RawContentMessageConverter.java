@@ -46,7 +46,9 @@ public class RawContentMessageConverter implements HttpMessageConverter<Object> 
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return type == String.class || type == ByteBuffer.class || type == byte[].class;
+        return type == String.class
+                || type == byte[].class
+                || (type != null && ByteBuffer.class.isAssignableFrom(type));
     }
 
     @Override

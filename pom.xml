@@ -63,6 +63,7 @@
         <module>hartshorn-hsl</module>
         <module>hartshorn-web</module>
         <module>hartshorn-web-jetty</module>
+        <module>hartshorn-web-test-fixtures</module>
         <module>hartshorn-test-assertions</module>
         <module>hartshorn-testsuite</module>
         <module>hartshorn-support</module>

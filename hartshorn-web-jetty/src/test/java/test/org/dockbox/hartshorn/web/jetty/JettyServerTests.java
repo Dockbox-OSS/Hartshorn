@@ -16,52 +16,14 @@
 
 package test.org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.test.annotations.TestComponents;
-import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.web.GetRoute;
-import org.dockbox.hartshorn.web.Router;
-import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
 import org.dockbox.hartshorn.web.jetty.JettyWebServer;
-import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.web.WebServerTests;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+public class JettyServerTests extends WebServerTests {
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@UseWebServer
-@HartshornIntegrationTest(includeBasePackages = false)
-public class JettyServerTests {
-
-    @Test
-    @TestComponents(TestRouter.class)
-    void testBasicRequestResponseFlow(
-        @Inject WebServer server
-    ) throws IOException, InterruptedException {
-        assertThat(server).isInstanceOf(JettyWebServer.class);
-
-        int port = server.port();
-        String response;
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:" + port + "/hello"))
-                    .build();
-            response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-        }
-        assertThat(response).isEqualTo("hello");
-    }
-
-    @Router
-    public static class TestRouter {
-
-        @GetRoute("/hello")
-        public String hello() {
-            return "hello";
-        }
+    @Override
+    protected Class<? extends WebServer> expectedInstanceType() {
+        return JettyWebServer.class;
     }
 }
