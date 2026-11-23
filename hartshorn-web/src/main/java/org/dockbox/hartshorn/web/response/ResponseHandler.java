@@ -34,9 +34,9 @@ public interface ResponseHandler {
      * Handles the given result and writes it to the response. The implementation is responsible for
      * setting the appropriate content type and status code, if necessary.
      *
-     * @param request
+     * @param request the request that triggered the response
      * @param response the response to write the result to
-     * @param result   the result to write to the response
+     * @param result the result to write to the response
      * @throws Exception if an error occurs while writing the result to the response
      */
     void handleResponse(
