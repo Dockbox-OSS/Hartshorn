@@ -14,6 +14,7 @@
   <name>Hartshorn</name>
   <artifactId>hartshorn</artifactId>
   <packaging>pom</packaging>
+  <description>Hartshorn framework</description>
 
   <properties>
     <!-- Project version, keep in sync with build support POM -->
@@ -23,27 +24,40 @@
     <jacoco.skip>false</jacoco.skip>
     <javadoc.skip>false</javadoc.skip>
 
-    <!-- Deployment configuration -->
-    <maven.deploy.skip>true</maven.deploy.skip>
-
     <!-- Maven plugin versions, in alphabetical order -->
     <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
   </properties>
 
   <profiles>
     <profile>
-      <id>default</id>
+      <id>local</id>
       <activation>
         <property>
-          <name>!includeModules</name>
+          <name>!excludeLocal</name>
         </property>
+      </activation>
+      <modules>
+        <module>hartshorn-proxy-test-fixtures</module>
+        <module>hartshorn-introspect-test-fixtures</module>
+        <module>hartshorn-integration-tests</module>
+        <module>hartshorn-web-test-fixtures</module>
+        <module>hartshorn-launchpad-samples</module>
+        <module>hartshorn-assembly/architecture-rules</module>
+
+        <!-- TODO: Verify if this can be included by default for deployments -->
+        <module>hartshorn-launchpad-starter</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
         <!-- Platform and base modules -->
         <module>hartshorn-assembly/hartshorn-platform-build</module>
         <module>hartshorn-bom</module>
         <module>hartshorn-assembly/hartshorn-platform-support</module>
-        <module>hartshorn-assembly/architecture-rules</module>
 
         <!-- Individually deployable modules -->
         <module>hartshorn-shared</module>
@@ -51,26 +65,20 @@
         <module>hartshorn-profiles</module>
         <module>hartshorn-spi</module>
         <module>hartshorn-proxy</module>
-        <module>hartshorn-proxy-test-fixtures</module>
         <module>hartshorn-proxy-javassist</module>
         <module>hartshorn-introspect</module>
-        <module>hartshorn-introspect-test-fixtures</module>
         <module>hartshorn-introspect-reflection</module>
         <module>hartshorn-inject</module>
-        <module>hartshorn-integration-tests</module>
         <module>hartshorn-inject-configurations</module>
         <module>hartshorn-launchpad</module>
         <module>hartshorn-reporting</module>
         <module>hartshorn-hsl</module>
         <module>hartshorn-web</module>
         <module>hartshorn-web-jetty</module>
-        <module>hartshorn-web-test-fixtures</module>
         <module>hartshorn-test-assertions</module>
         <module>hartshorn-testsuite</module>
         <module>hartshorn-support</module>
         <module>hartshorn-launchpad-kotlin-extensions</module>
-        <module>hartshorn-launchpad-starter</module>
-        <module>hartshorn-launchpad-samples</module>
       </modules>
     </profile>
     <profile>
@@ -78,6 +86,7 @@
       <properties>
         <jacoco.skip>true</jacoco.skip>
         <javadoc.skip>true</javadoc.skip>
+        <includeLocal>false</includeLocal>
       </properties>
     </profile>
   </profiles>

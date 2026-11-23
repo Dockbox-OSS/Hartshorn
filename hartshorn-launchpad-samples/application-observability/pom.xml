@@ -14,8 +14,4 @@
   <name>Hartshorn Sample: Observability</name>
   <artifactId>hartshorn-sample-observability</artifactId>
   <packaging>jar</packaging>
-
-  <properties>
-    <maven.deploy.skip>true</maven.deploy.skip>
-  </properties>
 </project>

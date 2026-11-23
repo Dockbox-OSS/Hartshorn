@@ -15,10 +15,6 @@
   <artifactId>hartshorn-launchpad-samples</artifactId>
   <packaging>pom</packaging>
 
-  <properties>
-    <maven.deploy.skip>true</maven.deploy.skip>
-  </properties>
-
   <modules>
     <module>application-observability</module>
     <module>application-processing</module>
