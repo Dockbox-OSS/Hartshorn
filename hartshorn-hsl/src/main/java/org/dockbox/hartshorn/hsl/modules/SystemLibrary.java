@@ -17,8 +17,6 @@
 package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.slf4j.LoggerFactory;
 
 /**
  * Standard library granting access to environment variables.
@@ -53,32 +51,6 @@ public class SystemLibrary {
      * @param object The object to print.
      */
     public void print(Object object) {
-        String text = this.stringify(object);
-        // Create logger late, in case the script name changes.
-        LoggerFactory.getLogger(this.context.scriptName()).info(text);
-    }
-
-    /**
-     * Stringifies the given object, converting nulls to "null" and handling special cases such as
-     * doubles ending with ".0".
-     *
-     * @param object The object to stringify.
-     *
-     * @return The string representation of the object.
-     */
-    public String stringify(Object object) {
-        if (object == null) {
-            return LiteralTokenType.NULL.representation();
-        }
-        // Hack. Work around Java adding ".0" to integer-valued doubles.
-        if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
-        }
-
-        return object.toString().replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t");
+        this.context.outputCapture().print(object);
     }
 }

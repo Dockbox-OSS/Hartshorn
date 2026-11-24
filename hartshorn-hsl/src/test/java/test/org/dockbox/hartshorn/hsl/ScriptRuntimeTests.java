@@ -23,14 +23,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
@@ -63,7 +65,8 @@ public class ScriptRuntimeTests {
     }
 
     public static Stream<Arguments> phases() {
-        return Arrays.stream(Phase.values()).map(Arguments::of);
+        return Stream.of(Phase.TOKENIZING, Phase.PARSING, Phase.SEMANTIC_ANALYSIS, Phase.EXECUTING)
+                .map(Arguments::of);
     }
 
     public static Stream<Arguments> bitwise() {
@@ -79,7 +82,13 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void predefinedScript(Path path) throws Exception {
-        this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
+        this.assertNoErrorsReported(InterpretedScript.of(this.applicationContext, path));
+    }
+
+    @ParameterizedTest
+    @MethodSource("scripts")
+    void predefinedCompiledScript(Path path) throws Exception {
+        this.assertNoErrorsReported(CompiledScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
@@ -102,7 +111,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void expressionWithGlobal() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "a == 12");
+        InterpretedExpressionScript expression = InterpretedExpressionScript.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
@@ -110,7 +119,7 @@ public class ScriptRuntimeTests {
     @Test
     void expressionWithGlobalFunctionAccess() {
         String expression = "context != null && context.environment() != null";
-        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        InterpretedExpressionScript script = InterpretedExpressionScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertValid(script);
     }
@@ -118,14 +127,15 @@ public class ScriptRuntimeTests {
     @Test
     void scriptWithGlobalFunctionAccess() {
         String expression = "context.environment().configuration().isBatchMode()";
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);
     }
 
     @Test
     void expressionWithNativeAccess() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "isClosed() == false");
+        InterpretedExpressionScript expression =
+                InterpretedExpressionScript.of(this.applicationContext, "isClosed() == false");
         expression
                 .runtime()
                 .module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
@@ -183,7 +193,7 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("phases")
     void phaseCustomizers(Phase phase) {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, "1 == 1");
 
         AtomicBoolean called = new AtomicBoolean(false);
         CodeCustomizer customizer = CodeCustomizer.of(phase, context -> called.set(true));
@@ -215,7 +225,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void interpreterCanBeReused() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             var x = 1;
             test ("Variable has not been modified") {
                 yield x == 1;
@@ -227,7 +237,7 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertValid(String expression) {
-        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        InterpretedExpressionScript script = InterpretedExpressionScript.of(this.applicationContext, expression);
         return this.assertValid(script);
     }
 
@@ -238,7 +248,7 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertNoErrorsReported(String expression) {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, expression);
         return this.assertNoErrorsReported(script);
     }
 

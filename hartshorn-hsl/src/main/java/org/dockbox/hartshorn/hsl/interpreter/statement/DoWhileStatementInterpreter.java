@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 /**
  * Interpreter for {@link DoWhileStatement} nodes.
@@ -41,7 +41,7 @@ public class DoWhileStatementInterpreter implements StatementInterpreter<DoWhile
                         break;
                     }
                 }
-            } while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition())));
+            } while (CodeExecutionUtilities.isTruthy(interpreter.evaluate(node.condition())));
         });
         return null;
     }

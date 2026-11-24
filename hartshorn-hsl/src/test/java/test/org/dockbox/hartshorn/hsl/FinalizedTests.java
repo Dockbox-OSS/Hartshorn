@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.hsl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
-import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -38,7 +38,7 @@ class FinalizedTests {
 
     @Test
     void cannotExtendFinalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final class User { }
             class Admin extends User { }
             """);
@@ -52,7 +52,7 @@ class FinalizedTests {
 
     @Test
     void canExtendNonFinalExternalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             class Admin extends User { }
             """);
         script.runtime().imports(User.class);
@@ -61,7 +61,7 @@ class FinalizedTests {
 
     @Test
     void cannotExtendFinalExternalClass() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             class Admin extends FinalUser { }
             """);
         script.runtime().imports(FinalUser.class);
@@ -75,7 +75,7 @@ class FinalizedTests {
 
     @Test
     void cannotReassignFinalVariables() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final var x = 1;
             x = 2;
             """);
@@ -90,7 +90,7 @@ class FinalizedTests {
 
     @Test
     void cannotReassignFinalFunctions() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final function x() { }
             function x() { }
             """);
@@ -105,7 +105,7 @@ class FinalizedTests {
 
     @Test
     void cannotReassignFinalClasses() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final class User { }
             class User { }
             """);
@@ -120,7 +120,7 @@ class FinalizedTests {
 
     @Test
     void cannotReassignFinalNativeFunctions() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             final native function a:x();
             function x() { }
             """);

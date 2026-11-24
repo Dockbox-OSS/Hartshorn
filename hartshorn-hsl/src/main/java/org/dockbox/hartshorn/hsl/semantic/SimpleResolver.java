@@ -53,7 +53,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
  */
 public class SimpleResolver implements Resolver {
 
-    private final Interpreter interpreter;
+    private final SymbolTable symbolTable;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private final Stack<Map<String, String>> finals = new Stack<>();
     private final ResolverVisitor visitor = new ResolverVisitor(this);
@@ -62,13 +62,17 @@ public class SimpleResolver implements Resolver {
     private FunctionType currentFunction = FunctionType.NONE;
     private FlowControlKeyword.ScopeType currentScopeType = FlowControlKeyword.ScopeType.NONE;
 
+    public SimpleResolver(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
+
     public SimpleResolver(Interpreter interpreter) {
-        this.interpreter = interpreter;
+        this((SymbolTable) interpreter);
     }
 
     @Override
-    public Interpreter interpreter() {
-        return this.interpreter;
+    public SymbolTable symbolTable() {
+        return this.symbolTable;
     }
 
     @Override
@@ -160,7 +164,7 @@ public class SimpleResolver implements Resolver {
     public void resolveLocal(Expression expression, Token name) {
         for (int i = this.scopes.size() - 1; i >= 0; i--) {
             if (this.scopes.get(i).containsKey(name.lexeme())) {
-                this.interpreter.resolve(expression, this.scopes.size() - 1 - i);
+                this.symbolTable.resolve(expression, this.scopes.size() - 1 - i);
                 return;
             }
         }

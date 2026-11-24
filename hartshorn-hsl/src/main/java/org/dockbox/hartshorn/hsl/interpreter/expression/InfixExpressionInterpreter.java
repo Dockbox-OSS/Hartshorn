@@ -46,7 +46,7 @@ public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, In
         try {
             return value.call(node.infixOperatorName(), interpreter, null, args);
         } catch (ApplicationException e) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(
                             DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
                             "infix",

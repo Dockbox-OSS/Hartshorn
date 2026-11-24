@@ -67,7 +67,7 @@ public class ExecutableLookup {
             return executable;
         }
 
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, function, arguments, declaring.name())
                 .at(at)
                 .build();

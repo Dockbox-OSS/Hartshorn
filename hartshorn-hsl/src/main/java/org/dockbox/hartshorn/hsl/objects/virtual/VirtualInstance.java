@@ -64,7 +64,7 @@ public class VirtualInstance implements InstanceReference {
     public void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope) {
         VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .at(name)
                     .message(
                             DiagnosticMessage.UNDEFINED_PROPERTY,
@@ -75,7 +75,7 @@ public class VirtualInstance implements InstanceReference {
         if (field != null) {
             FormattedDiagnostic accessError = this.accessVerifier().write(name, field, this, fromScope);
             if (accessError != null) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(name)
                         .message(accessError)
                         .build();
@@ -87,7 +87,7 @@ public class VirtualInstance implements InstanceReference {
                 }
             }
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(name)
                         .message(
                                 DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT,
@@ -106,7 +106,7 @@ public class VirtualInstance implements InstanceReference {
         if (field != null) {
             FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(name)
                         .message(accessError)
                         .build();
@@ -125,7 +125,7 @@ public class VirtualInstance implements InstanceReference {
         if (this.type().isDynamic()) {
             return this.fields.get(name.lexeme());
         }
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .at(name)
                 .message(
                         DiagnosticMessage.UNDEFINED_PROPERTY,

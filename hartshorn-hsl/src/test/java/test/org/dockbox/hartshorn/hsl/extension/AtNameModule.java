@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.hsl.extension;
 import static org.assertj.core.api.Assertions.fail;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
 import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -54,6 +55,11 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
     @Override
     public ASTNodeInterpreter<Object, AtNameExpression> interpreter() {
         return (node, adapter) -> node.identifier().lexeme();
+    }
+
+    @Override
+    public ASTNodeCompiler<AtNameExpression> compiler() {
+        throw new UnsupportedOperationException("AtNameExpression compilation not implemented. Out of scope.");
     }
 
     @Override

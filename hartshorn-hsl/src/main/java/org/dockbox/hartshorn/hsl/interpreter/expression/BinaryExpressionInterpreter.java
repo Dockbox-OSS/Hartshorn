@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.BitwiseAdditionStrategy;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -56,8 +56,8 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
         Object left = interpreter.evaluate(node.leftExpression());
         Object right = interpreter.evaluate(node.rightExpression());
 
-        left = InterpreterUtilities.unwrap(left);
-        right = InterpreterUtilities.unwrap(right);
+        left = CodeExecutionUtilities.unwrap(left);
+        right = CodeExecutionUtilities.unwrap(right);
 
         Token operator = node.operator();
         return switch (operator.type()) {
@@ -68,7 +68,7 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     }
                 }
                 // Otherwise, unsupported
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .message(
                                 DiagnosticMessage.UNSUPPORTED_CHILD,
                                 ArithmeticTokenType.PLUS.representation(),
@@ -78,7 +78,7 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                         .build();
             }
             case ArithmeticTokenType.MINUS -> {
-                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(operator, left, right);
+                Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(operator, left, right);
                 yield tuple.left().doubleValue() - tuple.right().doubleValue();
             }
             case ArithmeticTokenType.STAR -> {
@@ -99,17 +99,17 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     }
                     yield result;
                 }
-                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(operator, left, right);
+                Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(operator, left, right);
                 yield tuple.left().doubleValue() * tuple.right().doubleValue();
             }
             case ArithmeticTokenType.MODULO -> {
-                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(operator, left, right);
+                Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(operator, left, right);
                 yield tuple.left().doubleValue() % tuple.right().doubleValue();
             }
             case ArithmeticTokenType.SLASH -> {
-                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(operator, left, right);
+                Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(operator, left, right);
                 if (tuple.right().doubleValue() == 0) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
                             .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
                             .at(operator)
                             .build();
@@ -120,15 +120,15 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
             case ConditionTokenType.GREATER_EQUAL -> this.compareNumbers(node, left, right, (l, r) -> l >= r);
             case ConditionTokenType.LESS -> this.compareNumbers(node, left, right, (l, r) -> l < r);
             case ConditionTokenType.LESS_EQUAL -> this.compareNumbers(node, left, right, (l, r) -> l <= r);
-            case ConditionTokenType.BANG_EQUAL -> !InterpreterUtilities.isEqual(left, right);
-            case ConditionTokenType.EQUAL_EQUAL -> InterpreterUtilities.isEqual(left, right);
+            case ConditionTokenType.BANG_EQUAL -> !CodeExecutionUtilities.isEqual(left, right);
+            case ConditionTokenType.EQUAL_EQUAL -> CodeExecutionUtilities.isEqual(left, right);
             default -> null;
         };
     }
 
     private boolean compareNumbers(
             BinaryExpression expression, Object left, Object right, BiPredicate<Double, Double> predicate) {
-        Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(expression.operator(), left, right);
+        Tuple<Number, Number> tuple = CodeExecutionUtilities.checkNumberOperands(expression.operator(), left, right);
         return predicate.test(tuple.left().doubleValue(), tuple.right().doubleValue());
     }
 }

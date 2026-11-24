@@ -39,7 +39,7 @@ public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
                 interpreter.execute(node.body());
             } catch (FlowControlKeyword keyword) {
                 if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
-                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    throw ScriptEvaluationError.builder(Phase.EXECUTING)
                             .message(
                                     DiagnosticMessage.UNEXPECTED_FLOW_CONTROL_X_IN_Y,
                                     keyword.moveType().name().toLowerCase(),

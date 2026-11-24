@@ -21,6 +21,7 @@ import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.extension.CustomExpression;
 import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
 import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
@@ -87,12 +88,18 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
                 this.checkpoints.put(string, count);
                 return count;
             } else {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .at(node.descriptor())
                         .message("Checkpoint descriptor must be a string")
                         .build();
             }
         };
+    }
+
+    @Override
+    public ASTNodeCompiler<CheckpointExpression> compiler() {
+        // TODO: Implement compilation
+        return null;
     }
 
     @Override

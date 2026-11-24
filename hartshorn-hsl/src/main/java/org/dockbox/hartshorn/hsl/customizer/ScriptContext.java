@@ -19,19 +19,25 @@ package org.dockbox.hartshorn.hsl.customizer;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
+import org.dockbox.hartshorn.hsl.runtime.ScriptOutputCapture;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
+import org.dockbox.hartshorn.hsl.runtime.Slf4JScriptOutputCapture;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.LoggerFactory;
 
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
@@ -52,6 +58,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private final String source;
 
     private String scriptName = "HSL Script %d".formatted(this.hashCode());
+    private ScriptOutputCapture outputCapture;
 
     private TokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
     private List<Token> tokens = List.of();
@@ -62,6 +69,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
+    private SymbolTable symbolTable;
+    private CompiledScript compiledScript;
+    private ExecutionMode executionMode = ExecutionMode.INTERPRETED;
 
     public ScriptContext(ScriptRuntime runtime, String source) {
         super(runtime.applicationContext());
@@ -99,6 +109,34 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      */
     public ScriptContext scriptName(String scriptName) {
         this.scriptName = scriptName;
+        return this;
+    }
+
+    /**
+     * The output capture object for the script. All standard output should be redirected to this
+     * capture object. If not configured, the output will be redirected to a Slf4J logger identified
+     * by the script name. Note that there is no automatic synchronization between the script name
+     * and logger instance, if the script name is changed after the output capture has been
+     * initialized, the logger will not be updated.
+     *
+     * @return the capture object.
+     */
+    public ScriptOutputCapture outputCapture() {
+        if (this.outputCapture == null) {
+            this.outputCapture = new Slf4JScriptOutputCapture(LoggerFactory.getLogger(this.scriptName()));
+        }
+        return this.outputCapture;
+    }
+
+    /**
+     * Sets the capture object for the script.
+     *
+     * @param capture The capture object.
+     *
+     * @return The current context.
+     */
+    public ScriptContext outputCapture(ScriptOutputCapture capture) {
+        this.outputCapture = capture;
         return this;
     }
 
@@ -298,6 +336,66 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     /**
+     * The symbol table used for identifier resolution and scope tracking.
+     *
+     * @return The symbol table.
+     */
+    public SymbolTable symbolTable() {
+        return this.symbolTable != null ? this.symbolTable : this.interpreter;
+    }
+
+    /**
+     * Sets the symbol table used for identifier resolution.
+     *
+     * @param symbolTable The symbol table.
+     * @return The current context.
+     */
+    public ScriptContext symbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+        return this;
+    }
+
+    /**
+     * The compiled script instance, if the script has been compiled.
+     *
+     * @return The compiled script.
+     */
+    public CompiledScript compiledScript() {
+        return this.compiledScript;
+    }
+
+    /**
+     * Sets the compiled script instance.
+     *
+     * @param compiledScript The compiled script.
+     * @return The current context.
+     */
+    public ScriptContext compiledScript(CompiledScript compiledScript) {
+        this.compiledScript = compiledScript;
+        return this;
+    }
+
+    /**
+     * The execution mode configured for this script context.
+     *
+     * @return The execution mode.
+     */
+    public ExecutionMode executionMode() {
+        return this.executionMode;
+    }
+
+    /**
+     * Sets the execution mode for this script context.
+     *
+     * @param executionMode The execution mode.
+     * @return The current context.
+     */
+    public ScriptContext executionMode(ExecutionMode executionMode) {
+        this.executionMode = executionMode;
+        return this;
+    }
+
+    /**
      * The runtime that is executing the script. This runtime provides the environment in which the
      * script is executed, including configuration options, external modules, and global variables.
      *
@@ -329,12 +427,18 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
 
     @Override
     public <T> Option<T> result(String id, Class<T> type) {
-        return Option.of(this.results.get(id)).ofType(type);
+        return this.result(id).ofType(type);
     }
 
     @Override
     public Option<?> result(String id) {
-        return Option.of(this.results.get(id));
+        if (this.results.containsKey(id)) {
+            return Option.of(this.results.get(id));
+        }
+        if (this.interpreter != null && this.interpreter.global() != null) {
+            return Option.of(this.interpreter.global().values().get(id));
+        }
+        return Option.empty();
     }
 
     @Override

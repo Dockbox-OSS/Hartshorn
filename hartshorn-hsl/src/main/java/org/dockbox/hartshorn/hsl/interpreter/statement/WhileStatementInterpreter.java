@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 /**
  * Interpreter for {@link WhileStatement} nodes.
@@ -32,7 +32,7 @@ public class WhileStatementInterpreter implements StatementInterpreter<WhileStat
 
     @Override
     public Void interpret(WhileStatement node, Interpreter interpreter) {
-        while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
+        while (CodeExecutionUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
             try {
                 interpreter.execute(node.body());
             } catch (FlowControlKeyword keyword) {

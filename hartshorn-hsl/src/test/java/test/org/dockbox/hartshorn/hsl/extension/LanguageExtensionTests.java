@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -45,8 +46,8 @@ class LanguageExtensionTests {
 
     @Test
     void languageExtensionCanInject() {
-        ExpressionScript script =
-                ExpressionScript.of(this.applicationContext, "(@hello == \"hello\") && (@world == \"world\")");
+        ExpressionScript script = InterpretedExpressionScript.of(
+                this.applicationContext, "(@hello == \"hello\") && (@world == \"world\")");
 
         AtNameModule module = new AtNameModule();
         RuntimeExtensionCodeCustomizer customizer = new RuntimeExtensionCodeCustomizer();

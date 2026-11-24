@@ -151,7 +151,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         VariableScope variableScope = new VariableScope(this.closure);
         List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(
                             DiagnosticMessage.EXPECTED_X_OF_Y_AT_Z,
                             parameters.size(),
@@ -167,7 +167,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
             interpreter.execute(this.declaration.statements(), variableScope);
         } catch (Yield yieldValue) {
             if (this.returnType != ReturnStatement.ReturnType.YIELD) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .message(DiagnosticMessage.ILLEGAL_YIELD_IN_NON_GENERATOR)
                         .at(at)
                         .build();
@@ -175,7 +175,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
             return yieldValue.value();
         } catch (Return returnValue) {
             if (this.returnType != ReturnStatement.ReturnType.RETURN) {
-                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
                         .message(DiagnosticMessage.ILLEGAL_RETURN_IN_GENERATOR)
                         .at(at)
                         .build();

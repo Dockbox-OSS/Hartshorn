@@ -104,7 +104,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
-        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+        throw ScriptEvaluationError.builder(Phase.EXECUTING)
                 .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
                 .at(name)
                 .build();
@@ -115,7 +115,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
         if ("length".equals(name.lexeme())) {
             return this.values.length;
         } else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+            throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y, "read", name.lexeme(), "length")
                     .at(name)
                     .build();

@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
+import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 /**
  * Interpreter for {@link ForStatement} nodes.
@@ -34,7 +34,7 @@ public class ForStatementInterpreter implements StatementInterpreter<ForStatemen
     public Void interpret(ForStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             interpreter.execute(node.initializer());
-            while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
+            while (CodeExecutionUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
                 try {
                     interpreter.execute(node.body());
                 } catch (FlowControlKeyword keyword) {

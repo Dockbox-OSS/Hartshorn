@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.hsl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
-import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
@@ -36,7 +36,7 @@ class InterpreterTests {
 
     @Test
     void ambiguousExternalFunctionsAreAllowedByDefault() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
                 .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.evaluate();
@@ -44,7 +44,7 @@ class InterpreterTests {
 
     @Test
     void ambiguousExternalFunctionsAreAllowedWhenEnabled() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
                 .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
@@ -53,7 +53,7 @@ class InterpreterTests {
 
     @Test
     void ambiguousExternalFunctionsAreNotAllowedWhenDisabled() {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
                 .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
@@ -66,8 +66,8 @@ class InterpreterTests {
             return true;
         }
 
-        public boolean ambiguousCall(boolean value) {
-            return value;
+        public boolean ambiguousCall(String ignored) {
+            return true;
         }
     }
 }

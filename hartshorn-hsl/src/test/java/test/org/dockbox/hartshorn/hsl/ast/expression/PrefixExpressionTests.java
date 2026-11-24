@@ -94,7 +94,7 @@ class PrefixExpressionTests {
         ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
                 .isThrownBy(helper::interpretValue)
                 .actual();
-        assertThat(error.phase()).isEqualTo(Phase.INTERPRETING);
+        assertThat(error.phase()).isEqualTo(Phase.EXECUTING);
         ScriptAssertions.assertEvaluationError(
                 error, FormattedDiagnostic.of(DiagnosticMessage.UNDEFINED_VARIABLE, "not"));
     }

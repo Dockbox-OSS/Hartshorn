@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.hsl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import java.util.stream.Stream;
-import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -92,7 +92,7 @@ public class VirtualClassTests {
     @ParameterizedTest
     @MethodSource("propertyAccessors")
     void test(String modifier, String accessor, FormattedDiagnostic message) {
-        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+        InterpretedScript script = InterpretedScript.of(this.applicationContext, """
             class User {
                 %s name;
                 constructor(name) {

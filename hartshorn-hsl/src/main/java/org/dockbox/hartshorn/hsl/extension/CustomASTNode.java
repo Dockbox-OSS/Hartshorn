@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.extension;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
+import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
@@ -54,6 +57,10 @@ public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R
      */
     default R interpret(Interpreter interpreter) {
         return this.module().interpreter().interpret((T) this, interpreter);
+    }
+
+    default void compile(CodeBuilder code, CompilationContext context, CompilationChain chain) {
+        this.module().compiler().compile((T) this, code, context, chain);
     }
 
     /**
