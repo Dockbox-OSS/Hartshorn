@@ -29,7 +29,7 @@ jobs:
           mvn clean deploy \
             -Dci \
             -Drelease \
-            -Djavadoc.skip=false \ 
+            -Djavadoc.skip=false \
             -DexcludeLocal \
             -DskipTests \
             -Drevision="${REVISION}" \
