@@ -93,8 +93,7 @@ public record ParameterPathPartSpec(String parameterName, Pattern pattern) imple
             if (parts.length > 1) {
                 try {
                     pattern = Pattern.compile(parts[1]);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     return Option.empty();
                 }
             }

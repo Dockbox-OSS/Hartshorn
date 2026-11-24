@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
@@ -31,25 +34,18 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * A parser for class statements, which dynamically delegates parsing of class body members
  * to registered {@link ClassMemberParser} instances.
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class ClassStatementParser implements StatementParser<ClassStatement> {
 
     @Override
-    public Option<? extends ClassStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ClassTokenType.CLASS)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
@@ -70,30 +66,24 @@ public class ClassStatementParser implements StatementParser<ClassStatement> {
                 ClassMemberStatement member = this.parseMember(parser, validator);
                 if (member == null) {
                     throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
-                            parser.peek().type().representation())
-                        .at(parser.peek())
-                        .build();
+                            .message(
+                                    DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT,
+                                    parser.peek().type().representation())
+                            .at(parser.peek())
+                            .build();
                 }
                 members.add(member);
             }
 
             validator.expectAfter(block.close(), "class body");
 
-            return Option.of(new ClassStatement(
-                name,
-                superClass,
-                members,
-                isDynamic
-            ));
+            return Option.of(new ClassStatement(name, superClass, members, isDynamic));
         }
         return Option.empty();
     }
 
-    private ClassMemberStatement parseMember(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) throws ScriptEvaluationError {
+    private ClassMemberStatement parseMember(TokenParser parser, TokenStepValidator validator)
+            throws ScriptEvaluationError {
         for (ClassMemberParser<?> memberParser : parser.classMemberParsers()) {
             Option<?> statement = memberParser.parse(parser, validator);
             if (statement.present() && statement.get() instanceof ClassMemberStatement member) {

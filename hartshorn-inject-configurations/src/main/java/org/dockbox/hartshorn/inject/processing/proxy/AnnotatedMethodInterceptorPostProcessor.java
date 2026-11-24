@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.lang.annotation.Annotation;
-import java.util.Collection;
 
 /**
  * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors
@@ -35,7 +34,7 @@ import java.util.Collection;
  * @author Guus Lieben
  */
 public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation>
-    extends MethodInterceptorPostProcessor {
+        extends MethodInterceptorPostProcessor {
 
     /**
      * Returns the annotation class that is used to identify methods for which interceptors should
@@ -47,13 +46,15 @@ public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotati
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
+        return !processingContext
+                .type()
+                .methods()
+                .annotatedWith(this.annotation())
+                .isEmpty();
     }
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
-        ComponentProcessingContext<T> processingContext
-    ) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext) {
         return processingContext.type().methods().annotatedWith(this.annotation());
     }
 }

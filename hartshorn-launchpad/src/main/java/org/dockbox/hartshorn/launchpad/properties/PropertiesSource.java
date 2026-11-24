@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 
 /**
  * Annotation to specify the property sources to load. This annotation can be used on any class that
@@ -48,9 +47,9 @@ import java.lang.annotation.Target;
  *
  * @see ApplicationEnvironment#resourceLookup()
  * @see TypeDiscoveryPropertySourceResolver
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)

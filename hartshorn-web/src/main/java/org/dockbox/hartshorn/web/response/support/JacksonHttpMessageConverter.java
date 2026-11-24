@@ -53,11 +53,7 @@ public class JacksonHttpMessageConverter implements HttpMessageConverter<Object>
     }
 
     @Override
-    public boolean supportsResponse(
-            Class<?> type,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
+    public boolean supportsResponse(Class<?> type, HttpServletRequest request, HttpServletResponse response) {
         String contentType = response.getContentType();
         if (contentType == null) {
             return true;

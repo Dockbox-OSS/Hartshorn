@@ -40,11 +40,7 @@ public class OptionSerializer extends StdSerializer<Option<?>> {
     }
 
     @Override
-    public void serialize(
-            Option<?> value,
-            JsonGenerator gen,
-            SerializationContext provider
-    ) throws JacksonException {
+    public void serialize(Option<?> value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value.present()) {
             gen.writePOJO(value.get());
         } else {

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.properties.list;
 
+import java.util.Collection;
+import java.util.List;
 import org.dockbox.hartshorn.properties.ListProperty;
 import org.dockbox.hartshorn.properties.ObjectProperty;
 import org.dockbox.hartshorn.properties.Property;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.StreamGatherers;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Basic implementation of {@link ListProperty} that uses a list to store
@@ -58,8 +57,8 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ValueProperty> values() {
         return this.elements().stream()
-            .gather(StreamGatherers.filterByType(ValueProperty.class))
-            .toList();
+                .gather(StreamGatherers.filterByType(ValueProperty.class))
+                .toList();
     }
 
     @Override
@@ -70,8 +69,8 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ObjectProperty> objects() {
         return this.elements().stream()
-            .gather(StreamGatherers.filterByType(ObjectProperty.class))
-            .toList();
+                .gather(StreamGatherers.filterByType(ObjectProperty.class))
+                .toList();
     }
 
     @Override
@@ -82,8 +81,8 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ListProperty> lists() {
         return this.elements().stream()
-            .gather(StreamGatherers.filterByType(ListProperty.class))
-            .toList();
+                .gather(StreamGatherers.filterByType(ListProperty.class))
+                .toList();
     }
 
     @Override
@@ -94,8 +93,8 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("name", this.name)
-            .field("values", this.values())
-            .describe();
+                .field("name", this.name)
+                .field("values", this.values())
+                .describe();
     }
 }

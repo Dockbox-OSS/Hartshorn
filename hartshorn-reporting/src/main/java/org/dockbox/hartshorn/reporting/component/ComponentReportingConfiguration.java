@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ package org.dockbox.hartshorn.reporting.component;
  * control over the information that is reported.
  *
  * @see ComponentDiagnosticsReporter
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ComponentReportingConfiguration {
@@ -95,9 +95,7 @@ public class ComponentReportingConfiguration {
      *
      * @return this configuration object
      */
-    public ComponentReportingConfiguration includeRequiredConditions(
-        boolean includeRequiredConditions
-    ) {
+    public ComponentReportingConfiguration includeRequiredConditions(boolean includeRequiredConditions) {
         this.includeRequiredConditions = includeRequiredConditions;
         return this;
     }

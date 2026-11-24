@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.LinkedList;
+import java.util.List;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
@@ -24,13 +27,9 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ParameterLoaderTests {
 
@@ -51,27 +50,24 @@ class ParameterLoaderTests {
         TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(stringTypeView).is(String.class);
         Mockito.doReturn(null).when(stringTypeView).defaultOrNull();
-        Mockito.when(stringTypeView.cast(Mockito.any()))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(stringTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(intTypeView).is(int.class);
         Mockito.doReturn(0).when(intTypeView).defaultOrNull();
-        Mockito.when(intTypeView.cast(Mockito.any()))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(intTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
 
         ParameterView<String> stringParameter =
-            TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
+                TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(stringParameter.type()).thenReturn(stringTypeView);
 
         ParameterView<Integer> intParameter =
-            TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
+                TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(intParameter.type()).thenReturn(intTypeView);
 
-        ExecutableParametersIntrospector parametersIntrospector =
-            Mockito.mock(ExecutableParametersIntrospector.class);
+        ExecutableParametersIntrospector parametersIntrospector = Mockito.mock(ExecutableParametersIntrospector.class);
 
         LinkedList<ParameterView<?>> parameters = new LinkedList<>();
         parameters.add(stringParameter);
@@ -80,14 +76,13 @@ class ParameterLoaderTests {
         Mockito.when(parametersIntrospector.all()).thenReturn(parameters);
         Mockito.when(methodContext.parameters()).thenReturn(parametersIntrospector);
 
-        // Object to serve as mock instance, to prevent static method rules from rejecting the context. Alternative would be
+        // Object to serve as mock instance, to prevent static method rules from rejecting the context. Alternative
+        // would be
         // to mock MethodView#modifiers#isStatic, but this is more straightforward.
-        ParameterLoaderContext loaderContext =
-            new ParameterLoaderContext(methodContext, new Object());
+        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, new Object());
         List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
-        assertThat(objects)
-                .hasSize(2);
+        assertThat(objects).hasSize(2);
         assertThat(objects.get(0)).isEqualTo("JUnit");
         assertThat(objects.get(1)).isEqualTo(0); // Default value for 'int', instead of the value being null
     }

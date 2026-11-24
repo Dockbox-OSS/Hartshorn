@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import org.jspecify.annotations.NonNull;
-
 import java.util.Collection;
 import java.util.Iterator;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A basic implementation of {@link Collection} that delegates all operations to a backing

@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Annotation for defining HTTP PUT routes on methods. Shorthand for

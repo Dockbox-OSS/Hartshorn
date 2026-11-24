@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
@@ -24,22 +25,17 @@ import org.dockbox.hartshorn.hsl.token.type.ImportTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-
 /**
  * A parser for {@link ModuleStatement} nodes.
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class ModuleStatementParser implements StatementParser<ModuleStatement> {
 
     @Override
-    public Option<? extends ModuleStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends ModuleStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ImportTokenType.IMPORT)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token name = validator.expect(identifier, "module name");

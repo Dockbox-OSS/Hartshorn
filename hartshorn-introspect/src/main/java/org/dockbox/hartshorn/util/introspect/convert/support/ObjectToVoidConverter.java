@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A converter which converts any object to 'void', returning {@code null} as the result.
@@ -46,10 +45,7 @@ public class ObjectToVoidConverter implements GenericConverter, ConditionalConve
 
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         // Void should never be instantiated, so we can safely return null
         return null;
     }

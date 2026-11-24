@@ -44,18 +44,13 @@ public class JettyErrorHandlerAdapter implements Request.Handler {
 
     @Override
     public boolean handle(Request request, Response response, Callback callback) throws Exception {
-        ServletException servletException = (ServletException) request.getAttribute(
-                ErrorHandler.ERROR_EXCEPTION
-        );
+        ServletException servletException = (ServletException) request.getAttribute(ErrorHandler.ERROR_EXCEPTION);
         ServletContextRequest servletContextRequest = (ServletContextRequest) request;
         ServletContextResponse servletContextResponse = (ServletContextResponse) response;
 
         ServletApiResponse servletApiResponse = servletContextResponse.getServletApiResponse();
         this.errorHandler.handle(
-                servletException.getCause(),
-                servletContextRequest.getServletApiRequest(),
-                servletApiResponse
-        );
+                servletException.getCause(), servletContextRequest.getServletApiRequest(), servletApiResponse);
         return true;
     }
 }

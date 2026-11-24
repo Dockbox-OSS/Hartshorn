@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -30,8 +31,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-
 /**
  * A {@link DependencyContext} implementation that is used for managed components. Managed
  * components are components that are managed by the container. Typically, these are obtained
@@ -41,23 +40,19 @@ import java.util.Set;
  *
  * @see DependencyContext
  * @see ComponentRegistry
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public abstract class ManagedComponentDependencyContext<T>
-    implements LifecycleAwareDependencyContext<T> {
+public abstract class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
     public ManagedComponentDependencyContext(
-        ComponentKey<T> componentKey,
-        DependencyMap dependencies,
-        ConstructorView<? extends T> constructorView
-    ) {
+            ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
@@ -119,8 +114,7 @@ public abstract class ManagedComponentDependencyContext<T>
             // handled by the context constructor when the application is ready for initialization.
             case SINGLETON -> function.lazySingleton(componentType);
             case PROTOTYPE -> function.to(componentType);
-            default -> throw new ComponentConfigurationException("Unsupported lifecycle: "
-                + lifecycleType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + lifecycleType);
         }
     }
 }

@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.scope;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
@@ -28,10 +31,6 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Supplier;
-
 /**
  * A context that manages default bindings for scope modules. The hierarchies of bindings are stored
  * based on their scope keys, allowing them to be re-used for different instances of the same
@@ -43,8 +42,7 @@ import java.util.function.Supplier;
  */
 public class ScopeModuleContext extends DefaultContext {
 
-    private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules =
-        new ConcurrentSetMultiMap<>();
+    private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
     private final ScopeKey applicationScope;
 
@@ -63,8 +61,8 @@ public class ScopeModuleContext extends DefaultContext {
      */
     public static ContextKey<ScopeModuleContext> createKey(Supplier<ScopeKey> fallbackScope) {
         return ContextKey.builder(ScopeModuleContext.class)
-            .fallback(() -> new ScopeModuleContext(fallbackScope.get()))
-            .build();
+                .fallback(() -> new ScopeModuleContext(fallbackScope.get()))
+                .build();
     }
 
     /**
@@ -90,22 +88,20 @@ public class ScopeModuleContext extends DefaultContext {
      */
     public <T> BindingHierarchy<T> hierarchy(ScopeKey scope, ComponentKey<T> key) {
         BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
-            .filter(hierarchy -> hierarchy.isCompatible(key))
-            .findFirst()
-            .orElseGet(() -> {
-                BindingHierarchy<T> hierarchy;
-                if (key.type() == ComponentCollection.class) {
-                    var collectorHierarchy = new CollectionBindingHierarchy<>(
-                            TypeUtils.unchecked(key, ComponentKey.class)
-                    );
-                    hierarchy = TypeUtils.unchecked(collectorHierarchy, BindingHierarchy.class);
-                }
-                else {
-                    hierarchy = new NativePrunableBindingHierarchy<>(key);
-                }
-                this.scopeModules.put(scope, hierarchy);
-                return hierarchy;
-            });
+                .filter(hierarchy -> hierarchy.isCompatible(key))
+                .findFirst()
+                .orElseGet(() -> {
+                    BindingHierarchy<T> hierarchy;
+                    if (key.type() == ComponentCollection.class) {
+                        var collectorHierarchy =
+                                new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
+                        hierarchy = TypeUtils.unchecked(collectorHierarchy, BindingHierarchy.class);
+                    } else {
+                        hierarchy = new NativePrunableBindingHierarchy<>(key);
+                    }
+                    this.scopeModules.put(scope, hierarchy);
+                    return hierarchy;
+                });
 
         return TypeUtils.unchecked(bindingHierarchy, BindingHierarchy.class);
     }
@@ -128,8 +124,8 @@ public class ScopeModuleContext extends DefaultContext {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("applicationScope", this.applicationScope)
-            .field("scopeModules", this.scopeModules)
-            .describe();
+                .field("applicationScope", this.applicationScope)
+                .field("scopeModules", this.scopeModules)
+                .describe();
     }
 }

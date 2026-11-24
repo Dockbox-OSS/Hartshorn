@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,28 +52,22 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
 
     @Override
     public void validateBeforeConfiguration(
-        DependencyGraph dependencyGraph,
-        Introspector introspector,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
-        if (orchestrator instanceof AliasCapableComponentProviderOrchestrator
-            aliasCapableOrchestrator) {
+            DependencyGraph dependencyGraph, Introspector introspector, ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
+        if (orchestrator instanceof AliasCapableComponentProviderOrchestrator aliasCapableOrchestrator) {
             BindingAliasNormalizer aliasNormalizer = aliasCapableOrchestrator.aliasNormalizer();
-            List<? extends AliasableDependencyContext<?>> aliasedDependencyContexts =
-                dependencyGraph.nodes().stream()
+            List<? extends AliasableDependencyContext<?>> aliasedDependencyContexts = dependencyGraph.nodes().stream()
                     .filter(node -> node.value() instanceof AliasableDependencyContext<?> context
-                        && context.hasConfiguredAliases())
+                            && context.hasConfiguredAliases())
                     .map(node -> (AliasableDependencyContext<?>) node.value())
                     .toList();
 
             // Collect all ambiguous locations, rather than just failing on the first one
-            MultiMap<PrioritizedComponentKey<?>, DependencyContext<?>> contextsByAlias =
-                new HashSetMultiMap<>();
+            MultiMap<PrioritizedComponentKey<?>, DependencyContext<?>> contextsByAlias = new HashSetMultiMap<>();
             for (AliasableDependencyContext<?> dependencyContext : aliasedDependencyContexts) {
-                for (ComponentKey<?> componentKey : this.normalizeComponentKeys(dependencyContext,
-                    aliasNormalizer)) {
+                for (ComponentKey<?> componentKey : this.normalizeComponentKeys(dependencyContext, aliasNormalizer)) {
                     PrioritizedComponentKey<?> key =
-                        new PrioritizedComponentKey<>(componentKey, dependencyContext.priority());
+                            new PrioritizedComponentKey<>(componentKey, dependencyContext.priority());
                     contextsByAlias.put(key, dependencyContext);
                 }
             }
@@ -87,21 +81,17 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
         }
     }
 
-    record PrioritizedComponentKey<T>(ComponentKey<? super T> key, int priority) {
-    }
+    record PrioritizedComponentKey<T>(ComponentKey<? super T> key, int priority) {}
 
     private <T> Set<ComponentKey<? super T>> normalizeComponentKeys(
-        AliasableDependencyContext<T> dependencyContext,
-        BindingAliasNormalizer aliasNormalizer
-    ) {
+            AliasableDependencyContext<T> dependencyContext, BindingAliasNormalizer aliasNormalizer) {
         Set<ComponentKey<? super T>> componentKeys = dependencyContext.aliasKeys();
         Set<QualifierKey<T>> qualifierKeys = dependencyContext.aliasQualifiers();
         Set<Class<? super T>> types = dependencyContext.aliasTypes();
 
         Set<ComponentKey<? super T>> normalizedKeys = new HashSet<>(componentKeys);
         for (QualifierKey<T> qualifierKey : qualifierKeys) {
-            normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(),
-                qualifierKey));
+            normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(), qualifierKey));
         }
         for (Class<? super T> type : types) {
             normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(), type));

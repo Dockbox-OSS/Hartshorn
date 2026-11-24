@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.properties;
 
-import org.dockbox.hartshorn.properties.list.SimpleListProperty;
-import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
-import org.dockbox.hartshorn.properties.parse.support.ValueConfiguredPropertyParser;
-import org.dockbox.hartshorn.properties.value.SimpleValueProperty;
-import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.stream.EntryStream;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +24,14 @@ import java.util.TreeMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.properties.list.SimpleListProperty;
+import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
+import org.dockbox.hartshorn.properties.parse.support.ValueConfiguredPropertyParser;
+import org.dockbox.hartshorn.properties.value.SimpleValueProperty;
+import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * Represents a property that contains a map of properties. This is used to represent nested
@@ -54,10 +53,7 @@ public abstract class AbstractMapProperty<T> {
     private final String name;
 
     protected AbstractMapProperty(
-        String name,
-        Map<String, ConfiguredProperty> properties,
-        PropertyPathStyle pathStyle
-    ) {
+            String name, Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
         this.properties = new TreeMap<>(properties);
         this.name = name;
         this.pathStyle = pathStyle;
@@ -102,7 +98,7 @@ public abstract class AbstractMapProperty<T> {
      */
     public Option<ValueProperty> get(T key) {
         return Option.of(this.properties.get(this.valueAccessor(key)))
-            .flatMap(ValueConfiguredPropertyParser.INSTANCE::parse);
+                .flatMap(ValueConfiguredPropertyParser.INSTANCE::parse);
     }
 
     /**
@@ -139,15 +135,15 @@ public abstract class AbstractMapProperty<T> {
      * @return the property with the given key
      */
     public Option<ObjectProperty> object(T key) {
-        Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
-            name.startsWith(this.valueAccessor(key) + OBJECT_SEPARATOR)
-        ).entrySet().stream().collect(Collectors.toMap(
-            // Strip trailing object separators from key
-            entry -> entry.getKey().substring(OBJECT_SEPARATOR.length()),
-            Map.Entry::getValue
-        ));
-        ObjectProperty property =
-            new MapObjectProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
+        Map<String, ConfiguredProperty> propertyMap = this.collectToMap(
+                        key, (name, property) -> name.startsWith(this.valueAccessor(key) + OBJECT_SEPARATOR))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        // Strip trailing object separators from key
+                        entry -> entry.getKey().substring(OBJECT_SEPARATOR.length()),
+                        Map.Entry::getValue));
+        ObjectProperty property = new MapObjectProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
         return Option.of(property);
     }
 
@@ -170,10 +166,13 @@ public abstract class AbstractMapProperty<T> {
             List<String> valueList = values.stream().flatMap(Arrays::stream).toList();
             List<Property> listProperties = new ArrayList<>();
             for (int i = 0; i < valueList.size(); i++) {
-                listProperties.add(i, new SimpleValueProperty(
-                    this.name() + this.accessor(key) + this.pathStyle().index(i),
-                    valueList.get(i)
-                ));
+                listProperties.add(
+                        i,
+                        new SimpleValueProperty(
+                                this.name()
+                                        + this.accessor(key)
+                                        + this.pathStyle().index(i),
+                                valueList.get(i)));
             }
             return new SimpleListProperty(this.name() + this.accessor(key), listProperties);
         });
@@ -192,19 +191,13 @@ public abstract class AbstractMapProperty<T> {
      *
      * @return the property with the given key
      */
-    public Option<ListProperty> list(
-        T key,
-        Function<ValueProperty, ListProperty> singleValueMapper
-    ) {
+    public Option<ListProperty> list(T key, Function<ValueProperty, ListProperty> singleValueMapper) {
         if (this.properties().containsKey(this.valueAccessor(key))) {
             return this.get(key).map(singleValueMapper);
-        }
-        else {
-            Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
-                name.startsWith(this.valueAccessor(key) + LIST_START)
-            );
-            ListProperty property =
-                new MapListProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
+        } else {
+            Map<String, ConfiguredProperty> propertyMap =
+                    this.collectToMap(key, (name, property) -> name.startsWith(this.valueAccessor(key) + LIST_START));
+            ListProperty property = new MapListProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
             return Option.of(property);
         }
     }
@@ -221,13 +214,11 @@ public abstract class AbstractMapProperty<T> {
     public boolean contains(T key) {
         if (this.properties().containsKey(this.valueAccessor(key))) {
             return true;
-        }
-        else {
+        } else {
             String accessor = this.accessor(key);
-            return this.properties().keySet().stream().anyMatch(propertyKey ->
-                propertyKey.startsWith(accessor + OBJECT_SEPARATOR) || propertyKey.startsWith(
-                    accessor + LIST_START)
-            );
+            return this.properties().keySet().stream()
+                    .anyMatch(propertyKey -> propertyKey.startsWith(accessor + OBJECT_SEPARATOR)
+                            || propertyKey.startsWith(accessor + LIST_START));
         }
     }
 
@@ -241,9 +232,9 @@ public abstract class AbstractMapProperty<T> {
      */
     protected List<ConfiguredProperty> find(BiPredicate<String, ConfiguredProperty> predicate) {
         return EntryStream.of(this.properties().entrySet())
-            .filter(predicate)
-            .map(Map.Entry::getValue)
-            .collect(Collectors.toList());
+                .filter(predicate)
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -255,15 +246,9 @@ public abstract class AbstractMapProperty<T> {
      *
      * @return all properties that match the given predicate, collected to a map
      */
-    protected Map<String, ConfiguredProperty> collectToMap(
-        T key,
-        BiPredicate<String, ConfiguredProperty> predicate
-    ) {
+    protected Map<String, ConfiguredProperty> collectToMap(T key, BiPredicate<String, ConfiguredProperty> predicate) {
         return this.find(predicate).stream()
-            .collect(Collectors.toMap(
-                property -> this.key(key, property),
-                Function.identity()
-            ));
+                .collect(Collectors.toMap(property -> this.key(key, property), Function.identity()));
     }
 
     /**
@@ -282,8 +267,8 @@ public abstract class AbstractMapProperty<T> {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("name", this.name)
-            .field("properties", this.properties)
-            .describe();
+                .field("name", this.name)
+                .field("properties", this.properties)
+                .describe();
     }
 }

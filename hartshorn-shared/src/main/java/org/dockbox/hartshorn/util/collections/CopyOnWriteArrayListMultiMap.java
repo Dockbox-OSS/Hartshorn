@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class CopyOnWriteArrayListMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
 
-    public CopyOnWriteArrayListMultiMap() {
-    }
+    public CopyOnWriteArrayListMultiMap() {}
 
     public CopyOnWriteArrayListMultiMap(MultiMap<K, V> map) {
         super(map);

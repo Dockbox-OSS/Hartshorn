@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.reporting.collect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.stream.Stream;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
@@ -45,10 +44,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     private final GroupNode group;
 
     public StandardDiagnosticsPropertyWriter(
-        String name,
-        StandardDiagnosticsReportCollector collector,
-        GroupNode group
-    ) {
+            String name, StandardDiagnosticsReportCollector collector, GroupNode group) {
         this.name = name;
         this.collector = collector;
         this.group = group;
@@ -100,9 +96,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     public DiagnosticsReportCollector writeDelegate(Reportable reportable) {
         this.checkClosed();
         GroupNode group = new GroupNode(this.name);
-        reportable.report(property -> new StandardDiagnosticsPropertyWriter(property,
-            this.collector,
-            group));
+        reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
         return this.exit(group);
     }
 
@@ -145,7 +139,8 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     @Override
     public <E extends Enum<E>> DiagnosticsReportCollector writeEnums(E... values) {
         this.checkClosed();
-        return this.exit(new ArrayNode<>(this.name, Stream.of(values).map(Enum::name).toList()));
+        return this.exit(
+                new ArrayNode<>(this.name, Stream.of(values).map(Enum::name).toList()));
     }
 
     @Override
@@ -153,9 +148,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
         List<Node<?>> nodes = new ArrayList<>();
         for (Reportable reportable : reportables) {
             GroupNode group = new GroupNode(this.name);
-            reportable.report(property -> new StandardDiagnosticsPropertyWriter(property,
-                this.collector,
-                group));
+            reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
             nodes.add(group);
         }
         return this.exit(new ArrayNode<>(this.name, nodes));

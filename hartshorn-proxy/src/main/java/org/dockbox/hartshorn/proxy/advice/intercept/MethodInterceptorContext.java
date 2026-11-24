@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
+import java.util.concurrent.Callable;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.concurrent.Callable;
 
 /**
  * The context of a {@link MethodInterceptor}. It contains the method to be intercepted, the
@@ -44,13 +43,12 @@ public final class MethodInterceptorContext<T, R> extends DefaultContext {
     private final R result;
 
     private MethodInterceptorContext(
-        MethodView<T, R> method,
-        Object[] args,
-        T instance,
-        Callable<R> callable,
-        CustomInvocation<R> customInvocation,
-        R result
-    ) {
+            MethodView<T, R> method,
+            Object[] args,
+            T instance,
+            Callable<R> callable,
+            CustomInvocation<R> customInvocation,
+            R result) {
         this.method = method;
         this.args = args;
         this.instance = instance;
@@ -76,19 +74,14 @@ public final class MethodInterceptorContext<T, R> extends DefaultContext {
      * and custom invocation
      */
     public static <T, R> MethodInterceptorContext<T, R> of(
-        MethodView<T, R> method,
-        Object[] args,
-        T instance,
-        CustomInvocation<R> customInvocation
-    ) {
+            MethodView<T, R> method, Object[] args, T instance, CustomInvocation<R> customInvocation) {
         return new MethodInterceptorContext<>(
-            method,
-            args,
-            instance,
-            customInvocation.toCallable(args),
-            customInvocation,
-            method.returnType().defaultOrNull()
-        );
+                method,
+                args,
+                instance,
+                customInvocation.toCallable(args),
+                customInvocation,
+                method.returnType().defaultOrNull());
     }
 
     /**
@@ -103,17 +96,9 @@ public final class MethodInterceptorContext<T, R> extends DefaultContext {
      * @return a new {@link MethodInterceptorContext} with the given result
      */
     public static <T, R> MethodInterceptorContext<T, R> copyWithResult(
-        MethodInterceptorContext<T, R> context,
-        R result
-    ) {
+            MethodInterceptorContext<T, R> context, R result) {
         var copiedContext = new MethodInterceptorContext<>(
-            context.method,
-            context.args,
-            context.instance,
-            context.callable,
-            context.customInvocation,
-            result
-        );
+                context.method, context.args, context.instance, context.callable, context.customInvocation, result);
         context.copyToContext(copiedContext);
         return copiedContext;
     }

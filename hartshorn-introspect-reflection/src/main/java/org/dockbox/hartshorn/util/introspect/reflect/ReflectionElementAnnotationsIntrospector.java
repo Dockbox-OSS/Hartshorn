@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.AnnotatedElement;
@@ -32,6 +26,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * An {@link ElementAnnotationsIntrospector} that uses reflection to introspect annotations on an
@@ -49,18 +48,12 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(
-        Introspector introspector,
-        AnnotatedElement element
-    ) {
+    public ReflectionElementAnnotationsIntrospector(Introspector introspector, AnnotatedElement element) {
         this(introspector, element, introspector.annotations());
     }
 
     public ReflectionElementAnnotationsIntrospector(
-        Introspector introspector,
-        AnnotatedElement element,
-        AnnotationLookup annotationLookup
-    ) {
+            Introspector introspector, AnnotatedElement element, AnnotationLookup annotationLookup) {
         this.introspector = introspector;
         this.element = element;
         this.annotationLookup = annotationLookup;
@@ -84,19 +77,17 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
 
     @Override
     public Set<Annotation> all() {
-        return this.annotationCache().values().stream()
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+        return this.annotationCache().values().stream().filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     @Override
     public Set<Annotation> annotedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-            .filter(presentAnnotation -> this.introspector
-                .introspect(presentAnnotation.annotationType())
-                .annotations()
-                .has(annotation))
-            .collect(Collectors.toSet());
+                .filter(presentAnnotation -> this.introspector
+                        .introspect(presentAnnotation.annotationType())
+                        .annotations()
+                        .has(annotation))
+                .collect(Collectors.toSet());
     }
 
     @Override

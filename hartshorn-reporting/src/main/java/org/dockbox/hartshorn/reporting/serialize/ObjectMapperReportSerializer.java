@@ -47,9 +47,7 @@ public class ObjectMapperReportSerializer implements ReportSerializer<String> {
     public String serialize(DiagnosticsReport report) throws ReportSerializationException {
         try {
             JsonNode node = report.root().accept(new NodeToJacksonVisitor());
-            return this.objectMapper
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(node);
+            return this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
         } catch (JacksonException e) {
             throw new ReportSerializationException(e);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.inject.environment;
 
-import org.dockbox.hartshorn.spi.DiscoveryService;
-import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
+import org.dockbox.hartshorn.spi.DiscoveryService;
+import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -50,18 +50,14 @@ public final class DefaultProxyOrchestratorLoader {
      *
      * @return The initializer
      */
-    public static ContextualInitializer<Introspector, ProxyOrchestrator> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<Introspector, ProxyOrchestrator> create(Customizer<Configurer> customizer) {
         return context -> {
             // Call, but ignore the result of the customizer for now
             customizer.configure(new Configurer());
             try {
-                ProxyOrchestratorLoader loader =
-                    DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
+                ProxyOrchestratorLoader loader = DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
                 return loader.create(context.input());
-            }
-            catch (ServiceDiscoveryException e) {
+            } catch (ServiceDiscoveryException e) {
                 throw new ApplicationRuntimeException(e);
             }
         };

@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.WebRequestScope;
-import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.response.ResponseHandler;
+import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.route.rules.HeaderValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.PathParameterValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.QueryParameterValueParameterLoaderRule;
@@ -55,8 +55,7 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
             InjectionCapableApplication application,
             ConversionService conversionService,
             ResponseHandler responseHandler,
-            MethodView<P, R> methodView
-    ) {
+            MethodView<P, R> methodView) {
         this.application = application;
         this.conversionService = conversionService;
         this.responseHandler = responseHandler;
@@ -68,29 +67,20 @@ public class RouterMethodRequestHandler<P, R> implements RequestHandler, Reporta
         WebRequestScope scope = new WebRequestScope(request, response);
         var adapter = new InjectorExecutableInvocationAdapter(this.application)
                 .scope(scope)
-                .addParameterLoaderRule(new HeaderValueParameterLoaderRule<>(
-                        request,
-                        this.conversionService
-                ))
-                .addParameterLoaderRule(new PathParameterValueParameterLoaderRule<>(
-                        request,
-                        this.conversionService
-                ))
-                .addParameterLoaderRule(new QueryParameterValueParameterLoaderRule<>(
-                        request,
-                        this.conversionService
-                ));
+                .addParameterLoaderRule(new HeaderValueParameterLoaderRule<>(request, this.conversionService))
+                .addParameterLoaderRule(new PathParameterValueParameterLoaderRule<>(request, this.conversionService))
+                .addParameterLoaderRule(new QueryParameterValueParameterLoaderRule<>(request, this.conversionService));
 
-        P instance = this.application.defaultProvider().get(this.methodView.declaredBy().type());
+        P instance = this.application
+                .defaultProvider()
+                .get(this.methodView.declaredBy().type());
         try {
             Option<R> result = adapter.invoke(this.methodView, instance);
             this.responseHandler.handleResponse(request, response, result.orNull());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Will be handled upstream
             throw e;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             // Will be handled upstream
             throw new Exception(t);
         }

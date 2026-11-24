@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.NotPrimitiveException;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,6 +30,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.util.NotPrimitiveException;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for functionalities related to types. Within the context of this class, types can
@@ -45,47 +44,40 @@ import java.util.stream.Stream;
 public class TypeUtils {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = Map.ofEntries(
-        Map.entry(boolean.class, Boolean.class),
-        Map.entry(byte.class, Byte.class),
-        Map.entry(char.class, Character.class),
-        Map.entry(double.class, Double.class),
-        Map.entry(float.class, Float.class),
-        Map.entry(int.class, Integer.class),
-        Map.entry(long.class, Long.class),
-        Map.entry(short.class, Short.class)
-    );
+            Map.entry(boolean.class, Boolean.class),
+            Map.entry(byte.class, Byte.class),
+            Map.entry(char.class, Character.class),
+            Map.entry(double.class, Double.class),
+            Map.entry(float.class, Float.class),
+            Map.entry(int.class, Integer.class),
+            Map.entry(long.class, Long.class),
+            Map.entry(short.class, Short.class));
 
     private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = Map.ofEntries(
-        Map.entry(boolean.class, input -> {
-            // Boolean.valueOf only checks if the input equals 'true', and otherwise
-            // defaults to 'false'. We want to be more strict.
-            if ("true".equals(input)) {
-                return true;
-            }
-            else if ("false".equals(input)) {
-                return false;
-            }
-            else {
-                throw new TypeConversionException("Invalid boolean value: " + input);
-            }
-        }),
-        Map.entry(byte.class, Byte::valueOf),
-        Map.entry(char.class, input -> {
-            if (input.length() == 1) {
-                return input.charAt(0);
-            }
-            else {
-                throw new TypeConversionException(
-                    "Invalid char value: " + input + " (length != 1)"
-                );
-            }
-        }),
-        Map.entry(double.class, Double::valueOf),
-        Map.entry(float.class, Float::valueOf),
-        Map.entry(int.class, Integer::valueOf),
-        Map.entry(long.class, Long::valueOf),
-        Map.entry(short.class, Short::valueOf)
-    );
+            Map.entry(boolean.class, input -> {
+                // Boolean.valueOf only checks if the input equals 'true', and otherwise
+                // defaults to 'false'. We want to be more strict.
+                if ("true".equals(input)) {
+                    return true;
+                } else if ("false".equals(input)) {
+                    return false;
+                } else {
+                    throw new TypeConversionException("Invalid boolean value: " + input);
+                }
+            }),
+            Map.entry(byte.class, Byte::valueOf),
+            Map.entry(char.class, input -> {
+                if (input.length() == 1) {
+                    return input.charAt(0);
+                } else {
+                    throw new TypeConversionException("Invalid char value: " + input + " (length != 1)");
+                }
+            }),
+            Map.entry(double.class, Double::valueOf),
+            Map.entry(float.class, Float::valueOf),
+            Map.entry(int.class, Integer::valueOf),
+            Map.entry(long.class, Long::valueOf),
+            Map.entry(short.class, Short::valueOf));
 
     /**
      * Converts a string value to a primitive type. If the type is an enum, the value is converted
@@ -109,21 +101,16 @@ public class TypeUtils {
      * in a future release, but is no longer recommended for use.
      */
     @Deprecated(since = "0.6.0", forRemoval = false)
-    public static <T> T toPrimitive(Class<?> type, String value)
-        throws TypeConversionException, NotPrimitiveException {
+    public static <T> T toPrimitive(Class<?> type, String value) throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
             String name = String.valueOf(value).toUpperCase();
             try {
                 //noinspection unchecked,rawtypes
                 return (T) Enum.valueOf((Class<? extends Enum>) type, name);
+            } catch (IllegalArgumentException e) {
+                throw new TypeConversionException("No enum constant " + type.getName() + "." + name);
             }
-            catch (IllegalArgumentException e) {
-                throw new TypeConversionException(
-                    "No enum constant " + type.getName() + "." + name
-                );
-            }
-        }
-        else {
+        } else {
             if (!type.isPrimitive()) {
                 for (Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPERS.entrySet()) {
                     if (isPrimitiveWrapper(type, entry.getKey())) {
@@ -134,8 +121,7 @@ public class TypeUtils {
 
             if (!type.isPrimitive()) {
                 throw new NotPrimitiveException(type);
-            }
-            else {
+            } else {
                 try {
                     Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
                     T result = unchecked(converter.apply(value), Object.class);
@@ -143,8 +129,7 @@ public class TypeUtils {
                         throw new TypeConversionException(type, value);
                     }
                     return result;
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
                     throw new TypeConversionException(type, value, e);
                 }
             }
@@ -206,11 +191,8 @@ public class TypeUtils {
      *
      * @return The adjusted object
      */
-    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType>
-    AdjustedType unchecked(
-        InstanceType obj,
-        Class<KeyType> type
-    ) {
+    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType unchecked(
+            InstanceType obj, Class<KeyType> type) {
         if (obj == null) {
             return null;
         }
@@ -219,8 +201,7 @@ public class TypeUtils {
             return (AdjustedType) obj;
         }
         throw new IllegalArgumentException(
-            "Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName()
-        );
+                "Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName());
     }
 
     /**
@@ -256,18 +237,12 @@ public class TypeUtils {
      *
      * @see MapBackedAnnotationInvocationHandler
      */
-    public static <A extends Annotation> A annotation(
-        Class<A> annotationType,
-        Map<String, Object> values
-    ) {
+    public static <A extends Annotation> A annotation(Class<A> annotationType, Map<String, Object> values) {
         Object instance = Proxy.newProxyInstance(
-            annotationType.getClassLoader(),
-            new Class[] {annotationType},
-            new MapBackedAnnotationInvocationHandler(
-                annotationType,
-                values == null ? Collections.emptyMap() : values
-            )
-        );
+                annotationType.getClassLoader(),
+                new Class[] {annotationType},
+                new MapBackedAnnotationInvocationHandler(
+                        annotationType, values == null ? Collections.emptyMap() : values));
         return annotationType.cast(instance);
     }
 
@@ -427,18 +402,14 @@ public class TypeUtils {
     public static Map<String, Object> getAttributes(Annotation annotation) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         return Arrays.stream(annotationType.getDeclaredMethods())
-            .filter(method -> !method.isAnnotationPresent(Deprecated.class))
-            .collect(Collectors.toMap(
-                Method::getName,
-                method -> {
+                .filter(method -> !method.isAnnotationPresent(Deprecated.class))
+                .collect(Collectors.toMap(Method::getName, method -> {
                     try {
                         return method.invoke(annotation);
-                    }
-                    catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
-                }
-            ));
+                }));
     }
 
     /**
@@ -472,8 +443,7 @@ public class TypeUtils {
     public static Option<Class<?>> forName(String name) {
         try {
             return Option.of(Class.forName(name));
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return Option.empty();
         }
     }
@@ -493,14 +463,13 @@ public class TypeUtils {
      * {@link Option}
      */
     public static <T> Option<Class<? extends T>> forName(String name, Class<T> parentType) {
-        return forName(name)
-            .map(type -> {
-                if (parentType.isAssignableFrom(type)) {
-                    //noinspection unchecked
-                    return (Class<? extends T>) type;
-                }
-                return null;
-            });
+        return forName(name).map(type -> {
+            if (parentType.isAssignableFrom(type)) {
+                //noinspection unchecked
+                return (Class<? extends T>) type;
+            }
+            return null;
+        });
     }
 
     /**
@@ -513,8 +482,7 @@ public class TypeUtils {
      * @return The retention policy of the given annotation
      */
     public static Option<RetentionPolicy> retention(Class<? extends Annotation> annotation) {
-        return Option.of(annotation.getAnnotation(Retention.class))
-            .map(Retention::value);
+        return Option.of(annotation.getAnnotation(Retention.class)).map(Retention::value);
     }
 
     /**
@@ -526,10 +494,7 @@ public class TypeUtils {
      *
      * @return Whether the given annotation has the given retention policy
      */
-    public static boolean hasRetentionPolicy(
-        Class<? extends Annotation> annotation,
-        RetentionPolicy policy
-    ) {
+    public static boolean hasRetentionPolicy(Class<? extends Annotation> annotation, RetentionPolicy policy) {
         return retention(annotation).test(policy::equals);
     }
 
@@ -543,10 +508,7 @@ public class TypeUtils {
      *
      * @return Whether the given annotations have the given retention policy
      */
-    public static boolean hasRetentionPolicy(
-        Set<Class<? extends Annotation>> annotations,
-        RetentionPolicy policy
-    ) {
+    public static boolean hasRetentionPolicy(Set<Class<? extends Annotation>> annotations, RetentionPolicy policy) {
         return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
     }
 

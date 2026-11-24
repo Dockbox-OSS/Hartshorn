@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap;
-
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -32,13 +31,12 @@ import org.dockbox.hartshorn.util.option.Option;
  * type, they are all added to the same collection.
  *
  * @see DependencyResolutionType
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public final class DependencyMap
-    extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
+public final class DependencyMap extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
 
     private DependencyMap() {
         // Use static factory method
@@ -131,8 +129,8 @@ public final class DependencyMap
         if (!this.containsValue(componentKey)) {
             return Option.empty();
         }
-        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map()
-            .entrySet()) {
+        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry :
+                this.map().entrySet()) {
             if (entry.getValue().contains(componentKey)) {
                 return Option.of(entry.getKey());
             }

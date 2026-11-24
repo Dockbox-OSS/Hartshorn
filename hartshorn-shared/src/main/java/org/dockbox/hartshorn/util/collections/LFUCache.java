@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.util.ArrayDeque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A simple implementation of a Least Frequently Used (LFU) cache. This cache evicts the least
@@ -90,8 +89,7 @@ public class LFUCache<K, V> {
             }
             value = this.generator.apply(key);
             this.put(key, value);
-        }
-        else {
+        } else {
             // Move the key to the end of the deque to mark it as most recently used
             synchronized (this.keys) {
                 this.keys.remove(key);

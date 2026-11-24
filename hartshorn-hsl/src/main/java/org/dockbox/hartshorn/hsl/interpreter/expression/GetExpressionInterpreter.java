@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  * Interpreter for {@link GetExpression} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetExpression> {
@@ -44,15 +44,14 @@ public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetE
             if (result instanceof ExternalObjectReference objectReference) {
                 result = objectReference.externalObject();
             }
-            if (result instanceof ExternalFunction bindableNode
-                && object instanceof InstanceReference instance) {
+            if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
             }
             return result;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-            .message(DiagnosticMessage.NON_PROPERTY_CONTAINER, object)
-            .at(node)
-            .build();
+                .message(DiagnosticMessage.NON_PROPERTY_CONTAINER, object)
+                .at(node)
+                .build();
     }
 }

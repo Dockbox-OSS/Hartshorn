@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
-import org.dockbox.hartshorn.inject.condition.CacheableCondition;
-import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
-import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.inject.condition.ReferenceCondition;
-import org.dockbox.hartshorn.util.types.ClassFileUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.lang.classfile.Annotation;
 import java.lang.classfile.AnnotationValue;
 import java.lang.classfile.AttributedElement;
 import java.util.List;
+import org.dockbox.hartshorn.inject.condition.CacheableCondition;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.ReferenceCondition;
+import org.dockbox.hartshorn.inject.condition.ReferenceConditionContext;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A condition that matches when a class is present on the classpath.
@@ -42,32 +41,24 @@ public class ClassCondition implements ReferenceCondition, CacheableCondition {
     @Override
     public ConditionResult matches(ReferenceConditionContext context) {
         AttributedElement element = context.element();
-        Annotation annotation = ClassFileUtilities.getAnnotation(
-                element,
-                RequiresClass.class
-        ).orElseThrow(() -> new IllegalStateException(
-                "ClassModel does not represent a type annotated with RequiresClass"
-        ));
+        Annotation annotation = ClassFileUtilities.getAnnotation(element, RequiresClass.class)
+                .orElseThrow(() ->
+                        new IllegalStateException("ClassModel does not represent a type annotated with RequiresClass"));
 
-        List<String> classes = ClassFileUtilities.getAnnotationValues(
-                        annotation,
-                        "classes",
-                        AnnotationValue.OfClass.class
-                ).stream()
-                .map(AnnotationValue.OfClass::className)
-                .map(ClassFileUtilities::constantPoolNameToQualifiedName)
-                .toList();
+        List<String> classes =
+                ClassFileUtilities.getAnnotationValues(annotation, "classes", AnnotationValue.OfClass.class).stream()
+                        .map(AnnotationValue.OfClass::className)
+                        .map(ClassFileUtilities::constantPoolNameToQualifiedName)
+                        .toList();
         // Potentially return early if a class is not found
         ConditionResult result = matchRequiredClasses(classes);
         if (result != null) return result;
 
-        List<String> classNames = ClassFileUtilities.getAnnotationValues(
-                        annotation,
-                        "classNames",
-                        AnnotationValue.OfString.class
-                ).stream()
-                .map(AnnotationValue.OfString::stringValue)
-                .toList();
+        List<String> classNames =
+                ClassFileUtilities.getAnnotationValues(annotation, "classNames", AnnotationValue.OfString.class)
+                        .stream()
+                        .map(AnnotationValue.OfString::stringValue)
+                        .toList();
         result = matchRequiredClasses(classNames);
         if (result != null) return result;
 

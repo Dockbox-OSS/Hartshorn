@@ -41,14 +41,14 @@ public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopu
 
     @Override
     protected <T> boolean permitsProxying(
-        InjectionCapableApplication application, @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         if (!super.permitsProxying(application, instance, processingContext)) {
             return false;
         }
-        return !processingContext.containsKey(ComponentContainer.class) || processingContext.get(
-            ComponentContainer.class).permitsProxying();
+        return !processingContext.containsKey(ComponentContainer.class)
+                || processingContext.get(ComponentContainer.class).permitsProxying();
     }
 
     /**
@@ -62,8 +62,7 @@ public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopu
      * {@link ContainerAwareComponentPopulatorPostProcessor}
      */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(
-        Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);

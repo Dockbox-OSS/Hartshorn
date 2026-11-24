@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 
@@ -33,9 +32,8 @@ import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
  *
  * @author Guus Lieben
  */
-public record CompositeBindingDependencyResolver(
-    Set<BindingDeclarationDependencyResolver> resolvers)
-    implements BindingDeclarationDependencyResolver {
+public record CompositeBindingDependencyResolver(Set<BindingDeclarationDependencyResolver> resolvers)
+        implements BindingDeclarationDependencyResolver {
 
     @Override
     public <T> boolean canHandle(BindingStrategyContext<T> context) {
@@ -45,8 +43,8 @@ public record CompositeBindingDependencyResolver(
     @Override
     public Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context) {
         return this.resolvers.stream()
-            .filter(resolver -> resolver.canHandle(context))
-            .flatMap(resolver -> resolver.dependencies(context).stream())
-            .collect(Collectors.toSet());
+                .filter(resolver -> resolver.canHandle(context))
+                .flatMap(resolver -> resolver.dependencies(context).stream())
+                .collect(Collectors.toSet());
     }
 }

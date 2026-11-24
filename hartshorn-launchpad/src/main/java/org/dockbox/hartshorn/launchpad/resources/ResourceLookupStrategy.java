@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.launchpad.resources;
 
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-
 import java.net.URI;
 import java.util.Set;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 
 /**
  * Defines how a resource is looked up when using {@link ResourceLookup}. It remains up to the
@@ -28,9 +27,9 @@ import java.util.Set;
  * {@code classpath:my/resource/path}.
  *
  * @see ResourceLookup
- * 
+ *
  * @since 0.4.7
- * 
+ *
  * @author Guus Lieben
  */
 public interface ResourceLookupStrategy {

@@ -45,8 +45,8 @@ public record ImmutableInjectorConfiguration(
         boolean bannerEnabled,
         boolean isBatchMode,
         boolean showStacktraces,
-        boolean includeParentScopeForFuzzyMatching
-) implements InjectorConfiguration {
+        boolean includeParentScopeForFuzzyMatching)
+        implements InjectorConfiguration {
 
     /**
      * Creates a {@link ContextualInitializer} for an {@link InjectorConfiguration} using the
@@ -56,8 +56,7 @@ public record ImmutableInjectorConfiguration(
      * @return a {@link ContextualInitializer} for an {@link InjectorConfiguration}
      */
     public static ContextualInitializer<PropertyRegistry, InjectorConfiguration> create(
-            Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return registry -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -68,8 +67,7 @@ public record ImmutableInjectorConfiguration(
                     configurer.enableBanner.initialize(registry),
                     configurer.enableBatchMode.initialize(registry),
                     configurer.showStacktraces.initialize(registry),
-                    configurer.includeParentScopeForFuzzyMatching.initialize(registry)
-            );
+                    configurer.includeParentScopeForFuzzyMatching.initialize(registry));
         };
     }
 
@@ -84,8 +82,7 @@ public record ImmutableInjectorConfiguration(
 
         // checkstyle:off LineLength
         private ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode =
-                PropertyInitializer.booleanProperty("hartshorn.strict.enabled")
-                        .orElseGet(() -> true);
+                PropertyInitializer.booleanProperty("hartshorn.strict.enabled").orElseGet(() -> true);
 
         private ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching =
                 PropertyInitializer.booleanProperty("hartshorn.inject.fuzzy-match-with-parent-scopes")
@@ -100,16 +97,14 @@ public record ImmutableInjectorConfiguration(
                         .orElseGet(() -> true);
 
         private ContextualInitializer<PropertyRegistry, Boolean> enableBanner =
-                PropertyInitializer.booleanProperty("hartshorn.banner.enabled")
-                        .orElseGet(() -> true);
+                PropertyInitializer.booleanProperty("hartshorn.banner.enabled").orElseGet(() -> true);
 
         private ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode =
-                PropertyInitializer.booleanProperty("hartshorn.batch.enabled")
-                        .orElseGet(() -> false);
+                PropertyInitializer.booleanProperty("hartshorn.batch.enabled").orElseGet(() -> false);
 
-        private ContextualInitializer<PropertyRegistry, Boolean> showStacktraces =
-                PropertyInitializer.booleanProperty("hartshorn.exceptions.stacktraces")
-                        .orElseGet(() -> true);
+        private ContextualInitializer<PropertyRegistry, Boolean> showStacktraces = PropertyInitializer.booleanProperty(
+                        "hartshorn.exceptions.stacktraces")
+                .orElseGet(() -> true);
         // checkstyle:on LineLength
 
         /**
@@ -143,9 +138,7 @@ public record ImmutableInjectorConfiguration(
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableStrictMode(
-                ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode
-        ) {
+        public Configurer enableStrictMode(ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode) {
             this.enableStrictMode = enableStrictMode;
             return this;
         }
@@ -159,8 +152,7 @@ public record ImmutableInjectorConfiguration(
          * @return the current {@link Configurer} instance
          */
         public Configurer includeParentScopeForFuzzyMatching(
-                ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching
-        ) {
+                ContextualInitializer<PropertyRegistry, Boolean> includeParentScopeForFuzzyMatching) {
             this.includeParentScopeForFuzzyMatching = includeParentScopeForFuzzyMatching;
             return this;
         }
@@ -194,8 +186,7 @@ public record ImmutableInjectorConfiguration(
          * @see InjectorConfiguration#allowFallbackToSingleConstructor()
          */
         public Configurer allowFallbackToSingleConstructor(
-                ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor
-        ) {
+                ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor) {
             this.allowFallbackToSingleConstructor = allowFallbackToSingleConstructor;
             return this;
         }
@@ -235,9 +226,7 @@ public record ImmutableInjectorConfiguration(
          *
          * @see InjectorConfiguration#requiredByDefault()
          */
-        public Configurer requiredByDefault(
-                ContextualInitializer<PropertyRegistry, Boolean> requiredByDefault
-        ) {
+        public Configurer requiredByDefault(ContextualInitializer<PropertyRegistry, Boolean> requiredByDefault) {
             this.requiredByDefault = requiredByDefault;
             return this;
         }
@@ -274,9 +263,7 @@ public record ImmutableInjectorConfiguration(
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBanner(
-                ContextualInitializer<PropertyRegistry, Boolean> enableBanner
-        ) {
+        public Configurer enableBanner(ContextualInitializer<PropertyRegistry, Boolean> enableBanner) {
             this.enableBanner = enableBanner;
             return this;
         }
@@ -310,9 +297,7 @@ public record ImmutableInjectorConfiguration(
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBatchMode(
-                ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode
-        ) {
+        public Configurer enableBatchMode(ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode) {
             this.enableBatchMode = enableBatchMode;
             return this;
         }
@@ -347,9 +332,7 @@ public record ImmutableInjectorConfiguration(
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer showStacktraces(
-                ContextualInitializer<PropertyRegistry, Boolean> showStacktraces
-        ) {
+        public Configurer showStacktraces(ContextualInitializer<PropertyRegistry, Boolean> showStacktraces) {
             this.showStacktraces = showStacktraces;
             return this;
         }

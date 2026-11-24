@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,10 @@ public class SimpleInjectionPointDeclarationResolver implements InjectionPointDe
     @Override
     public TypeView<?> resolve(InjectionPoint injectionPoint) {
         return switch (injectionPoint.injectionPoint()) {
-            case ExecutableElementView<?> executableElementView ->
-                executableElementView.declaredBy();
+            case ExecutableElementView<?> executableElementView -> executableElementView.declaredBy();
             case FieldView<?, ?> fieldView -> fieldView.declaredBy();
             case ParameterView<?> parameterView -> parameterView.declaredBy().declaredBy();
-            default -> throw new IllegalStateException("Unexpected value: "
-                + injectionPoint.injectionPoint());
+            default -> throw new IllegalStateException("Unexpected value: " + injectionPoint.injectionPoint());
         };
     }
 }

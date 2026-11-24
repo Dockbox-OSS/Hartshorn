@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.web.route;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-
-import java.util.Collection;
 
 /**
  * A simple implementation of {@link HandlerMappingRegistry}.
@@ -32,18 +31,14 @@ import java.util.Collection;
  */
 public class SimpleHandlerMappingRegistry implements HandlerMappingRegistry {
 
-    private final MultiMap<PathSpec, PathHandlerSpec> requestMappings
-            = new ConcurrentSetMultiMap<>();
+    private final MultiMap<PathSpec, PathHandlerSpec> requestMappings = new ConcurrentSetMultiMap<>();
 
     @Override
     public void add(HttpMethod method, PathSpec pathSpec, RequestHandler handler) {
         Collection<PathHandlerSpec> handlerSpecs = this.requestMappings.get(pathSpec);
         if (handlerSpecs.stream().anyMatch(spec -> spec.method() == method)) {
             throw new IllegalArgumentException(
-                    "A handler for path '%s' and method '%s' is already registered".formatted(
-                            pathSpec, method
-                    )
-            );
+                    "A handler for path '%s' and method '%s' is already registered".formatted(pathSpec, method));
         }
         this.requestMappings.put(pathSpec, new PathHandlerSpec(method, handler));
     }

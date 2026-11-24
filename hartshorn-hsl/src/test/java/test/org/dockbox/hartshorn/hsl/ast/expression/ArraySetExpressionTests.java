@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArraySetExpressionInterpreter;
@@ -28,9 +31,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class ArraySetExpressionTests {
 
@@ -41,15 +41,14 @@ class ArraySetExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                 array[0] = "value"
                 """)
-            .expressionParser(new AssignExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("array", hslArray)
-            .build();
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", hslArray)
+                .build();
 
-        Object interpreted = helper
-            .evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
-            .interpretValue();
+        Object interpreted = helper.evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
+                .interpretValue();
         assertThat(interpreted).isEqualTo("value");
         assertThat(hslArray.value(0)).isEqualTo("value");
         assertThat(realArray[0]).isEqualTo("value");
@@ -62,16 +61,14 @@ class ArraySetExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                 array[1] = "value"
                 """)
-            .expressionParser(new AssignExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("array", hslArray)
-            .build();
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", hslArray)
+                .build();
 
-        assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
-            helper.evaluateWith(
-                ArraySetExpression.class,
-                new ArraySetExpressionInterpreter()
-            ).interpretValue());
+        assertThatExceptionOfType(IndexOutOfBoundsException.class)
+                .isThrownBy(() -> helper.evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
+                        .interpretValue());
     }
 }

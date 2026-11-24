@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
@@ -42,13 +42,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @see InstantiationStrategy
  * @see SupplierInstantiationStrategy
- * 
+ *
  * @since 0.4.4
- * 
+ *
  * @author Guus Lieben
  */
-public final class PrototypeConstructorInstantiationStrategy<C>
-    implements TypeAwareInstantiationStrategy<C> {
+public final class PrototypeConstructorInstantiationStrategy<C> implements TypeAwareInstantiationStrategy<C> {
 
     private final ComponentKey<? extends C> componentKey;
     private final LifecycleType lifecycleType;
@@ -56,10 +55,7 @@ public final class PrototypeConstructorInstantiationStrategy<C>
     private ConstructorView<? extends C> optimalConstructor;
     private boolean lazy = true;
 
-    private PrototypeConstructorInstantiationStrategy(
-        ComponentKey<? extends C> type,
-        LifecycleType lifecycleType
-    ) {
+    private PrototypeConstructorInstantiationStrategy(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
         this.componentKey = type;
         this.lifecycleType = lifecycleType;
     }
@@ -73,9 +69,7 @@ public final class PrototypeConstructorInstantiationStrategy<C>
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(
-        ComponentKey<? extends T> type
-    ) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(ComponentKey<? extends T> type) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.PROTOTYPE);
     }
 
@@ -88,9 +82,7 @@ public final class PrototypeConstructorInstantiationStrategy<C>
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(
-        ComponentKey<? extends T> type
-    ) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(ComponentKey<? extends T> type) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.SINGLETON);
     }
 
@@ -111,30 +103,25 @@ public final class PrototypeConstructorInstantiationStrategy<C>
 
     @Override
     public Option<ObjectContainer<C>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException {
-        Option<? extends ConstructorView<? extends C>> constructor =
-            this.optimalConstructor(application);
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException {
+        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(application);
         if (constructor.absent()) {
             return Option.empty();
         }
         try {
-            ComponentExecutableInvocationAdapter contextAdapter =
-                new InjectorExecutableInvocationAdapter(application)
+            ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
                     .requestContext(requestContext)
                     // Prefer component scope, but fall back to the given scope (which may be null,
                     // for global)
                     .scope(this.componentKey.scope().orElse(scope));
-            return contextAdapter.create(constructor.get())
-                .cast(this.type())
-                .map(instance -> ComponentObjectContainer.ofLifecycleType(instance,
-                    this.lifecycleType));
-        }
-        catch (Throwable throwable) {
-            throw new ApplicationException("Failed to create instance of type " + this.type()
-                .getName(), throwable);
+            return contextAdapter
+                    .create(constructor.get())
+                    .cast(this.type())
+                    .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));
+        } catch (Throwable throwable) {
+            throw new ApplicationException(
+                    "Failed to create instance of type " + this.type().getName(), throwable);
         }
     }
 
@@ -148,22 +135,18 @@ public final class PrototypeConstructorInstantiationStrategy<C>
         return Tristate.valueOf(this.lazy);
     }
 
-    private Option<? extends ConstructorView<? extends C>> optimalConstructor(
-        InjectionCapableApplication application
-    ) throws ApplicationException {
-        TypeView<? extends C> typeView = (TypeView<? extends C>) application.environment()
-                .introspector()
-                .introspect(this.componentKey.parameterizedType());
+    private Option<? extends ConstructorView<? extends C>> optimalConstructor(InjectionCapableApplication application)
+            throws ApplicationException {
+        TypeView<? extends C> typeView = (TypeView<? extends C>)
+                application.environment().introspector().introspect(this.componentKey.parameterizedType());
         if (this.optimalConstructor == null) {
             try {
                 this.optimalConstructor = ComponentConstructorResolver.create(application)
-                    .findConstructor(typeView)
-                    .orNull();
-            }
-            catch (ApplicationException e) {
+                        .findConstructor(typeView)
+                        .orNull();
+            } catch (ApplicationException e) {
                 throw e;
-            }
-            catch (Throwable throwable) {
+            } catch (Throwable throwable) {
                 throw new ApplicationException(throwable);
             }
         }
@@ -178,9 +161,9 @@ public final class PrototypeConstructorInstantiationStrategy<C>
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("type", this.componentKey.parameterizedType())
-            .field("lifecycleType", this.lifecycleType)
-            .field("lazy", this.lazy)
-            .describe();
+                .field("type", this.componentKey.parameterizedType())
+                .field("lifecycleType", this.lifecycleType)
+                .field("lazy", this.lazy)
+                .describe();
     }
 }

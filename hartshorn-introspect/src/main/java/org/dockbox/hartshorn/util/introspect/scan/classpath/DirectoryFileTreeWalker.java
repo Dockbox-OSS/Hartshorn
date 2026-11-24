@@ -30,7 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @see ClassPathScanner
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class DirectoryFileTreeWalker implements FileVisitor<Path> {
@@ -41,9 +41,10 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     private final URLClassLoader classLoader;
 
     public DirectoryFileTreeWalker(
-        ClassPathScanner classPathScanner, int rootDirNameLength,
-        ResourceHandler handler, URLClassLoader classLoader
-    ) {
+            ClassPathScanner classPathScanner,
+            int rootDirNameLength,
+            ResourceHandler handler,
+            URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.rootDirNameLength = rootDirNameLength;
         this.handler = handler;
@@ -51,19 +52,14 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(
-        Path directory,
-        BasicFileAttributes attributes
-    ) throws IOException {
+    public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
         String canonicalPath = directory.toFile().getCanonicalPath();
         if (canonicalPath.length() == this.rootDirNameLength) {
             return FileVisitResult.CONTINUE;
         }
 
         String resourceName = canonicalPath.substring(this.rootDirNameLength + 1);
-        String canonicalName = resourceName
-            .replace('/', '.')
-            .replace('\\', '.');
+        String canonicalName = resourceName.replace('/', '.').replace('\\', '.');
 
         for (String excludePrefix : this.classPathScanner.excludePrefixes()) {
             // If path starts with an excluded prefix, skip
@@ -75,8 +71,7 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
         for (String beginFilterName : this.classPathScanner.includedPrefixes()) {
             // If path starts with a included prefix, continue
             // If the path is part of a included package, continue, may match later
-            if (canonicalName.startsWith(beginFilterName)
-                || beginFilterName.startsWith(canonicalName)) {
+            if (canonicalName.startsWith(beginFilterName) || beginFilterName.startsWith(canonicalName)) {
                 return FileVisitResult.CONTINUE;
             }
         }
@@ -85,15 +80,9 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
-        String resourceName = file.toFile()
-            .getAbsolutePath()
-            .substring(this.rootDirNameLength + 1);
+        String resourceName = file.toFile().getAbsolutePath().substring(this.rootDirNameLength + 1);
 
-        this.classPathScanner.processPathResource(
-            this.handler,
-            this.classLoader,
-            resourceName,
-            file);
+        this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
 

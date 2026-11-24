@@ -37,46 +37,37 @@ public class StringToClassConverterFactory implements ConverterFactory<String, C
     public <O extends Class<?>> Converter<String, O> create(Class<O> targetType) {
         return (input, contexts) -> {
             AdditionalTargetTypeContext<O> additionalTypeContext = ContextUtilities.first(
-                    contexts,
-                    AdditionalTargetTypeContext.class
-            ).orElseGet(() -> {
-                return new AdditionalTargetTypeContext<>(targetType, null);
-            });
+                            contexts, AdditionalTargetTypeContext.class)
+                    .orElseGet(() -> {
+                        return new AdditionalTargetTypeContext<>(targetType, null);
+                    });
 
             if (input != null) {
                 Class<?> type = TypeUtils.forName(input).orNull();
                 if (type != null) {
-                    ParameterizableType parameterizableType = additionalTypeContext
-                        .parameterizableType();
+                    ParameterizableType parameterizableType = additionalTypeContext.parameterizableType();
 
                     if (!isValidBound(parameterizableType, type)) {
                         throw new IllegalArgumentException(
-                                ("Cannot convert '%s' to type %s: " +
-                                        "Target type %s is not within bound %s"
-                                ).formatted(
-                                        input,
-                                        targetType.getName(),
-                                        parameterizableType.toQualifiedString(),
-                                        type.getName()
-                                ));
+                                ("Cannot convert '%s' to type %s: " + "Target type %s is not within bound %s")
+                                        .formatted(
+                                                input,
+                                                targetType.getName(),
+                                                parameterizableType.toQualifiedString(),
+                                                type.getName()));
                     }
                     @SuppressWarnings("unchecked")
                     O castedType = (O) type;
                     return castedType;
                 }
-
             }
             return null;
         };
     }
 
-    private static boolean isValidBound(
-            ParameterizableType parameterizableType,
-            Class<?> type
-    ) {
+    private static boolean isValidBound(ParameterizableType parameterizableType, Class<?> type) {
         if (parameterizableType != null) {
-            List<ParameterizableType> parameters = parameterizableType
-                    .parameters();
+            List<ParameterizableType> parameters = parameterizableType.parameters();
             if (!parameters.isEmpty()) {
                 ParameterizableType valueBound = parameters.getFirst();
                 return valueBound.type().isAssignableFrom(type);

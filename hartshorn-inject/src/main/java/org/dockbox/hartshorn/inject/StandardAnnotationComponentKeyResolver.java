@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.annotations.Initialize;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.Qualifier;
@@ -32,10 +35,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A {@link ComponentKeyResolver} that resolves the {@link ComponentKey} of a component based on the
@@ -97,16 +96,12 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      *
      * @return the post configured key
      */
-    protected ComponentKey<?> postConfigureKey(
-        ComponentKey.Builder<?> builder,
-        AnnotatedGenericTypeView<?> view
-    ) {
+    protected ComponentKey<?> postConfigureKey(ComponentKey.Builder<?> builder, AnnotatedGenericTypeView<?> view) {
         TypeView<?> type = view.genericType();
         if (type.isChildOf(Collection.class)) {
             TypeView<?> elementType = this.resolveCollectionElementType(type);
             return builder.type(elementType).collector().build();
-        }
-        else {
+        } else {
             return builder.build();
         }
     }
@@ -118,10 +113,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param builder the builder to configure
      * @param annotations the annotations to configure the builder with
      */
-    protected void configureQualifiers(
-        ComponentKey.Builder<?> builder,
-        ElementAnnotationsIntrospector annotations
-    ) {
+    protected void configureQualifiers(ComponentKey.Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         Set<QualifierKey<?>> qualifiers = this.resolveQualifiers(annotations);
         builder.qualifiers(qualifiers);
     }
@@ -138,8 +130,8 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      */
     protected Set<QualifierKey<?>> resolveQualifiers(ElementAnnotationsIntrospector annotations) {
         return annotations.annotedWith(Qualifier.class).stream()
-            .map(QualifierKey::of)
-            .collect(Collectors.toSet());
+                .map(QualifierKey::of)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -149,10 +141,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param builder the builder to configure
      * @param annotations the annotations to configure the builder with
      */
-    protected void configureStrict(
-        ComponentKey.Builder<?> builder,
-        ElementAnnotationsIntrospector annotations
-    ) {
+    protected void configureStrict(ComponentKey.Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         Tristate isStrict = this.isStrict(annotations);
         if (isStrict != Tristate.UNDEFINED) {
             builder.strict(isStrict.booleanValue());
@@ -167,9 +156,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param annotations the annotations to configure the builder with
      */
     protected void configureParentScopeInclusion(
-        ComponentKey.Builder<?> builder,
-        ElementAnnotationsIntrospector annotations
-    ) {
+            ComponentKey.Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         Tristate includeParentScopes = this.includeParentScopes(annotations);
         if (includeParentScopes != Tristate.UNDEFINED) {
             builder.includeParentScopes(includeParentScopes.booleanValue());
@@ -185,9 +172,11 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @return the strictness of the key, or {@link Tristate#UNDEFINED} if it cannot be determined
      */
     protected Tristate isStrict(ElementAnnotationsIntrospector annotations) {
-        return annotations.get(Strict.class).map(Strict::value)
-            .map(Tristate::valueOf)
-            .orElse(Tristate.UNDEFINED);
+        return annotations
+                .get(Strict.class)
+                .map(Strict::value)
+                .map(Tristate::valueOf)
+                .orElse(Tristate.UNDEFINED);
     }
 
     /**
@@ -200,8 +189,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * determined
      */
     protected Tristate includeParentScopes(ElementAnnotationsIntrospector annotations) {
-        return annotations.get(Strict.class).map(Strict::includeParentScope)
-            .orElse(Tristate.UNDEFINED);
+        return annotations.get(Strict.class).map(Strict::includeParentScope).orElse(Tristate.UNDEFINED);
     }
 
     /**
@@ -211,10 +199,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param builder the builder to configure
      * @param annotations the annotations to configure the builder with
      */
-    protected void configureAutoEnabling(
-        ComponentKey.Builder<?> builder,
-        ElementAnnotationsIntrospector annotations
-    ) {
+    protected void configureAutoEnabling(ComponentKey.Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         builder.postConstructionAllowed(this.isAutoEnabled(annotations));
     }
 
@@ -238,19 +223,12 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param view the view to configure the builder with
      * @param scope the scope of the key
      */
-    protected void configurePriority(
-        ComponentKey.Builder<?> builder,
-        AnnotatedGenericTypeView<?> view,
-        Scope scope
-    ) {
+    protected void configurePriority(ComponentKey.Builder<?> builder, AnnotatedGenericTypeView<?> view, Scope scope) {
         Option<Priority> priorityOption = view.annotations().get(Priority.class);
         if (priorityOption.present()) {
             int parameterPriority = priorityOption.get().value();
-            builder.selectionStrategy(
-                new ExactPriorityProviderSelectionStrategy(parameterPriority)
-            );
-        }
-        else if (view instanceof ParameterView<?> parameterView) {
+            builder.selectionStrategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
+        } else if (view instanceof ParameterView<?> parameterView) {
             this.configureSelfProvisionCandidate(builder, scope, parameterView);
         }
     }
@@ -266,10 +244,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param parameterView the parameter to configure the builder with
      */
     protected void configureSelfProvisionCandidate(
-        ComponentKey.Builder<?> builder,
-        Scope scope,
-        ParameterView<?> parameterView
-    ) {
+            ComponentKey.Builder<?> builder, Scope scope, ParameterView<?> parameterView) {
         ExecutableElementView<?> declaredBy = parameterView.declaredBy();
         if (declaredBy instanceof AnnotatedGenericTypeView<?> annotatedDeclaredBy) {
             ComponentKey<?> key = this.resolve(annotatedDeclaredBy, scope);
@@ -277,9 +252,8 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
             if (selfProvision) {
                 Option<Priority> priority = declaredBy.annotations().get(Priority.class);
                 if (priority.present()) {
-                    builder.selectionStrategy(
-                        new MaximumPriorityProviderSelectionStrategy(priority.get().value())
-                    );
+                    builder.selectionStrategy(new MaximumPriorityProviderSelectionStrategy(
+                            priority.get().value()));
                 }
             }
         }
@@ -296,16 +270,13 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @throws ComponentPopulateException if the element type cannot be resolved
      */
     protected TypeView<?> resolveCollectionElementType(TypeView<?> type) {
-        Option<TypeView<?>> elementType = type
-            .typeParameters()
-            .inputFor(Collection.class)
-            .atIndex(0)
-            .flatMap(TypeParameterView::resolvedType);
+        Option<TypeView<?>> elementType =
+                type.typeParameters().inputFor(Collection.class).atIndex(0).flatMap(TypeParameterView::resolvedType);
 
         if (elementType.absent()) {
             throw new ComponentPopulateException("Failed to populate injection point "
-                + type.qualifiedName()
-                + ", could not resolve collection element type");
+                    + type.qualifiedName()
+                    + ", could not resolve collection element type");
         }
         return elementType.get();
     }

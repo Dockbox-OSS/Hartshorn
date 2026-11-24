@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Converts an {@link Option} to an {@link Object}. If the {@link Option} is empty, {@code null} is
@@ -30,8 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class OptionToObjectConverterFactory
-    implements ConverterFactory<Option<?>, Object>, ConditionalConverter {
+public class OptionToObjectConverterFactory implements ConverterFactory<Option<?>, Object>, ConditionalConverter {
 
     @Override
     public <O> Converter<Option<?>, O> create(Class<O> targetType) {

@@ -30,9 +30,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractSingleElementContext<I>
-    extends DefaultContext
-    implements SingleElementContext<I> {
+public abstract class AbstractSingleElementContext<I> extends DefaultContext implements SingleElementContext<I> {
 
     private final I input;
 

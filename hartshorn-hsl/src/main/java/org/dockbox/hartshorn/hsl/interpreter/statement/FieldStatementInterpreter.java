@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  * Interpreter for {@link FieldStatement} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class FieldStatementInterpreter implements StatementInterpreter<FieldStatement> {
@@ -37,8 +37,8 @@ public class FieldStatementInterpreter implements StatementInterpreter<FieldStat
         Object value = initializer != null ? interpreter.evaluate(initializer) : null;
         int distance = initializer != null ? interpreter.distance(initializer) : 0;
 
-        PropertyContainer object = (PropertyContainer) interpreter.visitingScope()
-            .getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
+        PropertyContainer object = (PropertyContainer)
+                interpreter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
         object.set(interpreter, node.name(), value, interpreter.visitingScope());
         return null;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,5 +21,4 @@ import test.org.dockbox.hartshorn.introspect.annotations.Route;
 
 @Joint2(path = "abc")
 @Route(regex = "jointRegex")
-public class TestClassWithJointAnnotation2 {
-}
+public class TestClassWithJointAnnotation2 {}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,15 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
@@ -25,41 +34,22 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.fail;
-
 public class ConverterIntrospectionHelper {
 
     public static <T extends Collection<?>> Introspector createIntrospectorForCollection(
-        Class<T> type,
-        Supplier<T> supplier
-    ) {
-        return createIntrospectorForCollection(type,
-            supplier,
-                _ -> fail("Unexpected call to capacity constructor"));
+            Class<T> type, Supplier<T> supplier) {
+        return createIntrospectorForCollection(type, supplier, _ -> fail("Unexpected call to capacity constructor"));
     }
 
     public static <T extends Collection<?>> Introspector createIntrospectorForCollection(
-        Class<T> type,
-        Supplier<T> supplier,
-        IntFunction<T> capacityConstructor
-    ) {
-        TypeConstructorsIntrospector<T> constructors =
-            Mockito.mock(TypeConstructorsIntrospector.class);
+            Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
+        TypeConstructorsIntrospector<T> constructors = Mockito.mock(TypeConstructorsIntrospector.class);
         configureDefaultConstructor(type, supplier, constructors);
         configureInitialCapacityConstructor(type, capacityConstructor, constructors);
 
-        TypeParametersIntrospector parametersIntrospector =
-            Mockito.mock(TypeParametersIntrospector.class);
+        TypeParametersIntrospector parametersIntrospector = Mockito.mock(TypeParametersIntrospector.class);
         Mockito.when(parametersIntrospector.inputFor(Collection.class))
-            .thenReturn(new SimpleTypeParameterList(List.of()));
+                .thenReturn(new SimpleTypeParameterList(List.of()));
 
         TypeView<T> typeView = Mockito.mock(TypeView.class);
         Mockito.when(typeView.constructors()).thenReturn(constructors);
@@ -71,10 +61,7 @@ public class ConverterIntrospectionHelper {
     }
 
     private static <T extends Collection<?>> void configureDefaultConstructor(
-        Class<T> type,
-        Supplier<T> supplier,
-        TypeConstructorsIntrospector<T> constructors
-    ) {
+            Class<T> type, Supplier<T> supplier, TypeConstructorsIntrospector<T> constructors) {
         try {
             Constructor<T> defaultConstructor = type.getConstructor();
             assertThat(defaultConstructor).isNotNull();
@@ -82,22 +69,19 @@ public class ConverterIntrospectionHelper {
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(defaultConstructor));
             assertThatCode(() -> {
-                Mockito.when(constructorView.create()).thenAnswer(_ -> supplier.get());
-            }).withFailMessage("On-going stub yielded an unexpected exception")
+                        Mockito.when(constructorView.create()).thenAnswer(_ -> supplier.get());
+                    })
+                    .withFailMessage("On-going stub yielded an unexpected exception")
                     .doesNotThrowAnyException();
 
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.of(constructorView));
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.empty());
         }
     }
 
     private static <T extends Collection<?>> void configureInitialCapacityConstructor(
-        Class<T> type,
-        IntFunction<T> supplier,
-        TypeConstructorsIntrospector<T> constructors
-    ) {
+            Class<T> type, IntFunction<T> supplier, TypeConstructorsIntrospector<T> constructors) {
         try {
             Constructor<T> capacityConstructor = type.getConstructor(int.class);
             assertThat(capacityConstructor).isNotNull();
@@ -105,15 +89,15 @@ public class ConverterIntrospectionHelper {
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(capacityConstructor));
             assertThatCode(() -> {
-                Mockito.when(constructorView.create(Mockito.anyInt()))
-                    .thenAnswer(invocation -> supplier.apply((int) invocation.getArguments()[0]));
-            }).withFailMessage("On-going stub yielded an unexpected exception")
+                        Mockito.when(constructorView.create(Mockito.anyInt()))
+                                .thenAnswer(invocation ->
+                                        supplier.apply((int) invocation.getArguments()[0]));
+                    })
+                    .withFailMessage("On-going stub yielded an unexpected exception")
                     .doesNotThrowAnyException();
 
-            Mockito.when(constructors.withParameters(int.class))
-                .thenReturn(Option.of(constructorView));
-        }
-        catch (NoSuchMethodException e) {
+            Mockito.when(constructors.withParameters(int.class)).thenReturn(Option.of(constructorView));
+        } catch (NoSuchMethodException e) {
             Mockito.when(constructors.withParameters(int.class)).thenReturn(Option.empty());
         }
     }

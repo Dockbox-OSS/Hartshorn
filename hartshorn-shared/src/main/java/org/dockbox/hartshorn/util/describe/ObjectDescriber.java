@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.describe;
 
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SequencedMap;
 import java.util.stream.StreamSupport;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
  * A utility class to describe objects in a pre-defined style. This class is useful for
@@ -117,12 +116,7 @@ public final class ObjectDescriber<T> {
         for (int i = 0; i < fieldNames.size(); i++) {
             String fieldName = fieldNames.get(i);
             Object fieldValue = this.fields.get(fieldName);
-            this.style.describeField(
-                builder,
-                this.object,
-                fieldName,
-                describeValue(fieldValue, includeTypeName)
-            );
+            this.style.describeField(builder, this.object, fieldName, describeValue(fieldValue, includeTypeName));
 
             if (i < fieldNames.size() - 1) {
                 this.style.describeFieldSeparator(builder, this.object);
@@ -177,12 +171,10 @@ public final class ObjectDescriber<T> {
             case DescribeAsObject describeAsObject -> String.valueOf(describeAsObject);
             case Map<?, ?> map -> this.describeMapLikeValue(map, includeTypeName);
             // MultiMap does not extend Map, so we need to handle it separately
-            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(
-                multiMap,
-                includeTypeName
-            );
+            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(multiMap, includeTypeName);
             case Iterable<?> iterable -> {
-                List<?> elements = StreamSupport.stream(iterable.spliterator(), false).toList();
+                List<?> elements =
+                        StreamSupport.stream(iterable.spliterator(), false).toList();
                 yield this.describeArrayLikeValue(elements, includeTypeName);
             }
             // Class can have an 'interface' or 'class' prefix, which isn't useful here
@@ -191,8 +183,7 @@ public final class ObjectDescriber<T> {
                 if (value.getClass().isArray()) {
                     List<Object> elements = Arrays.stream((Object[]) value).toList();
                     yield this.describeArrayLikeValue(elements, includeTypeName);
-                }
-                else {
+                } else {
                     // For other objects (including primitives), we simply convert them to a string
                     yield String.valueOf(value);
                 }

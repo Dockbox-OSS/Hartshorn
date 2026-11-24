@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,18 @@
 
 package org.dockbox.hartshorn.launchpad.logging.logback;
 
-import java.lang.management.ManagementFactory;
-
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import java.lang.management.ManagementFactory;
 
 /**
  * Logback converter that provides the PID of the current process. This is used by the
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
  * @see LogbackEncoder
- * 
+ *
  * @since 0.4.8
- * 
+ *
  * @author Guus Lieben
  */
 public class LogbackPIDConverter extends ClassicConverter {

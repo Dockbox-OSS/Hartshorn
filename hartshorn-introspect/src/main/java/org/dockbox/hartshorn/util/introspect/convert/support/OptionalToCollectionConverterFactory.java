@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Optional;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Converts an {@link Optional} to a {@link Collection}. If the {@link Optional} is empty, the
@@ -41,13 +40,13 @@ import java.util.Optional;
  * @see OptionToCollectionConverterFactory
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public record OptionalToCollectionConverterFactory(
-    Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,
-    ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory
-) implements ConverterFactory<Optional<?>, Collection<?>> {
+        Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,
+        ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory)
+        implements ConverterFactory<Optional<?>, Collection<?>> {
 
     public OptionalToCollectionConverterFactory(Introspector introspector) {
         this(new OptionalToOptionConverter(), new OptionToCollectionConverterFactory(introspector));
@@ -55,8 +54,8 @@ public record OptionalToCollectionConverterFactory(
 
     @Override
     public <O extends Collection<?>> Converter<Optional<?>, O> create(Class<O> targetType) {
-        Converter<Option<?>, O> optionToCollectionConverter = this
-            .helperOptionToCollectionConverterFactory.create(targetType);
+        Converter<Option<?>, O> optionToCollectionConverter =
+                this.helperOptionToCollectionConverterFactory.create(targetType);
         return (input, _) -> {
             Option<?> option = this.helperOptionalToOptionConverter.convert(input);
             return optionToCollectionConverter.convert(option);

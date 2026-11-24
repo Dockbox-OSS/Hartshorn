@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import java.util.List;
-
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
@@ -28,6 +26,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -36,24 +35,17 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link ExpressionCustomizer}.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    public ValidateExpressionRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory
-    ) {
-        this(applicationContext, factory, parser -> {
-        });
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
+        this(applicationContext, factory, parser -> {});
     }
 
     public ValidateExpressionRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory,
-        ParserCustomizer parserCustomizer
-    ) {
+            ApplicationContext applicationContext, ScriptComponentFactory factory, ParserCustomizer parserCustomizer) {
         super(applicationContext, factory, parserCustomizer);
         this.customizer(new ExpressionCustomizer());
     }
@@ -67,8 +59,7 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @return The validation result, or {@code false} if it does not exist.
      */
     public static boolean valid(ResultCollector collector) {
-        Option<Boolean> result =
-            collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
+        Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
         return result.test(Boolean::booleanValue);
     }
 
@@ -102,25 +93,20 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      *
      * @return The actual statements within the script.
      */
-    public static List<Statement> actualStatements(
-        ExpressionScript expressionScript,
-        boolean excludeModuleStatements
-    ) {
+    public static List<Statement> actualStatements(ExpressionScript expressionScript, boolean excludeModuleStatements) {
         List<Statement> statements = expressionScript.scriptContext().statements();
         List<TestStatement> testStatements = statements.stream()
-            .filter(statement -> statement instanceof TestStatement)
-            .map(TestStatement.class::cast)
-            .toList();
+                .filter(statement -> statement instanceof TestStatement)
+                .map(TestStatement.class::cast)
+                .toList();
         if (testStatements.size() == 1) {
             BlockStatement body = testStatements.getFirst().body();
             return body.statements().stream()
-                .filter(statement -> !(excludeModuleStatements
-                    && statement instanceof ModuleStatement))
-                .toList();
-        }
-        else {
-            throw new IllegalArgumentException("Expected exactly one test statement, but found "
-                + testStatements.size());
+                    .filter(statement -> !(excludeModuleStatements && statement instanceof ModuleStatement))
+                    .toList();
+        } else {
+            throw new IllegalArgumentException(
+                    "Expected exactly one test statement, but found " + testStatements.size());
         }
     }
 }

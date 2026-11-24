@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package test.org.dockbox.hartshorn.inject.stereotype;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ComponentStereotypeTests {
@@ -42,7 +42,8 @@ class ComponentStereotypeTests {
 
     @Test
     void nonComponentsAreNotProxied() {
-        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(NonComponentType.class));
+        assertThatExceptionOfType(ComponentResolutionException.class)
+                .isThrownBy(() -> this.applicationContext.get(NonComponentType.class));
     }
 
     @Test
@@ -50,14 +51,14 @@ class ComponentStereotypeTests {
     void permittedComponentsAreProxiedWhenRegularProvisionFails() {
         ComponentType instance = this.applicationContext.get(ComponentType.class);
         assertThat(instance).isNotNull();
-        assertThat(this.applicationContext.environment()
-            .proxyOrchestrator()
-            .isProxy(instance)).isTrue();
+        assertThat(this.applicationContext.environment().proxyOrchestrator().isProxy(instance))
+                .isTrue();
     }
 
     @Test
     @TestComponents(NonProxyComponentType.class)
     void nonPermittedComponentsAreNotProxied() {
-        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(NonProxyComponentType.class));
+        assertThatExceptionOfType(ComponentResolutionException.class)
+                .isThrownBy(() -> this.applicationContext.get(NonProxyComponentType.class));
     }
 }

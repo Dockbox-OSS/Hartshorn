@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import java.util.SequencedSet;
+import java.util.function.BiConsumer;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -51,9 +53,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.SequencedSet;
-import java.util.function.BiConsumer;
-
 /**
  * A {@link ApplicationContext} implementation that delegates to a
  * {@link PostProcessingComponentProvider}. This implementation is used to allow for custom
@@ -84,9 +83,8 @@ import java.util.function.BiConsumer;
  *
  * @author Guus Lieben
  */
-public abstract class DelegatingApplicationContext
-    extends DefaultFallbackCompatibleContext
-    implements ProcessableApplicationContext {
+public abstract class DelegatingApplicationContext extends DefaultFallbackCompatibleContext
+        implements ProcessableApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
@@ -97,35 +95,29 @@ public abstract class DelegatingApplicationContext
     protected boolean isRunning = false;
 
     protected DelegatingApplicationContext(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext,
-        Configurer configurer
-    ) {
+            SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         this.environment = initializerContext.input();
 
-        if (this.environment instanceof ModifiableApplicationContextCarrier
-            modifiableApplicationContextCarrier
-        ) {
+        if (this.environment instanceof ModifiableApplicationContextCarrier modifiableApplicationContextCarrier) {
             modifiableApplicationContextCarrier.applicationContext(this);
         }
 
         this.prepareInitialization(initializerContext);
 
-        SingleElementContext<ApplicationContext> applicationInitializerContext =
-            initializerContext.transform(this);
+        SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
         // Expose current context to allow initializers to resolve the application, even if the
         // content of the element context is not the application itself
         applicationInitializerContext.addContext(this);
 
-        this.componentProvider = configurer.componentProvider
-            .initialize(applicationInitializerContext.transform(
-                this.environment().componentRegistry()
-            ));
+        this.componentProvider = configurer.componentProvider.initialize(
+                applicationInitializerContext.transform(this.environment().componentRegistry()));
 
-        DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings
-            .initialize(applicationInitializerContext);
+        DefaultBindingConfigurer bindingConfigurer =
+                configurer.defaultBindings.initialize(applicationInitializerContext);
 
-        this.componentProvider.binderProcessorRegistry()
-            .register(new BindingConfigurerBinderPostProcessorAdapter(bindingConfigurer));
+        this.componentProvider
+                .binderProcessorRegistry()
+                .register(new BindingConfigurerBinderPostProcessorAdapter(bindingConfigurer));
     }
 
     /**
@@ -135,9 +127,7 @@ public abstract class DelegatingApplicationContext
      *
      * @param initializerContext the context in which the initialization is taking place
      */
-    protected void prepareInitialization(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext
-    ) {
+    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
         // Nothing by default
     }
 
@@ -149,8 +139,7 @@ public abstract class DelegatingApplicationContext
      */
     protected void checkRunning() {
         if (this.isRunning) {
-            throw new IllegalModificationException(
-                "Application context cannot be modified after it has been started");
+            throw new IllegalModificationException("Application context cannot be modified after it has been started");
         }
     }
 
@@ -201,15 +190,12 @@ public abstract class DelegatingApplicationContext
         if (this.componentProvider instanceof AliasCapableBinder binder) {
             AliasBindingFunction<C> function = binder.bind(key);
             return new DelegatingApplicationAliasBindingFunction<>(this, function);
-        }
-        else if (this.componentProvider instanceof Binder binder) {
+        } else if (this.componentProvider instanceof Binder binder) {
             BindingFunction<C> function = binder.bind(key);
-            BindingFunction<C> delegate =
-                new DelegatingApplicationBindingFunction<>(this, function);
+            BindingFunction<C> delegate = new DelegatingApplicationBindingFunction<>(this, function);
             return new NonAliasBindingFunctionAdapter<>(delegate);
         }
-        throw new UnsupportedOperationException(
-            "This application does not support binding hierarchies");
+        throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
 
     @Override
@@ -217,8 +203,7 @@ public abstract class DelegatingApplicationContext
         if (this.componentProvider instanceof Binder binder) {
             return binder.bind(hierarchy);
         }
-        throw new UnsupportedOperationException(
-            "This application does not support binding hierarchies");
+        throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
 
     @Override
@@ -231,8 +216,7 @@ public abstract class DelegatingApplicationContext
         if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
             return provider.hierarchy(key);
         }
-        throw new UnsupportedOperationException(
-            "This application does not support binding hierarchies");
+        throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
 
     @Override
@@ -246,7 +230,8 @@ public abstract class DelegatingApplicationContext
     @Override
     public void close() {
         if (this.isClosed()) {
-            ApplicationReentryPolicy reentryPolicy = this.environment().propertyRegistry()
+            ApplicationReentryPolicy reentryPolicy = this.environment()
+                    .propertyRegistry()
                     .value("hartshorn.container.close.reentry-policy")
                     .map(ApplicationReentryPolicy::valueOf)
                     .orElse(ApplicationReentryPolicy.FAIL);
@@ -262,18 +247,14 @@ public abstract class DelegatingApplicationContext
         }
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            SequencedSet<LifecycleObserver> observers = observable
-                    .observers(LifecycleObserver.class);
+            SequencedSet<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
             LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
                 LOG.debug("Notifying {} of shutdown", observer.getClass().getSimpleName());
                 try {
                     observer.onExit(this);
-                }
-                catch (Throwable e) {
-                    this.handle("Error notifying "
-                        + observer.getClass().getSimpleName()
-                        + " of shutdown", e);
+                } catch (Throwable e) {
+                    this.handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
                 }
             }
             this.isClosed = true;
@@ -305,11 +286,10 @@ public abstract class DelegatingApplicationContext
      */
     public static class Configurer {
 
-        private ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator>
-            componentProvider =
-            HierarchicalComponentProviderOrchestrator.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
-            defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
+        private ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator> componentProvider =
+                HierarchicalComponentProviderOrchestrator.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings =
+                ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         /**
          * Configures the {@link PostProcessingComponentProvider} that is used by the
@@ -332,9 +312,7 @@ public abstract class DelegatingApplicationContext
          * @return the current instance
          */
         public Configurer componentProvider(
-            ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator>
-                componentProvider
-        ) {
+                ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator> componentProvider) {
             this.componentProvider = componentProvider;
             return this;
         }
@@ -362,8 +340,7 @@ public abstract class DelegatingApplicationContext
          * @return the current instance
          */
         public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
-            return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(),
-                binder));
+            return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(), binder));
         }
 
         /**
@@ -376,9 +353,7 @@ public abstract class DelegatingApplicationContext
          * @return the current instance
          */
         public Configurer defaultBindings(
-            ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
-                defaultBindings
-        ) {
+                ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
             this.defaultBindings = defaultBindings;
             return this;
         }

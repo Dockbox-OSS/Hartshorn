@@ -35,10 +35,7 @@ public non-sealed class ReferenceConditionContext extends ConditionContext {
 
     private final AttributedElement element;
 
-    public ReferenceConditionContext(
-            ConditionDeclaration condition,
-            AttributedElement element
-    ) {
+    public ReferenceConditionContext(ConditionDeclaration condition, AttributedElement element) {
         super(condition);
         this.element = element;
     }

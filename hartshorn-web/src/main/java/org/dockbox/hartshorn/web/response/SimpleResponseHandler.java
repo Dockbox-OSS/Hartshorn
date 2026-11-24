@@ -18,9 +18,8 @@ package org.dockbox.hartshorn.web.response;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.util.List;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A simple implementation of {@link ResponseHandler} that uses a list of typed
@@ -35,53 +34,31 @@ public class SimpleResponseHandler implements ResponseHandler {
     private final HttpMessageConverter<?> fallbackConverter;
     private final List<HttpMessageConverter<?>> converters;
 
-    public SimpleResponseHandler(
-            HttpMessageConverter<?> fallbackConverter,
-            List<HttpMessageConverter<?>> converters
-    ) {
+    public SimpleResponseHandler(HttpMessageConverter<?> fallbackConverter, List<HttpMessageConverter<?>> converters) {
         this.fallbackConverter = fallbackConverter;
         this.converters = converters;
     }
 
     @Override
-    public void handleResponse(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object result
-    ) throws Exception {
+    public void handleResponse(HttpServletRequest request, HttpServletResponse response, Object result)
+            throws Exception {
         Class<?> resultType = result != null ? result.getClass() : null;
         List<HttpMessageConverter<?>> compatibleConverters = this.converters.stream()
-                .filter(converter -> converter.supportsResponse(
-                        resultType,
-                        request,
-                        response
-                ))
+                .filter(converter -> converter.supportsResponse(resultType, request, response))
                 .toList();
 
         if (compatibleConverters.isEmpty()) {
             if (this.fallbackConverter.supportsResponse(resultType, request, response)) {
-                this.fallbackConverter.write(
-                        response,
-                        TypeUtils.unchecked(result, Object.class)
-                );
-            }
-            else {
+                this.fallbackConverter.write(response, TypeUtils.unchecked(result, Object.class));
+            } else {
                 throw new IllegalStateException(
-                        ("Fallback converter is not compatible with type %s. " +
-                                "Was the response type constrained?").formatted(resultType)
-                );
+                        ("Fallback converter is not compatible with type %s. " + "Was the response type constrained?")
+                                .formatted(resultType));
             }
-        }
-        else if (compatibleConverters.size() == 1) {
-            compatibleConverters.getFirst().write(
-                    response,
-                    TypeUtils.unchecked(result, Object.class)
-            );
-        }
-        else {
-            throw new IllegalStateException(
-                    "Multiple compatible converters found for type " + resultType
-            );
+        } else if (compatibleConverters.size() == 1) {
+            compatibleConverters.getFirst().write(response, TypeUtils.unchecked(result, Object.class));
+        } else {
+            throw new IllegalStateException("Multiple compatible converters found for type " + resultType);
         }
     }
 }

@@ -16,13 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventSet;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.support.collections.CollectionFactory;
-import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -36,17 +34,17 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.CollectionFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")
 class CollectionFactoryTests {
 
     @Test
     void createCollectionWithArrayList() {
-        List<Integer> list =
-            this.createDefaultFactory().createCollection(List.class, Integer.class);
+        List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class);
         assertThat(list).isInstanceOf(ArrayList.class);
         assertThat(list).isEmpty();
     }
@@ -60,16 +58,14 @@ class CollectionFactoryTests {
 
     @Test
     void createCollectionWithTreeSet() {
-        SortedSet<Double> sortedSet =
-            this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
+        SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
         assertThat(sortedSet).isInstanceOf(TreeSet.class);
         assertThat(sortedSet).isEmpty();
     }
 
     @Test
     void createCollectionWithLinkedList() {
-        Queue<Boolean> queue =
-            this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
+        Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
         assertThat(queue).isInstanceOf(LinkedList.class);
         assertThat(queue).isEmpty();
     }
@@ -86,8 +82,7 @@ class CollectionFactoryTests {
     void initialCapacityIsConfigured() {
         int initialCapacity = 23;
         CollectionFactory factory = this.createFactory(Vector.class, Vector::new, Vector::new);
-        Vector<String> enumSet =
-            factory.createCollection(Vector.class, String.class, initialCapacity);
+        Vector<String> enumSet = factory.createCollection(Vector.class, String.class, initialCapacity);
         assertThat(enumSet).isInstanceOf(Vector.class);
         assertThat(enumSet).isEmpty();
         assertThat(initialCapacity).isEqualTo(enumSet.capacity());
@@ -109,24 +104,16 @@ class CollectionFactoryTests {
         assertThat(list).isEmpty();
     }
 
-    private <T extends Collection<?>> CollectionFactory createFactory(
-        Class<T> targetType,
-        Supplier<T> constructor
-    ) {
+    private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor) {
         Introspector introspector =
-            ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
+                ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
         return new SimpleCollectionFactory(introspector);
     }
 
     private <T extends Collection<?>> CollectionFactory createFactory(
-        Class<T> targetType,
-        Supplier<T> constructor,
-        IntFunction<T> capacityConstructor
-    ) {
+            Class<T> targetType, Supplier<T> constructor, IntFunction<T> capacityConstructor) {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            targetType,
-            constructor,
-            capacityConstructor);
+                targetType, constructor, capacityConstructor);
         return new SimpleCollectionFactory(introspector);
     }
 

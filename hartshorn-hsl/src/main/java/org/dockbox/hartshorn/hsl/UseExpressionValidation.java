@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,20 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 
 /**
  * Module activator annotation for HSL components.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 @ModuleActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface UseExpressionValidation {
-}
+public @interface UseExpressionValidation {}

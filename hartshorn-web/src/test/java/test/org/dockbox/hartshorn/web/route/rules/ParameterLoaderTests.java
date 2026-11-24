@@ -17,6 +17,9 @@
 package test.org.dockbox.hartshorn.web.route.rules;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -27,18 +30,14 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.web.Header;
-import org.dockbox.hartshorn.web.message.RequestAttributes;
 import org.dockbox.hartshorn.web.PathParameter;
 import org.dockbox.hartshorn.web.QueryParameter;
+import org.dockbox.hartshorn.web.message.RequestAttributes;
 import org.dockbox.hartshorn.web.route.rules.HeaderValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.PathParameterValueParameterLoaderRule;
 import org.dockbox.hartshorn.web.route.rules.QueryParameterValueParameterLoaderRule;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ParameterLoaderTests {
@@ -55,9 +54,8 @@ public class ParameterLoaderTests {
     @Test
     void presentPathParametersCanBeLoaded() {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getAttribute(
-                Mockito.eq(RequestAttributes.REQUEST_PATH_PARAMETERS)
-        )).thenReturn(Map.of(DEFAULT_KEY, DEFAULT_VALUE));
+        Mockito.when(request.getAttribute(Mockito.eq(RequestAttributes.REQUEST_PATH_PARAMETERS)))
+                .thenReturn(Map.of(DEFAULT_KEY, DEFAULT_VALUE));
 
         var rule = new PathParameterValueParameterLoaderRule<>(request, conversionService);
         Object argument = attemptLoadParameter("pathParameterConsumer", rule);
@@ -67,23 +65,21 @@ public class ParameterLoaderTests {
     @Test
     void absentPathParametersResultInError() {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getAttribute(
-                Mockito.eq(RequestAttributes.REQUEST_PATH_PARAMETERS)
-        )).thenReturn(Map.of());
+        Mockito.when(request.getAttribute(Mockito.eq(RequestAttributes.REQUEST_PATH_PARAMETERS)))
+                .thenReturn(Map.of());
 
         var rule = new PathParameterValueParameterLoaderRule<>(request, conversionService);
         Assertions.assertThatCode(() -> {
                     attemptLoadParameter("pathParameterConsumer", rule);
-                }).isInstanceOf(UnsupportedOperationException.class)
+                })
+                .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("Path parameters do not support default values.");
     }
 
     @Test
     void presentHeaderValueCanBeLoaded() {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getHeaders(DEFAULT_KEY)).thenReturn(
-                Collections.enumeration(List.of(DEFAULT_VALUE))
-        );
+        Mockito.when(request.getHeaders(DEFAULT_KEY)).thenReturn(Collections.enumeration(List.of(DEFAULT_VALUE)));
 
         var rule = new HeaderValueParameterLoaderRule<>(request, conversionService);
         Object argument = attemptLoadParameter("headerConsumer", rule);
@@ -103,8 +99,7 @@ public class ParameterLoaderTests {
     @Test
     void presentQueryValueCanBeLoaded() {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getParameterValues(DEFAULT_KEY))
-                .thenReturn(new String[]{DEFAULT_VALUE});
+        Mockito.when(request.getParameterValues(DEFAULT_KEY)).thenReturn(new String[] {DEFAULT_VALUE});
 
         var rule = new QueryParameterValueParameterLoaderRule<>(request, conversionService);
         Object argument = attemptLoadParameter("queryConsumer", rule);
@@ -121,11 +116,10 @@ public class ParameterLoaderTests {
         Assertions.assertThat(argument).isEqualTo("");
     }
 
-    private Object attemptLoadParameter(
-            String methodName,
-            ParameterLoaderRule<ParameterLoaderContext> rule
-    ) {
-        MethodView<ParameterLoaderTests, ?> method = introspector.introspect(this).methods()
+    private Object attemptLoadParameter(String methodName, ParameterLoaderRule<ParameterLoaderContext> rule) {
+        MethodView<ParameterLoaderTests, ?> method = introspector
+                .introspect(this)
+                .methods()
                 .named(methodName, String.class)
                 .get();
 
@@ -136,12 +130,9 @@ public class ParameterLoaderTests {
         return loader.loadArgument(context, 0);
     }
 
-    void pathParameterConsumer(@PathParameter(DEFAULT_KEY) String name) {
-    }
+    void pathParameterConsumer(@PathParameter(DEFAULT_KEY) String name) {}
 
-    void headerConsumer(@Header(DEFAULT_KEY) String name) {
-    }
+    void headerConsumer(@Header(DEFAULT_KEY) String name) {}
 
-    void queryConsumer(@QueryParameter(DEFAULT_KEY) String name) {
-    }
+    void queryConsumer(@QueryParameter(DEFAULT_KEY) String name) {}
 }

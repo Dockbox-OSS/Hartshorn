@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.token.Token;
-
 import java.util.List;
+import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
  * A member statement that defines a getter or setter for a field, with optional parameters and a
@@ -26,23 +25,21 @@ import java.util.List;
  * {@link FieldGetStatement} and {@link FieldSetStatement}.
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
-public abstract class FieldMemberStatement extends ParametricExecutableBodyStatement
-    implements MemberStatement {
+public abstract class FieldMemberStatement extends ParametricExecutableBodyStatement implements MemberStatement {
 
     private final Token modifier;
     private final Token keyword;
     private final FieldStatement fieldStatement;
 
     protected FieldMemberStatement(
-        Token modifier,
-        Token keyword,
-        FieldStatement fieldStatement,
-        List<Parameter> parameters,
-        BlockStatement body
-    ) {
+            Token modifier,
+            Token keyword,
+            FieldStatement fieldStatement,
+            List<Parameter> parameters,
+            BlockStatement body) {
         super(modifier != null ? modifier : keyword, parameters, body);
         this.modifier = modifier;
         this.keyword = keyword;

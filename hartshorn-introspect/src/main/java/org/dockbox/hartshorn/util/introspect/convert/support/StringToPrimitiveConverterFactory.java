@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import java.util.Map;
-
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -33,35 +32,26 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * @see StringToCharacterConverter
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class StringToPrimitiveConverterFactory
-    implements ConverterFactory<String, Object>, ConditionalConverter {
+public class StringToPrimitiveConverterFactory implements ConverterFactory<String, Object>, ConditionalConverter {
 
     // checkstyle:off LineLength
     private static final ConverterFactory<String, Number> NUMBER_CONVERTER_FACTORY =
-        new StringToNumberConverterFactory();
+            new StringToNumberConverterFactory();
     // checkstyle:on LineLength
 
     private static final Map<Class<?>, Converter<String, ?>> PRIMITIVE_CONVERTERS = Map.ofEntries(
-        Map.entry(boolean.class, new StringToBooleanConverter()
-            .andThen((aBoolean, _) -> aBoolean)),
-        Map.entry(char.class, new StringToCharacterConverter()
-            .andThen((character, _) -> character)),
-        Map.entry(byte.class, NUMBER_CONVERTER_FACTORY.create(Byte.class)
-            .andThen((aByte, _) -> aByte)),
-        Map.entry(double.class, NUMBER_CONVERTER_FACTORY.create(Double.class)
-            .andThen((aDouble, _) -> aDouble)),
-        Map.entry(float.class, NUMBER_CONVERTER_FACTORY.create(Float.class)
-            .andThen((aFloat, _) -> aFloat)),
-        Map.entry(int.class, NUMBER_CONVERTER_FACTORY.create(Integer.class)
-            .andThen((integer, _) -> integer)),
-        Map.entry(long.class, NUMBER_CONVERTER_FACTORY.create(Long.class)
-            .andThen((aLong, _) -> aLong)),
-        Map.entry(short.class, NUMBER_CONVERTER_FACTORY.create(Short.class)
-            .andThen((aShort, _) -> aShort))
-    );
+            Map.entry(boolean.class, new StringToBooleanConverter().andThen((aBoolean, _) -> aBoolean)),
+            Map.entry(char.class, new StringToCharacterConverter().andThen((character, _) -> character)),
+            Map.entry(byte.class, NUMBER_CONVERTER_FACTORY.create(Byte.class).andThen((aByte, _) -> aByte)),
+            Map.entry(
+                    double.class, NUMBER_CONVERTER_FACTORY.create(Double.class).andThen((aDouble, _) -> aDouble)),
+            Map.entry(float.class, NUMBER_CONVERTER_FACTORY.create(Float.class).andThen((aFloat, _) -> aFloat)),
+            Map.entry(int.class, NUMBER_CONVERTER_FACTORY.create(Integer.class).andThen((integer, _) -> integer)),
+            Map.entry(long.class, NUMBER_CONVERTER_FACTORY.create(Long.class).andThen((aLong, _) -> aLong)),
+            Map.entry(short.class, NUMBER_CONVERTER_FACTORY.create(Short.class).andThen((aShort, _) -> aShort)));
 
     @SuppressWarnings("unchecked")
     @Override
@@ -78,8 +68,6 @@ public class StringToPrimitiveConverterFactory
             return true;
         }
         // Should never encounter this case, but just in case
-        throw new IllegalArgumentException(
-            "No primitive converter found for primitive type " + targetType.getName()
-        );
+        throw new IllegalArgumentException("No primitive converter found for primitive type " + targetType.getName());
     }
 }

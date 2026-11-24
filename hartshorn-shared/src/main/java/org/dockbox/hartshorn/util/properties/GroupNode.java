@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,7 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
      * otherwise
      */
     public boolean has(String name) {
-        return this.value().stream()
-            .anyMatch(node -> node.name().equals(name));
+        return this.value().stream().anyMatch(node -> node.name().equals(name));
     }
 
     /**
@@ -65,9 +64,9 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
      */
     public Node<?> get(String name) {
         return this.value().stream()
-            .filter(node -> node.name().equals(name))
-            .findFirst()
-            .orElse(null);
+                .filter(node -> node.name().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

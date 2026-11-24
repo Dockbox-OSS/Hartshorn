@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import java.util.List;
+import java.util.SequencedCollection;
 import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.List;
-import java.util.SequencedCollection;
 
 /**
  * Represents a method of which the parameters can be injected. Most commonly, this is used for
@@ -45,14 +44,12 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
 
     @Override
     public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject)
-        throws ApplicationException {
+            throws ApplicationException {
         try {
             this.method.invoke(context.instance(), objectsToInject.toArray());
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw e;
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             throw new ApplicationException(throwable);
         }
     }
@@ -64,9 +61,7 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
 
     @Override
     public SequencedCollection<InjectionPoint> injectionPoints() {
-        return this.method.parameters().all().stream()
-            .map(InjectionPoint::new)
-            .toList();
+        return this.method.parameters().all().stream().map(InjectionPoint::new).toList();
     }
 
     @Override

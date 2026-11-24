@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.AmbiguousConverterException;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
@@ -26,62 +31,45 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 class GenericConvertersTests {
 
     @Test
     void genericConverterWithSingleTypePair() {
         GenericConverter converter =
-            new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
+                new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
         ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
         GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
-        assertThat(locatedConverter)
-                .isNotNull()
-                .isSameAs(converter);
+        assertThat(locatedConverter).isNotNull().isSameAs(converter);
     }
 
     @Test
     void genericConverterWithMultipleTypePairs() {
         GenericConverter converter = new SimpleGenericConverter(Set.of(
-            ConvertibleTypePair.of(Object.class, String.class),
-            ConvertibleTypePair.of(Object.class, Integer.class)
-        ));
+                ConvertibleTypePair.of(Object.class, String.class),
+                ConvertibleTypePair.of(Object.class, Integer.class)));
         ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
-        GenericConverter locatedStringConverter =
-            converters.getConverter(new Object(), String.class);
-        assertThat(locatedStringConverter)
-                .isNotNull()
-                .isSameAs(converter);
+        GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
+        assertThat(locatedStringConverter).isNotNull().isSameAs(converter);
 
-        GenericConverter locatedIntegerConverter =
-            converters.getConverter(new Object(), Integer.class);
-        assertThat(locatedIntegerConverter)
-                .isNotNull()
-                .isSameAs(converter);
+        GenericConverter locatedIntegerConverter = converters.getConverter(new Object(), Integer.class);
+        assertThat(locatedIntegerConverter).isNotNull().isSameAs(converter);
     }
 
     @Test
     void genericConverterWithMultipleTypePairsAndMultipleConverters() {
         GenericConverter converter1 = new SimpleGenericConverter(Set.of(
-            ConvertibleTypePair.of(Object.class, String.class),
-            ConvertibleTypePair.of(Object.class, Integer.class)
-        ));
+                ConvertibleTypePair.of(Object.class, String.class),
+                ConvertibleTypePair.of(Object.class, Integer.class)));
         GenericConverter converter2 = new SimpleGenericConverter(Set.of(
-            ConvertibleTypePair.of(Object.class, String.class),
-            ConvertibleTypePair.of(Object.class, Integer.class),
-            // Additional type to ensure the converters aren't considered equal, as they are implemented
-            // as the same record type.
-            ConvertibleTypePair.of(Object.class, Long.class)
-        ));
+                ConvertibleTypePair.of(Object.class, String.class),
+                ConvertibleTypePair.of(Object.class, Integer.class),
+                // Additional type to ensure the converters aren't considered equal, as they are implemented
+                // as the same record type.
+                ConvertibleTypePair.of(Object.class, Long.class)));
         GenericConverters converters = new GenericConverters();
         converters.addConverter(converter1);
         converters.addConverter(converter2);
@@ -90,18 +78,16 @@ class GenericConvertersTests {
                 .isThrownBy(() -> converters.getConverter(new Object(), String.class));
         assertThatExceptionOfType(AmbiguousConverterException.class)
                 .isThrownBy(() -> converters.getConverter(new Object(), Integer.class));
-        assertThatCode(() -> converters.getConverter(new Object(), Long.class))
-                .doesNotThrowAnyException();
+        assertThatCode(() -> converters.getConverter(new Object(), Long.class)).doesNotThrowAnyException();
     }
 
-    private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes)
-        implements GenericConverter {
+    private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes) implements GenericConverter {
         @Override
         public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType,
-            Context... contexts) {
+                @Nullable Object source,
+                @NonNull Class<I> sourceType,
+                @NonNull Class<O> targetType,
+                Context... contexts) {
             throw new UnsupportedOperationException("Not implemented");
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,9 @@ public class ModuleActivatorCollector {
      * @return a set of all module activators found
      */
     public Set<Annotation> moduleActivators(Class<?> forClass) {
-        return this.collectModuleActivatorsOnType(forClass)
-            .stream()
-            .flatMap(activator -> this.collectModuleActivatorsRecursively(activator).stream())
-            .collect(Collectors.toSet());
+        return this.collectModuleActivatorsOnType(forClass).stream()
+                .flatMap(activator -> this.collectModuleActivatorsRecursively(activator).stream())
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -55,8 +54,7 @@ public class ModuleActivatorCollector {
      * @return a set of all module activators found recursively
      */
     public Set<Annotation> collectModuleActivatorsRecursively(Annotation annotation) {
-        Set<Annotation> moduleActivatorsOnAnnotation =
-            this.collectModuleActivatorsOnType(annotation.annotationType());
+        Set<Annotation> moduleActivatorsOnAnnotation = this.collectModuleActivatorsOnType(annotation.annotationType());
         Set<Annotation> activators = new HashSet<>(moduleActivatorsOnAnnotation);
         activators.add(annotation);
 
@@ -75,9 +73,8 @@ public class ModuleActivatorCollector {
      */
     protected Set<Annotation> collectModuleActivatorsOnType(Class<?> type) {
         return Stream.of(type.getAnnotations())
-            .filter(annotation -> annotation.annotationType()
-                .isAnnotationPresent(ModuleActivator.class))
-            .collect(Collectors.toSet());
+                .filter(annotation -> annotation.annotationType().isAnnotationPresent(ModuleActivator.class))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -95,9 +92,9 @@ public class ModuleActivatorCollector {
             activators.add(annotationType.getAnnotation(ModuleActivator.class));
         }
         Arrays.stream(annotationType.getAnnotations())
-            .filter(ann -> ann.annotationType().isAnnotationPresent(ModuleActivator.class))
-            .map(ann -> ann.annotationType().getAnnotation(ModuleActivator.class))
-            .forEach(activators::add);
+                .filter(ann -> ann.annotationType().isAnnotationPresent(ModuleActivator.class))
+                .map(ann -> ann.annotationType().getAnnotation(ModuleActivator.class))
+                .forEach(activators::add);
         return activators;
     }
 }

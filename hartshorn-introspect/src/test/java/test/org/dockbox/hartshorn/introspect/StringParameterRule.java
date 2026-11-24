@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,19 @@
 package test.org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
 
     @Override
-    public boolean accepts(
-        ParameterView<?> parameter,
-        int index,
-        ParameterLoaderContext context,
-        Object... args
-    ) {
+    public boolean accepts(ParameterView<?> parameter, int index, ParameterLoaderContext context, Object... args) {
         return parameter.type().is(String.class);
     }
 
     @Override
-    public <T> Option<T> load(
-        ParameterView<T> parameter,
-        int index,
-        ParameterLoaderContext context,
-        Object... args
-    ) {
+    public <T> Option<T> load(ParameterView<T> parameter, int index, ParameterLoaderContext context, Object... args) {
         return Option.of(parameter.type().cast("JUnit"));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
+import java.util.Set;
 import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.dataformat.javaprop.JavaPropsMapper;
-
-import java.util.Set;
 
 /**
  * A {@link JacksonPropertyRegistryLoader} that loads properties from Java properties files. This
@@ -46,9 +45,7 @@ public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegis
     }
 
     public JacksonJavaPropsPropertyRegistryLoader(
-        PropertyPathFormatter formatter,
-        Customizer<JavaPropsMapper.Builder> customizer
-    ) {
+            PropertyPathFormatter formatter, Customizer<JavaPropsMapper.Builder> customizer) {
         super(formatter);
         this.customizer = customizer;
     }

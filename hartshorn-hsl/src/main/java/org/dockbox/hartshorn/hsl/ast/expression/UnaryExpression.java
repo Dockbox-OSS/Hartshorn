@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * {@code x}.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class UnaryExpression extends Expression {

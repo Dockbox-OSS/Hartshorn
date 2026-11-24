@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 /**
  * A standard implementation of {@link DiagnosticsReportCollector} which uses a
@@ -33,9 +32,9 @@ import java.time.format.DateTimeFormatter;
  *
  * @see NodeDiagnosticsReport
  * @see DiagnosticsReportCollector
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
@@ -49,8 +48,8 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(Reportable reportable) {
-        String timestamp = LocalDateTime.now(Clock.system(ZoneId.systemDefault()))
-            .format(DateTimeFormatter.ISO_DATE_TIME);
+        String timestamp =
+                LocalDateTime.now(Clock.system(ZoneId.systemDefault())).format(DateTimeFormatter.ISO_DATE_TIME);
         this.property("timestamp").writeString(timestamp);
 
         reportable.report(this);

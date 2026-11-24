@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
+import java.util.List;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-
-import java.util.List;
 
 /**
  * A properties resolver that resolves a list of properties from a given list of strings. The string
@@ -44,8 +43,7 @@ public class StringListCustomPropertiesResolver extends AbstractCustomProperties
 
     @Override
     protected List<String> resolveStringProperties(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext
-    ) {
+            SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
         return this.properties;
     }
 }

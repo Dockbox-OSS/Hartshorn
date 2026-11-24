@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.test;
 
+import java.net.http.HttpResponse;
+import java.util.function.Function;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ObjectAssert;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.net.http.HttpResponse;
-import java.util.function.Function;
 
 /**
  * Assertion extensions for Hartshorn specific types.
@@ -46,10 +45,7 @@ public class HartshornAssertions {
      */
     public static <E> InstanceOfAssertFactory<Option, OptionAssert<E>> option(Class<E> element) {
         return new InstanceOfAssertFactory<>(
-                Option.class,
-                new Class[] {element},
-                e -> assertThat(e).cast(element)
-        );
+                Option.class, new Class[] {element}, e -> assertThat(e).cast(element));
     }
 
     /**
@@ -75,11 +71,7 @@ public class HartshornAssertions {
      * @return a new {@link InstanceOfAssertFactory} for the given type
      */
     public static <T> InstanceOfAssertFactory<T, ObjectAssert<T>> ofType(Class<T> type) {
-        return new InstanceOfAssertFactory<>(
-                type,
-                new Class[0],
-                Assertions::assertThat
-        );
+        return new InstanceOfAssertFactory<>(type, new Class[0], Assertions::assertThat);
     }
 
     /**

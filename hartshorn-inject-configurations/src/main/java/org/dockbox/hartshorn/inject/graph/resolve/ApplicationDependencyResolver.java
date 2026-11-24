@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.CompositeDependencyResolver;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Standard {@link DependencyResolver} for injection-capable applications. This resolver allows for
@@ -56,18 +55,15 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
      * @return a new contextual initializer for an application dependency resolver
      */
     public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(
-        Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return context -> {
-            Configurer configurer = new Configurer()
-                .withManagedComponents()
-                .withBindsMethods(Customizer.useDefaults());
+            Configurer configurer = new Configurer().withManagedComponents().withBindsMethods(Customizer.useDefaults());
 
             customizer.configure(configurer);
 
             Set<DependencyResolver> resolvers = configurer.stream()
-                .map(initializer -> initializer.initialize(context))
-                .collect(Collectors.toSet());
+                    .map(initializer -> initializer.initialize(context))
+                    .collect(Collectors.toSet());
 
             return new ApplicationDependencyResolver(resolvers);
         };
@@ -80,8 +76,7 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
      *
      * @author Guus Lieben
      */
-    public static class Configurer
-        extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
+    public static class Configurer extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
 
         /**
          * Adds a {@link ComponentDependencyResolver} to the resolver. This will enable the
@@ -91,11 +86,10 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
          * @return the current configurer instance
          */
         public Configurer withManagedComponents() {
-            ContextualInitializer<InjectionCapableApplication, DependencyResolver>
-                methodDependencyResolver = ContextualInitializer.of(application -> {
-                return new ComponentDependencyResolver(application.environment(),
-                    application.defaultBinder());
-            });
+            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver =
+                    ContextualInitializer.of(application -> {
+                        return new ComponentDependencyResolver(application.environment(), application.defaultBinder());
+                    });
             this.add(methodDependencyResolver);
             return this;
         }
@@ -109,12 +103,9 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
          *
          * @return the current configurer instance
          */
-        public Configurer withBindsMethods(
-            Customizer<ManagedConfigurationDependencyResolver.Configurer> customizer
-        ) {
-            ContextualInitializer<InjectionCapableApplication, DependencyResolver>
-                methodDependencyResolver =
-                ManagedConfigurationDependencyResolver.create(customizer);
+        public Configurer withBindsMethods(Customizer<ManagedConfigurationDependencyResolver.Configurer> customizer) {
+            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver =
+                    ManagedConfigurationDependencyResolver.create(customizer);
             this.add(methodDependencyResolver);
             return this;
         }

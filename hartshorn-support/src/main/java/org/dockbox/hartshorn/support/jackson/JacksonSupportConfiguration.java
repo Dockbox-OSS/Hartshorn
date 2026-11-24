@@ -64,9 +64,7 @@ public class JacksonSupportConfiguration {
     @Singleton
     @SupportPriority
     public ObjectMapper objectMapper(
-            MapperBuilder<?, ?> builder,
-            @Fuzzy ComponentCollection<Customizer<MapperBuilder<?, ?>>> customizers
-    ) {
+            MapperBuilder<?, ?> builder, @Fuzzy ComponentCollection<Customizer<MapperBuilder<?, ?>>> customizers) {
         for (Customizer<MapperBuilder<?, ?>> customizer : customizers) {
             customizer.configure(builder);
         }
@@ -82,9 +80,7 @@ public class JacksonSupportConfiguration {
      */
     @Singleton
     @CompositeMember
-    public Customizer<MapperBuilder<?, ?>> jacksonMapperCustomizer(
-            @Fuzzy ComponentCollection<JacksonModule> modules
-    ) {
+    public Customizer<MapperBuilder<?, ?>> jacksonMapperCustomizer(@Fuzzy ComponentCollection<JacksonModule> modules) {
         return builder -> {
             for (JacksonModule module : modules) {
                 builder.addModule(module);
@@ -104,17 +100,14 @@ public class JacksonSupportConfiguration {
     @CompositeMember
     public JacksonModule hartshornSupportModule(
             @Fuzzy ComponentCollection<ValueSerializer<?>> serializers,
-            @Fuzzy ComponentCollection<ValueDeserializer<?>> deserializers
-    ) {
+            @Fuzzy ComponentCollection<ValueDeserializer<?>> deserializers) {
         SimpleModule module = new SimpleModule();
         for (ValueSerializer<?> serializer : serializers) {
             module.addSerializer(serializer);
         }
         for (ValueDeserializer<?> deserializer : deserializers) {
             module.addDeserializer(
-                    deserializer.handledType(),
-                    TypeUtils.unchecked(deserializer, ValueDeserializer.class)
-            );
+                    deserializer.handledType(), TypeUtils.unchecked(deserializer, ValueDeserializer.class));
         }
         return module;
     }
@@ -153,11 +146,7 @@ public class JacksonSupportConfiguration {
      * @author Guus Lieben
      */
     @Configuration
-    @RequiresProperty(
-            name = "hartshorn.jackson.support.include-defaults",
-            withValue = "true",
-            matchIfMissing = true
-    )
+    @RequiresProperty(name = "hartshorn.jackson.support.include-defaults", withValue = "true", matchIfMissing = true)
     public static class JacksonSupportModuleConfiguration {
 
         /**

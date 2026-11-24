@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * {@code array} to the value specified by the {@code value} expression.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ArraySetExpression extends Expression implements NamedNode {

@@ -25,14 +25,9 @@ import test.org.dockbox.hartshorn.testsuite.excluding.scan.exclude.ExcludedCompo
 import test.org.dockbox.hartshorn.testsuite.excluding.scan.include.IncludedComponent;
 
 @HartshornIntegrationTest(
-    excludePackages = {
-        "test.org.dockbox.hartshorn.testsuite.excluding.scan.exclude"
-    },
-    includePackages = {
-        "test.org.dockbox.hartshorn.testsuite.excluding.scan"
-    },
-    includeBasePackages = false
-)
+        excludePackages = {"test.org.dockbox.hartshorn.testsuite.excluding.scan.exclude"},
+        includePackages = {"test.org.dockbox.hartshorn.testsuite.excluding.scan"},
+        includeBasePackages = false)
 public class PackageExcludeTests {
 
     @Test

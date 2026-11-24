@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -26,9 +28,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Base interface for parsers that parse statements with parameters, such as functions or
@@ -54,40 +53,39 @@ public interface ParametricStatementParser {
      * @return the list of parsed parameters
      */
     default List<Parameter> parameters(
-        TokenParser parser,
-        TokenStepValidator validator,
-        String functionName,
-        int expectedNumberOfArguments,
-        TokenType functionType
-    ) {
+            TokenParser parser,
+            TokenStepValidator validator,
+            String functionName,
+            int expectedNumberOfArguments,
+            TokenType functionType) {
         TokenTypePair parameterTokens = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameterTokens.open(), functionName);
         List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameterTokens.close())) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
-                if (expectedNumberOfArguments >= 0
-                    && parameters.size() >= expectedNumberOfArguments) {
+                if (expectedNumberOfArguments >= 0 && parameters.size() >= expectedNumberOfArguments) {
                     throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
-                            expectedNumberOfArguments,
-                            functionType.representation()
-                        ).at(parser.peek())
-                        .build();
+                            .message(
+                                    DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
+                                    expectedNumberOfArguments,
+                                    functionType.representation())
+                            .at(parser.peek())
+                            .build();
                 }
                 Token parameterName = validator.expect(identifier, "parameter name");
                 parameters.add(new Parameter(parameterName));
-            }
-            while (parser.match(BaseTokenType.COMMA));
+            } while (parser.match(BaseTokenType.COMMA));
         }
 
         if (expectedNumberOfArguments >= 0 && parameters.size() < expectedNumberOfArguments) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X,
-                    expectedNumberOfArguments,
-                    functionType.representation()
-                ).at(parser.peek())
-                .build();
+                    .message(
+                            DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X,
+                            expectedNumberOfArguments,
+                            functionType.representation())
+                    .at(parser.peek())
+                    .build();
         }
         validator.expectAfter(parameterTokens.close(), "parameters");
         return parameters;

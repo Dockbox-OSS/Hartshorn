@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.function.Consumer;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects
@@ -272,8 +271,7 @@ public interface ProxyFactory<T> {
      *
      * @throws ApplicationException If the proxy could not be created
      */
-    Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args)
-        throws ApplicationException;
+    Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Creates a proxy instance of the given {@code type} and returns it. This will create a new
@@ -288,8 +286,7 @@ public interface ProxyFactory<T> {
      *
      * @throws ApplicationException If the proxy could not be created
      */
-    Option<T> proxy(Constructor<? extends T> constructor, Object[] args)
-        throws ApplicationException;
+    Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.

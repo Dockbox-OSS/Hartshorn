@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
-
-import java.util.Set;
 
 /**
  * An interpreter for {@link ConstructorStatement} class members.
@@ -33,13 +32,8 @@ import java.util.Set;
 public class ConstructorMemberInterpreter implements ClassMemberInterpreter<ConstructorStatement> {
 
     @Override
-    public void interpret(
-        ConstructorStatement constructor,
-        Interpreter interpreter,
-        VirtualClassBuilder builder
-    ) {
-        VirtualFunction function =
-            new VirtualFunction(constructor, interpreter.visitingScope(), true);
+    public void interpret(ConstructorStatement constructor, Interpreter interpreter, VirtualClassBuilder builder) {
+        VirtualFunction function = new VirtualFunction(constructor, interpreter.visitingScope(), true);
         builder.constructor(function);
     }
 

@@ -59,44 +59,37 @@ public class InjectPropertyParameterResolver implements InjectParameterResolver 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
         PropertyRegistry propertyRegistry = context.application().environment().propertyRegistry();
-        PropertyValue propertyValueAnnotation =
-            injectionPoint.injectionPoint().annotations().get(PropertyValue.class).get();
+        PropertyValue propertyValueAnnotation = injectionPoint
+                .injectionPoint()
+                .annotations()
+                .get(PropertyValue.class)
+                .get();
         String propertyName = propertyValueAnnotation.name();
         TypeView<?> targetType = injectionPoint.type();
         if (propertyRegistry.contains(propertyName)) {
             Option<?> value;
             if (targetType.is(ValueProperty.class)) {
                 value = propertyRegistry.get(propertyName);
-            }
-            else if (targetType.is(ListProperty.class)) {
+            } else if (targetType.is(ListProperty.class)) {
                 value = propertyRegistry.list(propertyName);
-            }
-            else if (targetType.is(ObjectProperty.class)) {
+            } else if (targetType.is(ObjectProperty.class)) {
                 value = propertyRegistry.object(propertyName);
-            }
-            else {
+            } else {
                 value = this.getPropertyValue(injectionPoint, propertyRegistry, propertyName);
             }
             if (value.present()) {
                 return value.get();
             }
         }
-        return this.conversionService()
-            .convert(propertyValueAnnotation.defaultValue(), targetType.type());
+        return this.conversionService().convert(propertyValueAnnotation.defaultValue(), targetType.type());
     }
 
     private Option<?> getPropertyValue(
-        InjectionPoint injectionPoint,
-        PropertyRegistry propertyRegistry,
-        String propertyName
-    ) {
+            InjectionPoint injectionPoint, PropertyRegistry propertyRegistry, String propertyName) {
         return propertyRegistry.value(propertyName, property -> {
             var context = new AdditionalTargetTypeContext<>(injectionPoint.type());
-            return Option.of(this.conversionService().convert(
-                    property,
-                    injectionPoint.type().type(),
-                    context
-            ));
+            return Option.of(this.conversionService()
+                    .convert(property, injectionPoint.type().type(), context));
         });
     }
 

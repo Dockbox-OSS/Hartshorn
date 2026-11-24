@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Set;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.FilePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
 
 /**
  * An SPI wrapper for {@link JacksonJavaPropsPropertyRegistryLoader}, to safely allow for safe
@@ -37,8 +36,7 @@ import java.util.Set;
 public class JacksonJavaPropsSpiPropertyRegistryLoader
         implements PredicatePropertyRegistryLoader, FilePropertyRegistryLoader {
 
-    public static final boolean CAN_LOAD =
-            TypeUtils.exists("tools.jackson.dataformat.javaprop.JavaPropsMapper");
+    public static final boolean CAN_LOAD = TypeUtils.exists("tools.jackson.dataformat.javaprop.JavaPropsMapper");
 
     @Override
     public Set<String> supportedExtensions() {
@@ -51,9 +49,9 @@ public class JacksonJavaPropsSpiPropertyRegistryLoader
 
     @Override
     public boolean isCompatible(URI path) {
-        return CAN_LOAD && JacksonJavaPropsPropertyRegistryLoader.DEFAULT_EXTENSIONS.contains(
-                IOUtilities.getFileExtension(path)
-        );
+        return CAN_LOAD
+                && JacksonJavaPropsPropertyRegistryLoader.DEFAULT_EXTENSIONS.contains(
+                        IOUtilities.getFileExtension(path));
     }
 
     @Override
@@ -62,14 +60,11 @@ public class JacksonJavaPropsSpiPropertyRegistryLoader
             DelegateHolder.INSTANCE.loadRegistry(registry, path);
         } else {
             throw new IllegalStateException(
-                    "Jackson JavaProps support is not available" +
-                            " (missing jackson-dataformat-properties)"
-            );
+                    "Jackson JavaProps support is not available" + " (missing jackson-dataformat-properties)");
         }
     }
 
     private static final class DelegateHolder {
-        static final JacksonJavaPropsPropertyRegistryLoader INSTANCE =
-                new JacksonJavaPropsPropertyRegistryLoader();
+        static final JacksonJavaPropsPropertyRegistryLoader INSTANCE = new JacksonJavaPropsPropertyRegistryLoader();
     }
 }

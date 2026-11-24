@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,10 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * Interpreter for {@link LogicalAssignExpression} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class LogicalAssignExpressionInterpreter
-    extends BitwiseInterpreter<Object, LogicalAssignExpression> {
+public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
     public Object interpret(LogicalAssignExpression node, Interpreter interpreter) {
@@ -42,17 +41,13 @@ public class LogicalAssignExpressionInterpreter
         TokenType bitwiseOperator = node.logicalOperator();
 
         // Virtual token to indicate the position of the operator
-        Token token = Token.of(bitwiseOperator)
-            .lexeme(op.lexeme())
-            .position(op)
-            .build();
+        Token token = Token.of(bitwiseOperator).lexeme(op.lexeme()).position(op).build();
         Object result = this.getBitwiseResult(token, left, right);
 
         Integer distance = interpreter.distance(node);
         if (distance != null) {
             interpreter.visitingScope().assignAt(distance, name, result);
-        }
-        else {
+        } else {
             interpreter.global().assign(name, result);
         }
         return result;

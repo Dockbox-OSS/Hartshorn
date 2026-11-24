@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A generic converter that delegates to a {@link Converter} instance. This is useful when a
@@ -40,11 +39,7 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     private final Converter<?, ?> converter;
     private final ConvertibleTypePair typePair;
 
-    public <I, O> ConverterAdapter(
-        Class<I> sourceType,
-        Class<O> targetType,
-        Converter<I, O> converter
-    ) {
+    public <I, O> ConverterAdapter(Class<I> sourceType, Class<O> targetType, Converter<I, O> converter) {
         this.converter = converter;
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
     }
@@ -58,8 +53,7 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
         if (matches) {
             if (this.typePair.targetType() != targetType) {
                 matches = false;
-            }
-            else if (!this.typePair.sourceType().isAssignableFrom(source.getClass())) {
+            } else if (!this.typePair.sourceType().isAssignableFrom(source.getClass())) {
                 matches = false;
             }
         }
@@ -74,10 +68,7 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         Converter<I, O> ioConverter = (Converter<I, O>) this.converter;
         return ioConverter.convert(sourceType.cast(source));
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -56,16 +55,12 @@ public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<
     }
 
     @Override
-    public List<MethodView<Object, ?>> annotatedWithAny(
-        Set<Class<? extends Annotation>> annotations
-    ) {
+    public List<MethodView<Object, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
         return Collections.emptyList();
     }
 
     @Override
-    public List<MethodView<Object, ?>> annotatedWithAll(
-        Set<Class<? extends Annotation>> annotations
-    ) {
+    public List<MethodView<Object, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
         return Collections.emptyList();
     }
 

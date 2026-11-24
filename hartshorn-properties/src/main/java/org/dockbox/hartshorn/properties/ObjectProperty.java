@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.properties;
 
+import java.util.Set;
 import org.dockbox.hartshorn.properties.object.ObjectPropertyParser;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * Represents a property that contains other properties, accessed by a key.
@@ -27,7 +26,7 @@ import java.util.Set;
  * @see Property
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public non-sealed interface ObjectProperty extends Property {

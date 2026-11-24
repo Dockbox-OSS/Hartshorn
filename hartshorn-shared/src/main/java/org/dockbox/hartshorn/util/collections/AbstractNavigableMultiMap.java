@@ -38,9 +38,8 @@ import java.util.TreeMap;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractNavigableMultiMap<K, V>
-    extends StandardMultiMap<K, V>
-    implements NavigableMultiMap<K, V> {
+public abstract class AbstractNavigableMultiMap<K, V> extends StandardMultiMap<K, V>
+        implements NavigableMultiMap<K, V> {
 
     private final Comparator<? super K> comparator;
 

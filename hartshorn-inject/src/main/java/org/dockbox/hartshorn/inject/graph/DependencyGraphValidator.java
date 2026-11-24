@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject.graph;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator;
@@ -33,9 +32,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  *
  * @see DependencyGraph
  * @see DependencyGraphInitializer.Configurer#graphValidator(Customizer)
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface DependencyGraphValidator {
@@ -51,9 +50,8 @@ public interface DependencyGraphValidator {
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
     default void validateBeforeConfiguration(
-        DependencyGraph dependencyGraph, Introspector introspector,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            DependencyGraph dependencyGraph, Introspector introspector, ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         // NOOP, override if needed
     }
 
@@ -69,11 +67,11 @@ public interface DependencyGraphValidator {
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
     default void validateAfterConfiguration(
-        DependencyGraph dependencyGraph,
-        Introspector introspector,
-        Set<GraphNode<DependencyContext<?>>> visited,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            DependencyGraph dependencyGraph,
+            Introspector introspector,
+            Set<GraphNode<DependencyContext<?>>> visited,
+            ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         // NOOP, override if needed
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,7 @@ class ApplicationStarterLifecycleObserver implements LifecycleObserver {
     public void onStarted(ApplicationContext applicationContext) {
         // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
         // application lifecycle.
-        ComponentKey<ApplicationStarter> componentKey = ComponentKey
-                .builder(ApplicationStarter.class)
+        ComponentKey<ApplicationStarter> componentKey = ComponentKey.builder(ApplicationStarter.class)
                 .fuzzy()
                 .optional()
                 .build();

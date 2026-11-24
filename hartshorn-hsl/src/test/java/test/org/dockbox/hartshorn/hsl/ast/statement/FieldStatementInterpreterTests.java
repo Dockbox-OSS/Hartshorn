@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.stream.Stream;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
@@ -35,10 +38,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.CaptureModule;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class FieldStatementInterpreterTests {
 
@@ -47,22 +46,22 @@ public class FieldStatementInterpreterTests {
 
     public static Stream<Arguments> fieldStatementVariants() {
         return StringUtilities.matrix()
-            .optionalSegment("private ", "public ")
-            .optionalSegment("final ")
-            .segment("age")
-            .build()
-            .stream()
-            .map(Arguments::of);
+                .optionalSegment("private ", "public ")
+                .optionalSegment("final ")
+                .segment("age")
+                .build()
+                .stream()
+                .map(Arguments::of);
     }
 
     public static Stream<Arguments> fieldStatementVariantsWithInitializer() {
         return StringUtilities.matrix()
-            .optionalSegment("private ", "public ")
-            .optionalSegment("final ")
-            .segment("age = 25")
-            .build()
-            .stream()
-            .map(Arguments::of);
+                .optionalSegment("private ", "public ")
+                .optionalSegment("final ")
+                .segment("age = 25")
+                .build()
+                .stream()
+                .map(Arguments::of);
     }
 
     @ParameterizedTest(name = "Field statement variant: ''{0}''")
@@ -86,13 +85,13 @@ public class FieldStatementInterpreterTests {
                 class Dummy { %s }
                 capture(Dummy())
                 """.formatted(variant))
-            .extensions(extensions -> extensions.statementModules(new CaptureModule()))
-            .statementParser(new ClassStatementParser())
-            .classMemberParser(new FieldStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .extensions(extensions -> extensions.statementModules(new CaptureModule()))
+                .statementParser(new ClassStatementParser())
+                .classMemberParser(new FieldStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
     }
 
     private static void assertFieldInitialized(HSLTestHelper helper, Object expected) {
@@ -100,15 +99,12 @@ public class FieldStatementInterpreterTests {
         VirtualInstance instance = assertThat(value)
                 .asInstanceOf(InstanceOfAssertFactories.type(VirtualInstance.class))
                 .actual();
-        Token ageToken = Token.of(LiteralTokenType.IDENTIFIER)
-            .lexeme("age")
-            .build();
+        Token ageToken = Token.of(LiteralTokenType.IDENTIFIER).lexeme("age").build();
         Object age = instance.get(
-            helper.interpreter(),
-            ageToken,
-            // Class scope, to ensure private fields are accessible
-            instance.virtualClass().variableScope()
-        );
+                helper.interpreter(),
+                ageToken,
+                // Class scope, to ensure private fields are accessible
+                instance.virtualClass().variableScope());
         assertThat(age).isEqualTo(expected);
     }
 }

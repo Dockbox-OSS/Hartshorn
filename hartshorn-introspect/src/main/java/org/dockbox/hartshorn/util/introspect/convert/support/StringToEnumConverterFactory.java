@@ -28,7 +28,7 @@ import org.jspecify.annotations.Nullable;
  * @see Enum#valueOf(Class, String)
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 @SuppressWarnings("rawtypes")
@@ -54,8 +54,7 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
      * @author Guus Lieben
      */
     @SuppressWarnings("unchecked")
-    private record StringToEnumConverter<T extends Enum>(Class<T> enumType)
-        implements Converter<String, T> {
+    private record StringToEnumConverter<T extends Enum>(Class<T> enumType) implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String source, Context... contexts) {
@@ -66,8 +65,7 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
             try {
                 Enum value = Enum.valueOf(this.enumType, source.trim());
                 return this.enumType.cast(value);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
         }

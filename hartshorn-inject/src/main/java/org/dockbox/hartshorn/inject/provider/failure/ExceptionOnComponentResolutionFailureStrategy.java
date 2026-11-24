@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,25 +27,21 @@ import org.dockbox.hartshorn.inject.ComponentResolutionException;
  *
  * @author Guus Lieben
  */
-public class ExceptionOnComponentResolutionFailureStrategy
-    implements ComponentResolutionFailureStrategy {
+public class ExceptionOnComponentResolutionFailureStrategy implements ComponentResolutionFailureStrategy {
 
     /**
      * A singleton instance of this strategy. This instance can be used to avoid unnecessary object
      * creation.
      */
     public static final ExceptionOnComponentResolutionFailureStrategy INSTANCE =
-        new ExceptionOnComponentResolutionFailureStrategy();
+            new ExceptionOnComponentResolutionFailureStrategy();
 
     private ExceptionOnComponentResolutionFailureStrategy() {
         // Private constructor to enforce singleton pattern
     }
 
     @Override
-    public <T> void onResolutionFailure(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext
-    ) {
+    public <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext) {
         throw new ComponentResolutionException("No component found for key " + componentKey);
     }
 }

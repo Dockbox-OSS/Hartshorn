@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.ast.expression;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
-
-import java.util.List;
 
 /**
  * An expression representing an array literal, which is a collection of expressions enclosed within

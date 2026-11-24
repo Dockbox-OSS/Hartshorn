@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package test.org.dockbox.hartshorn.inject.scope.provider;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
@@ -32,8 +34,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents({
     ScopedInjectionTests.ScopedConfiguration.class,
@@ -50,13 +50,11 @@ class ScopedInjectionTests {
         TestScope scope = new TestScope();
 
         ComponentKey<String> scopedStringKey =
-            ComponentKey.builder(String.class).scope(scope).build();
+                ComponentKey.builder(String.class).scope(scope).build();
         assertThat(this.applicationContext.get(scopedStringKey)).isEqualTo("testScopedString");
 
-        TestComponent component =
-            this.applicationContext.get(ComponentKey.builder(TestComponent.class)
-                .scope(scope)
-                .build());
+        TestComponent component = this.applicationContext.get(
+                ComponentKey.builder(TestComponent.class).scope(scope).build());
         assertThat(component).isNotNull();
 
         // Injected String should inherit the scope from the component
@@ -83,9 +81,8 @@ class ScopedInjectionTests {
         scope.addContext(new SampleContext("test"));
         this.applicationContext.addContext(new SampleContext("application"));
 
-        ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
-            .scope(scope)
-            .build();
+        ComponentKey<TestComponent> scopedComponentKey =
+                ComponentKey.builder(TestComponent.class).scope(scope).build();
         TestComponent component = this.applicationContext.get(scopedComponentKey);
         assertThat(component).isNotNull();
 
@@ -95,14 +92,14 @@ class ScopedInjectionTests {
     }
 
     @Test
-    @DisplayName("Scoped requests of components with context dependencies which are absent in the scope context should have global context")
+    @DisplayName(
+            "Scoped requests of components with context dependencies which are absent in the scope context should have global context")
     void scopedRequestOfUnmanagedComponentWithAbsentContextHasGlobalContext() {
         TestScope scope = new TestScope();
         this.applicationContext.addContext(new SampleContext("application"));
 
-        ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
-            .scope(scope)
-            .build();
+        ComponentKey<TestComponent> scopedComponentKey =
+                ComponentKey.builder(TestComponent.class).scope(scope).build();
         TestComponent component = this.applicationContext.get(scopedComponentKey);
         assertThat(component).isNotNull();
 
@@ -117,16 +114,12 @@ class ScopedInjectionTests {
         TestScope scope = new TestScope();
 
         ComponentKey<TestManagedComponent> scopedManagedComponentKey =
-            ComponentKey.builder(TestManagedComponent.class)
-                .scope(scope)
-                .build();
-        TestManagedComponent scopedManagedComponent =
-            this.applicationContext.get(scopedManagedComponentKey);
+                ComponentKey.builder(TestManagedComponent.class).scope(scope).build();
+        TestManagedComponent scopedManagedComponent = this.applicationContext.get(scopedManagedComponentKey);
         assertThat(scopedManagedComponent).isNotNull();
 
         // Managed components should always be application scoped, even if the request for it is scoped
-        TestManagedComponent applicationManagedComponent =
-            this.applicationContext.get(TestManagedComponent.class);
+        TestManagedComponent applicationManagedComponent = this.applicationContext.get(TestManagedComponent.class);
         assertThat(scopedManagedComponent).isSameAs(applicationManagedComponent);
 
         // The dependency should be the application scoped value
@@ -134,7 +127,8 @@ class ScopedInjectionTests {
     }
 
     @Test
-    @DisplayName("Scoped requests with the same scope type but different scope instances should yield different components")
+    @DisplayName(
+            "Scoped requests with the same scope type but different scope instances should yield different components")
     void scopedRequestOfDifferentContextWithSameTypeIsDifferentComponent() {
         TestScope scope1 = new TestScope();
         scope1.addContext(new SampleContext("test1"));
@@ -142,9 +136,9 @@ class ScopedInjectionTests {
         scope2.addContext(new SampleContext("test2"));
 
         ComponentKey<TestComponent> scopedComponentKey1 =
-            ComponentKey.builder(TestComponent.class).scope(scope1).build();
+                ComponentKey.builder(TestComponent.class).scope(scope1).build();
         ComponentKey<TestComponent> scopedComponentKey2 =
-            ComponentKey.builder(TestComponent.class).scope(scope2).build();
+                ComponentKey.builder(TestComponent.class).scope(scope2).build();
 
         TestComponent scopedComponent1 = this.applicationContext.get(scopedComponentKey1);
         TestComponent scopedComponent2 = this.applicationContext.get(scopedComponentKey2);

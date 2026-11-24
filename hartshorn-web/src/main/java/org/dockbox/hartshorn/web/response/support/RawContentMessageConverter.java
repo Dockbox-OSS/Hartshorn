@@ -19,11 +19,10 @@ package org.dockbox.hartshorn.web.response.support;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.response.HttpMessageConverter;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.web.response.HttpMessageConverter;
 
 /**
  * A {@link HttpMessageConverter} which allows writing raw content to the response, without any
@@ -41,11 +40,7 @@ public class RawContentMessageConverter implements HttpMessageConverter<Object> 
     }
 
     @Override
-    public boolean supportsResponse(
-            Class<?> type,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
+    public boolean supportsResponse(Class<?> type, HttpServletRequest request, HttpServletResponse response) {
         return type == String.class
                 || type == byte[].class
                 || (type != null && ByteBuffer.class.isAssignableFrom(type));
@@ -64,9 +59,7 @@ public class RawContentMessageConverter implements HttpMessageConverter<Object> 
             case ByteBuffer byteBuffer -> outputStream.write(byteBuffer);
             case byte[] bytes -> outputStream.write(bytes);
             default -> {
-                throw new IllegalArgumentException("Unsupported content type: %s".formatted(
-                        result.getClass()
-                ));
+                throw new IllegalArgumentException("Unsupported content type: %s".formatted(result.getClass()));
             }
         }
     }

@@ -44,13 +44,7 @@ public class ProxyCallbackContext<T> extends DefaultContext {
         this(delegate, proxy, method, args, null);
     }
 
-    public ProxyCallbackContext(
-        T delegate,
-        T proxy,
-        MethodView<T, ?> method,
-        Object[] args,
-        Throwable error
-    ) {
+    public ProxyCallbackContext(T delegate, T proxy, MethodView<T, ?> method, Object[] args, Throwable error) {
         this.delegate = delegate;
         this.proxy = proxy;
         this.method = method;

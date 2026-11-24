@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexArrayExpressionParser;
@@ -26,18 +28,14 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class ArrayLiteralExpressionTests {
 
     @Test
-    void emptyArrayLiteralYieldsEmptyArrayObject(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void emptyArrayLiteralYieldsEmptyArrayObject(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[]")
-            .expressionParser(new ComplexArrayExpressionParser())
-            .build();
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = assertThat(value)
@@ -47,13 +45,11 @@ class ArrayLiteralExpressionTests {
     }
 
     @Test
-    void singleValueArrayLiteralYieldsArrayObject(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void singleValueArrayLiteralYieldsArrayObject(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[\"test\"]")
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .build();
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = assertThat(value)
@@ -64,15 +60,13 @@ class ArrayLiteralExpressionTests {
     }
 
     @Test
-    void multipleValueArrayLiteralYieldsArrayObject(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void multipleValueArrayLiteralYieldsArrayObject(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                 ["test", "test2"]
                 """)
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .build();
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = assertThat(value)

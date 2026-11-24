@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -26,9 +28,6 @@ import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * A parser for {@link NativeFunctionStatement} nodes.
  *
@@ -36,23 +35,17 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class NativeFunctionStatementParser
-    extends AbstractBodyStatementParser<NativeFunctionStatement>
-    implements ParametricStatementParser {
+public class NativeFunctionStatementParser extends AbstractBodyStatementParser<NativeFunctionStatement>
+        implements ParametricStatementParser {
 
     @Override
-    public Option<? extends NativeFunctionStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends NativeFunctionStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(FunctionTokenType.NATIVE) && parser.match(FunctionTokenType.FUNCTION)) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             Token moduleName = validator.expect(identifier, "module name");
 
             while (parser.match(BaseTokenType.DOT)) {
-                Token token = Token.of(BaseTokenType.DOT)
-                    .position(moduleName)
-                    .build();
+                Token token = Token.of(BaseTokenType.DOT).position(moduleName).build();
                 moduleName.concat(token);
 
                 Token submodule = validator.expect(identifier, "module name");
@@ -61,11 +54,8 @@ public class NativeFunctionStatementParser
 
             validator.expectBefore(BaseTokenType.COLON, "function name");
             Token funcName = validator.expect(identifier, "function name");
-            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser,
-                validator,
-                "function name",
-                -1,
-                FunctionTokenType.NATIVE);
+            List<Parameter> parameters = ParametricStatementParser.super.parameters(
+                    parser, validator, "function name", -1, FunctionTokenType.NATIVE);
 
             validator.expectAfter(parser.tokenRegistry().statementEnd(), "value");
             // Do not resolve actual methods at this point, as we might not have loaded

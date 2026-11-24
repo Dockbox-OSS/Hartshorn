@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
@@ -29,15 +31,12 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * A standard implementation of the {@link ScriptComponentFactory} interface, using the default
  * implementations of the various components.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
@@ -59,13 +58,11 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
     public Interpreter interpreter(
-        ResultCollector resultCollector,
-        Map<String, NativeModule> modules,
-        TokenRegistry tokenRegistry,
-        ApplicationContext applicationContext
-    ) {
-        Interpreter interpreter =
-            new SimpleVisitorInterpreter(resultCollector, applicationContext, tokenRegistry);
+            ResultCollector resultCollector,
+            Map<String, NativeModule> modules,
+            TokenRegistry tokenRegistry,
+            ApplicationContext applicationContext) {
+        Interpreter interpreter = new SimpleVisitorInterpreter(resultCollector, applicationContext, tokenRegistry);
         interpreter.state().externalModules(modules);
         return interpreter;
     }

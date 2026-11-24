@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.annotations.Priority;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +24,14 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by
@@ -50,8 +49,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingHierarchy.class);
 
-    private final NavigableMap<Integer, InstantiationStrategy<T>> providers =
-        new TreeMap<>(Collections.reverseOrder());
+    private final NavigableMap<Integer, InstantiationStrategy<T>> providers = new TreeMap<>(Collections.reverseOrder());
 
     private final ComponentKey<T> key;
 
@@ -87,17 +85,15 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public BindingHierarchy<T> add(int priority, InstantiationStrategy<T> strategy) {
         // Default providers may be overwritten without further warnings
-        if (this.priorityProviders().containsKey(priority)
-                && priority != Priority.DEFAULT_PRIORITY) {
-            LOG.warn("There is already a provider for {} with priority {}. " +
-                            "It will be overwritten! " +
-                            "To avoid unexpected behavior, " +
-                            "ensure the priority is not already present. " +
-                            "Current hierarchy: {}",
+        if (this.priorityProviders().containsKey(priority) && priority != Priority.DEFAULT_PRIORITY) {
+            LOG.warn(
+                    "There is already a provider for {} with priority {}. " + "It will be overwritten! "
+                            + "To avoid unexpected behavior, "
+                            + "ensure the priority is not already present. "
+                            + "Current hierarchy: {}",
                     this.key().type().getSimpleName(),
                     priority,
-                    this
-            );
+                    this);
         }
         this.priorityProviders().put(priority, strategy);
         return this;
@@ -158,9 +154,9 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("componentKey", this.key())
-            .field("providers", this.priorityProviders())
-            .describe();
+                .field("componentKey", this.key())
+                .field("providers", this.priorityProviders())
+                .describe();
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.ConfigurationAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
@@ -28,11 +32,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is
@@ -51,8 +50,7 @@ import java.util.function.Consumer;
  *
  * @author Guus Lieben
  */
-public abstract class DefaultProxyFactory<T>
-    implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to
@@ -86,7 +84,7 @@ public abstract class DefaultProxyFactory<T>
         this.proxyOrchestrator = proxyOrchestrator;
         this.advisorRegistry = new ConfigurationAdvisorRegistry<>(proxyOrchestrator, this);
         this.contextContainer =
-            new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
+                new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
         this.validator = new CollectorProxyValidator().withDefaults();
     }
 
@@ -96,9 +94,7 @@ public abstract class DefaultProxyFactory<T>
     }
 
     @Override
-    public StateAwareProxyFactory<T> advisors(
-        Consumer<? super AdvisorRegistry<T>> registryConsumer
-    ) {
+    public StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer) {
         registryConsumer.accept(this.advisorRegistry);
         return this;
     }
@@ -150,8 +146,7 @@ public abstract class DefaultProxyFactory<T>
     }
 
     @Override
-    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args)
-        throws ApplicationException {
+    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
@@ -181,19 +176,14 @@ public abstract class DefaultProxyFactory<T>
      * or other application error
      */
     protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args)
-        throws ApplicationException;
+            throws ApplicationException;
 
     @Override
-    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args)
-        throws ApplicationException {
+    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
         if (constructor.constructor().present()) {
             return this.proxy(constructor.constructor().get(), args);
-        }
-        else {
-            throw new ApplicationException("Constructor "
-                + constructor
-                + " is not present on type "
-                + this.type());
+        } else {
+            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
         }
     }
 

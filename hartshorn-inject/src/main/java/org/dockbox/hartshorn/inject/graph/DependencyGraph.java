@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.graph;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
@@ -50,8 +49,7 @@ public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?
     public Set<GraphNode<DependencyContext<?>>> roots() {
         Set<GraphNode<DependencyContext<?>>> defaultRoots = new HashSet<>(super.roots());
         Set<GraphNode<DependencyContext<?>>> nodes = this.nodes();
-        Set<GraphNode<DependencyContext<?>>> danglingNodes =
-            CollectionUtilities.difference(defaultRoots, nodes);
+        Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(defaultRoots, nodes);
         for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
             if (isSingletonNode(danglingNode)) {
                 defaultRoots.add(danglingNode);
@@ -70,6 +68,6 @@ public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?
      */
     public static boolean isSingletonNode(GraphNode<DependencyContext<?>> node) {
         return node.value() instanceof LifecycleAwareDependencyContext<?> lifecycleAware
-            && lifecycleAware.lifecycleType() == LifecycleType.SINGLETON;
+                && lifecycleAware.lifecycleType() == LifecycleType.SINGLETON;
     }
 }

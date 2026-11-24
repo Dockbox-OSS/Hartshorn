@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.List;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
@@ -34,12 +39,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class LogicalAssignExpressionTests {
 
@@ -48,43 +47,39 @@ public class LogicalAssignExpressionTests {
 
     public static Stream<Arguments> logicalTokenTypes() {
         return Stream.of(
-            Arguments.of(BitwiseAssignmentTokenType.SHIFT_RIGHT_EQUAL, 0b10), // 2
-            Arguments.of(BitwiseAssignmentTokenType.SHIFT_LEFT_EQUAL, 0b1010), // 10
-            Arguments.of(BitwiseAssignmentTokenType.LOGICAL_SHIFT_RIGHT_EQUAL, 0b10), // 2
-            Arguments.of(BitwiseAssignmentTokenType.BITWISE_AND_EQUAL, 0b1), // 1
-            Arguments.of(BitwiseAssignmentTokenType.BITWISE_OR_EQUAL, 0b101), // 5
-            Arguments.of(BitwiseAssignmentTokenType.XOR_EQUAL, 0b100), // 4
-            Arguments.of(BitwiseAssignmentTokenType.COMPLEMENT_EQUAL, -0b110) // -6
-        );
+                Arguments.of(BitwiseAssignmentTokenType.SHIFT_RIGHT_EQUAL, 0b10), // 2
+                Arguments.of(BitwiseAssignmentTokenType.SHIFT_LEFT_EQUAL, 0b1010), // 10
+                Arguments.of(BitwiseAssignmentTokenType.LOGICAL_SHIFT_RIGHT_EQUAL, 0b10), // 2
+                Arguments.of(BitwiseAssignmentTokenType.BITWISE_AND_EQUAL, 0b1), // 1
+                Arguments.of(BitwiseAssignmentTokenType.BITWISE_OR_EQUAL, 0b101), // 5
+                Arguments.of(BitwiseAssignmentTokenType.XOR_EQUAL, 0b100), // 4
+                Arguments.of(BitwiseAssignmentTokenType.COMPLEMENT_EQUAL, -0b110) // -6
+                );
     }
 
     @Test
     void verifyCasesCovered() {
         List<TokenType> coveredTokenTypes = logicalTokenTypes()
-            .map(Arguments::get)
-            .map(args -> (TokenType) args[0])
-            .toList();
+                .map(Arguments::get)
+                .map(args -> (TokenType) args[0])
+                .toList();
         DefaultTokenRegistry.createDefault()
-            .tokenTypes(token -> token.assignsWith() != null)
-            .forEach(tokenType ->
-            assertThat(coveredTokenTypes.contains(tokenType)).as("Token type %s is not covered by tests".formatted(
-                tokenType.representation()
-            )).isTrue());
+                .tokenTypes(token -> token.assignsWith() != null)
+                .forEach(tokenType -> assertThat(coveredTokenTypes.contains(tokenType))
+                        .as("Token type %s is not covered by tests".formatted(tokenType.representation()))
+                        .isTrue());
     }
 
     @ParameterizedTest
     @MethodSource("logicalTokenTypes")
     void logicalAssignUpdatesVariableAndReturnsNewValue(TokenType tokenType, int result) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                this.applicationContext,
-                "a %s 1".formatted(tokenType.representation())
-            )
-            .parser(parser ->
-                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .defineLocal("a", 0b101)
-            .build();
+                        this.applicationContext, "a %s 1".formatted(tokenType.representation()))
+                .parser(parser -> parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .defineLocal("a", 0b101)
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value).isEqualTo(result);
@@ -95,15 +90,14 @@ public class LogicalAssignExpressionTests {
     @MethodSource("logicalTokenTypes")
     void logicalAssignCanNotAssignToNonVariable(TokenType tokenType) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                this.applicationContext,
-                "1 %s 1".formatted(tokenType.representation())
-            )
-            .parser(parser ->
-                parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                        this.applicationContext, "1 %s 1".formatted(tokenType.representation()))
+                .parser(parser -> parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry())))
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::expression).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::expression)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET);
     }
 }

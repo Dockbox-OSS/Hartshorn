@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,31 +52,21 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        if (this.applicationContext instanceof ProcessableApplicationContext
-            processableApplicationContext
-        ) {
+        if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
             ComponentProcessorRegistry registry =
-                processableApplicationContext.defaultProvider().processorRegistry();
+                    processableApplicationContext.defaultProvider().processorRegistry();
             this.reportPreProcessors(collector, registry);
             this.reportPostProcessors(collector, registry);
         }
     }
 
-    private void reportPreProcessors(
-        DiagnosticsPropertyCollector collector,
-        ComponentProcessorRegistry registry
-    ) {
-        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
-            registry.preProcessors();
+    private void reportPreProcessors(DiagnosticsPropertyCollector collector, ComponentProcessorRegistry registry) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
         collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
-    private void reportPostProcessors(
-        DiagnosticsPropertyCollector collector,
-        ComponentProcessorRegistry registry
-    ) {
-        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
-            registry.postProcessors();
+    private void reportPostProcessors(DiagnosticsPropertyCollector collector, ComponentProcessorRegistry registry) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
         collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.binding.defaults;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
@@ -24,8 +26,6 @@ import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class DefaultBindingsTests {
@@ -41,8 +41,8 @@ class DefaultBindingsTests {
     void loggerUsesContainerNameIfEnabled(@Inject Logger loggerParameter) {
         assertThat(loggerParameter).isNotNull();
         // Name should match the consuming class' name, and not the name of the configuration that uses it
-        ComponentContainer<?> container = this.componentRegistry.container(this.getClass())
-                .orElseGet(Assertions::fail);
+        ComponentContainer<?> container =
+                this.componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
         String expectedName = container.name();
         assertThat(loggerParameter.getName()).isEqualTo(expectedName);
 

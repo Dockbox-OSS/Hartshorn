@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.inject.graph;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
@@ -41,17 +40,17 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
 
     @Override
     public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers)
-        throws DependencyResolutionException {
+            throws DependencyResolutionException {
         Set<ConditionalDependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyDeclarationContext<?> componentContainer : containers) {
             dependencyContexts.addAll(this.resolveSingle(componentContainer));
         }
         ConditionalDependencyContextsHolder contextsHolder =
-            ConditionalDependencyContextsHolder.create(dependencyContexts);
+                ConditionalDependencyContextsHolder.create(dependencyContexts);
         return dependencyContexts.stream()
-            .filter(context -> context.conditionsMatched().test(contextsHolder))
-            .map(ConditionalDependencyContext::dependencyContext)
-            .collect(Collectors.toSet());
+                .filter(context -> context.conditionsMatched().test(contextsHolder))
+                .map(ConditionalDependencyContext::dependencyContext)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -68,6 +67,5 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
      * @throws DependencyResolutionException when the resolution fails
      */
     protected abstract <T> Set<ConditionalDependencyContext<?>> resolveSingle(
-        DependencyDeclarationContext<T> declarationContext
-    ) throws DependencyResolutionException;
+            DependencyDeclarationContext<T> declarationContext) throws DependencyResolutionException;
 }

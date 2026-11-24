@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.processing;
 
+import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.configuration.ApplicationContextCarrierConfiguration;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcessor;
 
 /**
  * A {@link ProxyDelegationPostProcessor} that configures proxies to delegate calls to
@@ -27,13 +27,12 @@ import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcesso
  * implementation in the target class.
  *
  * @see ApplicationContextCarrierConfiguration#contextCarrier(ApplicationContext)
- * 
+ *
  * @since 0.4.9
- * 
+ *
  * @author Guus Lieben
  */
-public class ContextCarrierDelegationPostProcessor
-    extends ProxyDelegationPostProcessor<ApplicationContextCarrier> {
+public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ApplicationContextCarrier> {
 
     @Override
     protected Class<ApplicationContextCarrier> parentTarget() {

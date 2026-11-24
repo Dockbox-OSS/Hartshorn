@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package test.org.dockbox.hartshorn.inject.context;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ContextInjectionTests {
@@ -38,8 +38,8 @@ class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext(new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
-            this.applicationContext.scope());
+        ContextInjectedType instance =
+                this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
 
         assertThat(instance.context()).isNotNull();
         assertThat(instance.context().name()).isEqualTo(contextName);
@@ -50,8 +50,8 @@ class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext("another", new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
-            this.applicationContext.scope());
+        ContextInjectedType instance =
+                this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
 
         assertThat(instance.anotherContext()).isNotNull();
         assertThat(instance.anotherContext().name()).isEqualTo(contextName);

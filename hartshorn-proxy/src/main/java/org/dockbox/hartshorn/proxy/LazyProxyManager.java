@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Method;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.RegistryProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Method;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors,
@@ -50,8 +49,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     static {
         try {
             managerAccessor = Proxy.class.getDeclaredMethod("manager");
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -68,9 +66,10 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     }
 
     public LazyProxyManager(
-        ProxyOrchestrator proxyOrchestrator, Class<T> proxyClass, Class<T> targetClass,
-        StateAwareAdvisorRegistry<T> advisors
-    ) {
+            ProxyOrchestrator proxyOrchestrator,
+            Class<T> proxyClass,
+            Class<T> targetClass,
+            StateAwareAdvisorRegistry<T> advisors) {
         this.proxyOrchestrator = proxyOrchestrator;
 
         if (this.proxyOrchestrator.isProxy(targetClass)) {

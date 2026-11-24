@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToCollectionConverterFactory;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("rawtypes")
@@ -35,18 +34,15 @@ class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void factoryCreatesConverterForConcreteCollectionTarget() {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            ArrayList.class,
-            ArrayList::new);
+        Introspector introspector =
+                ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
 
-        ConverterFactory<Object[], Collection<?>> factory =
-            new ArrayToCollectionConverterFactory(introspector);
+        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
         Converter<Object[], ArrayList> converter = factory.create(ArrayList.class);
         assertThat(converter).isNotNull();
 
         List<?> list = converter.convert(new Object[] {"test"});
-        assertThat(list)
-                .hasSize(1);
+        assertThat(list).hasSize(1);
         assertThat(list.get(0)).isEqualTo("test");
     }
 
@@ -56,8 +52,7 @@ class ArrayToCollectionConverterFactoryTests {
         assertThat(converter).isNotNull();
 
         Collection<String> list = converter.convert(new Object[] {"test"});
-        assertThat(list)
-                .hasSize(1);
+        assertThat(list).hasSize(1);
         assertThat(CollectionUtilities.first(list)).isEqualTo("test");
     }
 
@@ -71,13 +66,11 @@ class ArrayToCollectionConverterFactoryTests {
     }
 
     private static Converter<Object[], Collection<String>> createConverter() {
-        Introspector introspector =
-            ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
-        ConverterFactory<Object[], Collection<?>> factory =
-            new ArrayToCollectionConverterFactory(introspector);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
+        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
 
         Converter<Object[], Collection<String>> converter =
-            TypeUtils.unchecked(factory.create(Collection.class), Converter.class);
+                TypeUtils.unchecked(factory.create(Collection.class), Converter.class);
         assertThat(converter).isNotNull();
 
         return converter;

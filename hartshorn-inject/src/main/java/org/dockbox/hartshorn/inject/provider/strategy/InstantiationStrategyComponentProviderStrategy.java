@@ -60,15 +60,13 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
 
     @Override
     public <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ApplicationException {
-        BindingHierarchy<T> hierarchy =
-            this.hierarchy(chain.componentProvider(), componentKey, true);
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ApplicationException {
+        BindingHierarchy<T> hierarchy = this.hierarchy(chain.componentProvider(), componentKey, true);
         if (hierarchy != null) {
-            ObjectContainer<T> container =
-                this.createFromHierarchy(componentKey, requestContext, chain, hierarchy);
+            ObjectContainer<T> container = this.createFromHierarchy(componentKey, requestContext, chain, hierarchy);
             if (container != null) {
                 return container;
             }
@@ -77,51 +75,41 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
     }
 
     private <T> @Nullable ObjectContainer<T> createFromHierarchy(
-        ComponentKey<T> componentKey, ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy
-    ) throws ApplicationException {
-        InstantiationStrategy<T> strategy =
-            componentKey.selectionStrategy().selectProvider(hierarchy);
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain,
+            BindingHierarchy<T> hierarchy)
+            throws ApplicationException {
+        InstantiationStrategy<T> strategy = componentKey.selectionStrategy().selectProvider(hierarchy);
         if (strategy != null) {
-            return this.createFromInstantiationStrategy(requestContext,
-                chain,
-                strategy,
-                componentKey.scope().orElse(this.defaultScope));
+            return this.createFromInstantiationStrategy(
+                    requestContext, chain, strategy, componentKey.scope().orElse(this.defaultScope));
         }
         return null;
     }
 
     private <T> @Nullable ObjectContainer<T> createFromInstantiationStrategy(
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain,
-        InstantiationStrategy<T> strategy,
-        Scope scope
-    ) throws ApplicationException {
-        Option<ObjectContainer<T>> container =
-            strategy.provide(chain.application(), requestContext, scope);
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain,
+            InstantiationStrategy<T> strategy,
+            Scope scope)
+            throws ApplicationException {
+        Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext, scope);
         return container.orNull();
     }
 
     private <T> BindingHierarchy<T> hierarchy(
-        ComponentProvider componentProvider,
-        ComponentKey<T> key,
-        boolean useGlobalIfAbsent
-    ) {
+            ComponentProvider componentProvider, ComponentKey<T> key, boolean useGlobalIfAbsent) {
         return switch (componentProvider) {
-            case HierarchyLookup hierarchyLookup ->
-                this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
+            case HierarchyLookup hierarchyLookup -> this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
             case BinderAwareComponentProvider binderAwareProvider
-                when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder
-                -> this.hierarchy(hierarchicalBinder, key, useGlobalIfAbsent);
+            when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder ->
+                this.hierarchy(hierarchicalBinder, key, useGlobalIfAbsent);
             default -> null;
         };
     }
 
-    private <T> BindingHierarchy<T> hierarchy(
-        HierarchyLookup lookup,
-        ComponentKey<T> key,
-        boolean useGlobalIfAbsent
-    ) {
+    private <T> BindingHierarchy<T> hierarchy(HierarchyLookup lookup, ComponentKey<T> key, boolean useGlobalIfAbsent) {
         if (lookup instanceof NestedHierarchyLookup containedLookup) {
             return containedLookup.hierarchy(key, useGlobalIfAbsent);
         }

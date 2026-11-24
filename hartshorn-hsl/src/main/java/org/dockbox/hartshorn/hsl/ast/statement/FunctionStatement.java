@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.List;
 
 /**
  * A statement representing a function declaration, which defines a function with a specified type,
@@ -34,21 +33,15 @@ import java.util.List;
  * }</pre>
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
-public class FunctionStatement extends ParametricExecutableBodyStatement
-    implements ClassMemberStatement, NamedNode {
+public class FunctionStatement extends ParametricExecutableBodyStatement implements ClassMemberStatement, NamedNode {
 
     private final Token functionType;
     private final Token name;
 
-    public FunctionStatement(
-        Token functionType,
-        Token name,
-        List<Parameter> params,
-        BlockStatement body
-    ) {
+    public FunctionStatement(Token functionType, Token name, List<Parameter> params, BlockStatement body) {
         super(name, params, body);
         this.functionType = functionType;
         this.name = name;

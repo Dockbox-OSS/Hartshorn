@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import java.util.List;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.util.collections.BiMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Represents a list of type parameters. This is used to represent the type parameters of a type, or
@@ -30,7 +29,7 @@ import java.util.stream.Stream;
  * @see TypeParameterView
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface TypeParameterList extends Iterable<TypeParameterView> {

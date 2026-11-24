@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package test.org.dockbox.hartshorn.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.util.List;
 import org.dockbox.hartshorn.util.properties.ArrayNode;
 import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.NodeVisitor;
 import org.dockbox.hartshorn.util.properties.SimpleNode;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 class NodeTests {
 

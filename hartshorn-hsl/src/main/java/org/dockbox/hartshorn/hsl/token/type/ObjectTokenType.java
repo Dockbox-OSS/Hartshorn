@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
  * the super class of the current object instance.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum ObjectTokenType implements EnumTokenType {
@@ -43,9 +43,7 @@ public enum ObjectTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     ObjectTokenType() {
-        this.metaData = TokenMetaData.builder(this)
-            .keyword(true)
-            .build();
+        this.metaData = TokenMetaData.builder(this).keyword(true).build();
     }
 
     @Override

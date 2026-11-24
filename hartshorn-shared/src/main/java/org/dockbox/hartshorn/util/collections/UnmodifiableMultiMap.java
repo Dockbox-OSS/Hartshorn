@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import org.dockbox.hartshorn.util.stream.EntryStream;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * An unmodifiable {@link MultiMap} implementation that wraps another {@link MultiMap} and prevents

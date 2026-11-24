@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFieldMemberFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
-
-import java.util.Set;
 
 /**
  * An interpreter for {@link FieldStatement} class members.
@@ -37,21 +36,17 @@ import java.util.Set;
 public class FieldMemberInterpreter implements ClassMemberInterpreter<FieldStatement> {
 
     @Override
-    public void interpret(
-        FieldStatement field,
-        Interpreter interpreter,
-        VirtualClassBuilder builder
-    ) {
+    public void interpret(FieldStatement field, Interpreter interpreter, VirtualClassBuilder builder) {
         VirtualProperty virtualProperty = new VirtualProperty(field);
         FieldGetStatement getter = field.getter();
         if (getter != null) {
-            virtualProperty.getter(new VirtualFieldMemberFunction(getter,
-                new VariableScope(interpreter.visitingScope())));
+            virtualProperty.getter(
+                    new VirtualFieldMemberFunction(getter, new VariableScope(interpreter.visitingScope())));
         }
         FieldSetStatement setter = field.setter();
         if (setter != null) {
-            virtualProperty.setter(new VirtualFieldMemberFunction(setter,
-                new VariableScope(interpreter.visitingScope())));
+            virtualProperty.setter(
+                    new VirtualFieldMemberFunction(setter, new VariableScope(interpreter.visitingScope())));
         }
         builder.field(field.name().lexeme(), virtualProperty);
     }

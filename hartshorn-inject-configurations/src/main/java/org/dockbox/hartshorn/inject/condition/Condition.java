@@ -22,9 +22,9 @@ package org.dockbox.hartshorn.inject.condition;
  * multiple matches.
  *
  * @see ConditionMatcher
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public sealed interface Condition permits IntrospectionCondition, ReferenceCondition {

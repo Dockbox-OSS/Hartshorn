@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a media type, consisting of a type, subtype, and optional parameters.
@@ -47,9 +46,7 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
     public MediaType(String type, String subtype) {
         this(type, subtype, Map.of());
         if (isWildcardType() && !isWildcardSubtype()) {
-            throw new IllegalArgumentException(
-                    "A media type with a wildcard type must also have a wildcard subtype"
-            );
+            throw new IllegalArgumentException("A media type with a wildcard type must also have a wildcard subtype");
         }
     }
 
@@ -111,12 +108,8 @@ public record MediaType(String type, String subtype, Map<String, String> paramet
         StringBuilder sb = new StringBuilder();
         sb.append(this.type).append("/").append(this.subtype);
         if (!this.parameters.isEmpty()) {
-            this.parameters.forEach((key, value) -> sb
-                    .append(";")
-                    .append(key)
-                    .append("=")
-                    .append(value)
-            );
+            this.parameters.forEach(
+                    (key, value) -> sb.append(";").append(key).append("=").append(value));
         }
         return sb.toString();
     }

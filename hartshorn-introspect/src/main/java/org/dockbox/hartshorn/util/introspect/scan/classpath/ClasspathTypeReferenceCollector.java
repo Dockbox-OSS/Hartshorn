@@ -17,15 +17,14 @@
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A {@link TypeReferenceCollector} that collects {@link TypeReference}s from a classpath. This
@@ -40,8 +39,7 @@ import java.util.Set;
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 
     // checkstyle:off LineLength
-    private static final MultiMap<String, TypeReference> BATCH_CACHE =
-        new ConcurrentSetMultiMap<>();
+    private static final MultiMap<String, TypeReference> BATCH_CACHE = new ConcurrentSetMultiMap<>();
     // checkstyle:on LineLength
     private final Set<String> packageNames;
 
@@ -102,7 +100,7 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("packageNames", this.packageNames())
-            .describe();
+                .field("packageNames", this.packageNames())
+                .describe();
     }
 }

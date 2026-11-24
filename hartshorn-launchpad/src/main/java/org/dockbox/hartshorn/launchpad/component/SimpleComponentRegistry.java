@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad.component;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A simple implementation of {@link ComponentRegistry} which stores components in a thread-safe

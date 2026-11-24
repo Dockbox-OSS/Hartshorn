@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
  * @param <T> the type of the proxy
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface ProxyMethodInterceptor<T> {
@@ -55,6 +55,5 @@ public interface ProxyMethodInterceptor<T> {
      *
      * @throws Throwable if the method invocation fails
      */
-    Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args)
-        throws Throwable;
+    Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args) throws Throwable;
 }

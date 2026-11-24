@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.profiles.support;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.profiles.EnvironmentProfile;
 import org.dockbox.hartshorn.profiles.ProfileNameResolver;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
@@ -24,11 +28,6 @@ import org.dockbox.hartshorn.profiles.ProfileResourceResolver;
 import org.dockbox.hartshorn.profiles.PropertyRegistrySupplier;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Standard implementation of {@link ProfileRegistryFactory} that creates a {@link ProfileRegistry}
@@ -50,11 +49,10 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
     private final ProfileNameResolver profileNameResolver;
 
     public ConfigurationProfileRegistryFactory(
-        PropertyRegistryPathLoader propertyRegistryLoader,
-        ProfileResourceResolver resourceResolver,
-        PropertyRegistrySupplier registrySupplier,
-        ProfileNameResolver profileNameResolver
-    ) {
+            PropertyRegistryPathLoader propertyRegistryLoader,
+            ProfileResourceResolver resourceResolver,
+            PropertyRegistrySupplier registrySupplier,
+            ProfileNameResolver profileNameResolver) {
         this.propertyRegistryLoader = propertyRegistryLoader;
         this.resourceResolver = resourceResolver;
         this.registrySupplier = registrySupplier;
@@ -65,14 +63,13 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
     public ProfileRegistry create(PropertyRegistry rootRegistry) {
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
 
-        EnvironmentProfile defaultProfile =
-            new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
+        EnvironmentProfile defaultProfile = new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
         profileRegistry.register(0, defaultProfile);
 
-        List<EnvironmentProfile> additionalProfiles = this.profileNameResolver
-            .resolveProfileNames(rootRegistry).stream()
-            .map(this::resolveProfile)
-            .toList();
+        List<EnvironmentProfile> additionalProfiles =
+                this.profileNameResolver.resolveProfileNames(rootRegistry).stream()
+                        .map(this::resolveProfile)
+                        .toList();
 
         for (int i = 0; i < additionalProfiles.size(); i++) {
             EnvironmentProfile profile = additionalProfiles.get(i);
@@ -88,8 +85,7 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
         for (URI resource : resources) {
             try {
                 this.propertyRegistryLoader.loadRegistry(registry, resource);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new ProfileLoadingFailedException(profileName, resource, e);
             }
         }

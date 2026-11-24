@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.List;
 
 /**
  * A statement representing a native function declaration, which defines a function that is
@@ -49,7 +48,7 @@ import java.util.List;
  * }</pre>
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class NativeFunctionStatement extends Function implements NamedNode {
@@ -59,12 +58,7 @@ public class NativeFunctionStatement extends Function implements NamedNode {
     private final MethodView<?, ?> method;
     private final List<Parameter> params;
 
-    public NativeFunctionStatement(
-        Token name,
-        Token moduleName,
-        MethodView<?, ?> method,
-        List<Parameter> params
-    ) {
+    public NativeFunctionStatement(Token name, Token moduleName, MethodView<?, ?> method, List<Parameter> params) {
         super(name);
         this.name = name;
         this.moduleName = moduleName;

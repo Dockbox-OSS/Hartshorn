@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.ast.expression;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
-
-import java.util.List;
 
 /**
  * An expression representing a function call, which is an operation that invokes a function with a
@@ -37,12 +36,7 @@ public class FunctionCallExpression extends Expression {
     private final Token openParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(
-        Expression callee,
-        Token open,
-        Token close,
-        List<Expression> arguments
-    ) {
+    public FunctionCallExpression(Expression callee, Token open, Token close, List<Expression> arguments) {
         super(callee);
         this.callee = callee;
         this.openParenthesis = open;

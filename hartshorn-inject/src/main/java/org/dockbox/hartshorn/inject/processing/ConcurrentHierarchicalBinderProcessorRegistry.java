@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,19 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMapCollector;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-
 /**
  * Basic implementation of a {@link HierarchicalBinderProcessorRegistry} that uses a
  * {@link ConcurrentHashMap.KeySetView} to store the registered processors.
  */
-public class ConcurrentHierarchicalBinderProcessorRegistry
-    implements HierarchicalBinderProcessorRegistry {
+public class ConcurrentHierarchicalBinderProcessorRegistry implements HierarchicalBinderProcessorRegistry {
 
     private final Set<HierarchicalBinderPostProcessor> processors = ConcurrentHashMap.newKeySet();
 
@@ -45,30 +43,25 @@ public class ConcurrentHierarchicalBinderProcessorRegistry
     }
 
     @Override
-    public boolean isRegistered(
-        Class<? extends HierarchicalBinderPostProcessor> componentProcessor
-    ) {
+    public boolean isRegistered(Class<? extends HierarchicalBinderPostProcessor> componentProcessor) {
         return this.processors.stream()
-            .anyMatch(processor -> processor.getClass().equals(componentProcessor));
+                .anyMatch(processor -> processor.getClass().equals(componentProcessor));
     }
 
     @Override
-    public <T extends HierarchicalBinderPostProcessor> Option<T> lookup(
-        Class<T> componentProcessor
-    ) {
+    public <T extends HierarchicalBinderPostProcessor> Option<T> lookup(Class<T> componentProcessor) {
         return Option.of(this.processors.stream()
-            .filter(processor -> processor.getClass().equals(componentProcessor))
-            .map(componentProcessor::cast)
-            .findFirst());
+                .filter(processor -> processor.getClass().equals(componentProcessor))
+                .map(componentProcessor::cast)
+                .findFirst());
     }
 
     @Override
     public NavigableMultiMap<Integer, HierarchicalBinderPostProcessor> processors() {
         return this.processors.stream()
-            .collect(MultiMapCollector.toMultiMap(
-                ConcurrentSetTreeMultiMap::new,
-                HierarchicalBinderPostProcessor::priority,
-                Function.identity()
-            ));
+                .collect(MultiMapCollector.toMultiMap(
+                        ConcurrentSetTreeMultiMap::new,
+                        HierarchicalBinderPostProcessor::priority,
+                        Function.identity()));
     }
 }

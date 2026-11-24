@@ -16,19 +16,13 @@
 
 package org.dockbox.hartshorn.spi;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.google.common.collect.ImmutableList;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMapCollector;
-import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -36,16 +30,20 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMapCollector;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-class
-DiscoveryServiceTests {
+class DiscoveryServiceTests {
 
     private static final String IMPLEMENTATION_NAME = "HelloWorldSupplierImplementation";
     private static final String IMPLEMENTATION_QUALIFIED_NAME =
-        "%s.%s".formatted(DiscoveryServiceTests.class.getPackageName(), IMPLEMENTATION_NAME);
+            "%s.%s".formatted(DiscoveryServiceTests.class.getPackageName(), IMPLEMENTATION_NAME);
     private static final String HELLO_WORLD_MESSAGE = "Hello World!";
     private static final String HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE = """
         package org.dockbox.hartshorn.spi;
@@ -63,8 +61,7 @@ DiscoveryServiceTests {
         discoveryService.setAccessible(true);
         try {
             discoveryService.set(null, null);
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -74,13 +71,10 @@ DiscoveryServiceTests {
         ByteClassLoader classLoader = createImplementationAwareClassLoader();
 
         DiscoveryService.instance().addClassLoader(classLoader);
-        DiscoveryService.instance()
-            .override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
 
-        HelloWorldSupplier helloWorldSupplier = DiscoveryService.instance()
-                .discover(HelloWorldSupplier.class);
-        assertThat(helloWorldSupplier.getHelloWorld())
-                .isEqualTo(HELLO_WORLD_MESSAGE);
+        HelloWorldSupplier helloWorldSupplier = DiscoveryService.instance().discover(HelloWorldSupplier.class);
+        assertThat(helloWorldSupplier.getHelloWorld()).isEqualTo(HELLO_WORLD_MESSAGE);
     }
 
     @NonNull
@@ -89,10 +83,11 @@ DiscoveryServiceTests {
 
         // Class is compiled, but not loaded, so we need to load it manually.
         return new ByteClassLoader(
-            new URL[] {},
-            DiscoveryServiceTests.class.getClassLoader(),
-            Collections.singletonMap(IMPLEMENTATION_QUALIFIED_NAME,
-                implementationClassFile.openInputStream().readAllBytes()));
+                new URL[] {},
+                DiscoveryServiceTests.class.getClassLoader(),
+                Collections.singletonMap(
+                        IMPLEMENTATION_QUALIFIED_NAME,
+                        implementationClassFile.openInputStream().readAllBytes()));
     }
 
     @Test
@@ -100,68 +95,64 @@ DiscoveryServiceTests {
         ByteClassLoader classLoader = createImplementationAwareClassLoader();
         DiscoveryService.instance().addClassLoader(classLoader);
 
-        assertThat(
-                DiscoveryService.instance().contains(HelloWorldSupplier.class)
-        ).isFalse();
+        assertThat(DiscoveryService.instance().contains(HelloWorldSupplier.class))
+                .isFalse();
 
-        DiscoveryService.instance()
-            .override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
 
-        assertThat(
-                DiscoveryService.instance().contains(HelloWorldSupplier.class)
-        ).isTrue();
+        assertThat(DiscoveryService.instance().contains(HelloWorldSupplier.class))
+                .isTrue();
     }
 
     @Test
     void discoveryFailsIfNoImplementationExists() {
         assertThatThrownBy(() -> {
-            DiscoveryService.instance().discover(HelloWorldSupplier.class);
-        }).isInstanceOf(ServiceDiscoveryException.class);
+                    DiscoveryService.instance().discover(HelloWorldSupplier.class);
+                })
+                .isInstanceOf(ServiceDiscoveryException.class);
     }
 
     @Test
     void discoveryFailsIfImplementationClassDoesNotExist() {
         assertThatThrownBy(() -> {
-            DiscoveryService.instance()
-                    .override(HelloWorldSupplier.class, "org.dockbox.hartshorn.spi.DoesNotExist");
-            DiscoveryService.instance().discover(HelloWorldSupplier.class);
-        }).isInstanceOf(ServiceDiscoveryException.class);
+                    DiscoveryService.instance()
+                            .override(HelloWorldSupplier.class, "org.dockbox.hartshorn.spi.DoesNotExist");
+                    DiscoveryService.instance().discover(HelloWorldSupplier.class);
+                })
+                .isInstanceOf(ServiceDiscoveryException.class);
     }
 
     @Test
     void overrideFailsIfImplementationNotAssignable() {
         assertThatThrownBy(() -> {
-            DiscoveryService.instance().override(
-                    HelloWorldSupplier.class,
-                    DiscoveryServiceTests.class
-            );
-        }).isInstanceOf(IllegalArgumentException.class);
+                    DiscoveryService.instance().override(HelloWorldSupplier.class, DiscoveryServiceTests.class);
+                })
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void discoveryFailsIfImplementationHasNoDefaultConstructor() {
         assertThatThrownBy(() -> {
-            DiscoveryService.instance().override(
-                    HelloWorldSupplier.class,
-                    HelloWorldSupplierImplementationWithNoDefaultConstructor.class
-            );
-            DiscoveryService.instance().discover(HelloWorldSupplier.class);
-        }).isInstanceOf(IllegalArgumentException.class);
+                    DiscoveryService.instance()
+                            .override(
+                                    HelloWorldSupplier.class,
+                                    HelloWorldSupplierImplementationWithNoDefaultConstructor.class);
+                    DiscoveryService.instance().discover(HelloWorldSupplier.class);
+                })
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void discoveryForMultipleImplementations() throws Exception {
-        DiscoveryService.instance()
-            .override(HelloWorldSupplier.class, HelloWorldSupplierImplementationA.class);
-        DiscoveryService.instance()
-            .override(HelloWorldSupplier.class, HelloWorldSupplierImplementationB.class);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationA.class);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationB.class);
 
         assertThatThrownBy(() -> {
-            DiscoveryService.instance().discover(HelloWorldSupplier.class);
-        }).isInstanceOf(ServiceDiscoveryException.class);
+                    DiscoveryService.instance().discover(HelloWorldSupplier.class);
+                })
+                .isInstanceOf(ServiceDiscoveryException.class);
 
-        Set<HelloWorldSupplier> suppliers =
-            DiscoveryService.instance().discoverAll(HelloWorldSupplier.class);
+        Set<HelloWorldSupplier> suppliers = DiscoveryService.instance().discoverAll(HelloWorldSupplier.class);
         assertThat(suppliers)
                 .hasSize(2)
                 .anyMatch(HelloWorldSupplierImplementationA.class::isInstance)
@@ -170,29 +161,27 @@ DiscoveryServiceTests {
 
     @Test
     void discoveryFailsIfImplementationConstructorFails() {
-        DiscoveryService.instance().override(
-                HelloWorldSupplier.class,
-                HelloWorldSupplierImplementationWithErrorInConstructor.class
-        );
+        DiscoveryService.instance()
+                .override(HelloWorldSupplier.class, HelloWorldSupplierImplementationWithErrorInConstructor.class);
         assertThatThrownBy(() -> {
-            DiscoveryService.instance().discover(HelloWorldSupplier.class);
-        }).isInstanceOf(ServiceDiscoveryException.class);
+                    DiscoveryService.instance().discover(HelloWorldSupplier.class);
+                })
+                .isInstanceOf(ServiceDiscoveryException.class);
     }
 
     private static JavaFileObject compileAndGetRuntimeImplementation() {
         Compilation compilation = Compiler.javac()
-            .compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME,
-                HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE));
+                .compile(JavaFileObjects.forSourceString(
+                        IMPLEMENTATION_NAME, HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE));
 
         assertThat(compilation.errors()).isEmpty();
 
         ImmutableList<JavaFileObject> generatedFiles = compilation.generatedFiles();
         assertThat(generatedFiles).hasSize(1);
 
-        MultiMap<Kind, JavaFileObject> generatedByKind = generatedFiles.stream()
-            .collect(MultiMapCollector.groupingBy(JavaFileObject::getKind));
-        assertThat(generatedByKind.get(Kind.CLASS))
-                        .hasSize(1); // HelloWorldSupplierImplementation.class
+        MultiMap<Kind, JavaFileObject> generatedByKind =
+                generatedFiles.stream().collect(MultiMapCollector.groupingBy(JavaFileObject::getKind));
+        assertThat(generatedByKind.get(Kind.CLASS)).hasSize(1); // HelloWorldSupplierImplementation.class
 
         return CollectionUtilities.first(generatedByKind.get(Kind.CLASS));
     }
@@ -215,8 +204,7 @@ DiscoveryServiceTests {
         }
     }
 
-    public static class HelloWorldSupplierImplementationWithNoDefaultConstructor
-        implements HelloWorldSupplier {
+    public static class HelloWorldSupplierImplementationWithNoDefaultConstructor implements HelloWorldSupplier {
         private final String arg;
 
         public HelloWorldSupplierImplementationWithNoDefaultConstructor(String arg) {
@@ -229,8 +217,7 @@ DiscoveryServiceTests {
         }
     }
 
-    public static class HelloWorldSupplierImplementationWithErrorInConstructor
-        implements HelloWorldSupplier {
+    public static class HelloWorldSupplierImplementationWithErrorInConstructor implements HelloWorldSupplier {
 
         public HelloWorldSupplierImplementationWithErrorInConstructor() {
             throw new RuntimeException("Error in constructor");

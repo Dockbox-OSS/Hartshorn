@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.List;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
@@ -34,12 +39,6 @@ import test.org.dockbox.hartshorn.hsl.support.CheckpointModule;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ForEachStatementInterpreterTests {
 
@@ -48,12 +47,11 @@ public class ForEachStatementInterpreterTests {
 
     public static Stream<Arguments> arrayInputs() {
         return Stream.of(
-            Arguments.of(new Array(new Object[] {"a", "b", "c"})),
-            Arguments.of(List.of("a", "b", "c")),
-            // Note: first array is captured as varargs. Inner array
-            // is the actual input array.
-            Arguments.of(new Object[] {new Object[] {"a", "b", "c"}})
-        );
+                Arguments.of(new Array(new Object[] {"a", "b", "c"})),
+                Arguments.of(List.of("a", "b", "c")),
+                // Note: first array is captured as varargs. Inner array
+                // is the actual input array.
+                Arguments.of(new Object[] {new Object[] {"a", "b", "c"}}));
     }
 
     @ParameterizedTest
@@ -64,12 +62,12 @@ public class ForEachStatementInterpreterTests {
                     checkpoint(item)
                 }
                 """)
-            .statementParser(new ForStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new VariableDeclarationParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineGlobal("items", iterable)
-            .build();
+                .statementParser(new ForStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new VariableDeclarationParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineGlobal("items", iterable)
+                .build();
 
         helper.interpret();
 
@@ -87,14 +85,16 @@ public class ForEachStatementInterpreterTests {
                     checkpoint(item)
                 }
                 """)
-            .statementParser(new ForStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new VariableDeclarationParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineGlobal("items", "not an iterable")
-            .build();
+                .statementParser(new ForStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new VariableDeclarationParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineGlobal("items", "not an iterable")
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.NON_ITERABLE_COLLECTION);
     }
 
@@ -105,12 +105,12 @@ public class ForEachStatementInterpreterTests {
                     checkpoint(item)
                 }
                 """)
-            .statementParser(new ForStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new VariableDeclarationParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineGlobal("items", List.of())
-            .build();
+                .statementParser(new ForStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new VariableDeclarationParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineGlobal("items", List.of())
+                .build();
 
         helper.interpret();
 

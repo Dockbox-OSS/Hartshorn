@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
@@ -27,16 +29,13 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * A common library containing multiple {@link NativeModule native modules} which can be used to
  * invoke native functions. The library is loaded into the interpreter when a
  * {@link NativeFunctionStatement} or {@link ModuleStatement} is encountered.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class NativeLibrary implements CallableNode {
@@ -44,19 +43,12 @@ public class NativeLibrary implements CallableNode {
     private final NativeFunctionStatement declaration;
     private final Map<String, NativeModule> externalModules;
 
-    public NativeLibrary(
-        NativeFunctionStatement declaration,
-        Map<String, NativeModule> externalModules
-    ) {
+    public NativeLibrary(NativeFunctionStatement declaration, Map<String, NativeModule> externalModules) {
         this.declaration = declaration;
         this.externalModules = externalModules;
     }
 
-    public NativeLibrary(
-        NativeFunctionStatement declaration,
-        String moduleName,
-        NativeModule externalModule
-    ) {
+    public NativeLibrary(NativeFunctionStatement declaration, String moduleName, NativeModule externalModule) {
         this(declaration, Map.of(moduleName, externalModule));
     }
 
@@ -70,19 +62,15 @@ public class NativeLibrary implements CallableNode {
     }
 
     @Override
-    public Object call(
-        Token at,
-        Interpreter interpreter,
-        InstanceReference instance,
-        List<Object> arguments
-    ) throws ApplicationException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
+            throws ApplicationException {
         String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(at)
-                .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
-                .build();
+                    .at(at)
+                    .message(DiagnosticMessage.NO_SUCH_MODULE_X, moduleName)
+                    .build();
         }
 
         NativeModule module = this.externalModules.get(moduleName);

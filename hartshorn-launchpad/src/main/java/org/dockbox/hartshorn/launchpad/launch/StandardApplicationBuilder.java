@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
@@ -28,12 +33,6 @@ import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.jspecify.annotations.NonNull;
-
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A standard implementation of {@link ApplicationBuilder}. This implementation uses a
@@ -49,7 +48,7 @@ import java.util.Set;
  * applications.
  *
  * @see ApplicationContextFactory
- * 
+ *
  * @since 0.4.13
  *
  * @author Guus Lieben
@@ -83,13 +82,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      * classes. This is used to prevent the creation of applications that are named after a reserved
      * package.
      */
-    private static final Set<String> RESERVED_PACKAGES = Set.of(
-        "java.",
-        "javax.",
-        "sun.",
-        "com.sun.",
-        "jdk."
-    );
+    private static final Set<String> RESERVED_PACKAGES = Set.of("java.", "javax.", "sun.", "com.sun.", "jdk.");
 
     private final ApplicationContextFactory applicationContextFactory;
     private final ApplicationStartupLogger startupLogger;
@@ -98,34 +91,27 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
     private StandardApplicationBuilder(Configurer configurer) {
         if (configurer.mainClass == null) {
-            throw new IllegalArgumentException(
-                "Main class must be provided or inferred using #inferMainClass()");
+            throw new IllegalArgumentException("Main class must be provided or inferred using #inferMainClass()");
         }
 
         Class<?> mainClass = configurer.mainClass.initialize();
         String violation = this.getActivatorClassViolation(mainClass);
         if (violation != null) {
             throw new InvalidActivationSourceException(
-                "Main class (%s) is not a valid activator: %s".formatted(
-                    mainClass.getName(),
-                    violation
-                )
-            );
+                    "Main class (%s) is not a valid activator: %s".formatted(mainClass.getName(), violation));
         }
 
         SingleElementContext<? extends Class<?>> initializerContext =
-            new ApplicationInitializerContext<>(mainClass).initializeInitial();
+                new ApplicationInitializerContext<>(mainClass).initializeInitial();
 
         ApplicationBuildContext buildContext = new ApplicationBuildContext(
                 mainClass,
                 configurer.arguments.initialize(initializerContext),
-                configurer.applicationName.initialize(initializerContext)
-        );
+                configurer.applicationName.initialize(initializerContext));
 
         SingleElementContext<ApplicationBuildContext> buildInitializerContext =
-            initializerContext.transform(buildContext);
-        this.applicationContextFactory =
-            configurer.applicationContextFactory.initialize(buildInitializerContext);
+                initializerContext.transform(buildContext);
+        this.applicationContextFactory = configurer.applicationContextFactory.initialize(buildInitializerContext);
 
         this.startupLogger = configurer.startupLogger.initialize(buildInitializerContext);
     }
@@ -144,9 +130,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      */
     private String getActivatorClassViolation(Class<?> mainClass) {
         boolean isConcrete = !(mainClass.isPrimitive()
-            || Modifier.isAbstract(mainClass.getModifiers())
-            || mainClass.isInterface()
-            || mainClass.isArray());
+                || Modifier.isAbstract(mainClass.getModifiers())
+                || mainClass.isInterface()
+                || mainClass.isArray());
         if (!isConcrete) {
             return "Main class must be a concrete class.";
         }
@@ -158,8 +144,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         String packageName = mainClass.getPackageName();
         for (String reservedPackage : RESERVED_PACKAGES) {
             if (packageName.startsWith(reservedPackage)) {
-                return "Main class must not be part of reserved package '%s'."
-                    .formatted(reservedPackage);
+                return "Main class must not be part of reserved package '%s'.".formatted(reservedPackage);
             }
         }
 
@@ -169,15 +154,12 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
     @Override
     public synchronized ApplicationContext create() {
         if (this.state == FactoryState.CREATING) {
-            throw new IllegalStateException(
-                "Application factory is already creating a new application context");
+            throw new IllegalStateException("Application factory is already creating a new application context");
         }
         this.state = FactoryState.CREATING;
 
         this.startupLogger.logStartup();
-        Timer.Timing<ApplicationContext> timing = Timer.execute(
-                this.applicationContextFactory::createContext
-        );
+        Timer.Timing<ApplicationContext> timing = Timer.execute(this.applicationContextFactory::createContext);
         ApplicationContext applicationContext = timing.result();
         this.startupLogger.logStarted(timing.duration());
 
@@ -215,17 +197,16 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
     public static class Configurer {
 
         // checkstyle:off LineLength
-        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory =
-            StandardApplicationContextFactory.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory>
+                applicationContextFactory = StandardApplicationContextFactory.create(Customizer.useDefaults());
 
-        private final LazyStreamableConfigurer<Class<?>, String> arguments =
-            LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();
 
         private ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger =
-            ApplicationStartupLogger.create(Customizer.useDefaults());
+                ApplicationStartupLogger.create(Customizer.useDefaults());
 
         private ContextualInitializer<Class<?>, String> applicationName =
-            ContextualInitializer.of(Class::getSimpleName);
+                ContextualInitializer.of(Class::getSimpleName);
         // checkstyle:on LineLength
 
         private Initializer<Class<?>> mainClass;
@@ -263,12 +244,8 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          *
          * @return This {@link Configurer} instance.
          */
-        public Configurer applicationContextFactory(
-            Initializer<ApplicationContextFactory> applicationContextFactory
-        ) {
-            return this.applicationContextFactory(
-                ContextualInitializer.of(applicationContextFactory)
-            );
+        public Configurer applicationContextFactory(Initializer<ApplicationContextFactory> applicationContextFactory) {
+            return this.applicationContextFactory(ContextualInitializer.of(applicationContextFactory));
         }
 
         /**
@@ -288,9 +265,8 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          * @see ApplicationBuildContext
          */
         public Configurer applicationContextFactory(
-            ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory>
-                applicationContextFactory
-        ) {
+                ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory>
+                        applicationContextFactory) {
             this.applicationContextFactory = applicationContextFactory;
             return this;
         }
@@ -305,8 +281,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          * @return This {@link Configurer} instance.
          */
         public Configurer startupLogger(
-            ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger
-        ) {
+                ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger) {
             this.startupLogger = startupLogger;
             return this;
         }
@@ -385,17 +360,16 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
                 skip.addAll(Arrays.asList(namesToSkip));
 
                 StackTraceElement target = Arrays.stream(stackTrace)
-                    .filter(element -> !skip.contains(element.getClassName()))
-                    .filter(element -> !element.getClassName().contains("lambda$"))
-                    .filter(element -> !element.getClassName().contains("$lambda"))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException(
-                        "Could not deduce main class, no suitable stack trace element found"));
+                        .filter(element -> !skip.contains(element.getClassName()))
+                        .filter(element -> !element.getClassName().contains("lambda$"))
+                        .filter(element -> !element.getClassName().contains("$lambda"))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Could not deduce main class, no suitable stack trace element found"));
 
                 try {
                     return Class.forName(target.getClassName());
-                }
-                catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     throw new IllegalStateException("Could not deduce main class", e);
                 }
             });
@@ -404,15 +378,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         @NonNull
         private static Set<String> getClassNamesToSkipForInferring() {
             return Set.of(
-                StandardApplicationBuilder.class.getName(),
-                Configurer.class.getName(),
-                ApplicationBuilder.class.getName(),
-                HartshornApplication.class.getName(),
-                Customizer.class.getName(),
-                Thread.class.getName(),
-                HartshornApplication.ApplicationBootstrap.class.getName(),
-                HartshornApplicationConfigurer.class.getName()
-            );
+                    StandardApplicationBuilder.class.getName(),
+                    Configurer.class.getName(),
+                    ApplicationBuilder.class.getName(),
+                    HartshornApplication.class.getName(),
+                    Customizer.class.getName(),
+                    Thread.class.getName(),
+                    HartshornApplication.ApplicationBootstrap.class.getName(),
+                    HartshornApplicationConfigurer.class.getName());
         }
 
         /**

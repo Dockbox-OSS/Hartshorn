@@ -16,29 +16,30 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.jspecify.annotations.Nullable;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void postConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         if (instance instanceof NonProcessableType) {
             assertThatCode(() -> {
-                processingContext.type()
-                    .fields()
-                    .named("nonNullIfProcessed")
-                    .get()
-                    .set(instance, "processed");
-            }).doesNotThrowAnyException();
+                        processingContext
+                                .type()
+                                .fields()
+                                .named("nonNullIfProcessed")
+                                .get()
+                                .set(instance, "processed");
+                    })
+                    .doesNotThrowAnyException();
         }
     }
 }

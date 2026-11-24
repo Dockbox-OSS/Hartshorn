@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.inject.InjectorEnvironment;
-import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
 
 /**
  * Annotation used to indicate a method will return a provided object. The underlying method should
@@ -51,5 +50,4 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Provided {
-}
+public @interface Provided {}

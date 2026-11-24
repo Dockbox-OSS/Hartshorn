@@ -27,17 +27,14 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * {@link PropertyValue#defaultValue()} if no value is found.
  *
  * @see InjectPropertyParameterResolver
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class PropertyParameterLoaderRule extends InjectParameterResolverParameterLoaderRule {
 
-    public PropertyParameterLoaderRule(
-            ComponentProvider componentProvider,
-            InjectorConfiguration configuration
-    ) {
+    public PropertyParameterLoaderRule(ComponentProvider componentProvider, InjectorConfiguration configuration) {
         super(new InjectPropertyParameterResolver(componentProvider), configuration);
     }
 }

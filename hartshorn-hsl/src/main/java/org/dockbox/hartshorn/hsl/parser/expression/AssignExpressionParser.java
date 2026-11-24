@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,7 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 public class AssignExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         Expression expression = chain.next(parser, validator);
 
         if (parser.match(BaseTokenType.EQUAL)) {
@@ -67,18 +63,16 @@ public class AssignExpressionParser implements ExpressionParser {
             if (expression instanceof VariableExpression variableExpression) {
                 Token name = variableExpression.name();
                 return new AssignExpression(name, value);
-            }
-            else if (expression instanceof ArrayGetExpression arrayGetExpression) {
+            } else if (expression instanceof ArrayGetExpression arrayGetExpression) {
                 Token name = arrayGetExpression.name();
                 return new ArraySetExpression(name, arrayGetExpression.index(), value);
-            }
-            else if (expression instanceof GetExpression getExpression) {
+            } else if (expression instanceof GetExpression getExpression) {
                 return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
-                .at(equals)
-                .build();
+                    .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
+                    .at(equals)
+                    .build();
         }
         return expression;
     }

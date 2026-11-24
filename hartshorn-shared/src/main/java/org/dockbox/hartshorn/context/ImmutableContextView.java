@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.context;
 
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Immutable wrapper for {@link Context contexts}.
@@ -74,14 +73,11 @@ public class ImmutableContextView implements ContextView {
             MultiMap<String, ContextView> namedContexts = defaultContext.namedContexts();
             Set<ContextView> unnamedContexts = defaultContext.unnamedContexts();
             return ObjectDescriber.of(this)
-                .field("namedContexts", namedContexts)
-                .field("unnamedContexts", unnamedContexts)
-                .describe();
-        }
-        else {
-            return ObjectDescriber.of(this)
-                .field("contexts", this.contexts())
-                .describe();
+                    .field("namedContexts", namedContexts)
+                    .field("unnamedContexts", unnamedContexts)
+                    .describe();
+        } else {
+            return ObjectDescriber.of(this).field("contexts", this.contexts()).describe();
         }
     }
 }

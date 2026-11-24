@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,27 +33,27 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * do not require further enhancement.
  *
  * @see SingletonCacheComponentProvider#singletonCache()
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class SingletonCacheComponentProviderStrategy implements ComponentProviderStrategy {
 
     @Override
     public <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException, ApplicationException {
-        if (chain.componentProvider() instanceof SingletonCacheComponentProvider
-            singletonCacheComponentProvider) {
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ComponentResolutionException, ApplicationException {
+        if (chain.componentProvider() instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
             SingletonCache singletonCache = singletonCacheComponentProvider.singletonCache();
             if (singletonCache.contains(componentKey)) {
-                T instance = singletonCache.get(componentKey)
-                    .orElseThrow(() -> new ComponentResolutionException("No instance found for key "
-                        + componentKey
-                        + ", but the key was present in the singleton cache"));
+                T instance = singletonCache
+                        .get(componentKey)
+                        .orElseThrow(() -> new ComponentResolutionException("No instance found for key "
+                                + componentKey
+                                + ", but the key was present in the singleton cache"));
                 ObjectContainer<T> container = ComponentObjectContainer.ofSingleton(instance);
                 container.processed(true);
                 return container;

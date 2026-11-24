@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.web.route.rules;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import org.dockbox.hartshorn.inject.util.AbstractConverterCapableParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.annotation.Annotation;
 
 /**
  * An abstract {@link ParameterLoaderRule} that loads parameter values from a
@@ -37,19 +36,14 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractWebRequestParameterLoaderRule<
-        A extends Annotation,
-        C extends ParameterLoaderContext
-        > extends AbstractConverterCapableParameterLoaderRule<C> {
+public abstract class AbstractWebRequestParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext>
+        extends AbstractConverterCapableParameterLoaderRule<C> {
 
     private final Class<A> annotationType;
     private final HttpServletRequest request;
 
     protected AbstractWebRequestParameterLoaderRule(
-            Class<A> annotationType,
-            HttpServletRequest request,
-            ConversionService conversionService
-    ) {
+            Class<A> annotationType, HttpServletRequest request, ConversionService conversionService) {
         super(conversionService);
         this.annotationType = annotationType;
         this.request = request;
@@ -79,18 +73,11 @@ public abstract class AbstractWebRequestParameterLoaderRule<
     }
 
     @Override
-    public <T> Object loadRawParameterValue(
-        ParameterView<T> parameter,
-        int index,
-        C context,
-        Object... args
-    ) {
+    public <T> Object loadRawParameterValue(ParameterView<T> parameter, int index, C context, Object... args) {
         A annotation = parameter.annotations().get(this.annotationType).orElseThrow(() -> {
-            return new IllegalStateException("Parameter is not annotated with @%s".formatted(
-                    this.annotationType.getSimpleName()
-            ));
+            return new IllegalStateException(
+                    "Parameter is not annotated with @%s".formatted(this.annotationType.getSimpleName()));
         });
-        return this.lookupValue(this.request, annotation)
-                .orElseGet(() -> this.getDefaultValue(annotation));
+        return this.lookupValue(this.request, annotation).orElseGet(() -> this.getDefaultValue(annotation));
     }
 }

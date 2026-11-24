@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 
 /**
  * An introspection environment that uses reflection to determine whether parameter names are
@@ -39,16 +38,11 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
         if (this.parameterNamesAvailable == Tristate.UNDEFINED) {
             try {
                 Method method = ReflectionIntrospectionEnvironment.class.getDeclaredMethod(
-                    "$__hartshorn$__ignore",
-                    Object.class
-                );
+                        "$__hartshorn$__ignore", Object.class);
                 Parameter[] parameters = method.getParameters();
                 String name = parameters[0].getName();
-                this.parameterNamesAvailable = "parameterCheck".equals(name)
-                    ? Tristate.TRUE
-                    : Tristate.FALSE;
-            }
-            catch (NoSuchMethodException e) {
+                this.parameterNamesAvailable = "parameterCheck".equals(name) ? Tristate.TRUE : Tristate.FALSE;
+            } catch (NoSuchMethodException e) {
                 this.parameterNamesAvailable = Tristate.FALSE;
             }
         }
@@ -58,8 +52,7 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
     @SuppressWarnings({"unused", "DollarSignInName"})
     private void $__hartshorn$__ignore(Object parameterCheck) {
         throw new UnsupportedOperationException(
-            "This method is a placeholder used to discover whether parameter names are available. "
-                + "It should never be called."
-        );
+                "This method is a placeholder used to discover whether parameter names are available. "
+                        + "It should never be called.");
     }
 }

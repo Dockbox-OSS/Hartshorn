@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Optional;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToOptionConverter;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class OptionalToOptionConverterTests {
 

@@ -39,10 +39,7 @@ public class AdditionalTargetTypeContext<T> extends DefaultContext {
         this.parameterizableType = ParameterizableType.create(typeView);
     }
 
-    public AdditionalTargetTypeContext(
-        Class<T> targetType,
-        ParameterizableType parameterizableType
-    ) {
+    public AdditionalTargetTypeContext(Class<T> targetType, ParameterizableType parameterizableType) {
         this.targetType = targetType;
         this.parameterizableType = parameterizableType;
     }

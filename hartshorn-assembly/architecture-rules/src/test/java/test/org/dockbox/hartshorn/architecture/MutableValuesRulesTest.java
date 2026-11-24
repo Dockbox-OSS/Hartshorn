@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
+
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaCodeUnit;
 import com.tngtech.archunit.core.domain.JavaField;
@@ -26,14 +30,9 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 
 @AnalyzeClasses(packages = ArchitectureRuleConstants.HARTSHORN_PACKAGE)
 public class MutableValuesRulesTest {
@@ -45,7 +44,8 @@ public class MutableValuesRulesTest {
      */
     @ArchTest
     static final ArchRule publicMethodsShouldNotExposeConcreteCollectionTypes = methods()
-            .that().arePublic()
+            .that()
+            .arePublic()
             .should(notReturnConcreteCollectionTypes())
             .andShould(notAcceptConcreteCollectionTypes());
 
@@ -55,18 +55,16 @@ public class MutableValuesRulesTest {
      * the future.
      */
     @ArchTest
-    static final ArchRule publicConstructorsShouldNotExposeConcreteCollectionTypes = constructors()
-            .that().arePublic()
-            .should(notAcceptConcreteCollectionTypes());
+    static final ArchRule publicConstructorsShouldNotExposeConcreteCollectionTypes =
+            constructors().that().arePublic().should(notAcceptConcreteCollectionTypes());
 
     /**
      * No public fields should have concrete collection types, as this can lead to unexpected
      * behavior and makes it difficult to change the implementation of the field in the future.
      */
     @ArchTest
-    static final ArchRule publicFieldsShouldNotExposeConcreteCollectionTypes = fields()
-            .that().arePublic()
-            .should(notHaveConcreteCollectionType());
+    static final ArchRule publicFieldsShouldNotExposeConcreteCollectionTypes =
+            fields().that().arePublic().should(notHaveConcreteCollectionType());
 
     private static ArchCondition<JavaMethod> notReturnConcreteCollectionTypes() {
         return new ArchCondition<>("not return concrete collection types") {
@@ -79,11 +77,7 @@ public class MutableValuesRulesTest {
                     events.add(SimpleConditionEvent.violated(
                             method,
                             "%s returns concrete collection type %s"
-                                    .formatted(
-                                            method.getFullName(),
-                                            returnType.getName()
-                                    )
-                    ));
+                                    .formatted(method.getFullName(), returnType.getName())));
                 }
             }
         };
@@ -99,11 +93,7 @@ public class MutableValuesRulesTest {
                         events.add(SimpleConditionEvent.violated(
                                 codeUnit,
                                 "%s accepts concrete collection type %s"
-                                        .formatted(
-                                                codeUnit.getFullName(),
-                                                parameterType.getName()
-                                        )
-                        ));
+                                        .formatted(codeUnit.getFullName(), parameterType.getName())));
                     }
                 }
             }
@@ -120,25 +110,17 @@ public class MutableValuesRulesTest {
                 if (isConcreteCollectionType(fieldType)) {
                     events.add(SimpleConditionEvent.violated(
                             field,
-                            "%s has concrete collection type %s"
-                                    .formatted(
-                                            field.getFullName(),
-                                            fieldType.getName()
-                                    )
-                    ));
+                            "%s has concrete collection type %s".formatted(field.getFullName(), fieldType.getName())));
                 }
             }
         };
     }
 
     private static boolean isConcreteCollectionType(JavaClass type) {
-        return isCollectionType(type)
-                && !type.isInterface()
-                && !type.isEquivalentTo(Properties.class);
+        return isCollectionType(type) && !type.isInterface() && !type.isEquivalentTo(Properties.class);
     }
 
     private static boolean isCollectionType(JavaClass type) {
-        return type.isAssignableTo(Collection.class)
-                || type.isAssignableTo(Map.class);
+        return type.isAssignableTo(Collection.class) || type.isAssignableTo(Map.class);
     }
 }

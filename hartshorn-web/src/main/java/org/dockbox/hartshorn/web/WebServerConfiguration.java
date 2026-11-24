@@ -20,6 +20,10 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
@@ -70,15 +74,10 @@ import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.WildcardPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
-import org.dockbox.hartshorn.web.support.servlet.StaticResourceServlet;
 import org.dockbox.hartshorn.web.support.jackson.JacksonObjectMapperMediaTypeRegistry;
+import org.dockbox.hartshorn.web.support.servlet.StaticResourceServlet;
 import org.slf4j.Logger;
 import tools.jackson.databind.ObjectMapper;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Configuration class for setting up the web server components, including request filters,
@@ -109,12 +108,9 @@ public class WebServerConfiguration {
     @RequiresProperty(name = "hartshorn.web.logging.enabled", withValue = "true")
     public Filter requestLoggingFilter(
             @Required(false) RequestLoggingFilter.Builder builder,
-            @LoggerMeta(context = RequestLoggingFilter.class) Logger logger
-    ) {
-        return Objects.requireNonNullElseGet(
-                builder,
-                RequestLoggingFilter::builder
-        ).build(logger);
+            @LoggerMeta(context = RequestLoggingFilter.class) Logger logger) {
+        return Objects.requireNonNullElseGet(builder, RequestLoggingFilter::builder)
+                .build(logger);
     }
 
     /**
@@ -129,8 +125,7 @@ public class WebServerConfiguration {
     @SupportPriority
     @RequiresAbsentBinding(ServerPortProvider.class)
     public ServerPortProvider serverPortProvider(
-            @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port
-    ) {
+            @PropertyValue(name = "hartshorn.web.port", defaultValue = "8080") int port) {
         return () -> port;
     }
 
@@ -142,9 +137,7 @@ public class WebServerConfiguration {
      */
     @Singleton
     @SupportPriority
-    public HandlerMappingRegistry pathRouteRegistry(
-            @Fuzzy ComponentCollection<RouterCustomizer> customizers
-    ) {
+    public HandlerMappingRegistry pathRouteRegistry(@Fuzzy ComponentCollection<RouterCustomizer> customizers) {
         HandlerMappingRegistry registry = new SimpleHandlerMappingRegistry();
         HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry);
         customizers.forEach(customizer -> customizer.configure(registrar));
@@ -173,16 +166,9 @@ public class WebServerConfiguration {
             ConversionService conversionService,
             InjectionCapableApplication application,
             ResponseHandler responseHandler,
-            PathParser pathParser
-    ) {
+            PathParser pathParser) {
         return new DeclarativeRouterPathConfigurer(
-                basePath,
-                componentRegistry,
-                conversionService,
-                application,
-                responseHandler,
-                pathParser
-        );
+                basePath, componentRegistry, conversionService, application, responseHandler, pathParser);
     }
 
     /**
@@ -196,10 +182,7 @@ public class WebServerConfiguration {
     @Singleton
     @SupportPriority
     public PathSpec basePathSpec(
-            @PropertyValue(name = "hartshorn.web.route.base-path")
-            String basePath,
-            PathParser pathParser
-    ) {
+            @PropertyValue(name = "hartshorn.web.route.base-path") String basePath, PathParser pathParser) {
         if (basePath.isEmpty()) {
             return PathSpec.empty();
         }
@@ -219,12 +202,9 @@ public class WebServerConfiguration {
     @SupportPriority
     public ResponseHandler responseHandler(
             HttpMessageConverter<?> fallbackConverter,
-            @Fuzzy ComponentCollection<HttpMessageConverter<?>> messageConverters
-    ) {
+            @Fuzzy ComponentCollection<HttpMessageConverter<?>> messageConverters) {
         return new SimpleResponseHandler(
-                fallbackConverter,
-                messageConverters.stream().toList()
-        );
+                fallbackConverter, messageConverters.stream().toList());
     }
 
     /**
@@ -307,9 +287,7 @@ public class WebServerConfiguration {
     @Singleton
     @CompositeMember
     public CategorizedDiagnosticsReporter webServerDiagnosticsReporter(
-            WebServer webServer,
-            HandlerMappingRegistry handlerMappingRegistry
-    ) {
+            WebServer webServer, HandlerMappingRegistry handlerMappingRegistry) {
         return new WebServerDiagnosticsReporter(webServer, handlerMappingRegistry);
     }
 
@@ -322,11 +300,8 @@ public class WebServerConfiguration {
     @Singleton
     @SupportPriority
     public PathParser pathParser() {
-        return new SimplePathParser('/', List.of(
-                WildcardPathPartSpec::parse,
-                ParameterPathPartSpec::parse,
-                StaticPathPartSpec::parse
-        ));
+        return new SimplePathParser(
+                '/', List.of(WildcardPathPartSpec::parse, ParameterPathPartSpec::parse, StaticPathPartSpec::parse));
     }
 
     /**
@@ -347,35 +322,20 @@ public class WebServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    @RequiresProperty(
-            name = "hartshorn.web.resources.static.enabled",
-            withValue = "true",
-            matchIfMissing = true
-    )
+    @RequiresProperty(name = "hartshorn.web.resources.static.enabled", withValue = "true", matchIfMissing = true)
     public Customizer<ServletRegistrar> contextStaticPathCustomizer(
             ResourceLookup resourceLookup,
-            @PropertyValue(
-                    name = "hartshorn.web.resources.static.path",
-                    defaultValue = "/static"
-            )
-            String staticPath,
+            @PropertyValue(name = "hartshorn.web.resources.static.path", defaultValue = "/static") String staticPath,
             PathParser pathParser,
-            @PropertyValue(
-                    name = "hartshorn.web.resources.static.location",
-                    defaultValue = "classpath:static"
-            )
-            String staticLocation
-    ) {
+            @PropertyValue(name = "hartshorn.web.resources.static.location", defaultValue = "classpath:static")
+                    String staticLocation) {
         if (!staticPath.endsWith("/*")) {
             // Ensure capture at end to allow all static resources to be provided.
             staticPath = staticPath + "/*";
         }
         PathSpec pathSpec = pathParser.parse(staticPath);
         return context -> {
-            Servlet servlet = new StaticResourceServlet(
-                    resourceLookup,
-                    staticLocation
-            );
+            Servlet servlet = new StaticResourceServlet(resourceLookup, staticLocation);
             context.register(pathSpec, servlet);
         };
     }
@@ -392,17 +352,12 @@ public class WebServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    public Customizer<ServletRegistrar> contextCustomizer(
-            HandlerMappingRegistry mappingRegistry
-    ) {
+    public Customizer<ServletRegistrar> contextCustomizer(HandlerMappingRegistry mappingRegistry) {
         return context -> {
             MultiMap<PathSpec, PathHandlerSpec> mappings = mappingRegistry.mappings();
             for (PathSpec pathSpec : mappings.keySet()) {
                 Map<HttpMethod, RequestHandler> handlerMap = mappings.get(pathSpec).stream()
-                        .collect(Collectors.toMap(
-                                PathHandlerSpec::method,
-                                PathHandlerSpec::handler
-                        ));
+                        .collect(Collectors.toMap(PathHandlerSpec::method, PathHandlerSpec::handler));
                 Servlet servlet = new RequestRoutingServlet(pathSpec, handlerMap);
                 context.register(pathSpec, servlet);
             }
@@ -419,8 +374,7 @@ public class WebServerConfiguration {
     @Singleton
     @SupportPriority
     public ErrorHandlerRegistry errorHandlerRegistry(
-            @Fuzzy ComponentCollection<Customizer<ErrorHandlerRegistry>> customizers
-    ) {
+            @Fuzzy ComponentCollection<Customizer<ErrorHandlerRegistry>> customizers) {
         ErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
         for (Customizer<ErrorHandlerRegistry> customizer : customizers) {
             customizer.configure(registry);
@@ -438,16 +392,12 @@ public class WebServerConfiguration {
      */
     @Singleton
     @SupportPriority
-    public RequestErrorHandler<Throwable> defaultRequestErrorHandler(
-            ErrorHandlerRegistry errorHandlerRegistry
-    ) {
-        return new ConfigurableRequestErrorHandler(
-                errorHandlerRegistry,
-                (exception, _, response) -> {
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.code());
-                    response.getWriter().write("Internal Server Error: " + exception.getMessage());
-                    response.flushBuffer();
-                });
+    public RequestErrorHandler<Throwable> defaultRequestErrorHandler(ErrorHandlerRegistry errorHandlerRegistry) {
+        return new ConfigurableRequestErrorHandler(errorHandlerRegistry, (exception, _, response) -> {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.code());
+            response.getWriter().write("Internal Server Error: " + exception.getMessage());
+            response.flushBuffer();
+        });
     }
 
     /**
@@ -472,22 +422,15 @@ public class WebServerConfiguration {
          * @return A response writer backed by Jackson.
          */
         @Singleton
-        @RequiresProperty(
-                name = "hartshorn.web.support.jackson.enabled",
-                withValue = "true",
-                matchIfMissing = true
-        )
+        @RequiresProperty(name = "hartshorn.web.support.jackson.enabled", withValue = "true", matchIfMissing = true)
         @SupportPriority
         public HttpMessageConverter<?> jacksonResponseHandler(
-                ObjectMapper objectMapper,
-                JacksonObjectMapperMediaTypeRegistry mediaTypeRegistry
-        ) {
+                ObjectMapper objectMapper, JacksonObjectMapperMediaTypeRegistry mediaTypeRegistry) {
             String formatName = objectMapper.tokenStreamFactory().getFormatName();
-            MediaType mediaType = mediaTypeRegistry.getMediaTypeForFormat(
-                    formatName
-            ).orElseThrow(() -> new IllegalArgumentException(
-                    "Unsupported ObjectMapper format: %s".formatted(formatName)
-            ));
+            MediaType mediaType = mediaTypeRegistry
+                    .getMediaTypeForFormat(formatName)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Unsupported ObjectMapper format: %s".formatted(formatName)));
             return new JacksonHttpMessageConverter(objectMapper, mediaType);
         }
 
@@ -502,9 +445,7 @@ public class WebServerConfiguration {
         @Singleton
         @SupportPriority
         public JacksonObjectMapperMediaTypeRegistry jacksonObjectMapperMediaTypeRegistry(
-                @Fuzzy
-                ComponentCollection<Customizer<JacksonObjectMapperMediaTypeRegistry>> customizers
-        ) {
+                @Fuzzy ComponentCollection<Customizer<JacksonObjectMapperMediaTypeRegistry>> customizers) {
             var registry = new JacksonObjectMapperMediaTypeRegistry();
             for (Customizer<JacksonObjectMapperMediaTypeRegistry> customizer : customizers) {
                 customizer.configure(registry);

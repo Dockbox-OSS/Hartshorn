@@ -51,9 +51,9 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
 
     @Override
     public JsonNode visit(ArrayNode<?> node) {
-        return JsonNodeFactory.instance.arrayNode().addAll(node.value().stream()
-                .map(this::getJsonNode)
-                .toList());
+        return JsonNodeFactory.instance
+                .arrayNode()
+                .addAll(node.value().stream().map(this::getJsonNode).toList());
     }
 
     private JsonNode getJsonNode(Object value) {
@@ -66,8 +66,9 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
             case Boolean booleanValue -> JsonNodeFactory.instance.booleanNode(booleanValue);
             case Node<?> nodeValue -> nodeValue.accept(this);
             case null -> JsonNodeFactory.instance.nullNode();
-            default -> throw new IllegalArgumentException("Unsupported type " + value.getClass()
-                .getName());
+            default ->
+                throw new IllegalArgumentException(
+                        "Unsupported type " + value.getClass().getName());
         };
     }
 }

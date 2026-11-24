@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,7 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
         return visited;
     }
 
-    private void visitSingleRoot(
-        Set<GraphNode<T>> visited,
-        GraphNode<T> root
-    ) throws GraphException {
+    private void visitSingleRoot(Set<GraphNode<T>> visited, GraphNode<T> root) throws GraphException {
         Deque<GraphNode<T>> stack = new ArrayDeque<>();
         stack.push(root);
         boolean atNextPathStart = true;
@@ -60,11 +57,7 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
     }
 
     private boolean visitNextNode(
-        Deque<GraphNode<T>> stack,
-        Set<GraphNode<T>> visited,
-        boolean atNextPathStart,
-        GraphNode<T> node
-    ) {
+            Deque<GraphNode<T>> stack, Set<GraphNode<T>> visited, boolean atNextPathStart, GraphNode<T> node) {
         // Do not use children directly, as we want to ensure they can be visited
         // before considering them for the next node.
         Set<GraphNode<T>> visitableChildren = this.visitableChildren(node, visited);
@@ -72,8 +65,7 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
         if (visitableChildren.isEmpty()) {
             this.afterPathVisited();
             atNextPathStart = true;
-        }
-        else {
+        } else {
             for (GraphNode<T> visitableChild : visitableChildren) {
                 stack.push(visitableChild);
             }
@@ -88,9 +80,7 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
     private Set<GraphNode<T>> visitableChildren(GraphNode<T> node, Set<GraphNode<T>> visited) {
         Set<GraphNode<T>> visitableChildren = new HashSet<>();
         for (GraphNode<T> child : node.children()) {
-            if (child instanceof ContainableGraphNode<T> containable
-                && visited.containsAll(containable.parents())
-            ) {
+            if (child instanceof ContainableGraphNode<T> containable && visited.containsAll(containable.parents())) {
                 visitableChildren.add(child);
             }
         }

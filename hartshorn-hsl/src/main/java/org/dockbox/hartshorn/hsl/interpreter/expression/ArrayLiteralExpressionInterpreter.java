@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-
-import java.util.List;
 
 /**
  * Interpreter for {@link ArrayLiteralExpression} nodes.
@@ -31,8 +30,7 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class ArrayLiteralExpressionInterpreter
-    implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
+public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
 
     @Override
     public Object interpret(ArrayLiteralExpression node, Interpreter interpreter) {

@@ -38,11 +38,7 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 public class TernaryExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         Expression expression = chain.next(parser, validator);
 
         if (parser.match(BaseTokenType.QUESTION_MARK)) {
@@ -54,10 +50,9 @@ public class TernaryExpressionParser implements ExpressionParser {
                 return new TernaryExpression(expression, question, firstExp, colon, secondExp);
             }
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.EXPECTED_EXPRESSION_AFTER_X,
-                    BaseTokenType.COLON.representation())
-                .at(colon)
-                .build();
+                    .message(DiagnosticMessage.EXPECTED_EXPRESSION_AFTER_X, BaseTokenType.COLON.representation())
+                    .at(colon)
+                    .build();
         }
         return expression;
     }

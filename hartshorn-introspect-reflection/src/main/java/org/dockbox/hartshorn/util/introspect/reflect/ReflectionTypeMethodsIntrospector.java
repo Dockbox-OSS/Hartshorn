@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -31,6 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Reflection-based implementation of {@link TypeMethodsIntrospector}.
@@ -62,34 +61,35 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
         List<Method> methods = List.of(this.type.type().getMethods());
         if (!this.type.superClass().isVoid()) {
             List<Method> superClassMethods = this.type.superClass().methods().all().stream()
-                .filter(method -> method.modifiers().isPublic() || method.modifiers().isProtected())
-                .flatMap(method -> method.method().stream())
-                .toList();
+                    .filter(method ->
+                            method.modifiers().isPublic() || method.modifiers().isProtected())
+                    .flatMap(method -> method.method().stream())
+                    .toList();
             allMethods.addAll(superClassMethods);
         }
         allMethods.addAll(declaredMethods);
         allMethods.addAll(methods);
 
         List<? extends MethodView<T, ?>> introspectors = allMethods.stream()
-            .map(this.introspector::introspect)
-            .map(method -> (MethodView<T, ?>) method)
-            .toList();
+                .map(this.introspector::introspect)
+                .map(method -> (MethodView<T, ?>) method)
+                .toList();
 
         List<? extends MethodView<T, ?>> definedMethods = introspectors.stream()
-            .filter(method -> method.method().present())
-            .toList();
+                .filter(method -> method.method().present())
+                .toList();
 
         this.declaredMethods = definedMethods.stream()
-            .filter(method -> declaredMethods.contains(method.method().get()))
-            .collect(Collectors.toList());
+                .filter(method -> declaredMethods.contains(method.method().get()))
+                .collect(Collectors.toList());
 
         this.declaredAndInheritedMethods = definedMethods.stream()
-            .filter(method -> !method.method().get().isBridge())
-            .collect(Collectors.toList());
+                .filter(method -> !method.method().get().isBridge())
+                .collect(Collectors.toList());
 
         this.bridgeMethods = definedMethods.stream()
-            .filter(method -> method.method().get().isBridge())
-            .collect(Collectors.toList());
+                .filter(method -> method.method().get().isBridge())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -133,22 +133,22 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
     @Override
     public List<MethodView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-            .filter(method -> method.annotations().has(annotation))
-            .toList();
+                .filter(method -> method.annotations().has(annotation))
+                .toList();
     }
 
     @Override
     public List<MethodView<T, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
         return this.all().stream()
-            .filter(method -> method.annotations().hasAny(annotations))
-            .toList();
+                .filter(method -> method.annotations().hasAny(annotations))
+                .toList();
     }
 
     @Override
     public List<MethodView<T, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
         return this.all().stream()
-            .filter(method -> method.annotations().hasAll(annotations))
-            .toList();
+                .filter(method -> method.annotations().hasAll(annotations))
+                .toList();
     }
 
     @Override

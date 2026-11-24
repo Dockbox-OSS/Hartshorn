@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,17 +39,16 @@ import org.dockbox.hartshorn.test.annotations.TestProfiles;
  *
  * @author Guus Lieben
  */
-public record FromTestAnnotationProfileNameResolver(
-    List<AnnotatedElement> testComponentSources
-) implements ProfileNameResolver {
+public record FromTestAnnotationProfileNameResolver(List<AnnotatedElement> testComponentSources)
+        implements ProfileNameResolver {
 
     @Override
     public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return this.testComponentSources.stream()
-            .filter(element -> element.isAnnotationPresent(TestProfiles.class))
-            .map(element -> element.getAnnotation(TestProfiles.class))
-            .map(TestProfiles::value)
-            .flatMap(Stream::of)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+                .filter(element -> element.isAnnotationPresent(TestProfiles.class))
+                .map(element -> element.getAnnotation(TestProfiles.class))
+                .map(TestProfiles::value)
+                .flatMap(Stream::of)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

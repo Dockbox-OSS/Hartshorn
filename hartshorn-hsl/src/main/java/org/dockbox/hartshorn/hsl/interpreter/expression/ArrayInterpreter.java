@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.function.BiFunction;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -26,8 +27,6 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.function.BiFunction;
-
 /**
  * Base interpreter for array access expressions.
  *
@@ -35,7 +34,7 @@ import java.util.function.BiFunction;
  * @param <T> the specific AST node type this interpreter handles
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
@@ -52,18 +51,19 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
      * @return the converted array element
      */
     protected Object accessArray(
-        Interpreter interpreter, Token name, Expression indexExpression,
-        BiFunction<Array, Integer, Object> converter
-    ) {
+            Interpreter interpreter,
+            Token name,
+            Expression indexExpression,
+            BiFunction<Array, Integer, Object> converter) {
         Array array = (Array) interpreter.visitingScope().get(name);
         Number indexValue = (Number) interpreter.evaluate(indexExpression);
         int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
-                .at(indexExpression)
-                .build();
+                    .message(DiagnosticMessage.ARRAY_INDEX_OUT_OF_BOUNDS, index, array.length())
+                    .at(indexExpression)
+                    .build();
         }
 
         return converter.apply(array, index);

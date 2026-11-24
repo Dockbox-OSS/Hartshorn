@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class statement, which represents the declaration of a class. A class may have an optional
@@ -57,7 +56,7 @@ import java.util.List;
  * dynamic, allowing additional properties to be added at runtime.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ClassStatement extends FinalizableStatement implements NamedNode {
@@ -68,22 +67,17 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     private final boolean isDynamic;
 
     public ClassStatement(
-        Token name,
-        VariableExpression superClass,
-        List<ClassMemberStatement> members,
-        boolean isDynamic
-    ) {
+            Token name, VariableExpression superClass, List<ClassMemberStatement> members, boolean isDynamic) {
         this(name, false, name, superClass, members, isDynamic);
     }
 
     public ClassStatement(
-        ASTNode at,
-        boolean finalized,
-        Token name,
-        VariableExpression superClass,
-        List<ClassMemberStatement> members,
-        boolean isDynamic
-    ) {
+            ASTNode at,
+            boolean finalized,
+            Token name,
+            VariableExpression superClass,
+            List<ClassMemberStatement> members,
+            boolean isDynamic) {
         super(at, finalized);
         this.name = name;
         this.superClass = superClass;
@@ -92,35 +86,29 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     }
 
     public ClassStatement(
-        Token name,
-        VariableExpression superClass,
-        ConstructorStatement constructor,
-        List<FunctionStatement> methods,
-        List<FieldStatement> fields,
-        boolean isDynamic
-    ) {
+            Token name,
+            VariableExpression superClass,
+            ConstructorStatement constructor,
+            List<FunctionStatement> methods,
+            List<FieldStatement> fields,
+            boolean isDynamic) {
         this(name, false, name, superClass, constructor, methods, fields, isDynamic);
     }
 
     public ClassStatement(
-        ASTNode at,
-        boolean finalized,
-        Token name,
-        VariableExpression superClass,
-        ConstructorStatement constructor,
-        List<FunctionStatement> methods,
-        List<FieldStatement> fields,
-        boolean isDynamic
-    ) {
-        this(at, finalized, name, superClass,
-            combineMembers(constructor, methods, fields), isDynamic);
+            ASTNode at,
+            boolean finalized,
+            Token name,
+            VariableExpression superClass,
+            ConstructorStatement constructor,
+            List<FunctionStatement> methods,
+            List<FieldStatement> fields,
+            boolean isDynamic) {
+        this(at, finalized, name, superClass, combineMembers(constructor, methods, fields), isDynamic);
     }
 
     private static List<ClassMemberStatement> combineMembers(
-        ConstructorStatement constructor,
-        List<FunctionStatement> methods,
-        List<FieldStatement> fields
-    ) {
+            ConstructorStatement constructor, List<FunctionStatement> methods, List<FieldStatement> fields) {
         List<ClassMemberStatement> members = new ArrayList<>();
         if (fields != null) {
             members.addAll(fields);
@@ -165,10 +153,7 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
      * @return the list of matching member statements
      */
     public <T extends ClassMemberStatement> List<T> members(Class<T> type) {
-        return this.members.stream()
-            .filter(type::isInstance)
-            .map(type::cast)
-            .toList();
+        return this.members.stream().filter(type::isInstance).map(type::cast).toList();
     }
 
     /**

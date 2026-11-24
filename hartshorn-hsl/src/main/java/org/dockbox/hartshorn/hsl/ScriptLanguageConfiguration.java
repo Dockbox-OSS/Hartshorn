@@ -91,10 +91,7 @@ public class ScriptLanguageConfiguration {
     @Prototype
     @SupportPriority
     public ScriptRuntime runtime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory,
-        ParserCustomizer parserCustomizer
-    ) {
+            ApplicationContext applicationContext, ScriptComponentFactory factory, ParserCustomizer parserCustomizer) {
         return new StandardRuntime(applicationContext, factory, parserCustomizer);
     }
 
@@ -110,10 +107,7 @@ public class ScriptLanguageConfiguration {
     @Prototype
     @SupportPriority
     public ValidateExpressionRuntime expressionRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory,
-        ParserCustomizer parserCustomizer
-    ) {
+            ApplicationContext applicationContext, ScriptComponentFactory factory, ParserCustomizer parserCustomizer) {
         return new ValidateExpressionRuntime(applicationContext, factory, parserCustomizer);
     }
 

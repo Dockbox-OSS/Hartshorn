@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A delegating {@link AliasableBindingHierarchy} that delegates all calls to the wrapped
@@ -39,8 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class AliasableBindingHierarchyAdapter<C>
-        implements AliasableBindingHierarchy<C>, BindingHierarchyWrapper<C> {
+public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHierarchy<C>, BindingHierarchyWrapper<C> {
 
     private final Set<ComponentKey<? super C>> aliases = ConcurrentHashMap.newKeySet();
     private final BindingHierarchy<C> delegate;
@@ -87,8 +85,7 @@ public class AliasableBindingHierarchyAdapter<C>
     private AliasableBindingHierarchy<C> currentOrNextAdapter(BindingHierarchy<C> hierarchy) {
         if (hierarchy == this.delegate) {
             return this;
-        }
-        else {
+        } else {
             return new AliasableBindingHierarchyAdapter<>(hierarchy);
         }
     }
@@ -120,8 +117,7 @@ public class AliasableBindingHierarchyAdapter<C>
 
     @Override
     public <T> boolean isCompatible(ComponentKey<T> key) {
-        return this.delegate.isCompatible(key) || this.aliases.stream()
-            .anyMatch(alias -> alias.equals(key));
+        return this.delegate.isCompatible(key) || this.aliases.stream().anyMatch(alias -> alias.equals(key));
     }
 
     @Override
@@ -132,9 +128,9 @@ public class AliasableBindingHierarchyAdapter<C>
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("aliases", this.aliases)
-            .field("delegate", this.delegate)
-            .describe();
+                .field("aliases", this.aliases)
+                .field("delegate", this.delegate)
+                .describe();
     }
 
     @Override

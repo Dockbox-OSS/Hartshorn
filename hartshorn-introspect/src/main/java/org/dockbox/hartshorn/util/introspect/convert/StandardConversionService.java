@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.introspect.convert.support.StringToClassConverterFactory;
-import org.dockbox.hartshorn.util.introspect.convert.support.StringToTypeViewConverterFactory;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayDefaultValueProviderFactory;
@@ -45,16 +44,16 @@ import org.dockbox.hartshorn.util.introspect.convert.support.PrimitiveWrapperCon
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToArrayConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToCharacterConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToClassConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToPrimitiveConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToTypeViewConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Optional;
-import java.util.UUID;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Standard implementation of {@link ConversionService} and {@link ConverterRegistry}. The registry
@@ -97,10 +96,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     public StandardConversionService(
-        Introspector introspector,
-        ConverterCache converterCache,
-        ConverterCache defaultValueProviderCache
-    ) {
+            Introspector introspector, ConverterCache converterCache, ConverterCache defaultValueProviderCache) {
         this.introspector = introspector;
         this.converterCache = converterCache;
         this.defaultValueProviderCache = defaultValueProviderCache;
@@ -180,19 +176,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
             return targetTypeView.cast(converted);
         }
 
-        throw new IllegalArgumentException(
-            "No converter found for %s to convert %s to %s".formatted(
-                input,
-                input.getClass(),
-                targetType.getName()
-            ));
+        throw new IllegalArgumentException("No converter found for %s to convert %s to %s"
+                .formatted(input, input.getClass(), targetType.getName()));
     }
 
     private <O> O convertToDefaultValue(Class<O> targetType, Context... contexts) {
-        GenericConverter converter = this.defaultValueProviderCache.getConverter(
-            Null.INSTANCE,
-            targetType
-        );
+        GenericConverter converter = this.defaultValueProviderCache.getConverter(Null.INSTANCE, targetType);
         if (converter != null) {
             Object defaultValue = converter.convert(null, Null.TYPE, targetType, contexts);
             return targetType.cast(defaultValue);
@@ -202,36 +191,25 @@ public class StandardConversionService implements ConversionService, ConverterRe
 
     @Override
     public <I, O> void addConverter(Converter<I, O> converter) {
-        TypeParameterList converterParameters = this.introspector.introspect(converter)
-            .typeParameters()
-            .inputFor(Converter.class);
+        TypeParameterList converterParameters =
+                this.introspector.introspect(converter).typeParameters().inputFor(Converter.class);
 
-        Class<I> sourceType = TypeUtils.unchecked(
-            this.unwrapParameterAtIndex(converterParameters, 0),
-            Class.class
-        );
-        Class<O> targetType = TypeUtils.unchecked(
-            this.unwrapParameterAtIndex(converterParameters, 1),
-            Class.class
-        );
+        Class<I> sourceType = TypeUtils.unchecked(this.unwrapParameterAtIndex(converterParameters, 0), Class.class);
+        Class<O> targetType = TypeUtils.unchecked(this.unwrapParameterAtIndex(converterParameters, 1), Class.class);
         this.addConverter(sourceType, targetType, converter);
     }
 
     private Class<?> unwrapParameterAtIndex(TypeParameterList parameters, int index) {
-        return parameters.atIndex(index)
-            .flatMap(TypeParameterView::resolvedType)
-            .map(TypeView::type)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Could not determine type parameter " + index + " for converter"
-            ));
+        return parameters
+                .atIndex(index)
+                .flatMap(TypeParameterView::resolvedType)
+                .map(TypeView::type)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Could not determine type parameter " + index + " for converter"));
     }
 
     @Override
-    public <I, O> void addConverter(
-        Class<I> sourceType,
-        Class<O> targetType,
-        Converter<I, O> converter
-    ) {
+    public <I, O> void addConverter(Class<I> sourceType, Class<O> targetType, Converter<I, O> converter) {
         GenericConverter adapter = new ConverterAdapter(sourceType, targetType, converter);
         this.converterCache.addConverter(adapter);
     }
@@ -248,10 +226,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     @Override
-    public <I, O> void addConverterFactory(
-        Class<I> sourceType,
-        ConverterFactory<I, O> converterFactory
-    ) {
+    public <I, O> void addConverterFactory(Class<I> sourceType, ConverterFactory<I, O> converterFactory) {
         Class<O> targetType = this.getTypeParameter(ConverterFactory.class, converterFactory, 1);
         this.addConverter(new ConverterFactoryAdapter(sourceType, targetType, converterFactory));
     }
@@ -271,9 +246,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     @Override
     public <O> void addDefaultValueProviderFactory(DefaultValueProviderFactory<O> factory) {
         Class<O> targetType = this.getTypeParameter(DefaultValueProviderFactory.class, factory, 0);
-        this.defaultValueProviderCache.addConverter(
-            new ConverterFactoryAdapter(Null.TYPE, targetType, factory)
-        );
+        this.defaultValueProviderCache.addConverter(new ConverterFactoryAdapter(Null.TYPE, targetType, factory));
     }
 
     /**
@@ -290,9 +263,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * @throws IllegalArgumentException if the type parameter cannot be resolved
      */
     protected <T, R> Class<R> getTypeParameter(Class<T> fromType, T source, int parameterIndex) {
-        TypeParameterList typeParameters = this.introspector.introspect(source)
-            .typeParameters()
-            .inputFor(fromType);
+        TypeParameterList typeParameters =
+                this.introspector.introspect(source).typeParameters().inputFor(fromType);
 
         Class<?> parameter = this.unwrapParameterAtIndex(typeParameters, parameterIndex);
         return TypeUtils.unchecked(parameter, Class.class);
@@ -306,10 +278,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * @param introspector The introspector to use for introspecting types
      */
     public static void registerCollectionConverters(
-        ConverterRegistry registry,
-        ConversionService service,
-        Introspector introspector
-    ) {
+            ConverterRegistry registry, ConversionService service, Introspector introspector) {
         registry.addConverter(new ObjectToArrayConverter());
         registry.addConverter(new ArrayToObjectConverter(service));
         registry.addConverter(new CollectionToArrayConverter());
@@ -317,9 +286,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
 
         var arrayToCollectionConverterFactory = new ArrayToCollectionConverterFactory(introspector);
         registry.addConverterFactory(Object[].class, arrayToCollectionConverterFactory);
-        registry.addConverterFactory(Object.class, new ObjectToCollectionConverterFactory(
-            arrayToCollectionConverterFactory
-        ));
+        registry.addConverterFactory(
+                Object.class, new ObjectToCollectionConverterFactory(arrayToCollectionConverterFactory));
         registry.addConverterFactory(new CollectionToCollectionConverterFactory(introspector));
     }
 
@@ -330,10 +298,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * @param registry The registry to register the converters to
      * @param introspector The introspector to use for introspecting types
      */
-    public static void registerNullWrapperConverters(
-        ConverterRegistry registry,
-        Introspector introspector
-    ) {
+    public static void registerNullWrapperConverters(ConverterRegistry registry, Introspector introspector) {
         registry.addConverter(new ObjectToOptionalConverter());
         registry.addConverter(new ObjectToOptionConverter());
         registry.addConverter(new OptionalToObjectConverter());
@@ -351,10 +316,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * @param registry The registry to register the converters to
      * @param introspector The introspector to use for introspecting types
      */
-    public static void registerStringConverters(
-            ConverterRegistry registry,
-            Introspector introspector
-    ) {
+    public static void registerStringConverters(ConverterRegistry registry, Introspector introspector) {
         registry.addConverter(new StringToArrayConverter());
         registry.addConverter(String.class, Character.class, new StringToCharacterConverter());
         registry.addConverter(String.class, UUID.class, new StringToUUIDConverter());
@@ -364,9 +326,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(String.class, new StringToEnumConverterFactory());
         registry.addConverterFactory(String.class, new StringToNumberConverterFactory());
         registry.addConverterFactory(String.class, new StringToPrimitiveConverterFactory());
-        registry.addConverterFactory(String.class, new StringToTypeViewConverterFactory(
-            introspector
-        ));
+        registry.addConverterFactory(String.class, new StringToTypeViewConverterFactory(introspector));
         registry.addConverterFactory(String.class, new StringToClassConverterFactory());
     }
 
@@ -390,17 +350,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
      *
      * @see TypeView#defaultOrNull()
      */
-    public static void registerDefaultProviders(
-        ConverterRegistry registry,
-        Introspector introspector
-    ) {
+    public static void registerDefaultProviders(ConverterRegistry registry, Introspector introspector) {
         registry.addDefaultValueProvider(Option.class, Option::empty);
         registry.addDefaultValueProvider(String.class, () -> "");
         registry.addDefaultValueProvider(Optional.class, Optional::empty);
 
-        registry.addDefaultValueProviderFactory(
-            new CollectionDefaultValueProviderFactory(introspector).withDefaults()
-        );
+        registry.addDefaultValueProviderFactory(new CollectionDefaultValueProviderFactory(introspector).withDefaults());
         registry.addDefaultValueProviderFactory(new ArrayDefaultValueProviderFactory());
     }
 }

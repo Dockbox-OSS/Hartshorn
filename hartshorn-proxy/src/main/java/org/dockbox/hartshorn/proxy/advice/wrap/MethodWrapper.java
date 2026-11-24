@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,11 +72,7 @@ public interface MethodWrapper<T> {
      *
      * @return A method wrapper that calls the given callbacks
      */
-    static <T> MethodWrapper<T> of(
-        ProxyCallback<T> before,
-        ProxyCallback<T> after,
-        ProxyCallback<T> afterThrowing
-    ) {
+    static <T> MethodWrapper<T> of(ProxyCallback<T> before, ProxyCallback<T> after, ProxyCallback<T> afterThrowing) {
         return new CallbackMethodWrapper<>(before, after, afterThrowing);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
@@ -34,8 +35,6 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Set;
-
 /**
  * A dependency resolver that defines dependency contexts for managed components, which are allowed
  * to have dependencies on other components. Managed components are allowed to be conditional
@@ -51,69 +50,52 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     private final IntrospectionDependencyResolver resolver;
     private final HierarchyLookup hierarchyLookup;
 
-    protected ComponentDependencyResolver(
-        InjectorEnvironment environment,
-        HierarchyLookup hierarchyLookup
-    ) {
+    protected ComponentDependencyResolver(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         this.environment = environment;
         this.resolver = new IntrospectionDependencyResolver(
-            environment.injectionPointsResolver(),
-            environment.componentKeyResolver()
-        );
+                environment.injectionPointsResolver(), environment.componentKeyResolver());
         this.hierarchyLookup = hierarchyLookup;
     }
 
     @Override
-    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(
-        DependencyDeclarationContext<T> declarationContext
-    ) throws DependencyResolutionException {
+    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext)
+            throws DependencyResolutionException {
         TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
-            constructorView =
-                ComponentConstructorResolver.create(this.environment, this.hierarchyLookup)
+            constructorView = ComponentConstructorResolver.create(this.environment, this.hierarchyLookup)
                     .findConstructor(type)
                     .orNull();
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             throw new DependencyResolutionException(throwable);
         }
 
         if (constructorView == null) {
             return Set.of();
         }
-        Set<ComponentKey<?>> constructorDependencies =
-            this.resolver.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> constructorDependencies = this.resolver.resolveDependencies(constructorView);
         Set<ComponentKey<?>> typeDependencies = this.resolver.resolveDependencies(type);
 
-        DependencyMap dependencies = DependencyMap.create()
-            .immediate(constructorDependencies)
-            .delayed(typeDependencies);
+        DependencyMap dependencies =
+                DependencyMap.create().immediate(constructorDependencies).delayed(typeDependencies);
 
-        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T>(
-            ComponentContainer<T> container
-        )) {
+        if (declarationContext
+                instanceof ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)) {
             ComponentKey<T> componentKey = ComponentKey.of(type);
             ComponentContainerDependencyContext<T> dependencyContext =
-                new ComponentContainerDependencyContext<>(container,
-                    componentKey,
-                    dependencies,
-                    constructorView);
+                    new ComponentContainerDependencyContext<>(container, componentKey, dependencies, constructorView);
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
-        }
-        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T>
-            keyContext) {
+        } else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
             InstantiationStrategy<T> strategy = keyContext.provider();
-            ManagedComponentKeyDependencyContext<T> dependencyContext =
-                ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
+            ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(
+                            keyContext.key(), type)
                     .dependencies(dependencies)
                     .constructorView(constructorView)
                     .lazy(strategy.defaultLazy().booleanValue())
                     .lifecycleType(strategy.defaultLifecycle())
                     .build();
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
-        }
-        else {
+        } else {
             return Set.of();
         }
     }

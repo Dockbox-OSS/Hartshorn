@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
@@ -30,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class TestStatementInterpreterTests {
 
@@ -43,11 +43,11 @@ class TestStatementInterpreterTests {
                     yield true;
                 }
                 """)
-            .statementParser(new TestStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new ReturnStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new TestStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new ReturnStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         helper.interpret();
 
@@ -57,23 +57,22 @@ class TestStatementInterpreterTests {
     }
 
     @Test
-    void statementWithIncorrectReturnFailsParser(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void statementWithIncorrectReturnFailsParser(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                 test("wrong return") {
                     return true;
                 }
                 """)
-            .statementParser(new TestStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new ReturnStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new TestStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new ReturnStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
-        ScriptAssertions.assertEvaluationError(error,
-            DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::parse)
+                .actual();
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
@@ -83,15 +82,16 @@ class TestStatementInterpreterTests {
                     true;
                 }
                 """)
-            .statementParser(new TestStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new ReturnStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new TestStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new ReturnStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
-        ScriptAssertions.assertEvaluationError(error,
-            DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::parse)
+                .actual();
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD);
     }
 
     @Test
@@ -99,12 +99,14 @@ class TestStatementInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                 test("empty body") { }
                 """)
-            .statementParser(new TestStatementParser())
-            .statementParser(new BlockStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new TestStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::parse).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::parse)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.EMPTY_TEST_BODY);
     }
 }

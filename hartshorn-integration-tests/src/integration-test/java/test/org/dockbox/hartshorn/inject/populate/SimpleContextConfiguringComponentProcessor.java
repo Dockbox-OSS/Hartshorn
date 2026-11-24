@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.launchpad.processing.ContextConfiguringComponentProcessor;
 
-public class SimpleContextConfiguringComponentProcessor
-    extends ContextConfiguringComponentProcessor<SimpleContext> {
+public class SimpleContextConfiguringComponentProcessor extends ContextConfiguringComponentProcessor<SimpleContext> {
 
     public SimpleContextConfiguringComponentProcessor() {
         super(SimpleContext.class);
@@ -34,18 +33,15 @@ public class SimpleContextConfiguringComponentProcessor
 
     @Override
     protected <T> void configure(
-        InjectionCapableApplication application,
-        SimpleContext componentContext,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            SimpleContext componentContext,
+            ComponentProcessingContext<T> processingContext) {
         componentContext.value("Foo");
     }
 
     @Override
     protected SimpleContext createContext(
-        InjectionCapableApplication application,
-        ComponentProcessingContext<?> processingContext
-    ) {
+            InjectionCapableApplication application, ComponentProcessingContext<?> processingContext) {
         return new SimpleContext();
     }
 }

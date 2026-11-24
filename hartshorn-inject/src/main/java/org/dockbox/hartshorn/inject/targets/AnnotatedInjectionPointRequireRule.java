@@ -39,7 +39,10 @@ public class AnnotatedInjectionPointRequireRule implements RequireInjectionPoint
 
     @Override
     public boolean isRequired(InjectionPoint injectionPoint) {
-        return injectionPoint.injectionPoint().annotations().get(Required.class)
+        return injectionPoint
+                .injectionPoint()
+                .annotations()
+                .get(Required.class)
                 .map(Required::value)
                 .orCompute(this.injectorConfiguration::requiredByDefault)
                 .test(Boolean::booleanValue);

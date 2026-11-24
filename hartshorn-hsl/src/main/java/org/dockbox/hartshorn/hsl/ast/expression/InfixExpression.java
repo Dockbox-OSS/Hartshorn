@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * infix operator that checks whether the {@code value} is present in the {@code list}.
  *
  * @see FunctionStatement#functionType()
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class InfixExpression extends Expression {

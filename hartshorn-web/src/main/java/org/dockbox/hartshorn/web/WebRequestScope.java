@@ -32,10 +32,7 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
  *
  * @author Guus Lieben
  */
-public record WebRequestScope(
-        HttpServletRequest request,
-        HttpServletResponse response
-) implements Scope {
+public record WebRequestScope(HttpServletRequest request, HttpServletResponse response) implements Scope {
 
     @Override
     public ScopeKey installableScopeType() {

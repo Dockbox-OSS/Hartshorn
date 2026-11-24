@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -30,8 +31,6 @@ import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * A parser for {@link TestStatement} nodes.
@@ -55,18 +54,15 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
             BlockStatement body = this.blockStatement("test", name, parser, validator);
             if (body.statements().isEmpty()) {
                 throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.EMPTY_TEST_BODY)
-                    .at(testToken)
-                    .build();
-            }
-            else if (
-                !(CollectionUtilities.last(body.statements())
-                    instanceof ReturnStatement returnStatement)
-                || returnStatement.returnType() != ReturnStatement.ReturnType.YIELD) {
+                        .message(DiagnosticMessage.EMPTY_TEST_BODY)
+                        .at(testToken)
+                        .build();
+            } else if (!(CollectionUtilities.last(body.statements()) instanceof ReturnStatement returnStatement)
+                    || returnStatement.returnType() != ReturnStatement.ReturnType.YIELD) {
                 throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD)
-                    .at(testToken)
-                    .build();
+                        .message(DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD)
+                        .at(testToken)
+                        .build();
             }
             return Option.of(new TestStatement(name, body));
         }

@@ -16,15 +16,14 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.MediaTypes;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MediaTypeTests {
 
@@ -41,9 +40,7 @@ public class MediaTypeTests {
     void wildcardTypeWithConcreteSubtypeIsInvalid() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new MediaType("*", "html"))
-                .withMessageContaining(
-                        "A media type with a wildcard type must also have a wildcard subtype"
-                );
+                .withMessageContaining("A media type with a wildcard type must also have a wildcard subtype");
     }
 
     @Test
@@ -66,9 +63,7 @@ public class MediaTypeTests {
 
     @Test
     void mediaTypeParametersDoNotAffectWildcardPredicateForConcreteType() {
-        MediaType mediaType = new MediaType("text", "html", Map.of(
-                "charset", "utf-8"
-        ));
+        MediaType mediaType = new MediaType("text", "html", Map.of("charset", "utf-8"));
         assertThat(mediaType.isWildcardType()).isFalse();
         assertThat(mediaType.isWildcardSubtype()).isFalse();
         assertThat(mediaType.isConcrete()).isTrue();
@@ -77,9 +72,7 @@ public class MediaTypeTests {
 
     @Test
     void mediaTypeParametersDoNotAffectWildcardPredicateForWildcardType() {
-        MediaType mediaType = new MediaType("*", "html", Map.of(
-                "charset", "utf-8"
-        ));
+        MediaType mediaType = new MediaType("*", "html", Map.of("charset", "utf-8"));
         assertThat(mediaType.isWildcardType()).isTrue();
         assertThat(mediaType.isWildcardSubtype()).isFalse();
         assertThat(mediaType.isConcrete()).isFalse();
@@ -88,9 +81,7 @@ public class MediaTypeTests {
 
     @Test
     void mediaTypeParametersDoNotAffectWildcardPredicateForWildcardSubtype() {
-        MediaType mediaType = new MediaType("text", "*", Map.of(
-                "charset", "utf-8"
-        ));
+        MediaType mediaType = new MediaType("text", "*", Map.of("charset", "utf-8"));
         assertThat(mediaType.isWildcardType()).isFalse();
         assertThat(mediaType.isWildcardSubtype()).isTrue();
         assertThat(mediaType.isConcrete()).isFalse();
@@ -119,7 +110,8 @@ public class MediaTypeTests {
     @Test
     void invalidMediaTypeCannotBeParsed() {
         Assertions.assertThatCode(() -> {
-            MediaTypes.parse("junit/test/wrong");
-        }).isInstanceOf(IllegalArgumentException.class);
+                    MediaTypes.parse("junit/test/wrong");
+                })
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

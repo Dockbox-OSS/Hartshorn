@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.profiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.profiles.EnvironmentProfile;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
@@ -29,14 +31,11 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ProfileAggregationTests {
 
     @Test
     void aggregationWithoutProfiles() {
-        ProfilePropertyRegistryAggregator aggregator =
-            new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
         ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
         assertThat(profilePropertyRegistry.keys()).isEmpty();
@@ -45,11 +44,9 @@ class ProfileAggregationTests {
 
     @Test
     void aggregationWithSingleProfile() {
-        ProfilePropertyRegistryAggregator aggregator =
-            new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
-        EnvironmentProfile profile1 =
-            new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
+        EnvironmentProfile profile1 = new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
@@ -58,24 +55,20 @@ class ProfileAggregationTests {
         assertThat(profilePropertyRegistry.contains("key")).isTrue();
 
         assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(1);
-        assertThat(profilePropertyRegistry.profileRegistry()
-            .profile("profile1")
-            .present()).isTrue();
+        assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present())
+                .isTrue();
     }
 
     @Test
     void aggregationWithMultipleProfilesUsesCorrectPriority() {
-        ProfilePropertyRegistryAggregator aggregator =
-            new SimpleProfilePropertyRegistryAggregator();
+        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
 
-        EnvironmentProfile profile1 =
-            new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
+        EnvironmentProfile profile1 = new SimpleEnvironmentProfile("profile1", new MapPropertyRegistry());
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
-        EnvironmentProfile profile2 =
-            new SimpleEnvironmentProfile("profile2", new MapPropertyRegistry());
+        EnvironmentProfile profile2 = new SimpleEnvironmentProfile("profile2", new MapPropertyRegistry());
         profile2.propertyRegistry().register(new SingleConfiguredProperty("key", "value2"));
         profileRegistry.register(1, profile2);
 
@@ -89,11 +82,9 @@ class ProfileAggregationTests {
         assertThat(valueProperty.get().value().contains("value2")).isTrue();
 
         assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(2);
-        assertThat(profilePropertyRegistry.profileRegistry()
-            .profile("profile1")
-            .present()).isTrue();
-        assertThat(profilePropertyRegistry.profileRegistry()
-            .profile("profile2")
-            .present()).isTrue();
+        assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present())
+                .isTrue();
+        assertThat(profilePropertyRegistry.profileRegistry().profile("profile2").present())
+                .isTrue();
     }
 }

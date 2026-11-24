@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import java.lang.classfile.ClassFileElement;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.ClassFileElement;
 
 /**
  * A {@link PackageView} implementation for wildcard types.

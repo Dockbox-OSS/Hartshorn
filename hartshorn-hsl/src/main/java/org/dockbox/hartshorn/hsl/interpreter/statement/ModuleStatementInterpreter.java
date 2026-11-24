@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,44 +16,36 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * Interpreter for {@link ModuleStatement} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ModuleStatementInterpreter extends AbstractNativeLibraryStatementInterpreter
-    implements StatementInterpreter<ModuleStatement> {
+        implements StatementInterpreter<ModuleStatement> {
 
     @Override
     public Void interpret(ModuleStatement node, Interpreter interpreter) {
         String moduleName = node.name().lexeme();
         NativeModule module = interpreter.state().externalModules().get(moduleName);
 
-        List<NativeFunctionStatement> supportedFunctions =
-            module.supportedFunctions(node.name(), interpreter);
+        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.name(), interpreter);
         Map<String, List<NativeFunctionStatement>> functionsByName = supportedFunctions.stream()
-            .collect(Collectors.groupingBy(function -> function.name().lexeme()));
+                .collect(Collectors.groupingBy(function -> function.name().lexeme()));
 
         EntryStream.of(functionsByName).forEach((name, functions) -> {
-            this.registerModuleFunction(
-                moduleName,
-                name,
-                interpreter,
-                functions,
-                module
-            );
+            this.registerModuleFunction(moduleName, name, interpreter, functions, module);
         });
         return null;
     }

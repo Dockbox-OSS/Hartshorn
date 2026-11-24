@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Set;
 
 /**
  * A resolver that determines the injection points of a component. This is commonly used by
@@ -30,9 +29,9 @@ import java.util.Set;
  * ComponentPopulator} is expected to filter injection points based on available metadata.
  *
  * @see ComponentPopulator
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface ComponentInjectionPointsResolver {

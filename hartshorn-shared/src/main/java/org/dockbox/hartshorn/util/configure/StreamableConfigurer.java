@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.context.SingleElementContext;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.SingleElementContext;
 
 /**
  * A {@link Configurer} that can be used to configure a collection of objects. Each object is
@@ -44,8 +43,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * Creates a new {@link StreamableConfigurer} instance. Protected to prevent direct
      * instantiation outside of extending classes and static factory methods.
      */
-    protected StreamableConfigurer() {
-    }
+    protected StreamableConfigurer() {}
 
     /**
      * Creates a new {@link StreamableConfigurer} instance without any initializers.
@@ -102,9 +100,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @return the new instance
      */
-    public static <I, O> StreamableConfigurer<I, O> ofInitializer(
-        ContextualInitializer<I, O> initializer
-    ) {
+    public static <I, O> StreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
         StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();
         return configurer.add(initializer);
     }
@@ -310,8 +306,6 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * @return a list of all initialized objects
      */
     public List<T> initialize(SingleElementContext<? extends I> input) {
-        return this.stream()
-            .map(resolver -> resolver.initialize(input))
-            .toList();
+        return this.stream().map(resolver -> resolver.initialize(input)).toList();
     }
 }

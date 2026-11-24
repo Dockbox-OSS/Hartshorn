@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.classfile.MethodModel;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.StringJoiner;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -28,12 +33,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 
-import java.lang.classfile.MethodModel;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.StringJoiner;
-
 /**
  * A view that provides access to the methods of a class. This view is backed by a {@link Method}
  * instance.
@@ -42,11 +41,11 @@ import java.util.StringJoiner;
  * @param <ReturnType> The return type of the method
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
-public class ReflectionMethodView<Parent, ReturnType>
-    extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
+public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent>
+        implements MethodView<Parent, ReturnType> {
 
     private final Introspector introspector;
     private final Method method;
@@ -81,8 +80,7 @@ public class ReflectionMethodView<Parent, ReturnType>
     public Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable {
         if (this.modifiers().isStatic()) {
             return this.invoke(null, arguments);
-        }
-        else {
+        } else {
             throw new IllegalIntrospectionException(this, "Method is not static");
         }
     }
@@ -90,8 +88,7 @@ public class ReflectionMethodView<Parent, ReturnType>
     @Override
     public TypeView<ReturnType> returnType() {
         if (this.returnType == null) {
-            this.returnType =
-                (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+            this.returnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
         }
         return this.returnType;
     }
@@ -99,8 +96,8 @@ public class ReflectionMethodView<Parent, ReturnType>
     @Override
     public TypeView<ReturnType> genericReturnType() {
         if (this.genericReturnType == null) {
-            this.genericReturnType = (TypeView<ReturnType>)
-                this.introspector.introspect(this.method.getGenericReturnType());
+            this.genericReturnType =
+                    (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
         }
         return this.genericReturnType;
     }
@@ -117,7 +114,8 @@ public class ReflectionMethodView<Parent, ReturnType>
         return typeView.methods().all().stream()
                 .filter(method -> method.name().equals(this.name()))
                 .filter(method -> method.parameters().matches(parameters))
-                .filter(method -> method.returnType().isParentOf(this.returnType().type()))
+                .filter(method ->
+                        method.returnType().isParentOf(this.returnType().type()))
                 .collect(Option.collector());
     }
 
@@ -130,15 +128,12 @@ public class ReflectionMethodView<Parent, ReturnType>
     public String qualifiedName() {
         if (this.qualifiedName == null) {
             StringJoiner j = new StringJoiner(" ");
-            String shortSig =
-                MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes())
+            String shortSig = MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes())
                     .toString();
             int split = shortSig.lastIndexOf(')') + 1;
-            j.add(shortSig.substring(split))
-                .add(this.method.getName() + shortSig.substring(0, split));
+            j.add(shortSig.substring(split)).add(this.method.getName() + shortSig.substring(0, split));
             String k = j.toString();
-            this.qualifiedName =
-                this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
+            this.qualifiedName = this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
     }
@@ -157,8 +152,7 @@ public class ReflectionMethodView<Parent, ReturnType>
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").writeString(this.name());
         collector.property("returnType").writeDelegate(this.genericReturnType());
-        collector.property("parameters")
-            .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
         collector.property("declaredBy").writeDelegate(this.declaredBy());
     }
 
@@ -166,10 +160,6 @@ public class ReflectionMethodView<Parent, ReturnType>
     public Option<MethodModel> classFileElement() {
         return this.declaredBy()
                 .classFileElement()
-                .flatMap(type -> ClassFileUtilities.getMethod(
-                        type,
-                        this.name(),
-                        this.method.getParameterTypes()
-                ));
+                .flatMap(type -> ClassFileUtilities.getMethod(type, this.name(), this.method.getParameterTypes()));
     }
 }

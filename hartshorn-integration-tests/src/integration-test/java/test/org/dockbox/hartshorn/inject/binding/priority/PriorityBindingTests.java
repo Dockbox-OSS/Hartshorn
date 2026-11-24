@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package test.org.dockbox.hartshorn.inject.binding.priority;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
-import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class PriorityBindingTests {
@@ -38,16 +38,14 @@ public class PriorityBindingTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents({ZeroAndDefaultPriorityConfiguration.class,
-        ImplicitPriorityConfiguration.class})
+    @TestComponents({ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
     void provisionWithImplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         assertThat(component.name()).isEqualTo(PRIORITY_ZERO + PRIORITY_ONE);
     }
 
     @Test
-    @TestComponents({ZeroAndDefaultPriorityConfiguration.class,
-        ExplicitPriorityConfiguration.class})
+    @TestComponents({ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
     void provisionWithExplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         assertThat(component.name()).isEqualTo(PRIORITY_DEFAULT + PRIORITY_ONE);
@@ -61,9 +59,7 @@ public class PriorityBindingTests {
         String binding = this.applicationContext.get(String.class);
         assertThat(binding).isEqualTo("Hello modified world!");
 
-        this.applicationContext.bind(String.class)
-            .priority(-2)
-            .singleton("Hello low priority world!");
+        this.applicationContext.bind(String.class).priority(-2).singleton("Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
         assertThat(binding2).isEqualTo("Hello modified world!");
     }
@@ -76,9 +72,7 @@ public class PriorityBindingTests {
         String binding = this.applicationContext.get(String.class);
         assertThat(binding).isEqualTo("Hello modified world!");
 
-        this.applicationContext.bind(String.class)
-            .priority(-2)
-            .to(() -> "Hello low priority world!");
+        this.applicationContext.bind(String.class).priority(-2).to(() -> "Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
         assertThat(binding2).isEqualTo("Hello modified world!");
     }
@@ -114,8 +108,7 @@ public class PriorityBindingTests {
         @Prototype
         @Priority(1)
         public TestPriorityComponent sampleInterfacePriorityOne(
-            @Priority(Priority.DEFAULT_PRIORITY) TestPriorityComponent lowerPriority
-        ) {
+                @Priority(Priority.DEFAULT_PRIORITY) TestPriorityComponent lowerPriority) {
             return () -> lowerPriority.name() + PRIORITY_ONE;
         }
     }

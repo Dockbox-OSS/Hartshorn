@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.launchpad.annotations;
 
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
-import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
-import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
-import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.annotations.Provided;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.annotations.Provided;
+import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
 
 /**
  * Annotation to indicate that {@link Provided} methods can be proxied when
@@ -39,9 +38,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ModuleActivator(componentPostProcessors = {
-    ContextCarrierDelegationPostProcessor.class,
-    AnnotatedProviderMethodInterceptorPostProcessor.class,
-})
-public @interface UseProxying {
-}
+@ModuleActivator(
+        componentPostProcessors = {
+            ContextCarrierDelegationPostProcessor.class,
+            AnnotatedProviderMethodInterceptorPostProcessor.class,
+        })
+public @interface UseProxying {}

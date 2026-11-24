@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.NamedNode;
@@ -27,9 +29,6 @@ import org.dockbox.hartshorn.hsl.extension.CustomStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.Finalizable;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Resolver is responsible for performing semantic analysis and type checking before a collection of

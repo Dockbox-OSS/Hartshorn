@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A generic converter interface that can be used to convert objects from one type to another. This
@@ -28,7 +27,7 @@ import java.util.Set;
  * should be thread-safe.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface GenericConverter {
@@ -64,9 +63,5 @@ public interface GenericConverter {
      * @return the converted object, or {@code null} if the conversion cannot be performed
      */
     <I, O> @Nullable Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts
-    );
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts);
 }

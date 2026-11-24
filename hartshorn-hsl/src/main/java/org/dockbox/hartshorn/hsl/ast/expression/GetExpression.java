@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * {@code property} from the object named {@code object}.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class GetExpression extends Expression implements NamedNode {

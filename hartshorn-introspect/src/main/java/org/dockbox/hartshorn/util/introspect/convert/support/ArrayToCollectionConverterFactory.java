@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -23,10 +26,6 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Converts any array to a {@link Collection} of the same type, containing only the objects in the
@@ -37,14 +36,12 @@ import java.util.Objects;
  *
  * @author Guus Lieben
  */
-public class ArrayToCollectionConverterFactory
-    implements ConverterFactory<Object[], Collection<?>> {
+public class ArrayToCollectionConverterFactory implements ConverterFactory<Object[], Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> collectionFactory;
 
     public ArrayToCollectionConverterFactory(Introspector introspector) {
-        this.collectionFactory = new CollectionDefaultValueProviderFactory(introspector)
-            .withDefaults();
+        this.collectionFactory = new CollectionDefaultValueProviderFactory(introspector).withDefaults();
     }
 
     @Override
@@ -65,9 +62,8 @@ public class ArrayToCollectionConverterFactory
      *
      * @author Guus Lieben
      */
-    private record ArrayToCollectionConverter<O extends Collection<?>>(
-        DefaultValueProvider<O> helperProvider
-    ) implements Converter<Object[], O> {
+    private record ArrayToCollectionConverter<O extends Collection<?>>(DefaultValueProvider<O> helperProvider)
+            implements Converter<Object[], O> {
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         @Override

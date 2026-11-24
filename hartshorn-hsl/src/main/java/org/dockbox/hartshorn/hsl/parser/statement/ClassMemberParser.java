@@ -28,6 +28,4 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
  *
  * @author Guus Lieben
  */
-public interface ClassMemberParser<T extends Statement & ClassMemberStatement>
-    extends StatementParser<T> {
-}
+public interface ClassMemberParser<T extends Statement & ClassMemberStatement> extends StatementParser<T> {}

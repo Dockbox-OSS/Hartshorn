@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.inject.component;
 
+import java.util.Comparator;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Comparator;
 
 /**
  * Represents a container for a component. The metadata provided by this container is used to
@@ -28,9 +27,9 @@ import java.util.Comparator;
  * @param <T> the type of the component
  *
  * @see ComponentRegistry
- * 
+ *
  * @since 0.4.1
- * 
+ *
  * @author Guus Lieben
  */
 public interface ComponentContainer<T> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
  * Represents the different types of import tokens that can be used in the HSL language.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum ImportTokenType implements EnumTokenType {
@@ -38,9 +38,9 @@ public enum ImportTokenType implements EnumTokenType {
 
     ImportTokenType() {
         this.metaData = TokenMetaData.builder(this)
-            .keyword(true)
-            .standaloneStatement(true)
-            .build();
+                .keyword(true)
+                .standaloneStatement(true)
+                .build();
     }
 
     @Override

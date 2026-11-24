@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,36 @@
 
 package org.dockbox.hartshorn.launchpad.banner;
 
-import org.dockbox.hartshorn.launchpad.logging.AnsiColor;
-import org.dockbox.hartshorn.launchpad.logging.AnsiMessage;
-
 import java.util.List;
 import java.util.Objects;
+import org.dockbox.hartshorn.launchpad.logging.AnsiColor;
+import org.dockbox.hartshorn.launchpad.logging.AnsiMessage;
 
 /**
  * The default banner of Hartshorn. This banner is printed when the application starts if no custom
  * banner is provided.
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class HartshornLogoBanner extends AbstractConsoleBanner {
 
     private static final List<String> BANNER_LINES = List.of(
-        "",
-        "     _   _            _       _",
-        "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
-        "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",
-        "    |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |",
-        "    |_| |_|\\__,_|_|   \\__|___/_| |_|\\___/|_|  |_| |_|    ",
-        AnsiMessage.of("                                  ")
-            .append(AnsiMessage.of("-< ", AnsiColor.WHITE))
-            .append(AnsiMessage.of("Hartshorn %s".formatted(getImplementationVersion()),
-                AnsiColor.GREEN))
-            .append(AnsiMessage.of(" >-\n", AnsiColor.WHITE))
-            .toString()
-    );
+            "",
+            "     _   _            _       _",
+            "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
+            "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",
+            "    |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |",
+            "    |_| |_|\\__,_|_|   \\__|___/_| |_|\\___/|_|  |_| |_|    ",
+            AnsiMessage.of("                                  ")
+                    .append(AnsiMessage.of("-< ", AnsiColor.WHITE))
+                    .append(AnsiMessage.of("Hartshorn %s".formatted(getImplementationVersion()), AnsiColor.GREEN))
+                    .append(AnsiMessage.of(" >-\n", AnsiColor.WHITE))
+                    .toString());
 
     private static String getImplementationVersion() {
-        String implementationVersion =
-            HartshornLogoBanner.class.getPackage().getImplementationVersion();
+        String implementationVersion = HartshornLogoBanner.class.getPackage().getImplementationVersion();
         return Objects.requireNonNullElse(implementationVersion, "(unreleased version)");
     }
 

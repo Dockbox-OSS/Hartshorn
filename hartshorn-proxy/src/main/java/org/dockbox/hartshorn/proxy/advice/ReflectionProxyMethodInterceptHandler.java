@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
+import java.lang.invoke.MethodHandle;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.ProxyObject;
 import org.dockbox.hartshorn.proxy.advice.intercept.CustomInvocation;
@@ -23,11 +24,9 @@ import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.invoke.MethodHandle;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Standard implementation of {@link ProxyMethodInterceptHandler} that uses reflection to invoke
@@ -37,11 +36,10 @@ import java.lang.invoke.MethodHandle;
  * @param <T> the type of the target instance
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class ReflectionProxyMethodInterceptHandler<T>
-    implements ProxyMethodInterceptHandler<T>, ProxyObject<T> {
+public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInterceptHandler<T>, ProxyObject<T> {
 
     private final ProxyMethodInvoker<T> methodInvoker;
     private final ProxyManager<T> manager;
@@ -53,45 +51,36 @@ public class ReflectionProxyMethodInterceptHandler<T>
 
     @Override
     public Object handleNonInterceptedMethod(
-        T self,
-        MethodInvokable source,
-        Invokable proxy,
-        T callbackTarget,
-        Object[] arguments
-    ) throws Throwable {
+            T self, MethodInvokable source, Invokable proxy, T callbackTarget, Object[] arguments) throws Throwable {
         Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, arguments);
         if (defaultMethod.present()) {
             return defaultMethod.get();
         }
 
-        Option<?> delegate = this.manager()
-            .advisor()
-            .resolver()
-            .method(source.toMethod())
-            .delegate();
+        Option<?> delegate =
+                this.manager().advisor().resolver().method(source.toMethod()).delegate();
 
         if (delegate.present()) {
             return this.handleDelegateMethod(delegate.get(), callbackTarget, source, arguments);
-        }
-        else {
+        } else {
             return this.handleNonDelegateMethod(self, callbackTarget, source, proxy, arguments);
         }
     }
 
     @Override
     public Object handleInterceptedMethod(
-        MethodInvokable source,
-        T callbackTarget,
-        CustomInvocation<?> customInvocation,
-        Object[] arguments,
-        MethodInterceptor<T, Object> interceptor
-    ) throws Throwable {
-        return this.methodInvoker.invokeInterceptor(callbackTarget,
-            TypeUtils.unchecked(source.toIntrospector(), MethodView.class),
-            arguments,
-            interceptor,
-            TypeUtils.unchecked(customInvocation, CustomInvocation.class)
-        );
+            MethodInvokable source,
+            T callbackTarget,
+            CustomInvocation<?> customInvocation,
+            Object[] arguments,
+            MethodInterceptor<T, Object> interceptor)
+            throws Throwable {
+        return this.methodInvoker.invokeInterceptor(
+                callbackTarget,
+                TypeUtils.unchecked(source.toIntrospector(), MethodView.class),
+                arguments,
+                interceptor,
+                TypeUtils.unchecked(customInvocation, CustomInvocation.class));
     }
 
     @Override
@@ -114,8 +103,7 @@ public class ReflectionProxyMethodInterceptHandler<T>
      *
      * @throws Throwable if the invocation fails
      */
-    protected Object handleDelegateMethod(Object delegate, T self, Invokable source, Object[] args)
-        throws Throwable {
+    protected Object handleDelegateMethod(Object delegate, T self, Invokable source, Object[] args) throws Throwable {
         Object result = source.invoke(delegate, args);
         if (result == delegate) {
             return self;
@@ -137,18 +125,12 @@ public class ReflectionProxyMethodInterceptHandler<T>
      *
      * @throws Throwable if the invocation fails
      */
-    protected Object handleNonDelegateMethod(
-        T self,
-        T callbackTarget,
-        Invokable source,
-        Invokable proxy,
-        Object[] args
-    ) throws Throwable {
+    protected Object handleNonDelegateMethod(T self, T callbackTarget, Invokable source, Invokable proxy, Object[] args)
+            throws Throwable {
         Object result;
         if (callbackTarget == self && proxy != null) {
             result = proxy.invoke(callbackTarget, args);
-        }
-        else {
+        } else {
             result = this.methodInvoker.invokeReal(self, source, source, args);
         }
         return result;
@@ -177,8 +159,7 @@ public class ReflectionProxyMethodInterceptHandler<T>
                 return this.proxyHashCode(self);
             }
 
-            throw new UnsupportedOperationException("Unsupported default method: "
-                + target.qualifiedName());
+            throw new UnsupportedOperationException("Unsupported default method: " + target.qualifiedName());
         });
     }
 

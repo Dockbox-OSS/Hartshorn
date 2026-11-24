@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Optional;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Optional;
 
 /**
  * Converts any object to an {@link Optional} by wrapping the object in an

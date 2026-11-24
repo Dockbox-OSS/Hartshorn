@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 
 /**
@@ -162,8 +161,7 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
     public ScriptContext evaluate() {
         if (this.context != null) {
             this.context = this.getOrCreateRuntime().runOnly(this.context, Phase.INTERPRETING);
-        }
-        else {
+        } else {
             this.context = this.resolve();
             this.context = this.evaluate();
         }

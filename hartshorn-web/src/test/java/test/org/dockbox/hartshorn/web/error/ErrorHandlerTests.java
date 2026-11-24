@@ -18,6 +18,9 @@ package test.org.dockbox.hartshorn.web.error;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.WebServerConfiguration;
@@ -27,22 +30,18 @@ import org.dockbox.hartshorn.web.error.SimpleErrorHandlerRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 public class ErrorHandlerTests {
 
     @Test
     void exactHandlerIsPreferredOverParentHandler() {
         SimpleErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
         RequestErrorHandler<Exception> parentHandler = (_, _, _) -> {};
-        RequestErrorHandler<IllegalArgumentException> exactHandler =
-                (_, _, _) -> {};
+        RequestErrorHandler<IllegalArgumentException> exactHandler = (_, _, _) -> {};
         registry.register(Exception.class, parentHandler);
         registry.register(IllegalArgumentException.class, exactHandler);
 
-        Assertions.assertThat(registry.getHandler(IllegalArgumentException.class).get())
+        Assertions.assertThat(
+                        registry.getHandler(IllegalArgumentException.class).get())
                 .isSameAs(exactHandler);
     }
 
@@ -50,12 +49,12 @@ public class ErrorHandlerTests {
     void nearestParentHandlerIsSelectedWhenNoExactHandlerExists() {
         SimpleErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
         RequestErrorHandler<Throwable> broadHandler = (_, _, _) -> {};
-        RequestErrorHandler<RuntimeException> nearestHandler =
-                (_, _, _) -> {};
+        RequestErrorHandler<RuntimeException> nearestHandler = (_, _, _) -> {};
         registry.register(Throwable.class, broadHandler);
         registry.register(RuntimeException.class, nearestHandler);
 
-        Assertions.assertThat(registry.getHandler(IllegalArgumentException.class).get())
+        Assertions.assertThat(
+                        registry.getHandler(IllegalArgumentException.class).get())
                 .isSameAs(nearestHandler);
     }
 
@@ -63,7 +62,8 @@ public class ErrorHandlerTests {
     void missingHandlerIsReportedAsAbsent() {
         SimpleErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
 
-        Assertions.assertThat(registry.getHandler(IllegalArgumentException.class).absent())
+        Assertions.assertThat(
+                        registry.getHandler(IllegalArgumentException.class).absent())
                 .isTrue();
     }
 
@@ -80,13 +80,10 @@ public class ErrorHandlerTests {
                     Assertions.assertThat(actualResponse).isSameAs(response);
                 };
         registry.register(IllegalStateException.class, registeredHandler);
-        ConfigurableRequestErrorHandler handler = new ConfigurableRequestErrorHandler(
-                registry,
-                (_, _, _) -> {
-                    // Default fallback behavior
-                    throw new AssertionError("Expected the registered handler to be used");
-                }
-        );
+        ConfigurableRequestErrorHandler handler = new ConfigurableRequestErrorHandler(registry, (_, _, _) -> {
+            // Default fallback behavior
+            throw new AssertionError("Expected the registered handler to be used");
+        });
 
         handler.handle(exception, request, response);
     }
@@ -94,8 +91,7 @@ public class ErrorHandlerTests {
     @Test
     void defaultHandlerWritesInternalServerErrorResponse() throws IOException {
         SimpleErrorHandlerRegistry registry = new SimpleErrorHandlerRegistry();
-        RequestErrorHandler<Throwable> handler = new WebServerConfiguration()
-                .defaultRequestErrorHandler(registry);
+        RequestErrorHandler<Throwable> handler = new WebServerConfiguration().defaultRequestErrorHandler(registry);
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         StringWriter body = new StringWriter();
@@ -111,18 +107,15 @@ public class ErrorHandlerTests {
     @Test
     void configurableHandlerPropagatesIoFailures() {
         IOException failure = new IOException("response failed");
-        ConfigurableRequestErrorHandler handler = new ConfigurableRequestErrorHandler(
-                new SimpleErrorHandlerRegistry(),
-                (_, _, _) -> {
+        ConfigurableRequestErrorHandler handler =
+                new ConfigurableRequestErrorHandler(new SimpleErrorHandlerRegistry(), (_, _, _) -> {
                     throw failure;
-                }
-        );
+                });
 
         Assertions.assertThatThrownBy(() -> handler.handle(
                         new IllegalStateException("request failed"),
                         Mockito.mock(HttpServletRequest.class),
-                        Mockito.mock(HttpServletResponse.class)
-                ))
+                        Mockito.mock(HttpServletResponse.class)))
                 .isSameAs(failure);
     }
 }

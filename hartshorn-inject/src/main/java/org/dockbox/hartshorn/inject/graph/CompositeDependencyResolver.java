@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.inject.graph;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 
@@ -29,9 +28,9 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  * dependencies, as resolved by the delegates.
  *
  * @see DependencyResolver
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CompositeDependencyResolver implements DependencyResolver {
@@ -52,9 +51,8 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(
-        Collection<DependencyDeclarationContext<?>> declarationContexts
-    ) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> declarationContexts)
+            throws DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyResolver resolver : this.resolvers()) {
             Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(declarationContexts);

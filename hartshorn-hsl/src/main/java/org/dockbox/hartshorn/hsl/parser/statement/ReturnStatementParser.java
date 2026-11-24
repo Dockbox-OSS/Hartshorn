@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * A parser for {@link ReturnStatement} nodes.
@@ -37,10 +36,7 @@ import java.util.Set;
 public class ReturnStatementParser implements StatementParser<ReturnStatement> {
 
     @Override
-    public Option<? extends ReturnStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ControlTokenType.RETURN, ControlTokenType.YIELD)) {
             Token keyword = parser.previous();
             Expression value = null;
@@ -52,8 +48,7 @@ public class ReturnStatementParser implements StatementParser<ReturnStatement> {
             ReturnStatement.ReturnType returnType = switch (keyword.type()) {
                 case ControlTokenType.RETURN -> ReturnStatement.ReturnType.RETURN;
                 case ControlTokenType.YIELD -> ReturnStatement.ReturnType.YIELD;
-                default -> throw new IllegalStateException("Unexpected return token type: "
-                    + keyword.type());
+                default -> throw new IllegalStateException("Unexpected return token type: " + keyword.type());
             };
             return Option.of(new ReturnStatement(keyword, value, returnType));
         }

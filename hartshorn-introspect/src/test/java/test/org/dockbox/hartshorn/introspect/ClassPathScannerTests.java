@@ -16,6 +16,14 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScanner;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.introspect.types.ScanAnnotation;
@@ -26,22 +34,13 @@ import test.org.dockbox.hartshorn.introspect.types.ScanEnum;
 import test.org.dockbox.hartshorn.introspect.types.ScanInterface;
 import test.org.dockbox.hartshorn.introspect.types.ScanRecord;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 class ClassPathScannerTests {
 
     @Test
     void canScanWithPackageFilter() throws Exception {
         ClassPathScanner scanner = ClassPathScanner.create()
-            .includeDefaultClassPath()
-            .includePrefix("test.org.dockbox.hartshorn.introspect.types");
+                .includeDefaultClassPath()
+                .includePrefix("test.org.dockbox.hartshorn.introspect.types");
 
         Set<String> classes = new HashSet<>();
         scanner.scan(resource -> classes.add(resource.resourceName()));
@@ -51,9 +50,9 @@ class ClassPathScannerTests {
                 // 7 classes in the test package
                 .contains(ScanAnnotation.class.getCanonicalName())
                 .contains(ScanClass.class.getCanonicalName())
-                // Inner classes' canonical name is OuterClass.InnerClass, while the resource name (which is also compatible with Class.forName) is OuterClass$InnerClass
-                .contains(this.resourceNameFromCanonicalName(
-            NonStaticInnerClass.class.getCanonicalName()))
+                // Inner classes' canonical name is OuterClass.InnerClass, while the resource name (which is also
+                // compatible with Class.forName) is OuterClass$InnerClass
+                .contains(this.resourceNameFromCanonicalName(NonStaticInnerClass.class.getCanonicalName()))
                 .contains(this.resourceNameFromCanonicalName(StaticInnerClass.class.getCanonicalName()))
                 .contains(ScanEnum.class.getCanonicalName())
                 .contains(ScanInterface.class.getCanonicalName())
@@ -62,7 +61,8 @@ class ClassPathScannerTests {
 
     @Test
     void canScanWithEncodedCharacters() throws Exception {
-        // Note that we use an empty directory here, so scanning will yield no results, but won't throw an exception either.
+        // Note that we use an empty directory here, so scanning will yield no results, but won't throw an exception
+        // either.
         Path dummyFolder = Files.createTempDirectory("dummy folder");
         dummyFolder.toFile().deleteOnExit();
         URL url = dummyFolder.toUri().toURL();

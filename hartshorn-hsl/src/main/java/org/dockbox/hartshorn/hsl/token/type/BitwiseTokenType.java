@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * Represents the different bitwise operators that are available in the HSL language.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum BitwiseTokenType implements EnumTokenType {
@@ -89,19 +89,15 @@ public enum BitwiseTokenType implements EnumTokenType {
      * shifted to the
      * right by 1 position, and the leftmost bit is filled with a 0.
      */
-    LOGICAL_SHIFT_RIGHT(builder -> builder.combines(DefaultTokenCharacter.GREATER,
-        DefaultTokenCharacter.GREATER,
-        DefaultTokenCharacter.GREATER)),
-
+    LOGICAL_SHIFT_RIGHT(builder -> builder.combines(
+            DefaultTokenCharacter.GREATER, DefaultTokenCharacter.GREATER, DefaultTokenCharacter.GREATER)),
     ;
 
     private final TokenMetaData metaData;
 
     BitwiseTokenType(DefaultTokenCharacter character) {
-        this(builder -> builder
-            .representation(String.valueOf(character.character()))
-            .characters(character)
-        );
+        this(builder ->
+                builder.representation(String.valueOf(character.character())).characters(character));
     }
 
     BitwiseTokenType(Customizer<TokenMetaDataBuilder> customizer) {

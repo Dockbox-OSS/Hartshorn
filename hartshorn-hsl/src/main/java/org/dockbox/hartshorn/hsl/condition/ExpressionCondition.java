@@ -75,16 +75,15 @@ public class ExpressionCondition implements IntrospectionCondition {
 
     @Override
     public ConditionResult matches(IntrospectedConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresExpression.class)
-            .map(condition -> this.calculateResult(context, condition))
-            .orElse(ConditionResult.invalidCondition("expression"));
+        return context.annotatedElement()
+                .annotations()
+                .get(RequiresExpression.class)
+                .map(condition -> this.calculateResult(context, condition))
+                .orElse(ConditionResult.invalidCondition("expression"));
     }
 
     @NonNull
-    private ConditionResult calculateResult(
-        IntrospectedConditionContext context,
-        RequiresExpression condition
-    ) {
+    private ConditionResult calculateResult(IntrospectedConditionContext context, RequiresExpression condition) {
         String expression = condition.value();
         ValidateExpressionRuntime runtime = this.createRuntime(context);
 
@@ -92,8 +91,7 @@ public class ExpressionCondition implements IntrospectionCondition {
             ScriptContext scriptContext = runtime.interpret(expression);
             boolean result = ValidateExpressionRuntime.valid(scriptContext);
             return ConditionResult.of(result);
-        }
-        catch (ScriptEvaluationError e) {
+        } catch (ScriptEvaluationError e) {
             return ConditionResult.notMatched(e.getMessage());
         }
     }
@@ -115,10 +113,8 @@ public class ExpressionCondition implements IntrospectionCondition {
             runtime = new ValidateExpressionRuntime(
                     applicationContext,
                     new StandardScriptComponentFactory(),
-                    new DefaultScriptStatementsParserCustomizer()
-            );
-        }
-        else {
+                    new DefaultScriptStatementsParserCustomizer());
+        } else {
             // Less predictable, especially with inject configurations enabled. But if the
             // application is not using the standard application context, we cannot make assumptions
             // in any case.
@@ -153,47 +149,39 @@ public class ExpressionCondition implements IntrospectionCondition {
      * @return the enhanced runtime
      */
     protected ValidateExpressionRuntime enhance(
-        ValidateExpressionRuntime runtime,
-        InjectionApplicationAwareContext context
-    ) {
+            ValidateExpressionRuntime runtime, InjectionApplicationAwareContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.firstContext(ProvidedParameterContext.class).peek(parameterContext -> {
-            parameterContext.arguments()
-                .forEach((parameter, value) -> runtime.global(parameter.name(), value));
+            parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
         });
 
-        context.firstContext(ExpressionConditionContext.class).peek(expressionContext -> {
+        context.firstContext(ExpressionConditionContext.class)
+                .peek(expressionContext -> {
+                    runtime.customizers(expressionContext.customizers());
+                    runtime.imports(expressionContext.imports());
+                    runtime.global(expressionContext.globalVariables());
+                    runtime.modules(expressionContext.externalModules());
 
-            runtime.customizers(expressionContext.customizers());
-            runtime.imports(expressionContext.imports());
-            runtime.global(expressionContext.globalVariables());
-            runtime.modules(expressionContext.externalModules());
-
-            if (expressionContext.includeApplicationContext()) {
-                this.enhanceWithApplicationContext(runtime, context.application());
-            }
-        }).onEmpty(() -> {
-            this.enhanceWithApplicationContext(runtime, context.application());
-        });
+                    if (expressionContext.includeApplicationContext()) {
+                        this.enhanceWithApplicationContext(runtime, context.application());
+                    }
+                })
+                .onEmpty(() -> {
+                    this.enhanceWithApplicationContext(runtime, context.application());
+                });
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(
-        ScriptRuntime runtime,
-        InjectionCapableApplication application
-    ) {
+    private void enhanceWithApplicationContext(ScriptRuntime runtime, InjectionCapableApplication application) {
         if (!(application instanceof ApplicationContext applicationContext)) {
-            throw new IllegalStateException(
-                "Application context is not available in the current context");
+            throw new IllegalStateException("Application context is not available in the current context");
         }
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
-            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME)
-                != applicationContext) {
+            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
                 LOG.warn("Runtime contains mismatched application context reference");
             }
             // Ignore if the global application is equal to our active context
-        }
-        else {
+        } else {
             runtime.global(GLOBAL_APPLICATION_CONTEXT_NAME, applicationContext);
         }
     }

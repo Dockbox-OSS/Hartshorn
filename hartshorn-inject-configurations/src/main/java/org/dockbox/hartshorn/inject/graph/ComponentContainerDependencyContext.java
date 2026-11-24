@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ public class ComponentContainerDependencyContext<T> extends ManagedComponentDepe
     private final ComponentContainer<T> container;
 
     public ComponentContainerDependencyContext(
-        ComponentContainer<T> container,
-        ComponentKey<T> componentKey, DependencyMap dependencies,
-        ConstructorView<? extends T> constructorView
-    ) {
+            ComponentContainer<T> container,
+            ComponentKey<T> componentKey,
+            DependencyMap dependencies,
+            ConstructorView<? extends T> constructorView) {
         super(componentKey, dependencies, constructorView);
         this.container = container;
     }

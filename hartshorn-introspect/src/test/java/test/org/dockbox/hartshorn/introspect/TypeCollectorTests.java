@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.util.introspect.scan.AggregateTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.CachedTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
@@ -32,32 +37,26 @@ import test.org.dockbox.hartshorn.introspect.types.ScanEnum;
 import test.org.dockbox.hartshorn.introspect.types.ScanInterface;
 import test.org.dockbox.hartshorn.introspect.types.ScanRecord;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 class TypeCollectorTests {
 
     @Test
     void classPathScannerTypeCollector() throws Exception {
-        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(
-            Set.of("test.org.dockbox.hartshorn.introspect.types")
-        );
+        TypeReferenceCollector collector =
+                new ClassPathScannerTypeReferenceCollector(Set.of("test.org.dockbox.hartshorn.introspect.types"));
         Set<TypeReference> typeReferences = collector.collect();
 
         assertThat(typeReferences).hasSize(7);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Set<Class<?>> types = typeReferences.stream().map(typeReference -> {
-            try {
-                return typeReference.getOrLoad(classLoader);
-            }
-            catch (ClassReferenceLoadException e) {
-                return fail(e);
-            }
-        }).collect(Collectors.toSet());
+        Set<Class<?>> types = typeReferences.stream()
+                .map(typeReference -> {
+                    try {
+                        return typeReference.getOrLoad(classLoader);
+                    } catch (ClassReferenceLoadException e) {
+                        return fail(e);
+                    }
+                })
+                .collect(Collectors.toSet());
 
         assertThat(types)
                 .contains(ScanAnnotation.class)
@@ -71,9 +70,8 @@ class TypeCollectorTests {
 
     @Test
     void cachedTypeCollector() throws Exception {
-        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(
-            Set.of("test.org.dockbox.hartshorn.introspect.types")
-        );
+        TypeReferenceCollector collector =
+                new ClassPathScannerTypeReferenceCollector(Set.of("test.org.dockbox.hartshorn.introspect.types"));
         TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
 
         Set<TypeReference> typeReferencesA = cachedCollector.collect();
@@ -84,32 +82,28 @@ class TypeCollectorTests {
 
     @Test
     void aggregateTypeCollector() throws Exception {
-        PredefinedSetTypeReferenceCollector enumCollector =
-            PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
-        PredefinedSetTypeReferenceCollector classCollector =
-            PredefinedSetTypeReferenceCollector.of(ScanClass.class);
+        PredefinedSetTypeReferenceCollector enumCollector = PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
+        PredefinedSetTypeReferenceCollector classCollector = PredefinedSetTypeReferenceCollector.of(ScanClass.class);
         PredefinedSetTypeReferenceCollector interfaceCollector =
-            PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
+                PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
 
         TypeReferenceCollector collector =
-            new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
+                new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
         Set<TypeReference> typeReferences = collector.collect();
 
         assertThat(typeReferences).hasSize(3);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Set<Class<?>> types = typeReferences.stream().map(typeReference -> {
-            try {
-                return typeReference.getOrLoad(classLoader);
-            }
-            catch (ClassReferenceLoadException e) {
-                return fail(e);
-            }
-        }).collect(Collectors.toSet());
+        Set<Class<?>> types = typeReferences.stream()
+                .map(typeReference -> {
+                    try {
+                        return typeReference.getOrLoad(classLoader);
+                    } catch (ClassReferenceLoadException e) {
+                        return fail(e);
+                    }
+                })
+                .collect(Collectors.toSet());
 
-        assertThat(types)
-                .contains(ScanEnum.class)
-                .contains(ScanClass.class)
-                .contains(ScanInterface.class);
+        assertThat(types).contains(ScanEnum.class).contains(ScanClass.class).contains(ScanInterface.class);
     }
 }

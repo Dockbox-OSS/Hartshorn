@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <V> the type of the values
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {
 
-    protected ConcurrentMultiMap() {
-    }
+    protected ConcurrentMultiMap() {}
 
     protected ConcurrentMultiMap(MultiMap<K, V> map) {
         super(map);

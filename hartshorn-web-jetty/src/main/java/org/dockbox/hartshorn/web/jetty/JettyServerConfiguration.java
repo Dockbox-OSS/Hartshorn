@@ -99,16 +99,12 @@ public class JettyServerConfiguration {
             @Named(SERVER_SCHEDULER) Scheduler scheduler,
             @Named(SERVER_BUFFER_POOL) ByteBufferPool bufferPool,
             @Fuzzy ComponentCollection<Customizer<Server>> customizers,
-            ServerPortProvider portProvider
-    ) {
+            ServerPortProvider portProvider) {
         Server server = new Server(threadPool, scheduler, bufferPool);
         server.setHandler(serverHandler);
 
         HttpConfiguration httpConfig = new HttpConfiguration();
-        ServerConnector connector = new ServerConnector(
-                server,
-                new HttpConnectionFactory(httpConfig)
-        );
+        ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
 
         // Jetty defines 0 as dynamic port selection, but we want to allow for -1 as well, as it is
         // a common convention for dynamic port selection in other frameworks. If a higher value is
@@ -155,8 +151,7 @@ public class JettyServerConfiguration {
     public Handler serverHandler(
             @Fuzzy ComponentCollection<Customizer<ServletRegistrar>> customizers,
             @Fuzzy ComponentCollection<Customizer<ServletContextHandler>> filterCustomizers,
-            JettyPathSpecTransformer pathSpecTransformer
-    ) {
+            JettyPathSpecTransformer pathSpecTransformer) {
         ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
         filterCustomizers.forEach(customizer -> customizer.configure(context));
@@ -175,9 +170,7 @@ public class JettyServerConfiguration {
      */
     @Prototype
     @CompositeMember
-    public Customizer<ServletContextHandler> contextFilterCustomizer(
-            @Fuzzy ComponentCollection<Filter> filters
-    ) {
+    public Customizer<ServletContextHandler> contextFilterCustomizer(@Fuzzy ComponentCollection<Filter> filters) {
         return context -> {
             filters.forEach(filter -> context.addFilter(new FilterHolder(filter), "/*", null));
         };
@@ -211,9 +204,7 @@ public class JettyServerConfiguration {
     @SupportPriority
     public ThreadPool jettyServerCustomThreadPool(
             ComponentProvider componentProvider,
-            @PropertyValue(name = "hartshorn.web.jetty.threadpool")
-            Class<? extends ThreadPool> threadPool
-    ) {
+            @PropertyValue(name = "hartshorn.web.jetty.threadpool") Class<? extends ThreadPool> threadPool) {
         return componentProvider.get(threadPool);
     }
 
@@ -244,9 +235,7 @@ public class JettyServerConfiguration {
     @SupportPriority
     public Scheduler jettyServerCustomScheduler(
             ComponentProvider componentProvider,
-            @PropertyValue(name = "hartshorn.web.jetty.scheduler")
-            Class<? extends Scheduler> scheduler
-    ) {
+            @PropertyValue(name = "hartshorn.web.jetty.scheduler") Class<? extends Scheduler> scheduler) {
         return componentProvider.get(scheduler);
     }
 
@@ -278,9 +267,7 @@ public class JettyServerConfiguration {
     @SupportPriority
     public ByteBufferPool jettyServerCustomBufferPool(
             ComponentProvider componentProvider,
-            @PropertyValue(name = "hartshorn.web.jetty.bufferpool")
-            Class<? extends ByteBufferPool> bufferPool
-    ) {
+            @PropertyValue(name = "hartshorn.web.jetty.bufferpool") Class<? extends ByteBufferPool> bufferPool) {
         return componentProvider.get(bufferPool);
     }
 }

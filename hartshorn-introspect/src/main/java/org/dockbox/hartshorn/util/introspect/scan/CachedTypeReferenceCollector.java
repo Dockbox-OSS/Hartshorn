@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
+import java.util.Set;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
-import java.util.Set;
 
 /**
  * A {@link TypeReferenceCollector} that caches the result of a delegate collector. The cache is
@@ -55,8 +54,8 @@ public class CachedTypeReferenceCollector implements TypeReferenceCollector {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("cached", this.cache != null ? this.cache.size() : 0)
-            .field("delegate", this.collector)
-            .describe();
+                .field("cached", this.cache != null ? this.cache.size() : 0)
+                .field("delegate", this.collector)
+                .describe();
     }
 }

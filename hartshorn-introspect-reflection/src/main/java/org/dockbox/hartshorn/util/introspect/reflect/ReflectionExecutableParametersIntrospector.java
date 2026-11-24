@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -30,6 +23,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * An introspector for the parameters of an executable element, such as a method or constructor.
@@ -38,8 +37,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ReflectionExecutableParametersIntrospector
-    implements ExecutableParametersIntrospector {
+public class ReflectionExecutableParametersIntrospector implements ExecutableParametersIntrospector {
 
     private final Introspector introspector;
     private final ReflectionExecutableElementView<?> executable;
@@ -48,9 +46,7 @@ public class ReflectionExecutableParametersIntrospector
     private List<TypeView<?>> genericParameterTypes;
 
     public ReflectionExecutableParametersIntrospector(
-        Introspector introspector,
-        ReflectionExecutableElementView<?> executable
-    ) {
+            Introspector introspector, ReflectionExecutableElementView<?> executable) {
         this.introspector = introspector;
         this.executable = executable;
     }
@@ -59,8 +55,8 @@ public class ReflectionExecutableParametersIntrospector
     public List<TypeView<?>> types() {
         if (this.parameterTypes == null) {
             this.parameterTypes = Arrays.stream(this.executable.executable().getParameterTypes())
-                .map(this.introspector::introspect)
-                .collect(Collectors.toList());
+                    .map(this.introspector::introspect)
+                    .collect(Collectors.toList());
         }
         return this.parameterTypes;
     }
@@ -68,8 +64,8 @@ public class ReflectionExecutableParametersIntrospector
     @Override
     public List<TypeView<?>> genericTypes() {
         if (this.genericParameterTypes == null) {
-            this.genericParameterTypes =
-                Arrays.stream(this.executable.executable().getGenericParameterTypes())
+            this.genericParameterTypes = Arrays.stream(
+                            this.executable.executable().getGenericParameterTypes())
                     .map(this.introspector::introspect)
                     .collect(Collectors.toList());
         }
@@ -91,16 +87,15 @@ public class ReflectionExecutableParametersIntrospector
     @Override
     public List<ParameterView<?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-            .filter(parameter -> parameter.annotations().has(annotation))
-            .toList();
+                .filter(parameter -> parameter.annotations().has(annotation))
+                .toList();
     }
 
     @Override
     public Option<ParameterView<?>> at(int index) {
         if (this.all().size() > index) {
             return Option.of(this.all().get(index));
-        }
-        else {
+        } else {
             return Option.empty();
         }
     }
@@ -130,10 +125,7 @@ public class ReflectionExecutableParametersIntrospector
         return this.matches(parameterTypes, TypeView::isParentOf);
     }
 
-    private boolean matches(
-        List<Class<?>> parameterTypes,
-        BiPredicate<TypeView<?>, Class<?>> predicate
-    ) {
+    private boolean matches(List<Class<?>> parameterTypes, BiPredicate<TypeView<?>, Class<?>> predicate) {
         if (parameterTypes.size() != this.count()) {
             return false;
         }

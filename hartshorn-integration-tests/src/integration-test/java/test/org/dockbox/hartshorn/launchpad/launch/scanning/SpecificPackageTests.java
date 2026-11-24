@@ -16,14 +16,13 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ScanSpecificPackageActivator;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.components.CountingComponentPreProcessor;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ScanSpecificPackageActivator;
 
 /**
  * This test is associated with <a
@@ -33,10 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ScanSpecificPackageActivator
 @HartshornIntegrationTest(
-    includeBasePackages = false,
-    includePackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
-    componentPreProcessors = {CountingComponentPreProcessor.class}
-)
+        includeBasePackages = false,
+        includePackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
+        componentPreProcessors = {CountingComponentPreProcessor.class})
 class SpecificPackageTests {
 
     @Test

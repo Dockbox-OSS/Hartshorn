@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -46,10 +49,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily
  * delegates to individual components, such as the {@link DependencyGraphInitializer} and
@@ -76,51 +75,39 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     private final DependencyGraphInitializer dependencyGraphInitializer;
 
     public SimpleApplicationContext(
-            SingleElementContext<? extends ApplicationEnvironment> initializerContext,
-            Configurer configurer
-    ) {
+            SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         super(initializerContext, configurer);
-        this.dependencyGraphInitializer = configurer.dependencyGraphInitializer.initialize(
-                initializerContext.transform(this)
-        );
+        this.dependencyGraphInitializer =
+                configurer.dependencyGraphInitializer.initialize(initializerContext.transform(this));
     }
 
     @Override
     public synchronized void loadContext() {
         this.checkRunning();
 
-        Collection<ComponentContainer<?>> containers = this.environment()
-                .componentRegistry()
-                .containers();
+        Collection<ComponentContainer<?>> containers =
+                this.environment().componentRegistry().containers();
         LOG.debug("Located {} components", containers.size());
 
         try {
-            Collection<DependencyDeclarationContext<?>> declarationContexts = this
-                    .componentProvider()
-                    .processorRegistry()
-                    .uninitializedPostProcessors().stream()
-                    .map(this.environment().introspector()::introspect)
-                    .map(PostProcessorDependencyDeclarationContext::new)
-                    .distinct()
-                    .collect(Collectors.toList());
+            Collection<DependencyDeclarationContext<?>> declarationContexts =
+                    this.componentProvider().processorRegistry().uninitializedPostProcessors().stream()
+                            .map(this.environment().introspector()::introspect)
+                            .map(PostProcessorDependencyDeclarationContext::new)
+                            .distinct()
+                            .collect(Collectors.toList());
 
             List<? extends DependencyDeclarationContext<?>> componentContexts = containers.stream()
                     .map(ComponentContainerDependencyDeclarationContext::new)
                     .toList();
             declarationContexts.addAll(componentContexts);
 
-            this.dependencyGraphInitializer.initializeDependencyGraph(
-                    declarationContexts,
-                    this.componentProvider()
-            );
-        }
-        catch (DependencyResolutionException e) {
+            this.dependencyGraphInitializer.initializeDependencyGraph(declarationContexts, this.componentProvider());
+        } catch (DependencyResolutionException e) {
             throw new ComponentInitializationException("Failed to resolve dependencies", e);
-        }
-        catch (GraphException e) {
+        } catch (GraphException e) {
             throw new ComponentInitializationException("Failed to iterate dependency graph", e);
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw new ComponentInitializationException("Failed to initialize components", e);
         }
         this.initializePostProcessors();
@@ -131,12 +118,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
 
     private void initializePostProcessors() {
         ComponentProcessorRegistry registry = this.componentProvider().processorRegistry();
-        for (
-            Class<? extends ComponentPostProcessor> uninitializedPostProcessor
-            : registry.uninitializedPostProcessors()
-        ) {
-            ComponentPostProcessor processor =
-                this.componentProvider().get(uninitializedPostProcessor);
+        for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor :
+                registry.uninitializedPostProcessors()) {
+            ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
             registry.register(processor);
         }
     }
@@ -150,16 +134,14 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
      */
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
-        NavigableMultiMap<Integer, ComponentPreProcessor> processors = this.componentProvider()
-                .processorRegistry()
-                .preProcessors();
-        for(int priority : processors.keySet()) {
-            for(ComponentPreProcessor processor : processors.get(priority)) {
+        NavigableMultiMap<Integer, ComponentPreProcessor> processors =
+                this.componentProvider().processorRegistry().preProcessors();
+        for (int priority : processors.keySet()) {
+            for (ComponentPreProcessor processor : processors.get(priority)) {
                 LOG.debug(
                         "Processing {} components with registered processor {}",
                         containers.size(),
-                        processor.getClass().getSimpleName()
-                );
+                        processor.getClass().getSimpleName());
                 for (ComponentContainer<?> container : containers) {
                     this.processStandaloneComponent(container, processor);
                 }
@@ -171,20 +153,19 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     }
 
     private void processStandaloneComponent(
-            ComponentContainer<?> container,
-            ComponentPreProcessor componentPreProcessor
-    ) {
+            ComponentContainer<?> container, ComponentPreProcessor componentPreProcessor) {
         TypeView<?> componentType = container.type();
         ComponentKey<?> key = ComponentKey.of(componentType.type());
         LOG.debug(
                 "Processing component {} with registered processor {}",
                 container.id(),
-                componentPreProcessor.getClass().getSimpleName()
-        );
+                componentPreProcessor.getClass().getSimpleName());
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
-                this, ComponentRequestContext.createForComponent(),
-                key, ComponentObjectContainer.empty(), container.permitsProxying()
-        );
+                this,
+                ComponentRequestContext.createForComponent(),
+                key,
+                ComponentObjectContainer.empty(),
+                container.permitsProxying());
         context.put(ComponentContainer.class, container);
         componentPreProcessor.process(context);
     }
@@ -197,8 +178,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
      * @return the new {@link SimpleApplicationContext}
      */
     public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(
-            Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return environment -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -220,20 +200,15 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
                 dependencyGraphInitializer = ContextualInitializer.defer(() -> {
             return DependencyGraphInitializer.create(graph -> {
                 // Support @Binds methods
-                graph.dependencyResolver(
-                        ApplicationDependencyResolver.create(Customizer.useDefaults())
-                );
+                graph.dependencyResolver(ApplicationDependencyResolver.create(Customizer.useDefaults()));
 
                 // If context is processable, ensure processors are registered as components
                 graph.dependencyVisitor(ContextualInitializer.of(context -> {
-                    if (context instanceof ProcessableApplicationContext
-                            processableApplicationContext
-                    ) {
+                    if (context instanceof ProcessableApplicationContext processableApplicationContext) {
                         return new DelegatingConfigurationDependencyVisitor(
                                 context.defaultBinder(),
                                 context.defaultProvider(),
-                                processableApplicationContext.defaultProvider().processorRegistry()
-                        );
+                                processableApplicationContext.defaultProvider().processorRegistry());
                     }
                     return new SkipConfigurationDependencyVisitor();
                 }));
@@ -247,12 +222,8 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
          * @param dependencyGraphInitializer the dependency graph initializer
          * @return the current instance
          */
-        public Configurer dependencyGraphInitializer(
-            DependencyGraphInitializer dependencyGraphInitializer
-        ) {
-            return this.dependencyGraphInitializer(
-                ContextualInitializer.of(dependencyGraphInitializer)
-            );
+        public Configurer dependencyGraphInitializer(DependencyGraphInitializer dependencyGraphInitializer) {
+            return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
         }
 
         /**
@@ -263,9 +234,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
          * @return the current instance
          */
         public Configurer dependencyGraphInitializer(
-            ContextualInitializer<ApplicationContext, DependencyGraphInitializer>
-                dependencyGraphInitializer
-        ) {
+                ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
             this.dependencyGraphInitializer = dependencyGraphInitializer;
             return this;
         }

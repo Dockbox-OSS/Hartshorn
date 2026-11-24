@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * {@code b} are truthy.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class LogicalExpression extends Expression {

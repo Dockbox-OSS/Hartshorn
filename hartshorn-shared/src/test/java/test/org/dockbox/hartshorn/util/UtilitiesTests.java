@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,17 @@
 
 package test.org.dockbox.hartshorn.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
@@ -27,18 +38,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 public class UtilitiesTests {
 
     private static final int minute = 60;
@@ -48,55 +47,50 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> capitalizeValues() {
         return Stream.of(
-            Arguments.of("value", "Value"),
-            Arguments.of("Value", "Value"),
-            Arguments.of("VALUE", "VALUE"),
-            Arguments.of(" value", " value")
-        );
+                Arguments.of("value", "Value"),
+                Arguments.of("Value", "Value"),
+                Arguments.of("VALUE", "VALUE"),
+                Arguments.of(" value", " value"));
     }
 
     private static Stream<Arguments> durations() {
         return Stream.of(
-            Arguments.of("1", 1),
-            Arguments.of("1s", 1),
-            Arguments.of("1m", minute),
-            Arguments.of("1h", hour),
-            Arguments.of("1d", day),
-            Arguments.of("1w", week),
-            Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
-            Arguments.of("2w3d", (2 * week) + (3 * day)),
-            Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
-            Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13),
-            Arguments.of("123456", 123456)
-        );
+                Arguments.of("1", 1),
+                Arguments.of("1s", 1),
+                Arguments.of("1m", minute),
+                Arguments.of("1h", hour),
+                Arguments.of("1d", day),
+                Arguments.of("1w", week),
+                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
+                Arguments.of("2w3d", (2 * week) + (3 * day)),
+                Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
+                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13),
+                Arguments.of("123456", 123456));
     }
 
     public static Stream<Arguments> differences() {
         return Stream.of(
-            Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
-            Arguments.of(List.of("a"), List.of("a", "b"), List.of("b"))
-        );
+                Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
+                Arguments.of(List.of("a"), List.of("a", "b"), List.of("b")));
     }
 
     public static Stream<Arguments> stringFormats() {
         return Stream.of(
-            Arguments.of("Hello world!", "Hello world!", new Object[0]),
-            Arguments.of("Hello %s!", "Hello %s!", new Object[] {"world"}),
-            Arguments.of("Hello {0}!", "Hello world!", new Object[] {"world"}),
-            Arguments.of("{0} {1}!", "Hello world!", new Object[] {"Hello", "world"}),
-            Arguments.of("{0} {0}!", "Hello Hello!", new Object[] {"Hello", "world"})
-        );
+                Arguments.of("Hello world!", "Hello world!", new Object[0]),
+                Arguments.of("Hello %s!", "Hello %s!", new Object[] {"world"}),
+                Arguments.of("Hello {0}!", "Hello world!", new Object[] {"world"}),
+                Arguments.of("{0} {1}!", "Hello world!", new Object[] {"Hello", "world"}),
+                Arguments.of("{0} {0}!", "Hello Hello!", new Object[] {"Hello", "world"}));
     }
 
     public static Stream<Arguments> stringMapFormats() {
         return Stream.of(
-            Arguments.of("Hello world!", "Hello world!", Map.of()),
-            Arguments.of("Hello %s!", "Hello %s!", Map.of("{0}", "world")),
-            Arguments.of("Hello {0}!", "Hello world!", Map.of("{0}", "world")),
-            Arguments.of("{0} {1}!", "Hello world!", Map.of("{0}", "Hello", "{1}", "world")),
-            Arguments.of("{0} {0}!", "Hello Hello!", Map.of("{0}", "Hello", "{1}", "world")),
-            Arguments.of("Hello world!", "Hello user!", Map.of("world", "user"))
-        );
+                Arguments.of("Hello world!", "Hello world!", Map.of()),
+                Arguments.of("Hello %s!", "Hello %s!", Map.of("{0}", "world")),
+                Arguments.of("Hello {0}!", "Hello world!", Map.of("{0}", "world")),
+                Arguments.of("{0} {1}!", "Hello world!", Map.of("{0}", "Hello", "{1}", "world")),
+                Arguments.of("{0} {0}!", "Hello Hello!", Map.of("{0}", "Hello", "{1}", "world")),
+                Arguments.of("Hello world!", "Hello user!", Map.of("world", "user")));
     }
 
     private static <T, R> Function<T, R> asFunction(Function<T, R> function) {
@@ -105,25 +99,20 @@ public class UtilitiesTests {
 
     public static Stream<Arguments> stringJoinValues() {
         return Stream.of(
-            Arguments.of(", ",
-                List.of(1, 2, 3),
-                UtilitiesTests.asFunction(String::valueOf),
-                "1, 2, 3"),
-            Arguments.of("|",
-                List.of("A", "b", "c"),
-                UtilitiesTests.<String, String>asFunction(String::toUpperCase),
-                "A|B|C"),
-            Arguments.of("", List.of(""), UtilitiesTests.asFunction(String::valueOf), "")
-        );
+                Arguments.of(", ", List.of(1, 2, 3), UtilitiesTests.asFunction(String::valueOf), "1, 2, 3"),
+                Arguments.of(
+                        "|",
+                        List.of("A", "b", "c"),
+                        UtilitiesTests.<String, String>asFunction(String::toUpperCase),
+                        "A|B|C"),
+                Arguments.of("", List.of(""), UtilitiesTests.asFunction(String::valueOf), ""));
     }
 
     @ParameterizedTest
     @MethodSource("capitalizeValues")
     void capitalizeChangesOnlyFirstCharacter(String input, String expected) {
         String value = StringUtilities.capitalize(input);
-        assertThat(value)
-                .isNotNull()
-                .isEqualTo(expected);
+        assertThat(value).isNotNull().isEqualTo(expected);
     }
 
     @Test
@@ -166,49 +155,37 @@ public class UtilitiesTests {
     @Test
     void stripReplacesAllSpaces() {
         String stripped = StringUtilities.strip(" val ue  ");
-        assertThat(stripped)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(stripped).isNotNull().isEqualTo("value");
     }
 
     @Test
     void stripReplacesAllTabs() {
         String stripped = StringUtilities.strip("\tval\tue\t\t");
-        assertThat(stripped)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(stripped).isNotNull().isEqualTo("value");
     }
 
     @Test
     void stripReplacesAllNewLines() {
         String stripped = StringUtilities.strip("\nval\nue\n\n");
-        assertThat(stripped)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(stripped).isNotNull().isEqualTo("value");
     }
 
     @Test
     void stripReplacesAllCarriageReturns() {
         String stripped = StringUtilities.strip("\rval\rue\r\r");
-        assertThat(stripped)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(stripped).isNotNull().isEqualTo("value");
     }
 
     @Test
     void trimWithSpaces() {
         String trimmed = StringUtilities.trimWith(' ', " value  ");
-        assertThat(trimmed)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(trimmed).isNotNull().isEqualTo("value");
     }
 
     @Test
     void trimWithRegExCharacter() {
         String trimmed = StringUtilities.trimWith('$', "$value$$");
-        assertThat(trimmed)
-                .isNotNull()
-                .isEqualTo("value");
+        assertThat(trimmed).isNotNull().isEqualTo("value");
     }
 
     @Test
@@ -217,9 +194,7 @@ public class UtilitiesTests {
         Collection<Integer> col2 = Arrays.asList(4, 5, 6);
         Collection<Integer> merged = CollectionUtilities.merge(col1, col2);
 
-        assertThat(merged)
-                .hasSize(6)
-                .containsAll(Arrays.asList(1, 2, 3, 4, 5, 6));
+        assertThat(merged).hasSize(6).containsAll(Arrays.asList(1, 2, 3, 4, 5, 6));
     }
 
     @ParameterizedTest
@@ -239,10 +214,7 @@ public class UtilitiesTests {
     @ParameterizedTest
     @MethodSource("differences")
     void differenceInCollections(
-        Collection<String> collectionOne,
-        Collection<String> collectionTwo,
-        Collection<String> expected
-    ) {
+            Collection<String> collectionOne, Collection<String> collectionTwo, Collection<String> expected) {
         Set<String> difference = CollectionUtilities.difference(collectionOne, collectionTwo);
         assertThat(expected).hasSameSizeAs(difference);
         assertThat(difference).containsAll(expected);
@@ -273,44 +245,37 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("stringJoinValues")
-    <T> void join(
-        String delimiter,
-        Iterable<T> elements,
-        Function<T, String> toStringFunction,
-        String expected
-    ) {
+    <T> void join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction, String expected) {
         String joined = StringUtilities.join(delimiter, elements, toStringFunction);
         assertThat(joined).isEqualTo(expected);
     }
 
     public static Stream<Arguments> stringsToPrimitives() {
         return Stream.of(
-            Arguments.of("1", int.class, 1),
-            Arguments.of("1", long.class, 1L),
-            Arguments.of("1", short.class, (short) 1),
-            Arguments.of("1", byte.class, (byte) 1),
-            Arguments.of("1", float.class, 1.0f),
-            Arguments.of("1", double.class, 1.0d),
-            Arguments.of("true", boolean.class, true),
-            Arguments.of("1", char.class, '1'),
-            Arguments.of("ONE", TestEnum.class, TestEnum.ONE),
-            Arguments.of("TWO", TestEnum.class, TestEnum.TWO),
-            Arguments.of("THREE", TestEnum.class, TestEnum.THREE)
-        );
+                Arguments.of("1", int.class, 1),
+                Arguments.of("1", long.class, 1L),
+                Arguments.of("1", short.class, (short) 1),
+                Arguments.of("1", byte.class, (byte) 1),
+                Arguments.of("1", float.class, 1.0f),
+                Arguments.of("1", double.class, 1.0d),
+                Arguments.of("true", boolean.class, true),
+                Arguments.of("1", char.class, '1'),
+                Arguments.of("ONE", TestEnum.class, TestEnum.ONE),
+                Arguments.of("TWO", TestEnum.class, TestEnum.TWO),
+                Arguments.of("THREE", TestEnum.class, TestEnum.THREE));
     }
 
     public static Stream<Arguments> invalidStringsToPrimitives() {
         return Stream.of(
-            Arguments.of("one", int.class),
-            Arguments.of("one", long.class),
-            Arguments.of("one", short.class),
-            Arguments.of("one", byte.class),
-            Arguments.of("one", float.class),
-            Arguments.of("one", double.class),
-            Arguments.of("yes", boolean.class),
-            Arguments.of("too long", char.class),
-            Arguments.of("FOUR", TestEnum.class)
-        );
+                Arguments.of("one", int.class),
+                Arguments.of("one", long.class),
+                Arguments.of("one", short.class),
+                Arguments.of("one", byte.class),
+                Arguments.of("one", float.class),
+                Arguments.of("one", double.class),
+                Arguments.of("yes", boolean.class),
+                Arguments.of("too long", char.class),
+                Arguments.of("FOUR", TestEnum.class));
     }
 
     @ParameterizedTest
@@ -322,9 +287,12 @@ public class UtilitiesTests {
 
     @Test
     void toPrimitiveDoesNotAcceptObjects() {
-        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(Object.class, "value"));
-        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(String.class, "value"));
-        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(List.class, "value"));
+        assertThatExceptionOfType(NotPrimitiveException.class)
+                .isThrownBy(() -> TypeUtils.toPrimitive(Object.class, "value"));
+        assertThatExceptionOfType(NotPrimitiveException.class)
+                .isThrownBy(() -> TypeUtils.toPrimitive(String.class, "value"));
+        assertThatExceptionOfType(NotPrimitiveException.class)
+                .isThrownBy(() -> TypeUtils.toPrimitive(List.class, "value"));
     }
 
     @ParameterizedTest
@@ -337,18 +305,14 @@ public class UtilitiesTests {
     void validWildcardAdjustment() {
         List<?> list = Arrays.asList("one", "two", "three");
         List<String> adjusted = TypeUtils.unchecked(list, List.class);
-        assertThat(adjusted)
-                .isNotNull()
-                .isSameAs(list);
+        assertThat(adjusted).isNotNull().isSameAs(list);
     }
 
     @Test
     void wildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
         List<String> adjusted = TypeUtils.unchecked(list, Collection.class);
-        assertThat(adjusted)
-                .isNotNull()
-                .isSameAs(list);
+        assertThat(adjusted).isNotNull().isSameAs(list);
     }
 
     @Test
@@ -360,18 +324,18 @@ public class UtilitiesTests {
     @Test
     void annotationCreatesAnnotationWithValues() {
         TestAnnotationWithValue annotation =
-            TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
+                TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
         assertThat(annotation).isNotNull();
         assertThat(annotation.value()).isEqualTo("test");
     }
 
     @Test
     void annotationValidatesValues() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
     }
 
-    private @interface TestAnnotation {
-    }
+    private @interface TestAnnotation {}
 
     private @interface TestAnnotationWithValue {
         String value();

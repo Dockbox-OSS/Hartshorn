@@ -39,13 +39,11 @@ public class TestApplicationCondition implements IntrospectionCondition {
     @Override
     public ConditionResult matches(IntrospectedConditionContext context) {
         HierarchicalBinder binder = context.application().defaultBinder();
-        BindingHierarchy<ApplicationTestManager> hierarchy = binder.hierarchy(
-                ComponentKey.of(ApplicationTestManager.class)
-        );
+        BindingHierarchy<ApplicationTestManager> hierarchy =
+                binder.hierarchy(ComponentKey.of(ApplicationTestManager.class));
         if (hierarchy.size() != 0) {
             return ConditionResult.matched();
-        }
-        else {
+        } else {
             return ConditionResult.notFound("test binding", ApplicationContext.class.getName());
         }
     }

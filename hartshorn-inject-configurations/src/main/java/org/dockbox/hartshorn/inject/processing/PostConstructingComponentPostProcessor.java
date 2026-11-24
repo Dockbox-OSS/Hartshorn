@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * {@link OnInitialized} methods on the component, though specific implementations may vary.
  *
  * @see ComponentPostConstructor
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class PostConstructingComponentPostProcessor implements ComponentProviderPostProcessor {
@@ -45,11 +45,10 @@ public class PostConstructingComponentPostProcessor implements ComponentProvider
     private final Scope defaultScope;
 
     public PostConstructingComponentPostProcessor(
-        ComponentPostConstructor postConstructor,
-        ComponentProviderPostProcessor delegate,
-        ComponentStoreCallback componentStoreCallback,
-        Scope defaultScope
-    ) {
+            ComponentPostConstructor postConstructor,
+            ComponentProviderPostProcessor delegate,
+            ComponentStoreCallback componentStoreCallback,
+            Scope defaultScope) {
         this.postConstructor = postConstructor;
         this.delegate = delegate;
         this.componentStoreCallback = componentStoreCallback;
@@ -58,32 +57,23 @@ public class PostConstructingComponentPostProcessor implements ComponentProvider
 
     @Override
     public <T> T processInstance(
-        ComponentKey<T> componentKey,
-        ObjectContainer<T> objectContainer,
-        ComponentRequestContext requestContext
-    )
-        throws ApplicationException {
+            ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
+            throws ApplicationException {
         T instance = this.delegate.processInstance(componentKey, objectContainer, requestContext);
         return this.finishComponentRequest(componentKey, objectContainer.copyForObject(instance));
     }
 
-    private <T> T finishComponentRequest(
-        ComponentKey<T> componentKey,
-        ObjectContainer<T> container
-    ) {
+    private <T> T finishComponentRequest(ComponentKey<T> componentKey, ObjectContainer<T> container) {
         this.componentStoreCallback.store(componentKey, container);
         if (componentKey.postConstructionAllowed()) {
             try {
                 Scope scope = componentKey.scope().orElse(this.defaultScope);
                 return this.postConstructor.doPostConstruct(container.instance(), scope);
-            }
-            catch (ApplicationException e) {
+            } catch (ApplicationException e) {
                 throw new ComponentInitializationException(
-                    "Failed to perform post-construction on component with key " + componentKey,
-                    e);
+                        "Failed to perform post-construction on component with key " + componentKey, e);
             }
-        }
-        else {
+        } else {
             return container.instance();
         }
     }

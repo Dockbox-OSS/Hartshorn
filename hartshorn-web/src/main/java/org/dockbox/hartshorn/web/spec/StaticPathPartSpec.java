@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.web.spec;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Specification for a path part that represents a static segment of the path. A static path part

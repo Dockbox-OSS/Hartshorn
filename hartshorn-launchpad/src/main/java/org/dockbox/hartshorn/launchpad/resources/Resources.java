@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.resources;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +24,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator;
 
 /**
  * Utilities for working with classpath resources. This class is internal, and should not be used
@@ -114,8 +113,7 @@ public final class Resources {
      *
      * @throws IOException if the resource could not be found
      */
-    public static InputStream getResourceAsInputStream(ClassLoader loader, String resource)
-        throws IOException {
+    public static InputStream getResourceAsInputStream(ClassLoader loader, String resource) throws IOException {
         return getResourceURL(loader, resource).openStream();
     }
 
@@ -195,8 +193,7 @@ public final class Resources {
      *
      * @throws IOException if the resource could not be found
      */
-    public static Set<InputStream> getResourcesAsInputStreams(ClassLoader loader, String resource)
-        throws IOException {
+    public static Set<InputStream> getResourcesAsInputStreams(ClassLoader loader, String resource) throws IOException {
         Set<InputStream> inputStreams = new HashSet<>();
         for (URL resourceURL : getResourceURLs(loader, resource)) {
             inputStreams.add(resourceURL.openStream());
@@ -214,8 +211,7 @@ public final class Resources {
     private static ClassLoader getClassLoader() {
         try {
             return Thread.currentThread().getContextClassLoader();
-        }
-        catch (SecurityException e) {
+        } catch (SecurityException e) {
             return ApplicationContext.class.getClassLoader();
         }
     }

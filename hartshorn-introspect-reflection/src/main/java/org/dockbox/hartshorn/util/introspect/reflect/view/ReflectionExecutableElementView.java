@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Executable;
+import java.util.List;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -30,10 +33,6 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Executable;
-import java.util.List;
-
 /**
  * A view that provides access to executable elements of a class (constructors and methods). This
  * view is backed by a {@link Executable} instance.
@@ -42,13 +41,13 @@ import java.util.List;
  *
  * @see ExecutableParametersIntrospector
  * @see TypeVariablesIntrospector
- * 
+ *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView
-    implements ExecutableElementView<Parent> {
+        implements ExecutableElementView<Parent> {
 
     private final Introspector introspector;
     private final Executable executable;
@@ -58,22 +57,19 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
 
     private TypeView<Parent> declaredBy;
 
-    protected ReflectionExecutableElementView(
-        ReflectionIntrospector introspector,
-        Executable executable
-    ) {
+    protected ReflectionExecutableElementView(ReflectionIntrospector introspector, Executable executable) {
         super(introspector);
         this.executable = executable;
         this.introspector = introspector;
         if (!executable.trySetAccessible()) {
             String packageName = executable.getDeclaringClass().getPackageName();
             if (!(packageName.startsWith("java.")
-                || packageName.startsWith("jdk.")
-                || packageName.startsWith("sun.")
-                || packageName.startsWith("com.sun.")
-                || packageName.startsWith("javax."))) {
-                throw new IllegalIntrospectionException(executable,
-                    "Unable to set executable " + executable.getName() + " accessible");
+                    || packageName.startsWith("jdk.")
+                    || packageName.startsWith("sun.")
+                    || packageName.startsWith("com.sun.")
+                    || packageName.startsWith("javax."))) {
+                throw new IllegalIntrospectionException(
+                        executable, "Unable to set executable " + executable.getName() + " accessible");
             }
         }
     }
@@ -90,8 +86,7 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public ExecutableParametersIntrospector parameters() {
         if (this.parametersIntrospector == null) {
-            this.parametersIntrospector =
-                new ReflectionExecutableParametersIntrospector(this.introspector, this);
+            this.parametersIntrospector = new ReflectionExecutableParametersIntrospector(this.introspector, this);
         }
         return this.parametersIntrospector;
     }
@@ -99,9 +94,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public TypeVariablesIntrospector typeVariables() {
         if (this.typeVariablesIntrospector == null) {
-            this.typeVariablesIntrospector =
-                new ReflectionTypeVariablesIntrospector(this.introspector,
-                    List.of(this.executable.getTypeParameters()));
+            this.typeVariablesIntrospector = new ReflectionTypeVariablesIntrospector(
+                    this.introspector, List.of(this.executable.getTypeParameters()));
         }
         return this.typeVariablesIntrospector;
     }
@@ -109,8 +103,7 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public TypeView<Parent> declaredBy() {
         if (this.declaredBy == null) {
-            this.declaredBy = (TypeView<Parent>)
-                this.introspector.introspect(this.executable.getDeclaringClass());
+            this.declaredBy = (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
         }
         return this.declaredBy;
     }

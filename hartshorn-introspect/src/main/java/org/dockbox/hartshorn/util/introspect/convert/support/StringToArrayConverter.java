@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Converts a {@link String} to a {@link String} array, splitting the input string by a delimiter.
@@ -32,7 +31,7 @@ import java.util.regex.Pattern;
  * @see String#split(String)
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StringToArrayConverter implements GenericConverter {
@@ -60,10 +59,7 @@ public class StringToArrayConverter implements GenericConverter {
 
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         if (source instanceof String charSequence) {
             String[] strings = charSequence.split(this.delimiter.pattern());
             if (this.trim) {

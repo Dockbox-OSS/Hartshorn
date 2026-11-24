@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -25,29 +27,22 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * A parser for {@link ConstructorStatement} nodes.
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement>
-    implements ParametricStatementParser, ClassMemberParser<ConstructorStatement> {
+        implements ParametricStatementParser, ClassMemberParser<ConstructorStatement> {
 
     @Override
-    public Option<? extends ConstructorStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends ConstructorStatement> parse(TokenParser parser, TokenStepValidator validator) {
         Token keyword = parser.peek();
         if (keyword.type() == FunctionTokenType.CONSTRUCTOR) {
             parser.advance();
-            List<Parameter> parameters =
-                this.parameters(parser, validator, "constructor", -1, keyword.type());
+            List<Parameter> parameters = this.parameters(parser, validator, "constructor", -1, keyword.type());
             BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
             return Option.of(new ConstructorStatement(keyword, parameters, body));
         }

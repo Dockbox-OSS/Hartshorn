@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import java.lang.classfile.ClassModel;
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -28,10 +31,6 @@ import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.ClassModel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A {@link TypeView} that represents a wildcard type. This type is used to represent the type of a

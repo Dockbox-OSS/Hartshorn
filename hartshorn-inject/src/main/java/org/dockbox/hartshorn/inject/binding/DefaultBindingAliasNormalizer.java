@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,16 +40,11 @@ public class DefaultBindingAliasNormalizer implements BindingAliasNormalizer {
 
     @Override
     public <T> ComponentKey<? super T> alias(ComponentKey<T> baseKey, Class<? super T> aliasType) {
-        return baseKey.mutable()
-            .type(aliasType)
-            .build();
+        return baseKey.mutable().type(aliasType).build();
     }
 
     @Override
     public <T> ComponentKey<T> alias(ComponentKey<T> baseKey, QualifierKey<T> aliasQualifier) {
-        return baseKey.mutable()
-            .withoutQualifiers()
-            .qualifier(aliasQualifier)
-            .build();
+        return baseKey.mutable().withoutQualifiers().qualifier(aliasQualifier).build();
     }
 }

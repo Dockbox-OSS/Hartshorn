@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.web.support.jackson;
 
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.MediaType;
-
 import java.util.Map;
 import java.util.TreeMap;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.web.MediaType;
 
 /**
  * A registry for mapping format names of Jackson
@@ -33,9 +32,7 @@ import java.util.TreeMap;
  */
 public class JacksonObjectMapperMediaTypeRegistry {
 
-    private final Map<String, MediaType> mediaTypeCache = new TreeMap<>(
-            String.CASE_INSENSITIVE_ORDER
-    );
+    private final Map<String, MediaType> mediaTypeCache = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Adds a mapping from a format name to a {@link MediaType}. Format names should match the

@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.scan.ClassNameReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A {@link ClasspathTypeReferenceCollector} that collects {@link TypeReference}s from a classpath
@@ -64,9 +63,8 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
     @Override
     protected Set<TypeReference> createCache() throws TypeCollectionException {
         Set<TypeReference> typeReferences = new HashSet<>();
-        ClassPathScanner classpathScanner = ClassPathScanner.create()
-            .includeDefaultClassPath()
-            .classesOnly();
+        ClassPathScanner classpathScanner =
+                ClassPathScanner.create().includeDefaultClassPath().classesOnly();
 
         for (String packageName : this.packageNames()) {
             classpathScanner.includePrefix(packageName);
@@ -82,19 +80,14 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
                     typeReferences.add(new ClassNameReference(resource.resourceName()));
                 }
             });
-        }
-        catch (ClassPathWalkingException e) {
-            throw new TypeCollectionException(
-                "Failed to collect types in packages " + this.packageNames(),
-                e
-            );
+        } catch (ClassPathWalkingException e) {
+            throw new TypeCollectionException("Failed to collect types in packages " + this.packageNames(), e);
         }
         return typeReferences;
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("packages")
-            .writeStrings(this.packageNames().toArray(String[]::new));
+        collector.property("packages").writeStrings(this.packageNames().toArray(String[]::new));
     }
 }

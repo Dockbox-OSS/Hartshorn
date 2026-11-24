@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import java.lang.classfile.ClassModel;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
@@ -25,14 +32,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
-
-import java.lang.classfile.ClassModel;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * A collector for types in the environment. This delegates to the
@@ -47,9 +46,9 @@ import java.util.stream.Collectors;
  *
  * @see TypeReferenceCollector
  * @see TypeReferenceCollectorContext
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class EnvironmentTypeCollector {
@@ -58,9 +57,7 @@ public class EnvironmentTypeCollector {
     private final TypeReferenceCollectorContext collectorContext;
 
     public EnvironmentTypeCollector(
-        ApplicationEnvironment environment,
-        TypeReferenceCollectorContext collectorContext
-    ) {
+            ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext) {
         this.environment = environment;
         this.collectorContext = collectorContext;
     }
@@ -81,12 +78,11 @@ public class EnvironmentTypeCollector {
             Set<TypeReference> references = this.collectorContext.collector().collect();
             Collection<Class<?>> classes = this.loadClasses(references);
             return classes.stream()
-                .map(this.environment.introspector()::introspect)
-                .filter(predicate)
-                .map(reference -> (TypeView<T>) reference)
-                .collect(Collectors.toSet());
-        }
-        catch (TypeCollectionException e) {
+                    .map(this.environment.introspector()::introspect)
+                    .filter(predicate)
+                    .map(reference -> (TypeView<T>) reference)
+                    .collect(Collectors.toSet());
+        } catch (TypeCollectionException e) {
             this.environment.handle(e);
             return Collections.emptyList();
         }
@@ -96,26 +92,24 @@ public class EnvironmentTypeCollector {
         ConditionMatcher conditionMatcher = this.environment.conditionMatcher();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
-            .filter(reference -> conditionMatcher.match(resolveClassModel(reference)).matches())
-            .map(reference -> {
-                try {
-                    return reference.getOrLoad(classLoader);
-                }
-                catch (ClassReferenceLoadException e) {
-                    this.environment.handle(e);
-                    return null;
-                }
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .filter(reference ->
+                        conditionMatcher.match(resolveClassModel(reference)).matches())
+                .map(reference -> {
+                    try {
+                        return reference.getOrLoad(classLoader);
+                    } catch (ClassReferenceLoadException e) {
+                        this.environment.handle(e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     private ClassModel resolveClassModel(TypeReference reference) {
-        return ClassFileUtilities.getClassModel(
-                reference.qualifiedName()
-        ).orElseThrow(() -> new IllegalStateException(
-                "Could not load class model for type reference: %s. Is it on the classpath?"
-                        .formatted(reference.qualifiedName())
-        ));
+        return ClassFileUtilities.getClassModel(reference.qualifiedName())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Could not load class model for type reference: %s. Is it on the classpath?"
+                                .formatted(reference.qualifiedName())));
     }
 }

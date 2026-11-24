@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.profiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Set;
 import org.dockbox.hartshorn.profiles.ProfileNameResolver;
 import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
@@ -26,10 +29,6 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import org.dockbox.hartshorn.properties.loader.path.StandardPropertyPathStyle;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ProfileNameResolverTests {
 
     @Test
@@ -38,39 +37,31 @@ class ProfileNameResolverTests {
         PropertyPathStyle style = StandardPropertyPathStyle.INSTANCE;
 
         ConfiguredProperty profileOne = new SingleConfiguredProperty(
-            FromPropertyProfileNameResolver.PROFILES_PROPERTY
-                + style.index(0), "development");
+                FromPropertyProfileNameResolver.PROFILES_PROPERTY + style.index(0), "development");
         registry.register(profileOne);
 
         ConfiguredProperty profileTwo = new SingleConfiguredProperty(
-            FromPropertyProfileNameResolver.PROFILES_PROPERTY
-                + style.index(1), "testing");
+                FromPropertyProfileNameResolver.PROFILES_PROPERTY + style.index(1), "testing");
         registry.register(profileTwo);
 
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
         Set<String> profileNames = resolver.resolveProfileNames(registry);
 
-        assertThat(profileNames)
-                .hasSize(2)
-                .contains("development")
-                .contains("testing");
+        assertThat(profileNames).hasSize(2).contains("development").contains("testing");
     }
 
     @Test
     void fromPropertyProfileNameResolverSupportsCommaSeparatedValue() {
         PropertyRegistry registry = new MapPropertyRegistry();
 
-        ConfiguredProperty profiles = new SingleConfiguredProperty(
-            FromPropertyProfileNameResolver.PROFILES_PROPERTY, "development,testing");
+        ConfiguredProperty profiles =
+                new SingleConfiguredProperty(FromPropertyProfileNameResolver.PROFILES_PROPERTY, "development,testing");
         registry.register(profiles);
 
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
         Set<String> profileNames = resolver.resolveProfileNames(registry);
 
-        assertThat(profileNames)
-                .hasSize(2)
-                .contains("development")
-                .contains("testing");
+        assertThat(profileNames).hasSize(2).contains("development").contains("testing");
     }
 
     @Test

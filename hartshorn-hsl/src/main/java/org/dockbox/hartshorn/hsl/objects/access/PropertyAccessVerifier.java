@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * be accessed from within the class that defines it.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public interface PropertyAccessVerifier {
@@ -44,12 +44,7 @@ public interface PropertyAccessVerifier {
      *
      * @return a diagnostic if the access is not allowed, or null if it is allowed
      */
-    FormattedDiagnostic read(
-        Token at,
-        VirtualProperty property,
-        InstanceReference instance,
-        VariableScope fromScope
-    );
+    FormattedDiagnostic read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 
     /**
      * Verifies if a write access to the given property is allowed. If the access is not allowed, a
@@ -63,10 +58,5 @@ public interface PropertyAccessVerifier {
      *
      * @return a diagnostic if the access is not allowed, or null if it is allowed
      */
-    FormattedDiagnostic write(
-        Token at,
-        VirtualProperty property,
-        InstanceReference instance,
-        VariableScope fromScope
-    );
+    FormattedDiagnostic write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 }

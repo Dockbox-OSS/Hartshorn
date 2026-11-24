@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for IO operations.
@@ -131,8 +130,7 @@ public final class IOUtilities {
             String jarPath = s.substring(4, separatorIndex);
             try (var jarFile = new JarFile(Path.of(URI.create(jarPath)).toFile())) {
                 return jarFile.getJarEntry(entryPath) != null;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -151,8 +149,7 @@ public final class IOUtilities {
     public static Option<InputStream> openStream(URI uri) {
         try {
             return Option.of(uri.toURL().openStream());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return Option.empty();
         }
     }

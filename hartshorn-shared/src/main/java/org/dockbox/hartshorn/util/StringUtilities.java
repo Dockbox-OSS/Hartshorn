@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.Nullable;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +28,8 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A collection of utility methods for working with strings.
@@ -71,9 +70,9 @@ public final class StringUtilities {
      *     <li>1d4m: 1 day, 4 minutes</li>
      * </ul>
      */
-    private static final Pattern DURATION_PATTERN = Pattern.compile(
-        "^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$"
-    );
+    private static final Pattern DURATION_PATTERN =
+            Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int SECONDS_IN_HOUR = 60 * StringUtilities.SECONDS_IN_MINUTE;
     private static final int SECONDS_IN_DAY = 24 * StringUtilities.SECONDS_IN_HOUR;
@@ -93,8 +92,8 @@ public final class StringUtilities {
      */
     public static String capitalize(String value) {
         return StringUtilities.empty(value)
-            ? value
-            : (value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1));
+                ? value
+                : (value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1));
     }
 
     /**
@@ -345,9 +344,11 @@ public final class StringUtilities {
      */
     public static boolean matchesFormatted(String raw, String formatted) {
         String regex = Pattern.quote(raw);
-       regex = regex.replaceAll("\\{\\d+}", "(.+?)");
+        regex = regex.replaceAll("\\{\\d+}", "(.+?)");
         regex = regex.replaceAll("\\\\Q(.+?)\\\\E", "$1");
-        return Pattern.compile("^" + regex + "$", Pattern.DOTALL).matcher(formatted).matches();
+        return Pattern.compile("^" + regex + "$", Pattern.DOTALL)
+                .matcher(formatted)
+                .matches();
     }
 
     /**
@@ -370,11 +371,7 @@ public final class StringUtilities {
      *
      * @return the joined string
      */
-    public static <T> String join(
-        String delimiter,
-        Iterable<T> elements,
-        Function<T, String> toStringFunction
-    ) {
+    public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
         StringJoiner joiner = new StringJoiner(delimiter);
         for (T element : elements) {
             joiner.add(toStringFunction.apply(element));
@@ -482,11 +479,7 @@ public final class StringUtilities {
             return result;
         }
 
-        private void generate(
-            List<String> results,
-            String current,
-            int depth
-        ) {
+        private void generate(List<String> results, String current, int depth) {
             if (depth >= this.segments.size()) {
                 results.add(current);
                 return;

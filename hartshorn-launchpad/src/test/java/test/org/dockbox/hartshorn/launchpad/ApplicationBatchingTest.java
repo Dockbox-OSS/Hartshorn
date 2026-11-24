@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.launchpad;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -30,8 +32,6 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Execution(ExecutionMode.CONCURRENT)
 class ApplicationBatchingTest {
 
@@ -43,32 +43,25 @@ class ApplicationBatchingTest {
     @RepeatedTest(1)
     void applicationContextBatching(RepetitionInfo repetitionInfo) {
         int currentRepetition = repetitionInfo.getCurrentRepetition();
-        ApplicationContext applicationContext = HartshornApplication.create(
-                ApplicationBatchingTest.class,
-                builder -> {
-                    builder.applicationName("ApplicationBatchingTest-" + currentRepetition);
-                    builder.arguments("iteration=" + currentRepetition);
-                    builder.applicationContextFactory(StandardApplicationContextFactory.create(
-                            constructor -> {
-                                constructor.includeBasePackages(false);
-                                constructor.standaloneComponents(components -> {
-                                    components.add(SimpleComponent.class);
-                                });
-                                constructor.environment(ConfigurableApplicationEnvironment.create(
-                                    environment -> environment.injectorConfiguration(
-                                        ImmutableInjectorConfiguration.create(configuration -> {
-                                            configuration.enableBatchMode();
-                                            configuration.disableBanner();
-                                        })))
-                                );
-                            })
-                    );
+        ApplicationContext applicationContext = HartshornApplication.create(ApplicationBatchingTest.class, builder -> {
+            builder.applicationName("ApplicationBatchingTest-" + currentRepetition);
+            builder.arguments("iteration=" + currentRepetition);
+            builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                constructor.includeBasePackages(false);
+                constructor.standaloneComponents(components -> {
+                    components.add(SimpleComponent.class);
                 });
+                constructor.environment(ConfigurableApplicationEnvironment.create(environment ->
+                        environment.injectorConfiguration(ImmutableInjectorConfiguration.create(configuration -> {
+                            configuration.enableBatchMode();
+                            configuration.disableBanner();
+                        }))));
+            }));
+        });
 
         assertThat(applicationContext).isNotNull();
-        Option<ValueProperty> iterationProperty = applicationContext.environment()
-                .propertyRegistry()
-                .get("iteration");
+        Option<ValueProperty> iterationProperty =
+                applicationContext.environment().propertyRegistry().get("iteration");
         assertThat(iterationProperty.present()).isTrue();
         Option<String> iterationValue = iterationProperty.get().value();
         assertThat(iterationValue.present()).isTrue();
@@ -82,7 +75,6 @@ class ApplicationBatchingTest {
     public record SimpleComponent(ApplicationContext applicationContext) {
 
         @Inject
-        public SimpleComponent {
-        }
+        public SimpleComponent {}
     }
 }

@@ -52,41 +52,29 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
     }
 
     @Override
-    public final <T> T process(ComponentProcessingContext<T> processingContext)
-        throws ApplicationException {
+    public final <T> T process(ComponentProcessingContext<T> processingContext) throws ApplicationException {
         T instance = processingContext.instance();
 
         if (!this.isCompatible(processingContext)) {
             return instance;
         }
 
-        this.preConfigureComponent(processingContext.application(),
-            processingContext.instance(),
-            processingContext);
+        this.preConfigureComponent(processingContext.application(), processingContext.instance(), processingContext);
         checkForModification(processingContext, this, instance, processingContext.instance());
 
-        T updatedInstance = this.initializeComponent(processingContext.application(),
-            processingContext.instance(),
-            processingContext);
-        if (processingContext instanceof LockableComponentProcessingContext<T>
-            lockableComponentProcessingContext) {
+        T updatedInstance = this.initializeComponent(
+                processingContext.application(), processingContext.instance(), processingContext);
+        if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
             if (!lockableComponentProcessingContext.isInstanceLocked()) {
                 lockableComponentProcessingContext.instance(updatedInstance);
-            }
-            else if (updatedInstance != lockableComponentProcessingContext.instance()) {
-                throw new IllegalComponentModificationException(processingContext.key()
-                    .type()
-                    .getSimpleName(), this.priority(), this);
+            } else if (updatedInstance != lockableComponentProcessingContext.instance()) {
+                throw new IllegalComponentModificationException(
+                        processingContext.key().type().getSimpleName(), this.priority(), this);
             }
         }
 
-        this.postConfigureComponent(processingContext.application(),
-            processingContext.instance(),
-            processingContext);
-        checkForModification(processingContext,
-            this,
-            updatedInstance,
-            processingContext.instance());
+        this.postConfigureComponent(processingContext.application(), processingContext.instance(), processingContext);
+        checkForModification(processingContext, this, updatedInstance, processingContext.instance());
 
         return updatedInstance;
     }
@@ -102,10 +90,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param <T> the type of the component
      */
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         // Do nothing by default
     }
 
@@ -122,10 +110,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @return the initialized component
      */
     public <T> T initializeComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         // Do nothing by default
         return instance;
     }
@@ -142,10 +130,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param <T> the type of the component
      */
     public <T> void postConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         // Do nothing by default
     }
 
@@ -161,10 +149,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param <T> the type of the component
      */
     private static <T> void checkForModification(
-        ComponentProcessingContext<T> processingContext,
-        ComponentPostProcessor postProcessor,
-        T instance, T modified
-    ) {
+            ComponentProcessingContext<T> processingContext,
+            ComponentPostProcessor postProcessor,
+            T instance,
+            T modified) {
         if (instance != modified) {
             boolean ok = false;
             if (modified instanceof Proxy<?> modifiedProxy) {
@@ -172,12 +160,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
                 ok = proxy.manager().delegate().orNull() == instance;
             }
             if (!ok) {
-                throw new IllegalComponentModificationException(processingContext.key()
-                    .type()
-                    .getSimpleName(), postProcessor.priority(), postProcessor);
+                throw new IllegalComponentModificationException(
+                        processingContext.key().type().getSimpleName(), postProcessor.priority(), postProcessor);
             }
-            if (processingContext instanceof LockableComponentProcessingContext<T>
-                lockableComponentProcessingContext) {
+            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
                 lockableComponentProcessingContext.instance(modified);
             }
         }

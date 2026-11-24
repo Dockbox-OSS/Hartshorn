@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.inject.populate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
+
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -25,45 +28,31 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
-
 @HartshornIntegrationTest(
-    includeBasePackages = false,
-    componentPostProcessors = SimpleContextConfiguringComponentProcessor.class
-)
+        includeBasePackages = false,
+        componentPostProcessors = SimpleContextConfiguringComponentProcessor.class)
 class ContextConfiguringComponentProcessorTests {
 
     @Test
     @TestComponents(EmptyComponent.class)
     void nonContextComponentIsProcessed(
-        @Inject EmptyComponent emptyComponent,
-        @Inject ProxyOrchestrator proxyOrchestrator
-    ) {
+            @Inject EmptyComponent emptyComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         assertThat(emptyComponent).isNotNull();
         assertThat(proxyOrchestrator.isProxy(emptyComponent)).isTrue();
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        Option<SimpleContext> context = component.manager()
-                .firstContext(ContextKey.of(SimpleContext.class));
-        assertThat(context).value()
-                .extracting(SimpleContext::value)
-                .isEqualTo("Foo");
+        Option<SimpleContext> context = component.manager().firstContext(ContextKey.of(SimpleContext.class));
+        assertThat(context).value().extracting(SimpleContext::value).isEqualTo("Foo");
     }
 
     @Test
     @TestComponents(ContextComponent.class)
     void contextComponentIsProcessed(
-        @Inject ContextComponent contextComponent,
-        @Inject ProxyOrchestrator proxyOrchestrator
-    ) {
+            @Inject ContextComponent contextComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         assertThat(contextComponent).isNotNull();
         assertThat(proxyOrchestrator.isProxy(contextComponent)).isFalse();
 
-        Option<SimpleContext> context = contextComponent
-                .firstContext(ContextKey.of(SimpleContext.class));
-        assertThat(context).value()
-                .extracting(SimpleContext::value)
-                .isEqualTo("Foo");
+        Option<SimpleContext> context = contextComponent.firstContext(ContextKey.of(SimpleContext.class));
+        assertThat(context).value().extracting(SimpleContext::value).isEqualTo("Foo");
     }
 }

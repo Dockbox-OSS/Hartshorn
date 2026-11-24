@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package test.org.dockbox.hartshorn.inject.compatibility;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
@@ -33,13 +36,9 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 @HartshornIntegrationTest(
-    includeBasePackages = false,
-    customizers = DisableSingleConstructorFallbackTestCustomizer.class
-)
+        includeBasePackages = false,
+        customizers = DisableSingleConstructorFallbackTestCustomizer.class)
 class JakartaCompatibilityTests {
 
     /**
@@ -47,25 +46,19 @@ class JakartaCompatibilityTests {
      * application. Note that typically Jakarta support would be enabled through
      * {@link HartshornApplicationConfigurer#withJakartaAnnotations()}.
      */
-    public static class EnableJakartaTestApplicationCustomizer
-        implements TestApplicationCustomizer {
+    public static class EnableJakartaTestApplicationCustomizer implements TestApplicationCustomizer {
         @Override
         public void customizeApplication(SimpleApplicationContext.Configurer configurer) {
-            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(
-                orchestrator -> orchestrator.componentPostConstructor(
-                        AnnotatedMethodComponentPostConstructor.create(
-                                AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations
-                        )
-                )));
+            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(orchestrator ->
+                    orchestrator.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(
+                            AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations))));
         }
 
         @Override
         public void customizeEnvironment(ConfigurableApplicationEnvironment.Configurer configurer) {
-            configurer.injectionPointsResolver(ContextualInitializer.defer(() ->
-                MethodsAndFieldsInjectionPointResolver.create(
-                    MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations
-                )
-            ));
+            configurer.injectionPointsResolver(
+                    ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(
+                            MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations)));
         }
     }
 
@@ -80,7 +73,7 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJakartaComponent component =
-            this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
+                this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -93,7 +86,7 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJakartaComponent component =
-            this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
+                this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isNull();
@@ -107,7 +100,7 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         ConstructorJakartaComponent component =
-            this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
+                this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -119,13 +112,12 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         // No compatible constructor should be found, as Jakarta compatibility is disabled
-        Throwable componentResolutionException =
-                assertThatThrownBy(() -> {
-                    this.applicationContext.defaultProvider()
-                        .get(ConstructorJakartaComponent.class);
-                }).isInstanceOf(ComponentResolutionException.class).actual();
-        assertThat(componentResolutionException.getCause())
-                .isInstanceOf(MissingInjectConstructorException.class);
+        Throwable componentResolutionException = assertThatThrownBy(() -> {
+                    this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
+                })
+                .isInstanceOf(ComponentResolutionException.class)
+                .actual();
+        assertThat(componentResolutionException.getCause()).isInstanceOf(MissingInjectConstructorException.class);
     }
 
     @Test
@@ -135,7 +127,7 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJakartaComponent component =
-            this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
+                this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -148,7 +140,7 @@ class JakartaCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJakartaComponent component =
-            this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
+                this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isNull();

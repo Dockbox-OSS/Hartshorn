@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.launchpad.graph;
 
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.AbstractConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
  * {@link ConfigurationDependencyVisitor} implementation that delegates the configuration of the
@@ -39,35 +39,31 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
  *
  * @author Guus Lieben
  */
-public class DelegatingConfigurationDependencyVisitor
-    extends AbstractConfigurationDependencyVisitor {
+public class DelegatingConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
 
     private final ComponentProcessorRegistry processorRegistry;
     private final ComponentProvider componentProvider;
     private final Binder binder;
 
     public DelegatingConfigurationDependencyVisitor(
-        Binder binder,
-        ComponentProvider componentProvider,
-        ComponentProcessorRegistry processorRegistry
-    ) {
+            Binder binder, ComponentProvider componentProvider, ComponentProcessorRegistry processorRegistry) {
         this.componentProvider = componentProvider;
         this.processorRegistry = processorRegistry;
         this.binder = binder;
     }
 
     @Override
-    public <T> void registerProvider(DependencyContext<T> dependencyContext)
-        throws ComponentConfigurationException {
+    public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
         BindingFunction<T> function = this.binder.bind(dependencyContext.componentKey());
         dependencyContext.configure(function);
     }
 
     @Override
     public void doAfterRegister(DependencyContext<?> dependencyContext) {
-        if (ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
+        if (ComponentProcessor.class.isAssignableFrom(
+                dependencyContext.componentKey().type())) {
             ComponentProcessor processor =
-                (ComponentProcessor) this.componentProvider.get(dependencyContext.componentKey());
+                    (ComponentProcessor) this.componentProvider.get(dependencyContext.componentKey());
             this.processorRegistry.register(processor);
         }
     }

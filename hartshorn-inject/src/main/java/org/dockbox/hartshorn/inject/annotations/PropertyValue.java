@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.properties.ListProperty;
-import org.dockbox.hartshorn.properties.ObjectProperty;
-import org.dockbox.hartshorn.properties.ValueProperty;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.properties.ListProperty;
+import org.dockbox.hartshorn.properties.ObjectProperty;
+import org.dockbox.hartshorn.properties.ValueProperty;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Indicates that the annotated field or parameter should be injected with a value from the
@@ -56,7 +55,7 @@ import java.lang.annotation.Target;
  * }}</pre>
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)

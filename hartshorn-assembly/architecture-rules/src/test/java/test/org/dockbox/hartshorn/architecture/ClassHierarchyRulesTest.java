@@ -16,13 +16,13 @@
 
 package test.org.dockbox.hartshorn.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 @AnalyzeClasses(packages = ArchitectureRuleConstants.HARTSHORN_PACKAGE)
 public class ClassHierarchyRulesTest {
@@ -34,10 +34,14 @@ public class ClassHierarchyRulesTest {
      */
     @ArchTest
     static final ArchRule exceptionsShouldExtendApplicationException = classes()
-            .that().areAssignableTo(Exception.class)
+            .that()
+            .areAssignableTo(Exception.class)
             // Flow control exceptions are not application exceptions, and as such should not
             // extend ApplicationException.
-            .and().resideOutsideOfPackage("org.dockbox.hartshorn.hsl..")
-            .should().beAssignableTo(ApplicationException.class)
-            .orShould().beAssignableTo(ApplicationRuntimeException.class);
+            .and()
+            .resideOutsideOfPackage("org.dockbox.hartshorn.hsl..")
+            .should()
+            .beAssignableTo(ApplicationException.class)
+            .orShould()
+            .beAssignableTo(ApplicationRuntimeException.class);
 }

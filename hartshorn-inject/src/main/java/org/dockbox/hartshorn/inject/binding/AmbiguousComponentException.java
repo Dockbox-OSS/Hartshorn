@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
  * Thrown when two or more components fuzzy match a lookup key. This indicates that two equally
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * @see ComponentKey
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class AmbiguousComponentException extends ApplicationRuntimeException {
@@ -40,11 +39,9 @@ public class AmbiguousComponentException extends ApplicationRuntimeException {
     private final Set<ComponentKey<?>> foundKeys;
 
     public AmbiguousComponentException(ComponentKey<?> lookupKey, Set<ComponentKey<?>> foundKeys) {
-        super(
-            "Ambiguous component lookup for key " + lookupKey
-                + ". Found " + foundKeys.size() + " components: " + foundKeys.stream()
-                .map(ComponentKey::qualifiedName)
-                .collect(Collectors.joining(", ")));
+        super("Ambiguous component lookup for key " + lookupKey
+                + ". Found " + foundKeys.size() + " components: "
+                + foundKeys.stream().map(ComponentKey::qualifiedName).collect(Collectors.joining(", ")));
         this.lookupKey = lookupKey;
         this.foundKeys = foundKeys;
     }

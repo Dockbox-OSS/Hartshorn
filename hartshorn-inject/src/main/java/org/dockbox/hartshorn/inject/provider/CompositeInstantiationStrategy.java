@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Function;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -24,10 +27,6 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * A {@link InstantiationStrategy} of which the result can be mapped using a list of
@@ -38,22 +37,19 @@ import java.util.function.Function;
  *
  * @see InstantiationStrategy
  * @see ObjectContainer
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public final class CompositeInstantiationStrategy<T> implements InstantiationStrategy<T> {
 
-    private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions =
-        new LinkedList<>();
+    private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions = new LinkedList<>();
     private final InstantiationStrategy<T> strategy;
 
     @SafeVarargs
     public CompositeInstantiationStrategy(
-        InstantiationStrategy<T> strategy,
-        Function<ObjectContainer<T>, ObjectContainer<T>>... functions
-    ) {
+            InstantiationStrategy<T> strategy, Function<ObjectContainer<T>, ObjectContainer<T>>... functions) {
         this.strategy = strategy;
         this.functions.addAll(List.of(functions));
     }
@@ -80,12 +76,9 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
 
     @Override
     public Option<ObjectContainer<T>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException {
-        return this.strategy.provide(application, requestContext, scope)
-            .map(this::transformContainer);
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException {
+        return this.strategy.provide(application, requestContext, scope).map(this::transformContainer);
     }
 
     private ObjectContainer<T> transformContainer(ObjectContainer<T> container) {
@@ -96,9 +89,7 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     @Override
-    public InstantiationStrategy<T> map(
-        Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction
-    ) {
+    public InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         this.functions.add(mappingFunction);
         return this;
     }
@@ -116,8 +107,8 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("strategy", this.strategy)
-            .field("functions", this.functions)
-            .describe();
+                .field("strategy", this.strategy)
+                .field("functions", this.functions)
+                .describe();
     }
 }

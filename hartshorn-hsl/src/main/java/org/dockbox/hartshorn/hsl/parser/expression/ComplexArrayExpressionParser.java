@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -26,9 +28,6 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parser for complex array expressions, including array literals and array comprehensions. The most
@@ -45,25 +44,18 @@ import java.util.List;
 public class ComplexArrayExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         if (parser.match(parser.tokenRegistry().tokenPairs().array().open())) {
             Token open = parser.previous();
             if (parser.match(parser.tokenRegistry().tokenPairs().array().close())) {
                 return new ArrayLiteralExpression(open, parser.previous(), List.of());
-            }
-            else {
+            } else {
                 Expression expression = parser.expression();
                 if (parser.match(parser.tokenRegistry().tokenPairs().array().close())) {
                     return new ArrayLiteralExpression(open, parser.previous(), List.of(expression));
-                }
-                else if (parser.match(BaseTokenType.COMMA)) {
+                } else if (parser.match(BaseTokenType.COMMA)) {
                     return this.arrayLiteralExpression(parser, validator, open, expression);
-                }
-                else {
+                } else {
                     return this.arrayComprehensionExpression(parser, validator, open, expression);
                 }
             }
@@ -72,30 +64,19 @@ public class ComplexArrayExpressionParser implements ExpressionParser {
     }
 
     private ArrayLiteralExpression arrayLiteralExpression(
-        TokenParser parser,
-        TokenStepValidator validator,
-        Token open,
-        Expression expression
-    ) {
+            TokenParser parser, TokenStepValidator validator, Token open, Expression expression) {
         List<Expression> elements = new ArrayList<>();
         elements.add(expression);
         do {
             elements.add(parser.expression());
-        }
-        while (parser.match(BaseTokenType.COMMA));
+        } while (parser.match(BaseTokenType.COMMA));
         Token close = validator.expectAfter(
-            parser.tokenRegistry().tokenPairs().array().close(),
-            "array"
-        );
+                parser.tokenRegistry().tokenPairs().array().close(), "array");
         return new ArrayLiteralExpression(open, close, List.copyOf(elements));
     }
 
     private ArrayComprehensionExpression arrayComprehensionExpression(
-        TokenParser parser,
-        TokenStepValidator validator,
-        Token open,
-        Expression expression
-    ) {
+            TokenParser parser, TokenStepValidator validator, Token open, Expression expression) {
         Token forToken = validator.expectAfter(LoopTokenType.FOR, "expression");
         TokenType identifier = parser.tokenRegistry().literals().identifier();
         Token name = validator.expect(identifier, "variable name");
@@ -117,15 +98,20 @@ public class ComplexArrayExpressionParser implements ExpressionParser {
             elseExpression = parser.expression();
         }
 
-        Token close =
-            validator.expectAfter(parser.tokenRegistry().tokenPairs().array().close(), "array");
+        Token close = validator.expectAfter(
+                parser.tokenRegistry().tokenPairs().array().close(), "array");
 
         return new ArrayComprehensionExpression(
-            iterable, expression,
-            name, forToken, inToken,
-            open, close,
-            ifToken, condition,
-            elseToken, elseExpression
-        );
+                iterable,
+                expression,
+                name,
+                forToken,
+                inToken,
+                open,
+                close,
+                ifToken,
+                condition,
+                elseToken,
+                elseExpression);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * used to create virtual tokens that do not have a specific position in the source code.
  *
  * @see Token
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class TokenBuilder {
@@ -118,9 +118,7 @@ public class TokenBuilder {
      * @see Token#column()
      */
     public TokenBuilder position(Token token) {
-        return this
-            .line(token.line())
-            .column(token.column());
+        return this.line(token.line()).column(token.column());
     }
 
     /**
@@ -134,9 +132,7 @@ public class TokenBuilder {
      * @see Token#column()
      */
     public TokenBuilder virtual() {
-        return this
-            .line(-1)
-            .column(-1);
+        return this.line(-1).column(-1);
     }
 
     /**
@@ -153,16 +149,14 @@ public class TokenBuilder {
         if (this.lexeme == null) {
             if (this.type.keyword()) {
                 this.lexeme = this.type.representation();
-            }
-            else if (this.type == LiteralTokenType.EOF) {
+            } else if (this.type == LiteralTokenType.EOF) {
                 this.lexeme = "";
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException(
-                    "Cannot create a token of a non-keyword type without a lexeme at line "
-                        + this.line
-                        + ", column "
-                        + this.column);
+                        "Cannot create a token of a non-keyword type without a lexeme at line "
+                                + this.line
+                                + ", column "
+                                + this.column);
             }
         }
         return new Token(this.type, this.lexeme, this.literal, this.line, this.column);

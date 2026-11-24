@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.web.message;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.Map;
 
 /**
@@ -56,10 +55,7 @@ public class RequestAttributes {
      * @param request the request to add the attribute to
      * @param parameters the parameters to set as value for the attribute
      */
-    public static void setPathParameters(
-            HttpServletRequest request,
-            Map<String, String> parameters
-    ) {
+    public static void setPathParameters(HttpServletRequest request, Map<String, String> parameters) {
         request.setAttribute(REQUEST_PATH_PARAMETERS, parameters);
     }
 }

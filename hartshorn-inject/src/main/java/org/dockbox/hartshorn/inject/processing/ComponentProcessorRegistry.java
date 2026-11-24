@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * A registry for {@link ComponentProcessor} instances. This registry is used to store and manage

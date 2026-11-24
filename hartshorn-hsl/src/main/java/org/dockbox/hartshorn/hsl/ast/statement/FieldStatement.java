@@ -42,8 +42,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  *
  * @author Guus Lieben
  */
-public class FieldStatement extends FinalizableStatement
-    implements ClassMemberStatement, MemberStatement, NamedNode {
+public class FieldStatement extends FinalizableStatement implements ClassMemberStatement, MemberStatement, NamedNode {
 
     private final Token modifier;
     private final Token name;
@@ -112,19 +111,15 @@ public class FieldStatement extends FinalizableStatement
     public void withGetter(FieldGetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y,
-                    "getter",
-                    this.name.lexeme())
-                .at(statement.modifier())
-                .build();
+                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "getter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         if (this.getter != null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y,
-                    "getter",
-                    this.name.lexeme())
-                .at(statement.modifier())
-                .build();
+                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "getter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         this.getter = statement;
     }
@@ -140,19 +135,15 @@ public class FieldStatement extends FinalizableStatement
     public void withSetter(FieldSetStatement statement) {
         if (statement.field() != this) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y,
-                    "setter",
-                    this.name.lexeme())
-                .at(statement.modifier())
-                .build();
+                    .message(DiagnosticMessage.FIELD_MEMBER_X_NOT_FOR_FIELD_Y, "setter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         if (this.setter != null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y,
-                    "setter",
-                    this.name.lexeme())
-                .at(statement.modifier())
-                .build();
+                    .message(DiagnosticMessage.DUPLICATE_FIELD_MEMBER_X_FOR_FIELD_Y, "setter", this.name.lexeme())
+                    .at(statement.modifier())
+                    .build();
         }
         this.setter = statement;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -106,10 +105,7 @@ public interface IntrospectionViewCache {
      *
      * @return the cached view instance
      */
-    <T> ConstructorView<T> computeIfAbsent(
-        Constructor<T> constructor,
-        Supplier<ConstructorView<T>> viewSupplier
-    );
+    <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier);
 
     /**
      * Returns the {@link PackageView} for the provided {@link Package}. If the view is not yet

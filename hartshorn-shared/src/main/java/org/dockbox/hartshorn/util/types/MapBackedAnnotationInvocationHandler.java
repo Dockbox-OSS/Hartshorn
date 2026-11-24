@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,14 +85,11 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
                 Method method = type.getDeclaredMethod(property);
                 if (!TypeUtils.isAssignable(method.getReturnType(), value.getClass())) {
                     throw new IllegalStateException(
-                        "Value " + value + " is not assignable to " + method.getReturnType()
-                    );
+                            "Value " + value + " is not assignable to " + method.getReturnType());
                 }
-            }
-            catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(
-                    "No such method " + property + " on annotation " + type.getCanonicalName()
-                );
+                        "No such method " + property + " on annotation " + type.getCanonicalName());
             }
         });
         return values;
@@ -103,16 +100,19 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         String methodName = method.getName();
         return switch (methodName) {
             case "annotationType" -> this.type;
-            case "toString" -> "@%s(%s)".formatted(this.type, this.values.entrySet().stream()
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining()));
+            case "toString" ->
+                "@%s(%s)"
+                        .formatted(
+                                this.type,
+                                this.values.entrySet().stream()
+                                        .map(entry -> entry.getKey() + "=" + entry.getValue())
+                                        .collect(Collectors.joining()));
             case "hashCode" -> this.values.hashCode();
             case "equals" -> proxy == args[0];
             default -> {
                 if (this.values.containsKey(methodName)) {
                     yield this.values.get(methodName);
-                }
-                else {
+                } else {
                     yield method.getDefaultValue();
                 }
             }

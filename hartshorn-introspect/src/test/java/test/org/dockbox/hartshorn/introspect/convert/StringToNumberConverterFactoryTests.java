@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class StringToNumberConverterFactoryTests {
 
@@ -30,9 +30,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -40,9 +38,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -50,9 +46,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -60,9 +54,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -70,9 +62,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -80,9 +70,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -90,9 +78,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo(-1);
+        assertThat(converted).isNotNull().isEqualTo(-1);
     }
 
     @Test
@@ -100,9 +86,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo(-1L);
+        assertThat(converted).isNotNull().isEqualTo(-1L);
     }
 
     @Test
@@ -110,9 +94,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo(-1.0F);
+        assertThat(converted).isNotNull().isEqualTo(-1.0F);
     }
 
     @Test
@@ -120,9 +102,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo(-1.0D);
+        assertThat(converted).isNotNull().isEqualTo(-1.0D);
     }
 
     @Test
@@ -130,9 +110,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo((short) -1);
+        assertThat(converted).isNotNull().isEqualTo((short) -1);
     }
 
     @Test
@@ -140,9 +118,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("-1");
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo((byte) -1);
+        assertThat(converted).isNotNull().isEqualTo((byte) -1);
     }
 
     @Test
@@ -198,9 +174,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -208,9 +182,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -218,9 +190,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -228,9 +198,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -238,9 +206,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -248,9 +214,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("0x1");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -258,9 +222,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -268,9 +230,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -278,9 +238,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -288,9 +246,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -298,9 +254,7 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 
     @Test
@@ -308,8 +262,6 @@ class StringToNumberConverterFactoryTests {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("01");
-        assertThat(converted)
-                .isNotNull()
-                .isOne();
+        assertThat(converted).isNotNull().isOne();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,34 @@
 
 package test.org.dockbox.hartshorn.inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 class ContextKeyTests {
 
     @Test
     void contextKeyNameIsNullIfUndefined() {
         ContextIdentity<ContextView> undefinedNameKey =
-            ContextKey.builder(ContextView.class).build();
+                ContextKey.builder(ContextView.class).build();
         assertThat(undefinedNameKey.name()).isNull();
     }
 
     @Test
     void contextKeyNameIsNullIfEmpty() {
         ContextIdentity<ContextView> emptyNameKey =
-            ContextKey.builder(ContextView.class).name("").build();
+                ContextKey.builder(ContextView.class).name("").build();
         assertThat(emptyNameKey.name()).isNull();
     }
 
     @Test
     void contextKeyNameIsNullIfNull() {
-        ContextIdentity<ContextView> nullNameKey = ContextKey.builder(ContextView.class)
-                .name(null)
-                .build();
+        ContextIdentity<ContextView> nullNameKey =
+                ContextKey.builder(ContextView.class).name(null).build();
         // Ensure no NPE is thrown
         assertThat(nullNameKey.name()).isNull();
     }

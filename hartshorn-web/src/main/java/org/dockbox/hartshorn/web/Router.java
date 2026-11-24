@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Annotation for defining REST routers on classes. Routers are special components that permit

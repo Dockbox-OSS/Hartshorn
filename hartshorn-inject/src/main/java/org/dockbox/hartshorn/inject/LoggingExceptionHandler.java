@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,8 +64,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
 
             if (this.printStackTraces()) {
                 LOG.error(message, throwable);
-            }
-            else if (!message.isBlank()) {
+            } else if (!message.isBlank()) {
                 LOG.error(message);
             }
         }
@@ -84,13 +83,11 @@ public class LoggingExceptionHandler implements ExceptionHandler {
         while (next != null) {
             if (null != next.getMessage()) {
                 return next.getMessage();
-            }
-            else {
+            } else {
                 // Avoid infinitely looping if the throwable has itself as cause
                 if (!next.equals(throwable.getCause())) {
                     next = next.getCause();
-                }
-                else {
+                } else {
                     break;
                 }
             }

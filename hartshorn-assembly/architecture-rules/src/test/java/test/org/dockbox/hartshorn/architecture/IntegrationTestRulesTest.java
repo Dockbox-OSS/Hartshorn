@@ -16,30 +16,28 @@
 
 package test.org.dockbox.hartshorn.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static test.org.dockbox.hartshorn.architecture.ArchitectureUtilities.complyWith;
+
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static test.org.dockbox.hartshorn.architecture.ArchitectureUtilities.complyWith;
-
 @AnalyzeClasses(packages = ArchitectureRuleConstants.TEST_PACKAGE)
 public class IntegrationTestRulesTest {
 
     @ArchTest
     static final ArchRule integrationTestsShouldNotIncludeBasePackages = classes()
-            .that().areAnnotatedWith(HartshornIntegrationTest.class)
+            .that()
+            .areAnnotatedWith(HartshornIntegrationTest.class)
             .should(complyWith("have includeBasePackages set to false", (javaClass, events) -> {
-                HartshornIntegrationTest annotation =
-                        javaClass.getAnnotationOfType(HartshornIntegrationTest.class);
+                HartshornIntegrationTest annotation = javaClass.getAnnotationOfType(HartshornIntegrationTest.class);
 
                 if (annotation.includeBasePackages()) {
                     events.add(SimpleConditionEvent.violated(
-                            javaClass,
-                            "%s sets includeBasePackages to true".formatted(javaClass.getName())
-                    ));
+                            javaClass, "%s sets includeBasePackages to true".formatted(javaClass.getName())));
                 }
             }));
 }

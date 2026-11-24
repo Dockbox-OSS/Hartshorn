@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +49,8 @@ import java.util.stream.Collector;
  * @author Guus Lieben
  */
 public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends MultiMap<K, V>>(
-    Supplier<M> supplier,
-    Function<T, K> keyMapper,
-    Function<T, V> valueMapper,
-    Function<M, F> finisher
-) implements Collector<T, M, F> {
+        Supplier<M> supplier, Function<T, K> keyMapper, Function<T, V> valueMapper, Function<M, F> finisher)
+        implements Collector<T, M, F> {
 
     /**
      * A collector that collects entries into a {@link MultiMap}. The default implementation is an
@@ -78,8 +75,7 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
     public static <T, K> MultiMapCollector<T, K, T, MultiMap<K, T>, MultiMap<K, T>> groupingBy(
-        Function<T, K> keyMapper
-    ) {
+            Function<T, K> keyMapper) {
         return toMultiMap(keyMapper, Function.identity());
     }
 
@@ -96,15 +92,8 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
     public static <T, K, V> MultiMapCollector<T, K, V, MultiMap<K, V>, MultiMap<K, V>> toMultiMap(
-        Function<T, K> keyMapper,
-        Function<T, V> valueMapper
-    ) {
-        return toMultiMap(
-            ArrayListHashBiMultiMap::new,
-            keyMapper,
-            valueMapper,
-            UnmodifiableMultiMap::new
-        );
+            Function<T, K> keyMapper, Function<T, V> valueMapper) {
+        return toMultiMap(ArrayListHashBiMultiMap::new, keyMapper, valueMapper, UnmodifiableMultiMap::new);
     }
 
     /**
@@ -120,12 +109,8 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      *
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
-    public static <T, K, V, M extends MultiMap<K, V>>
-    MultiMapCollector<T, K, V, M, M> toMultiMap(
-        Supplier<M> mapSupplier,
-        Function<T, K> keyMapper,
-        Function<T, V> valueMapper
-    ) {
+    public static <T, K, V, M extends MultiMap<K, V>> MultiMapCollector<T, K, V, M, M> toMultiMap(
+            Supplier<M> mapSupplier, Function<T, K> keyMapper, Function<T, V> valueMapper) {
         return toMultiMap(mapSupplier, keyMapper, valueMapper, Function.identity());
     }
 
@@ -147,21 +132,18 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
     public static <T, K, V, M extends MultiMap<K, V>, F extends MultiMap<K, V>>
-    MultiMapCollector<T, K, V, M, F> toMultiMap(
-        Supplier<M> mapSupplier,
-        Function<T, K> keyMapper,
-        Function<T, V> valueMapper,
-        Function<M, F> finisher
-    ) {
+            MultiMapCollector<T, K, V, M, F> toMultiMap(
+                    Supplier<M> mapSupplier,
+                    Function<T, K> keyMapper,
+                    Function<T, V> valueMapper,
+                    Function<M, F> finisher) {
         return new MultiMapCollector<>(mapSupplier, keyMapper, valueMapper, finisher);
     }
 
     @Override
     public BiConsumer<M, T> accumulator() {
-        return (map, element) -> map.put(
-            this.keyMapper().apply(element),
-            this.valueMapper().apply(element)
-        );
+        return (map, element) ->
+                map.put(this.keyMapper().apply(element), this.valueMapper().apply(element));
     }
 
     @Override

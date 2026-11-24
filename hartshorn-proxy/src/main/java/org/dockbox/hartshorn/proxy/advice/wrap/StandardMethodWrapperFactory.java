@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,25 +34,19 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
 
     @Override
     public MethodWrapperFactory<T> before(ProxyCallback<T> callback) {
-        this.before = this.before == null
-            ? callback
-            : this.before.then(callback);
+        this.before = this.before == null ? callback : this.before.then(callback);
         return this;
     }
 
     @Override
     public MethodWrapperFactory<T> after(ProxyCallback<T> callback) {
-        this.after = this.after == null
-            ? callback
-            : this.after.then(callback);
+        this.after = this.after == null ? callback : this.after.then(callback);
         return this;
     }
 
     @Override
     public MethodWrapperFactory<T> onError(ProxyCallback<T> callback) {
-        this.onError = this.onError == null
-            ? callback
-            : this.onError.then(callback);
+        this.onError = this.onError == null ? callback : this.onError.then(callback);
         return this;
     }
 

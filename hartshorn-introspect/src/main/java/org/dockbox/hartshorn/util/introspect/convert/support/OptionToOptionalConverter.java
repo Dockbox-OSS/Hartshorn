@@ -16,18 +16,17 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Optional;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
 /**
  * Converts a {@link Option} to an {@link Optional}.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class OptionToOptionalConverter implements Converter<Option<?>, Optional<?>> {

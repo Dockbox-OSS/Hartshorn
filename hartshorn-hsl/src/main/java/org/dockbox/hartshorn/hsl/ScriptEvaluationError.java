@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,8 +185,8 @@ public class ScriptEvaluationError extends RuntimeException {
          */
         public Builder message(DiagnosticMessage message, Object... args) {
             if (message.phase() != null && message.phase() != this.phase) {
-                throw new IllegalArgumentException("Diagnostic message phase " + message.phase() +
-                    " does not match builder phase " + this.phase);
+                throw new IllegalArgumentException(
+                        "Diagnostic message phase " + message.phase() + " does not match builder phase " + this.phase);
             }
             this.message = message.format(args);
             return this;

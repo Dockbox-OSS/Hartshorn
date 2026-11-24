@@ -37,21 +37,14 @@ import org.dockbox.hartshorn.web.Header;
 public class HeaderValueParameterLoaderRule<C extends ParameterLoaderContext>
         extends AbstractWebRequestParameterLoaderRule<Header, C> {
 
-    public HeaderValueParameterLoaderRule(
-            HttpServletRequest request,
-            ConversionService conversionService
-    ) {
+    public HeaderValueParameterLoaderRule(HttpServletRequest request, ConversionService conversionService) {
         super(Header.class, request, conversionService);
     }
 
     @Override
     protected Option<String> lookupValue(HttpServletRequest request, Header annotation) {
-        Iterable<String> headers = CollectionUtilities.iterableOf(
-                request.getHeaders(annotation.value())
-        );
-        return Option.of(headers)
-                .map(values -> String.join(",", values))
-                .filter(value -> !value.isEmpty());
+        Iterable<String> headers = CollectionUtilities.iterableOf(request.getHeaders(annotation.value()));
+        return Option.of(headers).map(values -> String.join(",", values)).filter(value -> !value.isEmpty());
     }
 
     @Override

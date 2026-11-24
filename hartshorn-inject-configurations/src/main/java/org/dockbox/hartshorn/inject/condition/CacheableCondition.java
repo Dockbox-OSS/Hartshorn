@@ -23,5 +23,4 @@ package org.dockbox.hartshorn.inject.condition;
  *
  * @author Guus Lieben
  */
-public interface CacheableCondition {
-}
+public interface CacheableCondition {}

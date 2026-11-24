@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.lifecycle;
 
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-
 import java.util.SequencedSet;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 
 /**
  * An {@link ApplicationEnvironment} which can be observed by {@link Observer}s. Observers are
@@ -30,8 +29,7 @@ import java.util.SequencedSet;
  *
  * @author Guus Lieben
  */
-public interface ObservableApplicationEnvironment
-    extends ApplicationEnvironment, LifecycleObservable {
+public interface ObservableApplicationEnvironment extends ApplicationEnvironment, LifecycleObservable {
 
     /**
      * Gets all observers of the given type. If no observers are registered for the given type, an

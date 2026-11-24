@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
-import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.classfile.ClassModel;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.GenericDeclaration;
@@ -37,6 +28,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A view that provides access to a type parameter. This view is backed by a {@link Type}, which may
@@ -48,8 +47,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
-    implements TypeParameterView {
+public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView implements TypeParameterView {
 
     private final Type type;
     private final TypeView<?> consumedBy;
@@ -60,12 +58,7 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
     private Option<TypeView<?>> resolvedType;
     private TypeView<?> declaredBy;
 
-    public ReflectionTypeParameterView(
-        Type type,
-        TypeView<?> consumedBy,
-        int index,
-        Introspector introspector
-    ) {
+    public ReflectionTypeParameterView(Type type, TypeView<?> consumedBy, int index, Introspector introspector) {
         super(introspector);
         this.type = type;
         this.consumedBy = consumedBy;
@@ -94,13 +87,11 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
                 GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
                 if (genericDeclaration instanceof Class<?> clazz) {
                     this.declaredBy = this.introspector().introspect(clazz);
-                }
-                else {
+                } else {
                     throw new IllegalStateException(
-                        "Generic declaration is not a class, cannot resolve declaring type");
+                            "Generic declaration is not a class, cannot resolve declaring type");
                 }
-            }
-            else {
+            } else {
                 this.declaredBy = this.consumedBy();
             }
         }
@@ -117,7 +108,7 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
         if (this.isOutputParameter() && this.isVariable()) {
             TypeVariable<?> typeVariable = (TypeVariable<?>) this.type;
             TypeVariable<? extends Class<?>>[] typeParameters =
-                this.declaredBy.type().getTypeParameters();
+                    this.declaredBy.type().getTypeParameters();
             int index = -1;
             for (int i = 0; i < typeParameters.length; i++) {
                 TypeVariable<? extends Class<?>> typeParameter = typeParameters[i];
@@ -127,18 +118,13 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
                 }
             }
             if (index == -1) {
-                throw new IllegalStateException("Could not find type parameter "
-                    + typeVariable.getName()
-                    + " in "
-                    + this.declaredBy.name());
+                throw new IllegalStateException(
+                        "Could not find type parameter " + typeVariable.getName() + " in " + this.declaredBy.name());
             }
-            TypeParameterView view = new ReflectionTypeParameterView(typeVariable,
-                this.declaredBy,
-                index,
-                this.introspector());
+            TypeParameterView view =
+                    new ReflectionTypeParameterView(typeVariable, this.declaredBy, index, this.introspector());
             return Option.of(view);
-        }
-        else {
+        } else {
             return Option.empty();
         }
     }
@@ -155,11 +141,9 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
                 representationCandidates.addAll(genericInterfaces);
 
                 this.represents = representationCandidates.stream()
-                    .flatMap(candidate -> this.getRepresentedParameters(typeVariable, candidate)
-                        .stream())
-                    .collect(Collectors.toSet());
-            }
-            else if (this.type instanceof Class<?>) {
+                        .flatMap(candidate -> this.getRepresentedParameters(typeVariable, candidate).stream())
+                        .collect(Collectors.toSet());
+            } else if (this.type instanceof Class<?>) {
                 // A concrete type represents itself, as it is not provided by an input parameter.
                 // However, a self-representing type is not a type parameter, so it represents
                 // nothing in this context.
@@ -169,10 +153,7 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
         return this.represents;
     }
 
-    private Set<TypeParameterView> getRepresentedParameters(
-        TypeVariable<?> typeVariable,
-        TypeView<?> typeView
-    ) {
+    private Set<TypeParameterView> getRepresentedParameters(TypeVariable<?> typeVariable, TypeView<?> typeView) {
         Set<TypeParameterView> representedParameters = new HashSet<>();
         for (TypeParameterView parameterView : typeView.typeParameters().allInput()) {
             if (parameterView instanceof ReflectionTypeParameterView reflectionTypeParameterView) {
@@ -188,12 +169,14 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
     public Set<TypeView<?>> upperBounds() {
         if (this.upperBounds == null) {
             this.upperBounds = switch (this.type) {
-                case TypeVariable<?> typeVariable -> Arrays.stream(typeVariable.getBounds())
-                    .map(this.introspector()::introspect)
-                    .collect(Collectors.toSet());
-                case WildcardType wildcardType -> Arrays.stream(wildcardType.getUpperBounds())
-                    .map(this.introspector()::introspect)
-                    .collect(Collectors.toSet());
+                case TypeVariable<?> typeVariable ->
+                    Arrays.stream(typeVariable.getBounds())
+                            .map(this.introspector()::introspect)
+                            .collect(Collectors.toSet());
+                case WildcardType wildcardType ->
+                    Arrays.stream(wildcardType.getUpperBounds())
+                            .map(this.introspector()::introspect)
+                            .collect(Collectors.toSet());
                 case null, default -> Set.of();
             };
         }
@@ -270,8 +253,7 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
     public TypeParameterView asInputParameter() {
         if (this.isInputParameter()) {
             return this;
-        }
-        else {
+        } else {
             return this.consumedBy().typeParameters().atIndex(this.index).orNull();
         }
     }
@@ -298,10 +280,10 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("name", this.name())
-            .field("declaredBy", this.declaredBy())
-            .field("consumedBy", this.consumedBy())
-            .describe();
+                .field("name", this.name())
+                .field("declaredBy", this.declaredBy())
+                .field("consumedBy", this.consumedBy())
+                .describe();
     }
 
     @Override

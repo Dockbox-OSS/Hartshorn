@@ -16,11 +16,10 @@
 
 package test.org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.test.annotations.TestProperties;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import org.dockbox.hartshorn.test.annotations.TestProperties;
+import org.junit.jupiter.api.Test;
 
 public abstract class StaticResourceServletTests extends AbstractWebInteractionTest {
 

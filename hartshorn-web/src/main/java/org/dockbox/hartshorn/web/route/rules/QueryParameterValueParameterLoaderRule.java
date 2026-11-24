@@ -36,10 +36,7 @@ import org.dockbox.hartshorn.web.QueryParameter;
 public class QueryParameterValueParameterLoaderRule<C extends ParameterLoaderContext>
         extends AbstractWebRequestParameterLoaderRule<QueryParameter, C> {
 
-    public QueryParameterValueParameterLoaderRule(
-            HttpServletRequest request,
-            ConversionService conversionService
-    ) {
+    public QueryParameterValueParameterLoaderRule(HttpServletRequest request, ConversionService conversionService) {
         super(QueryParameter.class, request, conversionService);
     }
 

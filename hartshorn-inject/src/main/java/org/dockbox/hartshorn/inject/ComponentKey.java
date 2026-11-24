@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Objects;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
@@ -38,9 +40,6 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a
@@ -76,15 +75,14 @@ public final class ComponentKey<T> implements Reportable {
     private final Tristate includeParentScopes;
 
     private ComponentKey(
-        ProviderSelectionStrategy selectionStrategy,
-        ComponentResolutionFailureStrategy failureStrategy,
-        ParameterizableType type,
-        CompositeQualifier qualifier,
-        Scope scope,
-        boolean postConstructionAllowed,
-        Tristate strict,
-        Tristate includeParentScopes
-    ) {
+            ProviderSelectionStrategy selectionStrategy,
+            ComponentResolutionFailureStrategy failureStrategy,
+            ParameterizableType type,
+            CompositeQualifier qualifier,
+            Scope scope,
+            boolean postConstructionAllowed,
+            Tristate strict,
+            Tristate includeParentScopes) {
         this.selectionStrategy = selectionStrategy;
         this.failureStrategy = failureStrategy;
         this.type = type;
@@ -158,8 +156,8 @@ public final class ComponentKey<T> implements Reportable {
      */
     public static ComponentKey<ComponentCollection<?>> collect(ParameterizableType type) {
         ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
-            .parameters(type)
-            .build();
+                .parameters(type)
+                .build();
         return TypeUtils.unchecked(ComponentKey.of(collectionType), ComponentKey.class);
     }
 
@@ -266,14 +264,13 @@ public final class ComponentKey<T> implements Reportable {
      * @return the qualified name
      */
     public String qualifiedName() {
-        String qualifier =
-            StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
+        String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
         String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
         String scopeName = this.scope()
-            .map(Scope::installableScopeType)
-            .map(ScopeKey::name)
-            .map(scope -> " @ " + scope)
-            .orElse("");
+                .map(Scope::installableScopeType)
+                .map(ScopeKey::name)
+                .map(scope -> " @ " + scope)
+                .orElse("");
         return "%s%s%s".formatted(this.type.toQualifiedString(), qualifierSuffix, scopeName);
     }
 
@@ -283,19 +280,21 @@ public final class ComponentKey<T> implements Reportable {
                 .field("type", this.type)
                 .field("postConstructionAllowed", this.postConstructionAllowed)
                 .field("strict", this.strict)
-                .field("selectionStrategy", switch(this.selectionStrategy) {
-                    case HighestPriorityProviderSelectionStrategy _ -> "highest-priority";
-                    case ExactPriorityProviderSelectionStrategy exact -> {
-                        yield "exact-priority(%s)".formatted(exact.priority());
-                    }
-                    case MinimumPriorityProviderSelectionStrategy min -> {
-                        yield "minimum-priority(%s)".formatted(min.minimumPriorityInclusive());
-                    }
-                    case MaximumPriorityProviderSelectionStrategy max -> {
-                        yield "maximum-priority(%s)".formatted(max.maximumPriorityExclusive());
-                    }
-                    default -> this.selectionStrategy;
-                })
+                .field(
+                        "selectionStrategy",
+                        switch (this.selectionStrategy) {
+                            case HighestPriorityProviderSelectionStrategy _ -> "highest-priority";
+                            case ExactPriorityProviderSelectionStrategy exact -> {
+                                yield "exact-priority(%s)".formatted(exact.priority());
+                            }
+                            case MinimumPriorityProviderSelectionStrategy min -> {
+                                yield "minimum-priority(%s)".formatted(min.minimumPriorityInclusive());
+                            }
+                            case MaximumPriorityProviderSelectionStrategy max -> {
+                                yield "maximum-priority(%s)".formatted(max.maximumPriorityExclusive());
+                            }
+                            default -> this.selectionStrategy;
+                        })
                 .field("failureStrategy", this.failureStrategy);
         if (!this.qualifier.isEmpty()) {
             describer.field("qualifier", this.qualifier);
@@ -442,10 +441,9 @@ public final class ComponentKey<T> implements Reportable {
 
         private final ParameterizableType type;
         private final CompositeQualifier qualifier = new CompositeQualifier();
-        private ProviderSelectionStrategy selectionStrategy =
-            HighestPriorityProviderSelectionStrategy.INSTANCE;
+        private ProviderSelectionStrategy selectionStrategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
         private ComponentResolutionFailureStrategy failureStrategy =
-            ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
+                ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
         // If not provided, defaults to application scope
         private Scope scope = null;
         private boolean postConstructionAllowed = true;
@@ -471,10 +469,10 @@ public final class ComponentKey<T> implements Reportable {
 
         private <U> Builder<U> copyProperties(Builder<U> builder) {
             builder.qualifiers(this.qualifier.qualifiers())
-                .selectionStrategy(this.selectionStrategy)
-                .failureStrategy(this.failureStrategy)
-                .scope(this.scope)
-                .postConstructionAllowed(this.postConstructionAllowed);
+                    .selectionStrategy(this.selectionStrategy)
+                    .failureStrategy(this.failureStrategy)
+                    .scope(this.scope)
+                    .postConstructionAllowed(this.postConstructionAllowed);
             if (this.strict != Tristate.UNDEFINED) {
                 builder.strict(this.strict.booleanValue());
             }
@@ -741,8 +739,7 @@ public final class ComponentKey<T> implements Reportable {
          * @return a new collector key builder
          */
         public Builder<ComponentCollection<T>> collector() {
-            ParameterizableType collectionType =
-                ParameterizableType.builder(ComponentCollection.class)
+            ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
                     .parameters(this.type)
                     .build();
             Builder<?> builder = builder(collectionType)
@@ -764,15 +761,14 @@ public final class ComponentKey<T> implements Reportable {
          */
         public ComponentKey<T> build() {
             return new ComponentKey<>(
-                this.selectionStrategy,
-                this.failureStrategy,
-                this.type,
-                this.qualifier,
-                this.scope,
-                this.postConstructionAllowed,
-                this.strict,
-                this.includeParentScopes
-            );
+                    this.selectionStrategy,
+                    this.failureStrategy,
+                    this.type,
+                    this.qualifier,
+                    this.scope,
+                    this.postConstructionAllowed,
+                    this.strict,
+                    this.includeParentScopes);
         }
 
         /**

@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
@@ -27,15 +33,8 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.jspecify.annotations.NonNull;
 import org.dockbox.hartshorn.util.stream.StreamGatherers;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Registers component processors to the application context. This class should be used to prepare
@@ -69,9 +68,7 @@ public class ComponentProcessorRegistrar {
      *
      * @param processors the additional processors to add
      */
-    public void withAdditionalComponentProcessors(
-        Collection<? extends ComponentProcessor> processors
-    ) {
+    public void withAdditionalComponentProcessors(Collection<? extends ComponentProcessor> processors) {
         this.additionalComponentProcessors.addAll(processors);
     }
 
@@ -83,9 +80,7 @@ public class ComponentProcessorRegistrar {
      *
      * @param processors the additional processors to add
      */
-    public void withAdditionalBinderProcessors(
-        Collection<? extends HierarchicalBinderPostProcessor> processors
-    ) {
+    public void withAdditionalBinderProcessors(Collection<? extends HierarchicalBinderPostProcessor> processors) {
         this.additionalBinderProcessors.addAll(processors);
     }
 
@@ -98,20 +93,17 @@ public class ComponentProcessorRegistrar {
      * @param activators the set of {@link ModuleActivator}s
      */
     public void registerComponentProcessors(
-        ComponentProcessorRegistry registry,
-        Introspector introspector,
-        Set<ModuleActivator> activators
-    ) {
+            ComponentProcessorRegistry registry, Introspector introspector, Set<ModuleActivator> activators) {
         Set<Class<? extends ComponentPreProcessor>> preProcessorTypes =
-            this.resolveComponentPreProcessorTypes(activators);
+                this.resolveComponentPreProcessorTypes(activators);
         Set<Class<? extends ComponentPostProcessor>> postProcessorTypes =
-            this.resolveComponentPostProcessorTypes(activators);
+                this.resolveComponentPostProcessorTypes(activators);
 
         if (this.buildContext.logger().isDebugEnabled()) {
             int totalProcessors = preProcessorTypes.size() + postProcessorTypes.size();
-            this.buildContext.logger()
-                .debug("Registering {} component processors to application context",
-                    totalProcessors);
+            this.buildContext
+                    .logger()
+                    .debug("Registering {} component processors to application context", totalProcessors);
         }
 
         this.registerPostProcessors(registry, postProcessorTypes);
@@ -127,17 +119,14 @@ public class ComponentProcessorRegistrar {
      * @param activators the set of {@link ModuleActivator}s
      */
     public void registerBinderProcessors(
-        HierarchicalBinderProcessorRegistry registry,
-        Introspector introspector,
-        Set<ModuleActivator> activators
-    ) {
+            HierarchicalBinderProcessorRegistry registry, Introspector introspector, Set<ModuleActivator> activators) {
         Set<Class<? extends HierarchicalBinderPostProcessor>> binderPostProcessorTypes =
-            this.resolveBinderPostProcessorTypes(activators);
+                this.resolveBinderPostProcessorTypes(activators);
 
         if (this.buildContext.logger().isDebugEnabled()) {
-            this.buildContext.logger()
-                .debug("Registering {} binder processors to application context",
-                    binderPostProcessorTypes.size());
+            this.buildContext
+                    .logger()
+                    .debug("Registering {} binder processors to application context", binderPostProcessorTypes.size());
         }
 
         this.registerBinderPostProcessors(registry, introspector, binderPostProcessorTypes);
@@ -155,10 +144,8 @@ public class ComponentProcessorRegistrar {
      * @see #resolveProcessorTypes(Set, Function)
      */
     protected Set<Class<? extends HierarchicalBinderPostProcessor>> resolveBinderPostProcessorTypes(
-        Set<ModuleActivator> moduleActivatorAnnotations
-    ) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations,
-            ModuleActivator::binderPostProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::binderPostProcessors);
     }
 
     /**
@@ -172,10 +159,8 @@ public class ComponentProcessorRegistrar {
      * @see #resolveProcessorTypes(Set, Function)
      */
     protected Set<Class<? extends ComponentPreProcessor>> resolveComponentPreProcessorTypes(
-        Set<ModuleActivator> moduleActivatorAnnotations
-    ) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations,
-            ModuleActivator::componentPreProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPreProcessors);
     }
 
     /**
@@ -189,10 +174,8 @@ public class ComponentProcessorRegistrar {
      * @see #resolveProcessorTypes(Set, Function)
      */
     protected Set<Class<? extends ComponentPostProcessor>> resolveComponentPostProcessorTypes(
-        Set<ModuleActivator> moduleActivatorAnnotations
-    ) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations,
-            ModuleActivator::componentPostProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPostProcessors);
     }
 
     /**
@@ -206,13 +189,8 @@ public class ComponentProcessorRegistrar {
      * @return a set of processor types
      */
     protected <T> Set<Class<? extends T>> resolveProcessorTypes(
-        Set<ModuleActivator> moduleActivators,
-        Function<ModuleActivator, Class<? extends T>[]> lookup
-    ) {
-        return moduleActivators.stream()
-            .map(lookup)
-            .flatMap(Stream::of)
-            .collect(Collectors.toSet());
+            Set<ModuleActivator> moduleActivators, Function<ModuleActivator, Class<? extends T>[]> lookup) {
+        return moduleActivators.stream().map(lookup).flatMap(Stream::of).collect(Collectors.toSet());
     }
 
     /**
@@ -227,16 +205,14 @@ public class ComponentProcessorRegistrar {
      * @see ComponentProcessorRegistry#register(ComponentProcessor)
      */
     protected void registerPostProcessors(
-        ComponentProcessorRegistry registry,
-        Set<Class<? extends ComponentPostProcessor>> processorTypes
-    ) {
+            ComponentProcessorRegistry registry, Set<Class<? extends ComponentPostProcessor>> processorTypes) {
         for (Class<? extends ComponentPostProcessor> postProcessorType : processorTypes) {
             registry.registerLazy(postProcessorType);
         }
 
         this.additionalComponentProcessors.stream()
-            .gather(StreamGatherers.filterByType(ComponentPostProcessor.class))
-            .forEach(registry::register);
+                .gather(StreamGatherers.filterByType(ComponentPostProcessor.class))
+                .forEach(registry::register);
     }
 
     /**
@@ -250,12 +226,11 @@ public class ComponentProcessorRegistrar {
      * @see ComponentProcessorRegistry#register(ComponentProcessor)
      */
     protected void registerPreProcessors(
-        ComponentProcessorRegistry registry,
-        Introspector introspector,
-        Set<Class<? extends ComponentPreProcessor>> processorTypes
-    ) {
+            ComponentProcessorRegistry registry,
+            Introspector introspector,
+            Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         Set<ComponentPreProcessor> componentProcessors =
-            this.createPreProcessors(introspector, ComponentPreProcessor.class, processorTypes);
+                this.createPreProcessors(introspector, ComponentPreProcessor.class, processorTypes);
         for (ComponentProcessor componentProcessor : componentProcessors) {
             registry.register(componentProcessor);
         }
@@ -271,15 +246,11 @@ public class ComponentProcessorRegistrar {
      * @param processorTypes the types of binder post-processors to register
      */
     protected void registerBinderPostProcessors(
-        HierarchicalBinderProcessorRegistry registry,
-        Introspector introspector,
-        Set<Class<? extends HierarchicalBinderPostProcessor>> processorTypes
-    ) {
+            HierarchicalBinderProcessorRegistry registry,
+            Introspector introspector,
+            Set<Class<? extends HierarchicalBinderPostProcessor>> processorTypes) {
         Collection<HierarchicalBinderPostProcessor> processors = new HashSet<>(
-            this.createPreProcessors(introspector,
-                HierarchicalBinderPostProcessor.class,
-                processorTypes)
-        );
+                this.createPreProcessors(introspector, HierarchicalBinderPostProcessor.class, processorTypes));
         processors.addAll(this.additionalBinderProcessors);
         processors.forEach(registry::register);
     }
@@ -297,32 +268,25 @@ public class ComponentProcessorRegistrar {
      */
     @NonNull
     protected <T> Set<T> createPreProcessors(
-        Introspector introspector,
-        Class<T> rootType,
-        Set<Class<? extends T>> processorTypes
-    ) {
-        Set<T> componentProcessors = this.additionalComponentProcessors
-            .stream()
-            .filter(rootType::isInstance)
-            .map(rootType::cast)
-            .collect(Collectors.toSet());
+            Introspector introspector, Class<T> rootType, Set<Class<? extends T>> processorTypes) {
+        Set<T> componentProcessors = this.additionalComponentProcessors.stream()
+                .filter(rootType::isInstance)
+                .map(rootType::cast)
+                .collect(Collectors.toSet());
 
         // Note: pre-processors should never have dependencies, as they are used to process
         // components before they are registered and therefore cannot rely on other components being
         // available
         for (Class<? extends T> processorType : processorTypes) {
-            var constructor = introspector.introspect(processorType)
-                .constructors()
-                .defaultConstructor();
+            var constructor =
+                    introspector.introspect(processorType).constructors().defaultConstructor();
             if (constructor.absent()) {
-                throw new ComponentInitializationException(
-                    "Processor %s does not have a default constructor, skipping".formatted(
-                        processorType.getSimpleName()));
+                throw new ComponentInitializationException("Processor %s does not have a default constructor, skipping"
+                        .formatted(processorType.getSimpleName()));
             }
             try {
                 componentProcessors.add(constructor.get().create());
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 throw new ComponentInitializationException("Failed to create processor", e);
             }
         }

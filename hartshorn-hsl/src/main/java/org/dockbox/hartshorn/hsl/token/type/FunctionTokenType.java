@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.token.type;
 
 import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
@@ -26,9 +25,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
  * and overrides.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum FunctionTokenType implements EnumTokenType {
@@ -42,9 +41,7 @@ public enum FunctionTokenType implements EnumTokenType {
      * are used to create new instances of a class. As constructors are unnamed, they are
      * represented by the default lexical meaning '{@code <init>}'.
      */
-    CONSTRUCTOR(builder -> builder.keyword(true)
-        .standaloneStatement(false)
-        .defaultLexeme("<init>")),
+    CONSTRUCTOR(builder -> builder.keyword(true).standaloneStatement(false).defaultLexeme("<init>")),
 
     /**
      * Represents a prefix function, which is a function that is used as a prefix to an expression.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.ListProperty;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
@@ -27,18 +32,9 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class PropertyRegistryTests {
 
-    void assertWithRegistry(
-        Collection<ConfiguredProperty> properties,
-        Consumer<PropertyRegistry> registryConsumer
-    ) {
+    void assertWithRegistry(Collection<ConfiguredProperty> properties, Consumer<PropertyRegistry> registryConsumer) {
         PropertyRegistry registry = new MapPropertyRegistry();
         registry.registerAll(properties);
         registryConsumer.accept(registry);
@@ -63,25 +59,26 @@ class PropertyRegistryTests {
     }
 
     void assertObjectAccess(String objectKey) {
-        this.assertWithRegistry(List.of(
-            new SingleConfiguredProperty(objectKey + ".one", "one"),
-            new SingleConfiguredProperty(objectKey + ".two", "two")
-        ), registry -> {
-            Option<ObjectProperty> object = registry.object(objectKey);
-            assertThat(object.present()).isTrue();
-            object.peek(obj -> {
-                assertThat(obj.name()).isEqualTo(objectKey);
-                Option<ValueProperty> one = obj.get("one");
-                assertThat(one.present()).isTrue();
-                assertThat(one.get().value().get()).isEqualTo("one");
-                assertThat(one.get().name()).isEqualTo(objectKey + ".one");
+        this.assertWithRegistry(
+                List.of(
+                        new SingleConfiguredProperty(objectKey + ".one", "one"),
+                        new SingleConfiguredProperty(objectKey + ".two", "two")),
+                registry -> {
+                    Option<ObjectProperty> object = registry.object(objectKey);
+                    assertThat(object.present()).isTrue();
+                    object.peek(obj -> {
+                        assertThat(obj.name()).isEqualTo(objectKey);
+                        Option<ValueProperty> one = obj.get("one");
+                        assertThat(one.present()).isTrue();
+                        assertThat(one.get().value().get()).isEqualTo("one");
+                        assertThat(one.get().name()).isEqualTo(objectKey + ".one");
 
-                Option<ValueProperty> two = obj.get("two");
-                assertThat(two.present()).isTrue();
-                assertThat(two.get().value().get()).isEqualTo("two");
-                assertThat(two.get().name()).isEqualTo(objectKey + ".two");
-            });
-        });
+                        Option<ValueProperty> two = obj.get("two");
+                        assertThat(two.present()).isTrue();
+                        assertThat(two.get().value().get()).isEqualTo("two");
+                        assertThat(two.get().name()).isEqualTo(objectKey + ".two");
+                    });
+                });
     }
 
     @Test
@@ -103,25 +100,26 @@ class PropertyRegistryTests {
     }
 
     void testListAccess(String listKey) {
-        this.assertWithRegistry(List.of(
-            new SingleConfiguredProperty(listKey + "[0]", "one"),
-            new SingleConfiguredProperty(listKey + "[1]", "two")
-        ), registry -> {
-            Option<ListProperty> list = registry.list(listKey);
-            assertThat(list.present()).isTrue();
-            list.peek(l -> {
-                assertThat(l.name()).isEqualTo(listKey);
-                Option<ValueProperty> one = l.get(0);
-                assertThat(one.present()).isTrue();
-                assertThat(one.get().value().get()).isEqualTo("one");
-                assertThat(one.get().name()).isEqualTo(listKey + "[0]");
+        this.assertWithRegistry(
+                List.of(
+                        new SingleConfiguredProperty(listKey + "[0]", "one"),
+                        new SingleConfiguredProperty(listKey + "[1]", "two")),
+                registry -> {
+                    Option<ListProperty> list = registry.list(listKey);
+                    assertThat(list.present()).isTrue();
+                    list.peek(l -> {
+                        assertThat(l.name()).isEqualTo(listKey);
+                        Option<ValueProperty> one = l.get(0);
+                        assertThat(one.present()).isTrue();
+                        assertThat(one.get().value().get()).isEqualTo("one");
+                        assertThat(one.get().name()).isEqualTo(listKey + "[0]");
 
-                Option<ValueProperty> two = l.get(1);
-                assertThat(two.present()).isTrue();
-                assertThat(two.get().value().get()).isEqualTo("two");
-                assertThat(two.get().name()).isEqualTo(listKey + "[1]");
-            });
-        });
+                        Option<ValueProperty> two = l.get(1);
+                        assertThat(two.present()).isTrue();
+                        assertThat(two.get().value().get()).isEqualTo("two");
+                        assertThat(two.get().name()).isEqualTo(listKey + "[1]");
+                    });
+                });
     }
 
     @Test
@@ -143,9 +141,7 @@ class PropertyRegistryTests {
     }
 
     void testValueAccess(String valueKey) {
-        this.assertWithRegistry(List.of(
-            new SingleConfiguredProperty(valueKey, "value")
-        ), registry -> {
+        this.assertWithRegistry(List.of(new SingleConfiguredProperty(valueKey, "value")), registry -> {
             Option<ValueProperty> value = registry.get(valueKey);
             assertThat(value.present()).isTrue();
             value.peek(v -> {
@@ -159,46 +155,51 @@ class PropertyRegistryTests {
     @DisplayName("Test access to deeply nested value with step-by-step access")
     void complexAccess() {
         this.assertWithRegistry(
-            List.of(new SingleConfiguredProperty("sample[0][1][0].property.sample[1].value",
-                "value")),
-            registry -> {
-                // sample
-                Option<ListProperty> sample = registry.list("sample");
-                assertThat(sample.present()).isTrue();
+                List.of(new SingleConfiguredProperty("sample[0][1][0].property.sample[1].value", "value")),
+                registry -> {
+                    // sample
+                    Option<ListProperty> sample = registry.list("sample");
+                    assertThat(sample.present()).isTrue();
 
-                // sample[0]
-                Option<ListProperty> sampleIndex0 = sample.get().list(0);
-                assertThat(sampleIndex0.present()).isTrue();
+                    // sample[0]
+                    Option<ListProperty> sampleIndex0 = sample.get().list(0);
+                    assertThat(sampleIndex0.present()).isTrue();
 
-                // sample[0][1]
-                Option<ListProperty> sampleIndex0Index1 = sampleIndex0.get().list(1);
-                assertThat(sampleIndex0Index1.present()).isTrue();
+                    // sample[0][1]
+                    Option<ListProperty> sampleIndex0Index1 = sampleIndex0.get().list(1);
+                    assertThat(sampleIndex0Index1.present()).isTrue();
 
-                // sample[0][1][0]
-                Option<ObjectProperty> sampleIndex0Index1Index0 =
-                    sampleIndex0Index1.get().object(0);
-                assertThat(sampleIndex0Index1Index0.present()).isTrue();
+                    // sample[0][1][0]
+                    Option<ObjectProperty> sampleIndex0Index1Index0 =
+                            sampleIndex0Index1.get().object(0);
+                    assertThat(sampleIndex0Index1Index0.present()).isTrue();
 
-                // sample[0][1][0].property
-                Option<ObjectProperty> sampleIndex0Index1Index0Property =
-                    sampleIndex0Index1Index0.get().object("property");
-                assertThat(sampleIndex0Index1Index0Property.present()).isTrue();
+                    // sample[0][1][0].property
+                    Option<ObjectProperty> sampleIndex0Index1Index0Property =
+                            sampleIndex0Index1Index0.get().object("property");
+                    assertThat(sampleIndex0Index1Index0Property.present()).isTrue();
 
-                // sample[0][1][0].property.sample
-                Option<ListProperty> sampleIndex0Index1Index0PropertySample =
-                    sampleIndex0Index1Index0Property.get().list("sample");
-                assertThat(sampleIndex0Index1Index0PropertySample.present()).isTrue();
+                    // sample[0][1][0].property.sample
+                    Option<ListProperty> sampleIndex0Index1Index0PropertySample =
+                            sampleIndex0Index1Index0Property.get().list("sample");
+                    assertThat(sampleIndex0Index1Index0PropertySample.present()).isTrue();
 
-                // sample[0][1][0].property.sample[1]
-                Option<ObjectProperty> sampleIndex0Index1Index0PropertySampleIndex1 =
-                    sampleIndex0Index1Index0PropertySample.get().object(1);
-                assertThat(sampleIndex0Index1Index0PropertySampleIndex1.present()).isTrue();
+                    // sample[0][1][0].property.sample[1]
+                    Option<ObjectProperty> sampleIndex0Index1Index0PropertySampleIndex1 =
+                            sampleIndex0Index1Index0PropertySample.get().object(1);
+                    assertThat(sampleIndex0Index1Index0PropertySampleIndex1.present())
+                            .isTrue();
 
-                // sample[0][1][0].property.sample[1].value
-                Option<ValueProperty> sampleIndex0Index1Index0PropertySampleIndex1Value =
-                    sampleIndex0Index1Index0PropertySampleIndex1.get().get("value");
-                assertThat(sampleIndex0Index1Index0PropertySampleIndex1Value.present()).isTrue();
-                assertThat(sampleIndex0Index1Index0PropertySampleIndex1Value.get().value().get()).isEqualTo("value");
-            });
+                    // sample[0][1][0].property.sample[1].value
+                    Option<ValueProperty> sampleIndex0Index1Index0PropertySampleIndex1Value =
+                            sampleIndex0Index1Index0PropertySampleIndex1.get().get("value");
+                    assertThat(sampleIndex0Index1Index0PropertySampleIndex1Value.present())
+                            .isTrue();
+                    assertThat(sampleIndex0Index1Index0PropertySampleIndex1Value
+                                    .get()
+                                    .value()
+                                    .get())
+                            .isEqualTo("value");
+                });
     }
 }

@@ -16,6 +16,15 @@
 
 package test.org.dockbox.hartshorn.hsl.support;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
@@ -37,7 +46,6 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterState;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassMemberInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.statement.StatementInterpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
@@ -51,16 +59,6 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.mockito.Mockito;
 import org.mockito.internal.util.MockUtil;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * A helper class for testing HSL language features such as parsing and interpretation. This class
@@ -113,7 +111,7 @@ import static org.assertj.core.api.Assertions.fail;
  * instance, the captured value will still be wrapped in a {@link ExternalInstance}.
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class HSLTestHelper {
@@ -139,10 +137,7 @@ public class HSLTestHelper {
      *
      * @return the builder
      */
-    public static Builder ofExpression(
-        ApplicationContext applicationContext,
-        String source
-    ) {
+    public static Builder ofExpression(ApplicationContext applicationContext, String source) {
         String captureSource = "%s(%s)".formatted(CaptureModule.CAPTURE.tokenName(), source);
         return of(applicationContext, captureSource).withCaptureModule();
     }
@@ -156,10 +151,9 @@ public class HSLTestHelper {
      * @return the builder
      */
     public static Builder of(ApplicationContext applicationContext, String source) {
-        return new Builder(applicationContext, source)
-            .extensions(extensions -> {
-                extensions.expressionModules(new CheckpointModule());
-            });
+        return new Builder(applicationContext, source).extensions(extensions -> {
+            extensions.expressionModules(new CheckpointModule());
+        });
     }
 
     /**
@@ -208,27 +202,23 @@ public class HSLTestHelper {
      *
      * @return this helper
      */
-    public <T extends Expression> HSLTestHelper evaluateWith(
-        Class<T> type,
-        ASTNodeInterpreter<?, T> interpreter
-    ) {
+    public <T extends Expression> HSLTestHelper evaluateWith(Class<T> type, ASTNodeInterpreter<?, T> interpreter) {
         Interpreter defaultInterpreter = this.context.interpreter();
-        Interpreter spyInterpreter = MockUtil.isMock(defaultInterpreter)
-            ? defaultInterpreter
-            : Mockito.spy(defaultInterpreter);
+        Interpreter spyInterpreter =
+                MockUtil.isMock(defaultInterpreter) ? defaultInterpreter : Mockito.spy(defaultInterpreter);
 
         Mockito.doAnswer(invocation -> {
-            T expression = invocation.getArgument(0);
-            return interpreter.interpret(expression, spyInterpreter);
-        }).when(spyInterpreter).evaluate(Mockito.any(type));
+                    T expression = invocation.getArgument(0);
+                    return interpreter.interpret(expression, spyInterpreter);
+                })
+                .when(spyInterpreter)
+                .evaluate(Mockito.any(type));
 
         if (spyInterpreter instanceof SimpleVisitorInterpreter visitorInterpreter) {
             // Re-bind the visitor to use the spy interpreter. The visitor implementation is a
             // record, and thus immutable, so we need to create a new one.
             DelegatingInterpreterVisitor visitor = new DelegatingInterpreterVisitor(spyInterpreter);
-            Mockito.doAnswer(invocation -> visitor)
-                .when(visitorInterpreter)
-                .visitor();
+            Mockito.doAnswer(invocation -> visitor).when(visitorInterpreter).visitor();
         }
 
         this.context.interpreter(spyInterpreter);
@@ -263,9 +253,7 @@ public class HSLTestHelper {
     }
 
     public Object interpretValue() {
-        return this.interpret()
-            .captures()
-            .capturedValue();
+        return this.interpret().captures().capturedValue();
     }
 
     public CaptureModule captures() {
@@ -300,19 +288,15 @@ public class HSLTestHelper {
         private final Map<String, NativeModule> modules = new HashMap<>();
         private final Set<CodeCustomizer> codeCustomizers = new HashSet<>();
 
-        private Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer =
-            Customizer.useDefaults();
-        private ParserCustomizer parserCustomizer = parser -> {
-        };
+        private Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer = Customizer.useDefaults();
+        private ParserCustomizer parserCustomizer = parser -> {};
 
         private Builder(ApplicationContext applicationContext, String source) {
             this.applicationContext = applicationContext;
             this.source = source;
         }
 
-        public Builder extensions(
-            Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer
-        ) {
+        public Builder extensions(Customizer<RuntimeExtensionCodeCustomizer> extensionCustomizer) {
             this.extensionCustomizer = extensionCustomizer.compose(this.extensionCustomizer);
             return this;
         }
@@ -402,11 +386,7 @@ public class HSLTestHelper {
             return this.define(name, value, Interpreter::visitingScope);
         }
 
-        public Builder define(
-            String name,
-            Object value,
-            Function<Interpreter, VariableScope> scopeSelector
-        ) {
+        public Builder define(String name, Object value, Function<Interpreter, VariableScope> scopeSelector) {
             return this.customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
                 Interpreter interpreter = context.interpreter();
                 scopeSelector.apply(interpreter).define(name, value);
@@ -415,10 +395,7 @@ public class HSLTestHelper {
 
         public HSLTestHelper build() {
             SimpleScriptRuntime runtime = new SimpleScriptRuntime(
-                this.applicationContext,
-                new StandardScriptComponentFactory(),
-                this.parserCustomizer
-            );
+                    this.applicationContext, new StandardScriptComponentFactory(), this.parserCustomizer);
             runtime.modules(this.modules);
 
             runtime.customizers(this.codeCustomizers);

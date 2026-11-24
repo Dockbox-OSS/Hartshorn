@@ -38,11 +38,7 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 public class ElvisExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         Expression expression = chain.next(parser, validator);
         if (parser.match(ConditionTokenType.ELVIS)) {
             Token elvis = parser.previous();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.stream;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +27,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A utility class for custom collectors which target custom collection types.
@@ -68,9 +67,7 @@ public final class CollectorUtilities {
      * @return a collector that collects entries into an {@link EntryStream}
      */
     public static <T, K, V> Collector<T, ?, EntryStream<K, V>> toEntryStream(
-        Function<? super T, ? extends K> keyMapper,
-        Function<? super T, ? extends V> valueMapper
-    ) {
+            Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
         return toEntryStream(HashMap::new, keyMapper, valueMapper);
     }
 
@@ -89,20 +86,18 @@ public final class CollectorUtilities {
      * @return a collector that collects entries into an {@link EntryStream}
      */
     public static <T, K, V> Collector<T, ?, EntryStream<K, V>> toEntryStream(
-        Supplier<Map<K, V>> mapSupplier,
-        Function<? super T, ? extends K> keyMapper,
-        Function<? super T, ? extends V> valueMapper
-    ) {
+            Supplier<Map<K, V>> mapSupplier,
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends V> valueMapper) {
         return new RecordCollector<>(
-            mapSupplier,
-            (map, next) -> map.put(keyMapper.apply(next), valueMapper.apply(next)),
-            (left, right) -> {
-                left.putAll(right);
-                return left;
-            },
-            EntryStream::of,
-            EnumSet.of(Characteristics.UNORDERED)
-        );
+                mapSupplier,
+                (map, next) -> map.put(keyMapper.apply(next), valueMapper.apply(next)),
+                (left, right) -> {
+                    left.putAll(right);
+                    return left;
+                },
+                EntryStream::of,
+                EnumSet.of(Characteristics.UNORDERED));
     }
 
     /**
@@ -118,26 +113,21 @@ public final class CollectorUtilities {
             Option<T> value = Option.empty();
         }
         return Collector.of(
-            IntermediateHolder::new,
-            (holder, item) -> {
-                if (holder.value.present()) {
-                    throw new IllegalStateException(
-                        "Multiple elements encountered when only one was expected"
-                    );
-                }
-                holder.value = Option.of(item);
-            },
-            (current, next) -> {
-                if (current.value.present() && next.value.present()) {
-                    throw new IllegalStateException(
-                        "Multiple elements encountered when only one was expected"
-                    );
-                }
-                return current.value.present() ? current : next;
-            },
-            holder -> holder.value,
-            Collector.Characteristics.UNORDERED
-        );
+                IntermediateHolder::new,
+                (holder, item) -> {
+                    if (holder.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    holder.value = Option.of(item);
+                },
+                (current, next) -> {
+                    if (current.value.present() && next.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    return current.value.present() ? current : next;
+                },
+                holder -> holder.value,
+                Collector.Characteristics.UNORDERED);
     }
 
     /**
@@ -159,25 +149,15 @@ public final class CollectorUtilities {
      * @author Guus Lieben
      */
     public record RecordCollector<T, A, R>(
-        Supplier<A> supplier,
-        BiConsumer<A, T> accumulator,
-        BinaryOperator<A> combiner,
-        Function<A, R> finisher,
-        Set<Characteristics> characteristics
-    ) implements Collector<T, A, R> {
-
-        RecordCollector(
             Supplier<A> supplier,
             BiConsumer<A, T> accumulator,
-            BinaryOperator<A> combiner
-        ) {
-            this(
-                supplier,
-                accumulator,
-                combiner,
-                a -> (R) a,
-                EnumSet.of(Characteristics.IDENTITY_FINISH)
-            );
+            BinaryOperator<A> combiner,
+            Function<A, R> finisher,
+            Set<Characteristics> characteristics)
+            implements Collector<T, A, R> {
+
+        RecordCollector(Supplier<A> supplier, BiConsumer<A, T> accumulator, BinaryOperator<A> combiner) {
+            this(supplier, accumulator, combiner, a -> (R) a, EnumSet.of(Characteristics.IDENTITY_FINISH));
         }
     }
 }

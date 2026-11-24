@@ -16,7 +16,12 @@
 
 package test.org.dockbox.hartshorn.launchpad;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
@@ -48,19 +53,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 class ApplicationConfigurerTests {
 
     private static ApplicationContext createApplication(Customizer<HartshornApplicationConfigurer> customizer) {
         return HartshornApplication.createApplication(ApplicationConfigurerTests.class)
-            .initialize(customizer.compose(config -> {
-                config.includeBasePackages(false);
-            }));
+                .initialize(customizer.compose(config -> {
+                    config.includeBasePackages(false);
+                }));
     }
 
     @Test
@@ -73,8 +72,7 @@ class ApplicationConfigurerTests {
         });
         PropertyRegistry propertyRegistry = applicationContext.environment().propertyRegistry();
         assertThat(propertyRegistry.contains("sample.x.y")).isTrue();
-        String value = propertyRegistry.value("sample.x.y")
-            .orElseThrow(() -> new AssertionError("Property not found"));
+        String value = propertyRegistry.value("sample.x.y").orElseThrow(() -> new AssertionError("Property not found"));
         assertThat(value).isEqualTo("z");
     }
 
@@ -86,7 +84,8 @@ class ApplicationConfigurerTests {
                 activators.add(TypeUtils.annotation(UseSampleActivator.class));
             });
         });
-        assertThat(applicationContext.activators().hasActivator(UseSampleActivator.class)).isTrue();
+        assertThat(applicationContext.activators().hasActivator(UseSampleActivator.class))
+                .isTrue();
     }
 
     @Test
@@ -121,14 +120,11 @@ class ApplicationConfigurerTests {
                 .asInstanceOf(InstanceOfAssertFactories.type(DelegatingApplicationContext.class))
                 .actual();
         ComponentProvider componentProvider = processableApplicationContext.componentProvider();
-        PostProcessingComponentProvider postProcessingComponentProvider =
-                assertThat(componentProvider)
-                        .asInstanceOf(InstanceOfAssertFactories.type(
-                                PostProcessingComponentProvider.class
-                        ))
-                        .actual();
+        PostProcessingComponentProvider postProcessingComponentProvider = assertThat(componentProvider)
+                .asInstanceOf(InstanceOfAssertFactories.type(PostProcessingComponentProvider.class))
+                .actual();
         MultiMap<Integer, ComponentPostProcessor> processors =
-            postProcessingComponentProvider.processorRegistry().postProcessors();
+                postProcessingComponentProvider.processorRegistry().postProcessors();
         assertThat(processors.containsValue(processor)).isTrue();
     }
 
@@ -141,7 +137,8 @@ class ApplicationConfigurerTests {
             });
         });
         ComponentRegistry componentRegistry = applicationContext.get(ComponentRegistry.class);
-        assertThat(componentRegistry.container(DummyUnmanagedComponent.class).present()).isTrue();
+        assertThat(componentRegistry.container(DummyUnmanagedComponent.class).present())
+                .isTrue();
     }
 
     @Test
@@ -154,14 +151,14 @@ class ApplicationConfigurerTests {
             });
         });
         Option<TypeReferenceCollectorContext> collectorContextCandidate =
-            applicationContext.firstContext(TypeReferenceCollectorContext.class);
+                applicationContext.firstContext(TypeReferenceCollectorContext.class);
         assertThat(collectorContextCandidate.present()).isTrue();
 
         TypeReferenceCollectorContext collectorContext = collectorContextCandidate.get();
         Set<String> packages = collectorContext.collectors().stream()
-            .gather(StreamGatherers.filterByType(ClasspathTypeReferenceCollector.class))
-            .flatMap(scanner -> scanner.packageNames().stream())
-            .collect(Collectors.toSet());
+                .gather(StreamGatherers.filterByType(ClasspathTypeReferenceCollector.class))
+                .flatMap(scanner -> scanner.packageNames().stream())
+                .collect(Collectors.toSet());
         assertThat(packages).contains(dummyPackage);
     }
 
@@ -207,69 +204,62 @@ class ApplicationConfigurerTests {
     @Test
     @DisplayName("Customizer should be able to enable batch mode")
     void batchModeCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::enableBatchMode);
-        assertThat(applicationContext.environment().configuration().isBatchMode()).isTrue();
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::enableBatchMode);
+        assertThat(applicationContext.environment().configuration().isBatchMode())
+                .isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable batch mode")
     void batchModeDisabledCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::disableBatchMode);
-        assertThat(applicationContext.environment().configuration().isBatchMode()).isFalse();
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::disableBatchMode);
+        assertThat(applicationContext.environment().configuration().isBatchMode())
+                .isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to enable strict mode")
     void strictModeCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::enableStrictMode);
-        assertThat(applicationContext.environment().configuration().isStrictMode()).isTrue();
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::enableStrictMode);
+        assertThat(applicationContext.environment().configuration().isStrictMode())
+                .isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable strict mode")
     void strictModeDisabledCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::disableStrictMode);
-        assertThat(applicationContext.environment().configuration().isStrictMode()).isFalse();
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::disableStrictMode);
+        assertThat(applicationContext.environment().configuration().isStrictMode())
+                .isFalse();
     }
 
     @Test
     @DisplayName("Customizer should be able to enable stacktraces")
     void showStacktracesCustomizer() {
-        ApplicationContext applicationContext =
-            createApplication(HartshornApplicationConfigurer::showStacktraces);
-        ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertThat(applicationContext.environment())
-                    .asInstanceOf(InstanceOfAssertFactories.type(ConfigurableApplicationEnvironment.class))
-                    .actual();
-        LoggingExceptionHandler exceptionHandler =
-            assertThat(configurableApplicationEnvironment.exceptionHandler())
-                    .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
-                    .actual();
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::showStacktraces);
+        ConfigurableApplicationEnvironment configurableApplicationEnvironment = assertThat(
+                        applicationContext.environment())
+                .asInstanceOf(InstanceOfAssertFactories.type(ConfigurableApplicationEnvironment.class))
+                .actual();
+        LoggingExceptionHandler exceptionHandler = assertThat(configurableApplicationEnvironment.exceptionHandler())
+                .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
+                .actual();
         assertThat(exceptionHandler.printStackTraces()).isTrue();
     }
 
     @Test
     @DisplayName("Customizer should be able to disable stacktraces")
     void hideStacktracesCustomizer() {
-        ApplicationContext applicationContext = createApplication(
-                HartshornApplicationConfigurer::hideStacktraces
-        );
+        ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::hideStacktraces);
 
-        ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-            assertThat(applicationContext.environment())
-                    .asInstanceOf(InstanceOfAssertFactories.type(
-                            ConfigurableApplicationEnvironment.class
-                    ))
-                    .actual();
+        ConfigurableApplicationEnvironment configurableApplicationEnvironment = assertThat(
+                        applicationContext.environment())
+                .asInstanceOf(InstanceOfAssertFactories.type(ConfigurableApplicationEnvironment.class))
+                .actual();
 
-        LoggingExceptionHandler exceptionHandler =
-            assertThat(configurableApplicationEnvironment.exceptionHandler())
-                    .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
-                    .actual();
+        LoggingExceptionHandler exceptionHandler = assertThat(configurableApplicationEnvironment.exceptionHandler())
+                .asInstanceOf(InstanceOfAssertFactories.type(LoggingExceptionHandler.class))
+                .actual();
         assertThat(exceptionHandler.printStackTraces()).isFalse();
     }
 
@@ -304,16 +294,13 @@ class ApplicationConfigurerTests {
     }
 
     @ModuleActivator
-    private @interface UseSampleActivator {
-    }
+    private @interface UseSampleActivator {}
 
     private static class SamplePreProcessor extends ComponentPreProcessor {
 
         @Override
         public <T> void process(
-            InjectionCapableApplication application,
-            ComponentProcessingContext<T> processingContext
-        ) {
+                InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
             // Do nothing
         }
     }
@@ -323,8 +310,7 @@ class ApplicationConfigurerTests {
     }
 
     @Component
-    private static class DummyUnmanagedComponent {
-    }
+    private static class DummyUnmanagedComponent {}
 
     private static class HartshornBannerAccessor extends HartshornLogoBanner {
         @Override

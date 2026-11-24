@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.populate;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -34,8 +35,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-
-import java.util.Set;
 
 /**
  * A {@link ComponentPopulationStrategy} which populates components with other components. This
@@ -84,12 +83,11 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     private ConversionService conversionService;
 
     protected InjectPopulationStrategy(
-        ComponentKeyResolver componentKeyResolver,
-        ComponentInjectionPointsResolver injectionPointsResolver,
-        ComponentProvider componentProvider,
-        Set<RequireInjectionPointRule> requiresComponentRules,
-        Set<InjectParameterResolver> parameterResolvers
-    ) {
+            ComponentKeyResolver componentKeyResolver,
+            ComponentInjectionPointsResolver injectionPointsResolver,
+            ComponentProvider componentProvider,
+            Set<RequireInjectionPointRule> requiresComponentRules,
+            Set<InjectParameterResolver> parameterResolvers) {
         super(requiresComponentRules);
         this.componentKeyResolver = componentKeyResolver;
         this.injectionPointsResolver = injectionPointsResolver;
@@ -103,10 +101,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     }
 
     @Override
-    protected Object resolveInjectedObject(
-        InjectionPoint injectionPoint,
-        PopulateComponentContext<?> context
-    ) throws ComponentResolutionException {
+    protected Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context)
+            throws ComponentResolutionException {
         for (InjectParameterResolver resolver : this.parameterResolvers) {
             if (resolver.accepts(injectionPoint, context)) {
                 Object resolved = resolver.resolve(injectionPoint, context);
@@ -117,22 +113,22 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
                 // about custom implementations, and thus risk resulting in unexpected behaviour.
                 if (resolved == null || injectionPoint.type().isInstance(resolved)) {
                     return resolved;
-                }
-                else {
-                    throw new ComponentResolutionException("Failed to resolve injection point "
-                        + injectionPoint.injectionPoint().qualifiedName()
-                        + ", expected type "
-                        + injectionPoint.type().type().getName()
-                        + " but got "
-                        + resolved.getClass().getName(), null);
+                } else {
+                    throw new ComponentResolutionException(
+                            "Failed to resolve injection point "
+                                    + injectionPoint.injectionPoint().qualifiedName()
+                                    + ", expected type "
+                                    + injectionPoint.type().type().getName()
+                                    + " but got "
+                                    + resolved.getClass().getName(),
+                            null);
                 }
             }
         }
 
         ComponentKey<?> componentKey =
-            this.componentKeyResolver.resolve(injectionPoint.injectionPoint(), context.scope());
-        ComponentRequestContext requestContext =
-            ComponentRequestContext.createForInjectionPoint(injectionPoint);
+                this.componentKeyResolver.resolve(injectionPoint.injectionPoint(), context.scope());
+        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object component = this.componentProvider.get(componentKey, requestContext);
 
         // Ensure types are compatible, or a default value is provided if it is available. This
@@ -155,20 +151,19 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
      *
      * @return The contextual initializer for the population strategy
      */
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy>
-    create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy> create(
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
             InjectionCapableApplication application = context.input();
             InjectorEnvironment environment = application.environment();
             return new InjectPopulationStrategy(
-                environment.componentKeyResolver(),
-                environment.injectionPointsResolver(),
-                application.defaultProvider(),
-                Set.copyOf(configurer.requiresComponentRules.initialize(context)),
-                Set.copyOf(configurer.parameterResolvers.initialize(context))
-            );
+                    environment.componentKeyResolver(),
+                    environment.injectionPointsResolver(),
+                    application.defaultProvider(),
+                    Set.copyOf(configurer.requiresComponentRules.initialize(context)),
+                    Set.copyOf(configurer.parameterResolvers.initialize(context)));
         };
     }
 
@@ -184,22 +179,21 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     public static class Configurer {
 
         // checkstyle:off LineLength
-        private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule> requiresComponentRules =
-            LazyStreamableConfigurer.of(configurer -> {
-                configurer.add(ContextualInitializer.of(application -> {
-                    return new AnnotatedInjectionPointRequireRule(
-                            application.environment().configuration()
-                    );
-                }));
-            });
+        private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>
+                requiresComponentRules = LazyStreamableConfigurer.of(configurer -> {
+            configurer.add(ContextualInitializer.of(application -> {
+                return new AnnotatedInjectionPointRequireRule(
+                        application.environment().configuration());
+            }));
+        });
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver> parameterResolvers =
-            LazyStreamableConfigurer.of(configurer -> {
-                configurer.add(ContextualInitializer.of(InjectContextParameterResolver::new));
-                configurer.add(ContextualInitializer.of(application -> {
-                    return new InjectPropertyParameterResolver(application.defaultProvider());
-                }));
-            });
+        private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>
+                parameterResolvers = LazyStreamableConfigurer.of(configurer -> {
+            configurer.add(ContextualInitializer.of(InjectContextParameterResolver::new));
+            configurer.add(ContextualInitializer.of(application -> {
+                return new InjectPropertyParameterResolver(application.defaultProvider());
+            }));
+        });
         // checkstyle:on LineLength
 
         /**
@@ -210,11 +204,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer requiresComponentRules(
-            RequireInjectionPointRule... requiresComponentRules
-        ) {
-            this.requiresComponentRules.customizer(collection -> collection.addAll(
-                requiresComponentRules));
+        public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {
+            this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
             return this;
         }
 
@@ -226,11 +217,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer requiresComponentRules(
-            Set<RequireInjectionPointRule> requiresComponentRules
-        ) {
-            this.requiresComponentRules.customizer(collection -> collection.addAll(
-                requiresComponentRules));
+        public Configurer requiresComponentRules(Set<RequireInjectionPointRule> requiresComponentRules) {
+            this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
             return this;
         }
 
@@ -243,9 +231,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          * @return this configurer
          */
         public Configurer requiresComponentRules(
-            Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>>
-                customizer
-        ) {
+                Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>> customizer) {
             this.requiresComponentRules.customizer(customizer);
             return this;
         }
@@ -285,9 +271,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          * @return this configurer
          */
         public Configurer parameterResolvers(
-            Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>>
-                customizer
-        ) {
+                Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>> customizer) {
             this.parameterResolvers.customizer(customizer);
             return this;
         }

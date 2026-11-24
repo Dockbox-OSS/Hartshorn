@@ -33,9 +33,6 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 public class ConditionFailedException extends ApplicationRuntimeException {
 
     public ConditionFailedException(ConditionDeclaration declaration, ConditionResult result) {
-        super("Condition failed ("
-            + declaration.conditionName()
-            + ") with reason: "
-            + result.message());
+        super("Condition failed (" + declaration.conditionName() + ") with reason: " + result.message());
     }
 }

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.introspect;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -26,9 +28,6 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the
  * {@link InjectionCapableApplication} to load parameters.
@@ -38,19 +37,15 @@ import java.util.Set;
  * @author Guus Lieben
  */
 public class InjectorExecutableInvocationAdapter extends DefaultContext
-    implements ComponentExecutableInvocationAdapter {
+        implements ComponentExecutableInvocationAdapter {
 
     private final ComponentRequestContext componentRequestContext;
     private final InjectionCapableApplication application;
     private final Scope scope;
-    private final Set<ParameterLoaderRule<ApplicationBoundParameterLoaderContext>> additionalRules =
-            new HashSet<>();
+    private final Set<ParameterLoaderRule<ApplicationBoundParameterLoaderContext>> additionalRules = new HashSet<>();
 
     public InjectorExecutableInvocationAdapter(
-        InjectorExecutableInvocationAdapter adapter,
-        ComponentRequestContext componentRequestContext,
-        Scope scope
-    ) {
+            InjectorExecutableInvocationAdapter adapter, ComponentRequestContext componentRequestContext, Scope scope) {
         this.application = adapter.application;
         this.scope = scope;
         this.componentRequestContext = componentRequestContext;
@@ -71,8 +66,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
      * @return this adapter for chaining
      */
     public InjectorExecutableInvocationAdapter addParameterLoaderRule(
-        ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule
-    ) {
+            ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule) {
         this.additionalRules.add(rule);
         return this;
     }
@@ -87,9 +81,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     }
 
     @Override
-    public InjectorExecutableInvocationAdapter requestContext(
-        ComponentRequestContext componentRequestContext
-    ) {
+    public InjectorExecutableInvocationAdapter requestContext(ComponentRequestContext componentRequestContext) {
         return new InjectorExecutableInvocationAdapter(this, componentRequestContext, this.scope);
     }
 
@@ -102,9 +94,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     @Override
     public Object[] loadParameters(ExecutableElementView<?> element) {
         ExecutableElementContextParameterLoader parameterLoader =
-            new ExecutableElementContextParameterLoader(
-                this.application
-            );
+                new ExecutableElementContextParameterLoader(this.application);
         ComponentRequestContext componentRequestContext = this.componentRequestContext();
         if (componentRequestContext.isForInjectionPoint()) {
             var rule = new InjectionPointParameterLoaderRule(componentRequestContext);
@@ -113,12 +103,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
         for (var rule : this.additionalRules) {
             parameterLoader.add(rule);
         }
-        var loaderContext = new ApplicationBoundParameterLoaderContext(
-                element,
-                null,
-                this.application,
-                this.scope()
-        );
+        var loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.application, this.scope());
         this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
@@ -127,8 +112,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     public <P, R> Option<R> invoke(MethodView<P, R> method, P instance) throws Throwable {
         if (method.modifiers().isStatic()) {
             return this.invokeStatic(method);
-        }
-        else {
+        } else {
             Object[] parameters = this.loadParameters(method);
             return method.invoke(instance, parameters);
         }
@@ -137,8 +121,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     @Override
     public <P, R> Option<R> invokeStatic(MethodView<P, R> method) throws Throwable {
         if (!method.modifiers().isStatic()) {
-            throw new IllegalArgumentException("Method must be static to invoke statically: "
-                + method);
+            throw new IllegalArgumentException("Method must be static to invoke statically: " + method);
         }
         Object[] parameters = this.loadParameters(method);
         return method.invokeStatic(parameters);
@@ -146,7 +129,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
 
     private Scope scope() {
         return this.scope != null
-            ? this.scope
-            : this.application.defaultProvider().scope();
+                ? this.scope
+                : this.application.defaultProvider().scope();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,29 +31,27 @@ import org.dockbox.hartshorn.util.option.Option;
  * provide an instance, the chain is continued.
  *
  * @see PrototypeConstructorInstantiationStrategy#forPrototype(ComponentKey)
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class UnboundPrototypeComponentProviderStrategy implements ComponentProviderStrategy {
 
     @Override
     public <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey, ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException, ApplicationException {
-        InstantiationStrategy<T> strategy =
-            PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ComponentResolutionException, ApplicationException {
+        InstantiationStrategy<T> strategy = PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
         Option<ObjectContainer<T>> container = strategy.provide(
-            chain.application(),
-            requestContext,
-            componentKey.scope().orElse(chain.componentProvider().scope())
-        );
+                chain.application(),
+                requestContext,
+                componentKey.scope().orElse(chain.componentProvider().scope()));
         if (container.present()) {
             return container.get();
-        }
-        else {
+        } else {
             return chain.get(componentKey, requestContext);
         }
     }

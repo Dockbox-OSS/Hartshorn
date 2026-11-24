@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.resources.Resources;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.resources.Resources;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the
@@ -48,8 +47,7 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
         URL url = Resources.getResourceURL(name);
         try {
             return Option.of(url.toURI());
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IOException("Could not convert URL to URI: " + url, e);
         }
     }
@@ -60,8 +58,7 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
         for (URL url : Resources.getResourceURLs(name)) {
             try {
                 uris.add(url.toURI());
-            }
-            catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 throw new IOException("Could not convert URL to URI: " + url, e);
             }
         }
@@ -76,8 +73,7 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
                 return null;
             }
             return resource.toURI();
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             this.environment.handle("Could not look up classpath base", e);
             return null;
         }

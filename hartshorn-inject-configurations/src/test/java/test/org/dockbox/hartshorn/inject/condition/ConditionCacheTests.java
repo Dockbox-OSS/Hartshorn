@@ -16,6 +16,12 @@
 
 package test.org.dockbox.hartshorn.inject.condition;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.inject.condition.AnnotationConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.CacheableCondition;
@@ -30,36 +36,21 @@ import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 
-import java.lang.classfile.Annotation;
-import java.lang.classfile.ClassModel;
-import java.lang.classfile.MethodModel;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class ConditionCacheTests {
 
     @Test
     void cachedConditionMarkerIsRespectedByReferenceDeclarations() {
-        RequiresReferenceCondition annotation = TypeUtils.annotation(
-                RequiresReferenceCondition.class,
-                Map.of(
-                        "condition", TestCondition.class
-                ));
+        RequiresReferenceCondition annotation =
+                TypeUtils.annotation(RequiresReferenceCondition.class, Map.of("condition", TestCondition.class));
         Annotation classFileAnnotation = ClassFileUtilities.toClassfileAnnotation(annotation);
-        ReferenceConditionDeclaration declaration = new ReferenceConditionDeclaration(
-                classFileAnnotation
-        );
+        ReferenceConditionDeclaration declaration = new ReferenceConditionDeclaration(classFileAnnotation);
         assertThat(declaration.cacheable()).isTrue();
     }
 
     @Test
     void cachedConditionMarkerIsRespectedByIntrospectionDeclarations() {
-        RequiresCondition annotation = TypeUtils.annotation(
-                RequiresCondition.class,
-                Map.of(
-                        "condition", TestCondition.class
-                ));
+        RequiresCondition annotation =
+                TypeUtils.annotation(RequiresCondition.class, Map.of("condition", TestCondition.class));
         AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
         assertThat(declaration.cacheable()).isTrue();
     }
@@ -68,19 +59,19 @@ public class ConditionCacheTests {
     void cacheableConditionResultsAreCachedByMatcher() {
         ConditionMatcher matcher = new ConditionMatcher(() -> null);
         // Have to use reference matching, as application is unavailable for introspection.
-        ClassModel classModel = ClassFileUtilities.getClassModel(ConditionCacheTests.class).get();
-        MethodModel methodModel = ClassFileUtilities.getMethod(
-                classModel,
-                "conditionalMethod"
-        ).get();
+        ClassModel classModel =
+                ClassFileUtilities.getClassModel(ConditionCacheTests.class).get();
+        MethodModel methodModel =
+                ClassFileUtilities.getMethod(classModel, "conditionalMethod").get();
 
         boolean matchedOnce = matcher.match(methodModel).matches();
         assertThat(matchedOnce).isTrue();
 
         Assertions.assertThatCode(() -> {
-            boolean matchedTwice = matcher.match(methodModel).matches();
-            assertThat(matchedTwice).isTrue();
-        }).doesNotThrowAnyException();
+                    boolean matchedTwice = matcher.match(methodModel).matches();
+                    assertThat(matchedTwice).isTrue();
+                })
+                .doesNotThrowAnyException();
     }
 
     @RequiresReferenceCondition(condition = TestCondition.class)

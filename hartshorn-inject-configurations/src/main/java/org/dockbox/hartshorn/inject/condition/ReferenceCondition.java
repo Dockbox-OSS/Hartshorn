@@ -42,9 +42,7 @@ public non-sealed interface ReferenceCondition extends Condition {
         if (context instanceof ReferenceConditionContext referenceConditionContext) {
             return this.matches(referenceConditionContext);
         }
-        return ConditionResult.notMatched(
-                "ConditionContext is not an instance of ReferenceConditionContext"
-        );
+        return ConditionResult.notMatched("ConditionContext is not an instance of ReferenceConditionContext");
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SequencedCollection;
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
-import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
+import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
@@ -52,17 +51,13 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
 
     private final Set<RequireInjectionPointRule> requiresComponentRules;
 
-    protected AbstractComponentPopulationStrategy(
-        Set<RequireInjectionPointRule> requiresComponentRules
-    ) {
+    protected AbstractComponentPopulationStrategy(Set<RequireInjectionPointRule> requiresComponentRules) {
         this.requiresComponentRules = requiresComponentRules;
     }
 
     @Override
-    public <T> void populate(
-        PopulateComponentContext<T> context,
-        ComponentInjectionPoint<T> injectionPoint
-    ) throws ApplicationException {
+    public <T> void populate(PopulateComponentContext<T> context, ComponentInjectionPoint<T> injectionPoint)
+            throws ApplicationException {
         if (this.isApplicable(injectionPoint)) {
             List<Object> objectsToInject = this.resolveInjectedObjects(context, injectionPoint);
             injectionPoint.processObjects(context, objectsToInject);
@@ -86,9 +81,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
      * @return a list of objects to inject into the injection point
      */
     protected List<Object> resolveInjectedObjects(
-        PopulateComponentContext<?> context,
-        ComponentInjectionPoint<?> injectionPoint
-    ) {
+            PopulateComponentContext<?> context, ComponentInjectionPoint<?> injectionPoint) {
         SequencedCollection<InjectionPoint> injectionPoints = injectionPoint.injectionPoints();
 
         List<Object> objectsToInject = new ArrayList<>();
@@ -96,23 +89,21 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
             Object object;
             try {
                 object = this.resolveInjectedObject(point, context);
-            }
-            catch (ApplicationException | ApplicationRuntimeException e) {
+            } catch (ApplicationException | ApplicationRuntimeException e) {
                 if (this.shouldRequire(point)) {
                     throw new ComponentResolutionException(
-                        "Could not resolve value for injection point " + point.injectionPoint()
-                            .qualifiedName(),
-                        e);
-                }
-                else {
+                            "Could not resolve value for injection point "
+                                    + point.injectionPoint().qualifiedName(),
+                            e);
+                } else {
                     // Ignore the object if it cannot be resolved and is not required
                     object = null;
                 }
             }
 
             if (object == null && this.shouldRequire(point)) {
-                throw new ComponentRequiredException("Injection point " + point.injectionPoint()
-                    .qualifiedName() + " is required, but could not be provided");
+                throw new ComponentRequiredException("Injection point "
+                        + point.injectionPoint().qualifiedName() + " is required, but could not be provided");
             }
             objectsToInject.add(object);
         }
@@ -142,10 +133,8 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
      * @throws ApplicationException if the object cannot be resolved
      * @throws ApplicationRuntimeException if the object cannot be resolved
      */
-    protected abstract Object resolveInjectedObject(
-        InjectionPoint injectionPoint,
-        PopulateComponentContext<?> context
-    ) throws ApplicationException, ApplicationRuntimeException;
+    protected abstract Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context)
+            throws ApplicationException, ApplicationRuntimeException;
 
     /**
      * Indicates whether the given injection point should be required. This is determined by the
@@ -157,7 +146,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
      */
     protected boolean shouldRequire(InjectionPoint injectionPoint) {
         return this.requiresComponentRules.stream()
-            .map(rule -> rule.isRequired(injectionPoint))
-            .reduce(true, Boolean::logicalAnd);
+                .map(rule -> rule.isRequired(injectionPoint))
+                .reduce(true, Boolean::logicalAnd);
     }
 }

@@ -16,10 +16,18 @@
 
 package test.org.dockbox.hartshorn.web.response;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.MediaType;
@@ -32,15 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import tools.jackson.databind.json.JsonMapper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class ResponseHandlerTests {
 
     @Test
@@ -51,10 +50,8 @@ public class ResponseHandlerTests {
         HttpMessageConverter<Object> converter = converter(true);
         HttpMessageConverter<Object> incompatibleConverter = converter(false);
         HttpMessageConverter<Object> fallbackConverter = converter(false);
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                fallbackConverter,
-                List.of(converter, incompatibleConverter)
-        );
+        SimpleResponseHandler handler =
+                new SimpleResponseHandler(fallbackConverter, List.of(converter, incompatibleConverter));
 
         handler.handleResponse(request, response, result);
 
@@ -71,10 +68,7 @@ public class ResponseHandlerTests {
         String result = "fallback";
         HttpMessageConverter<Object> configuredConverter = converter(false);
         HttpMessageConverter<Object> fallbackConverter = converter(true);
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                fallbackConverter,
-                List.of(configuredConverter)
-        );
+        SimpleResponseHandler handler = new SimpleResponseHandler(fallbackConverter, List.of(configuredConverter));
 
         handler.handleResponse(request, response, result);
 
@@ -89,10 +83,7 @@ public class ResponseHandlerTests {
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         HttpMessageConverter<Object> configuredConverter = converter(false);
         HttpMessageConverter<Object> fallbackConverter = converter(false);
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                fallbackConverter,
-                List.of(configuredConverter)
-        );
+        SimpleResponseHandler handler = new SimpleResponseHandler(fallbackConverter, List.of(configuredConverter));
 
         Assertions.assertThatThrownBy(() -> handler.handleResponse(request, response, "result"))
                 .isInstanceOf(IllegalStateException.class)
@@ -112,10 +103,8 @@ public class ResponseHandlerTests {
         HttpMessageConverter<Object> firstConverter = converter(true);
         HttpMessageConverter<Object> secondConverter = converter(true);
         HttpMessageConverter<Object> fallbackConverter = converter(true);
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                fallbackConverter,
-                List.of(firstConverter, secondConverter)
-        );
+        SimpleResponseHandler handler =
+                new SimpleResponseHandler(fallbackConverter, List.of(firstConverter, secondConverter));
 
         Assertions.assertThatThrownBy(() -> handler.handleResponse(request, response, "result"))
                 .isInstanceOf(IllegalStateException.class)
@@ -144,10 +133,8 @@ public class ResponseHandlerTests {
     void nullResultUsesNoContentConverter() throws Exception {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                new NoContentMessageConverter(),
-                List.of(new RawContentMessageConverter())
-        );
+        SimpleResponseHandler handler =
+                new SimpleResponseHandler(new NoContentMessageConverter(), List.of(new RawContentMessageConverter()));
 
         handler.handleResponse(request, response, null);
 
@@ -162,13 +149,12 @@ public class ResponseHandlerTests {
 
         handler.handleResponse(request(), response, "raw response");
 
-        assertThat(outputStream.bytes())
-                .isEqualTo("raw response".getBytes());
+        assertThat(outputStream.bytes()).isEqualTo("raw response".getBytes());
     }
 
     @Test
     void rawByteArrayIsWrittenUnchanged() throws Exception {
-        byte[] content = { 1, 2, 3 };
+        byte[] content = {1, 2, 3};
         CaptureServletOutputStream outputStream = new CaptureServletOutputStream();
         SimpleResponseHandler handler = rawContentHandler();
 
@@ -179,13 +165,13 @@ public class ResponseHandlerTests {
 
     @Test
     void rawByteBufferWritesOnlyRemainingBytes() throws Exception {
-        ByteBuffer content = ByteBuffer.wrap(new byte[] { 0, 1, 2, 0 }, 1, 2);
+        ByteBuffer content = ByteBuffer.wrap(new byte[] {0, 1, 2, 0}, 1, 2);
         CaptureServletOutputStream outputStream = new CaptureServletOutputStream();
         SimpleResponseHandler handler = rawContentHandler();
 
         handler.handleResponse(request(), response(outputStream), content);
 
-        assertThat(outputStream.bytes()).isEqualTo(new byte[] { 1, 2 });
+        assertThat(outputStream.bytes()).isEqualTo(new byte[] {1, 2});
         assertThat(content.position()).isEqualTo(3);
     }
 
@@ -193,19 +179,13 @@ public class ResponseHandlerTests {
     void jacksonConverterWritesJsonAndContentType() throws Exception {
         CaptureServletOutputStream outputStream = new CaptureServletOutputStream();
         HttpServletResponse response = response(outputStream);
-        JacksonHttpMessageConverter converter = new JacksonHttpMessageConverter(
-                JsonMapper.builder().build(),
-                new MediaType("application", "json")
-        );
-        SimpleResponseHandler handler = new SimpleResponseHandler(
-                new NoContentMessageConverter(),
-                List.of(converter)
-        );
+        JacksonHttpMessageConverter converter =
+                new JacksonHttpMessageConverter(JsonMapper.builder().build(), new MediaType("application", "json"));
+        SimpleResponseHandler handler = new SimpleResponseHandler(new NoContentMessageConverter(), List.of(converter));
 
         handler.handleResponse(request(), response, Map.of("message", "hello"));
 
-        assertThat(outputStream.bytes())
-                .isEqualTo("{\"message\":\"hello\"}".getBytes(StandardCharsets.UTF_8));
+        assertThat(outputStream.bytes()).isEqualTo("{\"message\":\"hello\"}".getBytes(StandardCharsets.UTF_8));
         Mockito.verify(response).setContentType("application/json");
     }
 
@@ -217,18 +197,14 @@ public class ResponseHandlerTests {
     }
 
     private static SimpleResponseHandler rawContentHandler() {
-        return new SimpleResponseHandler(
-                new NoContentMessageConverter(),
-                List.of(new RawContentMessageConverter())
-        );
+        return new SimpleResponseHandler(new NoContentMessageConverter(), List.of(new RawContentMessageConverter()));
     }
 
     private static HttpServletRequest request() {
         return Mockito.mock(HttpServletRequest.class);
     }
 
-    private static HttpServletResponse response(CaptureServletOutputStream outputStream)
-            throws IOException {
+    private static HttpServletResponse response(CaptureServletOutputStream outputStream) throws IOException {
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         Mockito.when(response.getOutputStream()).thenReturn(outputStream);
         return response;
@@ -244,8 +220,7 @@ public class ResponseHandlerTests {
         }
 
         @Override
-        public void setWriteListener(WriteListener writeListener) {
-        }
+        public void setWriteListener(WriteListener writeListener) {}
 
         @Override
         public void write(int value) {

@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
+import java.lang.reflect.Method;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.jspecify.annotations.NonNull;
-
-import java.lang.reflect.Method;
-import java.util.function.Supplier;
 
 /**
  * An immutable resolver to look up advisors which are attached to a proxy instance. Advisors can be

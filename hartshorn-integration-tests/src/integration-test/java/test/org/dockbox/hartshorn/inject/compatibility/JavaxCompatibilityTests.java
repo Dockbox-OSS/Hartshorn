@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.compatibility;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
@@ -31,16 +36,9 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 @HartshornIntegrationTest(
-    includeBasePackages = false,
-    customizers = DisableSingleConstructorFallbackTestCustomizer.class
-)
+        includeBasePackages = false,
+        customizers = DisableSingleConstructorFallbackTestCustomizer.class)
 class JavaxCompatibilityTests {
 
     /**
@@ -51,22 +49,16 @@ class JavaxCompatibilityTests {
     public static class EnableJavaxTestApplicationCustomizer implements TestApplicationCustomizer {
         @Override
         public void customizeApplication(SimpleApplicationContext.Configurer configurer) {
-            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(
-                orchestrator -> orchestrator.componentPostConstructor(
-                        AnnotatedMethodComponentPostConstructor.create(
-                                AnnotatedMethodComponentPostConstructor.Configurer
-                                        ::withJavaxAnnotations
-                        )
-                )));
+            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(orchestrator ->
+                    orchestrator.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(
+                            AnnotatedMethodComponentPostConstructor.Configurer::withJavaxAnnotations))));
         }
 
         @Override
         public void customizeEnvironment(ConfigurableApplicationEnvironment.Configurer configurer) {
-            configurer.injectionPointsResolver(ContextualInitializer.defer(() ->
-                MethodsAndFieldsInjectionPointResolver.create(
-                    MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations
-                )
-            ));
+            configurer.injectionPointsResolver(
+                    ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(
+                            MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations)));
         }
     }
 
@@ -81,7 +73,7 @@ class JavaxCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJavaxComponent component =
-            this.applicationContext.defaultProvider().get(FieldJavaxComponent.class);
+                this.applicationContext.defaultProvider().get(FieldJavaxComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -94,7 +86,7 @@ class JavaxCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJavaxComponent component =
-            this.applicationContext.defaultProvider().get(FieldJavaxComponent.class);
+                this.applicationContext.defaultProvider().get(FieldJavaxComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isNull();
@@ -108,7 +100,7 @@ class JavaxCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         ConstructorJavaxComponent component =
-            this.applicationContext.defaultProvider().get(ConstructorJavaxComponent.class);
+                this.applicationContext.defaultProvider().get(ConstructorJavaxComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -121,11 +113,13 @@ class JavaxCompatibilityTests {
 
         // No compatible constructor should be found, as Javax compatibility is disabled
         Throwable componentResolutionException = assertThatThrownBy(() -> {
-            this.applicationContext.defaultProvider()
-                .get(JavaxCompatibilityTests.ConstructorJavaxComponent.class);
-        }).isInstanceOf(ComponentResolutionException.class).actual();
-        assertThat(componentResolutionException.getCause())
-                .isInstanceOf(MissingInjectConstructorException.class);
+                    this.applicationContext
+                            .defaultProvider()
+                            .get(JavaxCompatibilityTests.ConstructorJavaxComponent.class);
+                })
+                .isInstanceOf(ComponentResolutionException.class)
+                .actual();
+        assertThat(componentResolutionException.getCause()).isInstanceOf(MissingInjectConstructorException.class);
     }
 
     @Test
@@ -135,7 +129,7 @@ class JavaxCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJavaxComponent component =
-            this.applicationContext.defaultProvider().get(MethodJavaxComponent.class);
+                this.applicationContext.defaultProvider().get(MethodJavaxComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isEqualTo("Hello, World!");
@@ -148,7 +142,7 @@ class JavaxCompatibilityTests {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJavaxComponent component =
-            this.applicationContext.defaultProvider().get(MethodJavaxComponent.class);
+                this.applicationContext.defaultProvider().get(MethodJavaxComponent.class);
         assertThat(component).isNotNull();
 
         assertThat(component.messageAsInject).isNull();

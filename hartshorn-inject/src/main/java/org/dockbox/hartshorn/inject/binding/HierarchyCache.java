@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SequencedSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
@@ -30,15 +38,6 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.SequencedSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 /**
  * A cache that stores {@link BindingHierarchy} instances, keyed by a view of their
  * {@link ComponentKey}. This cache is typically used by {@link Binder}s (commonly
@@ -50,18 +49,14 @@ import java.util.stream.Collectors;
  */
 public class HierarchyCache {
 
-    private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies =
-        new ConcurrentHashMap<>();
+    private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
     private final InjectorConfiguration configuration;
     private final HierarchicalBinder globalBinder;
     private final HierarchicalBinder binder;
 
     public HierarchyCache(
-        InjectorConfiguration configuration,
-        HierarchicalBinder globalBinder,
-        HierarchicalBinder binder
-    ) {
+            InjectorConfiguration configuration, HierarchicalBinder globalBinder, HierarchicalBinder binder) {
         this.configuration = configuration;
         this.globalBinder = globalBinder;
         this.binder = binder;
@@ -110,24 +105,19 @@ public class HierarchyCache {
      *
      * @return the binding hierarchy
      */
-    public <T> BindingHierarchy<?> getOrComputeHierarchy(
-        ComponentKey<T> key,
-        boolean useGlobalIfAbsent
-    ) {
+    public <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         ComponentKeyView<T> view = key.view();
         if (this.hierarchies.containsKey(view)) {
             return this.hierarchies.get(view);
-        }
-        else {
+        } else {
             SequencedSet<BindingHierarchy<?>> compatibleAliases = this.hierarchies.values().stream()
                     .filter(hierarchy -> hierarchy.isCompatible(key))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
             if (compatibleAliases.size() > 1) {
-                throw new AmbiguousComponentException(key, compatibleAliases.stream()
-                    .map(BindingHierarchy::key)
-                    .collect(Collectors.toSet()));
-            }
-            else if (compatibleAliases.size() == 1) {
+                throw new AmbiguousComponentException(
+                        key,
+                        compatibleAliases.stream().map(BindingHierarchy::key).collect(Collectors.toSet()));
+            } else if (compatibleAliases.size() == 1) {
                 return compatibleAliases.getFirst();
             }
         }
@@ -135,10 +125,7 @@ public class HierarchyCache {
     }
 
     @NonNull
-    private <T> BindingHierarchy<?> computeHierarchy(
-        ComponentKey<T> key,
-        boolean useGlobalIfAbsent
-    ) {
+    private <T> BindingHierarchy<?> computeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         BindingHierarchy<?> hierarchy = this.tryCreateHierarchy(key);
 
         return Objects.requireNonNullElseGet(hierarchy, () -> {
@@ -149,9 +136,7 @@ public class HierarchyCache {
                 ComponentKey<T> unscopedKey = getUnscopedKey(key);
                 return this.globalBinder.hierarchy(unscopedKey);
             }
-            return new AliasableBindingHierarchyAdapter<>(
-                new NativePrunableBindingHierarchy<>(key)
-            );
+            return new AliasableBindingHierarchyAdapter<>(new NativePrunableBindingHierarchy<>(key));
         });
     }
 
@@ -159,19 +144,14 @@ public class HierarchyCache {
     private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key) {
         final BindingHierarchy<?> hierarchy;
         // Strict collection components can always be created, as they may contain 0-N elements.
-        if (this.isCollectionComponentKey(key)
-                && InjectorUtilities.isStrict(key, this.configuration)) {
-            hierarchy = new CollectionBindingHierarchy<>(
-                    TypeUtils.unchecked(key, ComponentKey.class)
-            );
+        if (this.isCollectionComponentKey(key) && InjectorUtilities.isStrict(key, this.configuration)) {
+            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
             this.put(hierarchy);
-        }
-        else if (InjectorUtilities.isStrict(key, this.configuration)) {
+        } else if (InjectorUtilities.isStrict(key, this.configuration)) {
             // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead,
             // callers may opt to use a fallback resolution strategy.
             hierarchy = null;
-        }
-        else {
+        } else {
             // Don't bind this hierarchy, as it's a fuzzy match. If the configuration changes, the
             // fuzzy match may not be valid anymore, so we don't want to cache it.
             hierarchy = this.fuzzyMatchHierarchy(key);
@@ -183,32 +163,27 @@ public class HierarchyCache {
     private <T> BindingHierarchy<?> fuzzyMatchHierarchy(ComponentKey<T> key) {
         Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
         Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
-                .filter(hierarchyKey -> SimpleComponentKeyMatcher.FuzzyComponentKeyMatcher.INSTANCE
-                        .matches(key, hierarchyKey)
-                )
+                .filter(hierarchyKey ->
+                        SimpleComponentKeyMatcher.FuzzyComponentKeyMatcher.INSTANCE.matches(key, hierarchyKey))
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
-            BindingHierarchy<?> currentScopeHierarchy = this.composeCollectionHierarchy(
-                    TypeUtils.unchecked(key, ComponentKey.class), compatibleKeys
-            );
+            BindingHierarchy<?> currentScopeHierarchy =
+                    this.composeCollectionHierarchy(TypeUtils.unchecked(key, ComponentKey.class), compatibleKeys);
             boolean inChildScope = isInChildScope();
             if (inChildScope && InjectorUtilities.includeParentScope(key, this.configuration)) {
                 // Create unscoped key, perform fuzzy match on global too
                 ComponentKey<T> unscopedKey = getUnscopedKey(key);
                 BindingHierarchy<?> globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
-                currentScopeHierarchy = currentScopeHierarchy.merge(
-                        TypeUtils.unchecked(globalHierarchy, BindingHierarchy.class)
-                );
+                currentScopeHierarchy =
+                        currentScopeHierarchy.merge(TypeUtils.unchecked(globalHierarchy, BindingHierarchy.class));
             }
             return currentScopeHierarchy;
-        }
-        else {
+        } else {
             if (compatibleKeys.size() == 1) {
                 ComponentKeyView<?> compatibleKey = CollectionUtilities.first(compatibleKeys);
                 return this.hierarchies.get(compatibleKey);
-            }
-            else {
+            } else {
                 // Acceptable, as long as there is a single highest priority binding. If multiple
                 // match, it's an error.
                 return this.lookupHighestPriorityHierarchy(key, compatibleKeys);
@@ -235,16 +210,12 @@ public class HierarchyCache {
 
     @Nullable
     private BindingHierarchy<?> lookupHighestPriorityHierarchy(
-        ComponentKey<?> key,
-        Set<ComponentKeyView<?>> compatibleKeys
-    ) {
-        Set<BindingHierarchy<?>> compatibleHierarchies = compatibleKeys.stream()
-            .map(this.hierarchies::get)
-            .collect(Collectors.toSet());
+            ComponentKey<?> key, Set<ComponentKeyView<?>> compatibleKeys) {
+        Set<BindingHierarchy<?>> compatibleHierarchies =
+                compatibleKeys.stream().map(this.hierarchies::get).collect(Collectors.toSet());
 
         // Track entire hierarchy, so potential duplicate top-priority hierarchies can be reported
-        AbstractNavigableMultiMap<Integer, BindingHierarchy<?>> providers =
-            new ConcurrentSetTreeMultiMap<>();
+        AbstractNavigableMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
         for (BindingHierarchy<?> compatibleHierarchy : compatibleHierarchies) {
             int highestPriority = compatibleHierarchy.highestPriority();
             compatibleHierarchy.get(highestPriority).peek(provider -> {
@@ -253,37 +224,28 @@ public class HierarchyCache {
         }
         Collection<BindingHierarchy<?>> highestPriority = providers.lastEntry();
         if (highestPriority.size() > 1) {
-            Set<ComponentKey<?>> foundKeys = highestPriority.stream()
-                .map(BindingHierarchy::key)
-                .collect(Collectors.toSet());
+            Set<ComponentKey<?>> foundKeys =
+                    highestPriority.stream().map(BindingHierarchy::key).collect(Collectors.toSet());
             throw new AmbiguousComponentException(key, foundKeys);
         }
         return CollectionUtilities.first(highestPriority);
     }
 
     private <T> BindingHierarchy<?> composeCollectionHierarchy(
-            ComponentKey<ComponentCollection<T>> key,
-            Set<ComponentKeyView<?>> compatibleKeys
-    ) {
+            ComponentKey<ComponentCollection<T>> key, Set<ComponentKeyView<?>> compatibleKeys) {
         CollectionBindingHierarchy<T> composedHierarchy = new CollectionBindingHierarchy<>(key);
         for (ComponentKeyView<?> compatibleKey : compatibleKeys) {
             BindingHierarchy<?> hierarchy = this.hierarchies.get(compatibleKey);
             if (hierarchy instanceof CollectionBindingHierarchy<?> collectionBindingHierarchy) {
-                composedHierarchy = composedHierarchy.merge(
-                    (CollectionBindingHierarchy<T>) collectionBindingHierarchy
-                );
-            }
-            else {
-                throw new IllegalStateException(
-                        ("Found incompatible hierarchy for key %s. Expected " +
-                                "CollectionBindingHierarchy or " +
-                                "ImmutableCompositeBindingHierarchy, but found %s")
-                                .formatted(compatibleKey, hierarchy.getClass().getSimpleName()));
+                composedHierarchy = composedHierarchy.merge((CollectionBindingHierarchy<T>) collectionBindingHierarchy);
+            } else {
+                throw new IllegalStateException(("Found incompatible hierarchy for key %s. Expected "
+                                + "CollectionBindingHierarchy or " + "ImmutableCompositeBindingHierarchy, but found %s")
+                        .formatted(compatibleKey, hierarchy.getClass().getSimpleName()));
             }
         }
 
-        if (key.scope().present()
-                && InjectorUtilities.includeParentScope(key, this.configuration)) {
+        if (key.scope().present() && InjectorUtilities.includeParentScope(key, this.configuration)) {
             ComponentKey<ComponentCollection<T>> unscopedKey = key.mutable()
                     // Need to drop the scope, otherwise we risk the global binder being an
                     // orchestrator which delegates based on the scope of the key, which would
@@ -291,12 +253,10 @@ public class HierarchyCache {
                     .scope(null)
                     .build();
             var globalHierarchy = this.globalBinder.hierarchy(unscopedKey);
-            while (globalHierarchy instanceof BindingHierarchyWrapper<ComponentCollection<T>>
-                    wrapper) {
+            while (globalHierarchy instanceof BindingHierarchyWrapper<ComponentCollection<T>> wrapper) {
                 globalHierarchy = wrapper.delegate();
             }
-            if (globalHierarchy instanceof CollectionBindingHierarchy<T>
-                    collectionBindingHierarchy) {
+            if (globalHierarchy instanceof CollectionBindingHierarchy<T> collectionBindingHierarchy) {
                 composedHierarchy = composedHierarchy.merge(collectionBindingHierarchy);
             }
         }

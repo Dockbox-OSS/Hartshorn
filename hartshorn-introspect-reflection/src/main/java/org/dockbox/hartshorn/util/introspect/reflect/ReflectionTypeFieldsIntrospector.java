@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Reflection-based implementation of {@link TypeFieldsIntrospector}.
@@ -41,14 +40,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospector<T> {
 
     private static final Set<String> EXCLUDED_FIELDS = Set.of(
-        /*
-         * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
-         * coverage. Refer to IDEA-274803 for more information.
-         *
-         * https://youtrack.jetbrains.com/issue/IDEA-274803/
-         */
-        "__$lineHits$__"
-    );
+            /*
+             * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
+             * coverage. Refer to IDEA-274803 for more information.
+             *
+             * https://youtrack.jetbrains.com/issue/IDEA-274803/
+             */
+            "__$lineHits$__");
 
     private final Map<String, FieldView<T, ?>> fields = new ConcurrentHashMap<>();
 
@@ -67,11 +65,10 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                     continue;
                 }
 
-                this.fields.put(declared.getName(),
-                    (FieldView<T, ?>) this.introspector.introspect(declared));
+                this.fields.put(declared.getName(), (FieldView<T, ?>) this.introspector.introspect(declared));
             }
-            if (!(this.type.superClass().isVoid() || Object.class.equals(this.type.superClass()
-                .type()))) {
+            if (!(this.type.superClass().isVoid()
+                    || Object.class.equals(this.type.superClass().type()))) {
                 for (FieldView<?, ?> field : this.type.superClass().fields().all()) {
                     this.fields.put(field.name(), (FieldView<T, ?>) field);
                 }
@@ -84,10 +81,8 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
         this.collect();
         if (this.fields.containsKey(name)) {
             return Option.of(this.fields.get(name));
-        }
-        else if (!this.type.superClass().isVoid()) {
-            return this.type.superClass().fields().named(name)
-                .map(field -> (FieldView<T, ?>) field);
+        } else if (!this.type.superClass().isVoid()) {
+            return this.type.superClass().fields().named(name).map(field -> (FieldView<T, ?>) field);
         }
         return Option.empty();
     }
@@ -101,7 +96,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     @Override
     public List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-            .filter(field -> field.annotations().has(annotation))
-            .toList();
+                .filter(field -> field.annotations().has(annotation))
+                .toList();
     }
 }

@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.support.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.support.jackson.modules.MultiMapDeserializer;
 import org.dockbox.hartshorn.support.jackson.modules.MultiMapSerializer;
 import org.dockbox.hartshorn.support.jackson.modules.OptionDeserializer;
@@ -28,8 +30,6 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class JacksonSerializationTests {
 
     @Test
@@ -37,8 +37,7 @@ public class JacksonSerializationTests {
         JsonMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addSerializer(new MultiMapSerializer())
-                        .addDeserializer(MultiMap.class, new MultiMapDeserializer())
-                )
+                        .addDeserializer(MultiMap.class, new MultiMapDeserializer()))
                 .build();
 
         MultiMap<String, String> map = new ArrayListMultiMap<>();
@@ -47,10 +46,7 @@ public class JacksonSerializationTests {
         map.put("key2", "value3");
 
         String serialized = mapper.writeValueAsString(map);
-        MultiMap<String, String> deserialized = mapper.readValue(
-                serialized,
-                new TypeReference<>() {}
-        );
+        MultiMap<String, String> deserialized = mapper.readValue(serialized, new TypeReference<>() {});
 
         assertThat(deserialized).isInstanceOf(ArrayListMultiMap.class);
         assertThat(deserialized.get("key1")).containsExactlyInAnyOrder("value1", "value2");
@@ -62,8 +58,7 @@ public class JacksonSerializationTests {
         JsonMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addSerializer(new OptionSerializer())
-                        .addDeserializer(Option.class, new OptionDeserializer())
-                )
+                        .addDeserializer(Option.class, new OptionDeserializer()))
                 .build();
 
         Option<String> option = Option.of("value");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,10 +177,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * corresponding keys and values
      */
     public static <T, K, V> EntryStream<K, V> of(
-        Stream<T> stream,
-        Function<T, K> keyMapper,
-        Function<T, V> valueMapper
-    ) {
+            Stream<T> stream, Function<T, K> keyMapper, Function<T, V> valueMapper) {
         return new EntryStream<>(stream.map(element -> {
             return Map.entry(keyMapper.apply(element), valueMapper.apply(element));
         }));
@@ -286,10 +283,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the keys mapped to new keys
      */
     public <R> EntryStream<R, V> mapKeys(Function<K, R> mapper) {
-        return EntryStream.of(this.map(entry -> Map.entry(
-            mapper.apply(entry.getKey()),
-            entry.getValue()
-        )));
+        return EntryStream.of(this.map(entry -> Map.entry(mapper.apply(entry.getKey()), entry.getValue())));
     }
 
     /**
@@ -302,10 +296,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the values mapped to new values
      */
     public <R> EntryStream<K, R> mapValues(Function<V, R> mapper) {
-        return EntryStream.of(this.map(entry -> Map.entry(
-            entry.getKey(),
-            mapper.apply(entry.getValue())
-        )));
+        return EntryStream.of(this.map(entry -> Map.entry(entry.getKey(), mapper.apply(entry.getValue()))));
     }
 
     /**
@@ -319,14 +310,9 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      *
      * @return a new {@link EntryStream} with the keys and values mapped to new keys and values
      */
-    public <RK, RV> EntryStream<RK, RV> map(
-        Function<K, RK> keyMapper,
-        Function<V, RV> valueMapper
-    ) {
-        return EntryStream.of(this.map(entry -> Map.entry(
-            keyMapper.apply(entry.getKey()),
-            valueMapper.apply(entry.getValue())
-        )));
+    public <RK, RV> EntryStream<RK, RV> map(Function<K, RK> keyMapper, Function<V, RV> valueMapper) {
+        return EntryStream.of(
+                this.map(entry -> Map.entry(keyMapper.apply(entry.getKey()), valueMapper.apply(entry.getValue()))));
     }
 
     /**
@@ -353,10 +339,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the keys flatmapped to new keys
      */
     public <R> EntryStream<R, V> flatMapKeys(Function<K, Stream<R>> mapper) {
-        return EntryStream.of(this.flatMap(entry -> mapper
-            .apply(entry.getKey())
-            .map(key -> Map.entry(key, entry.getValue()))
-        ));
+        return EntryStream.of(this.flatMap(
+                entry -> mapper.apply(entry.getKey()).map(key -> Map.entry(key, entry.getValue()))));
     }
 
     /**
@@ -370,10 +354,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the values flatmapped to new values
      */
     public <R> EntryStream<K, R> flatMapValues(Function<V, Stream<R>> mapper) {
-        return EntryStream.of(this.flatMap(entry -> mapper
-            .apply(entry.getValue())
-            .map(value -> Map.entry(entry.getKey(), value))
-        ));
+        return EntryStream.of(this.flatMap(
+                entry -> mapper.apply(entry.getValue()).map(value -> Map.entry(entry.getKey(), value))));
     }
 
     /**
@@ -382,9 +364,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the entries sorted by their keys
      */
     public EntryStream<K, V> sortedKeys() {
-        return EntryStream.of(this.sorted(
-            Comparator.comparingInt(entry -> entry.getKey().hashCode())
-        ));
+        return EntryStream.of(
+                this.sorted(Comparator.comparingInt(entry -> entry.getKey().hashCode())));
     }
 
     /**
@@ -393,9 +374,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @return a new {@link EntryStream} with the entries sorted by their values
      */
     public EntryStream<K, V> sortedValues() {
-        return EntryStream.of(this.sorted(
-            Comparator.comparingInt(entry -> entry.getValue().hashCode())
-        ));
+        return EntryStream.of(
+                this.sorted(Comparator.comparingInt(entry -> entry.getValue().hashCode())));
     }
 
     /**

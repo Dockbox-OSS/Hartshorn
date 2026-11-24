@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,7 @@ class AtNameExpressionParser implements ExpressionParser {
     }
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         if (parser.match(this.atNameModule.tokenType())) {
             Token at = parser.previous();
             Token identifier = validator.expectAfter(LiteralTokenType.IDENTIFIER, "at");

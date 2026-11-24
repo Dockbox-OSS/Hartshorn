@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -23,8 +25,6 @@ import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.util.types.GenericType;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 @AnalyzeClasses(packages = ArchitectureRuleConstants.HARTSHORN_PACKAGE)
 public class ReflectionRulesTest {
@@ -36,19 +36,20 @@ public class ReflectionRulesTest {
      */
     @ArchTest
     static final ArchRule reflectionShouldOnlyBeInImplementation = noClasses()
-            .that().resideOutsideOfPackages(
+            .that()
+            .resideOutsideOfPackages(
                     "org.dockbox.hartshorn.util.introspect..",
                     "org.dockbox.hartshorn.proxy..",
                     "org.dockbox.hartshorn.test..",
                     "org.dockbox.hartshorn.spi..",
-                    "org.dockbox.hartshorn.util.types.."
-            )
-            .and().doNotBelongToAnyOf(
+                    "org.dockbox.hartshorn.util.types..")
+            .and()
+            .doNotBelongToAnyOf(
                     ReflectionObjectFactory.class,
                     GenericType.class,
                     QualifierKey.class,
-                    StandardApplicationBuilder.class
-            )
-            .should().dependOnClassesThat()
+                    StandardApplicationBuilder.class)
+            .should()
+            .dependOnClassesThat()
             .resideInAnyPackage("java.lang.reflect..", "javassist..");
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-
-import java.util.List;
 
 /**
  * Interpreters are responsible for evaluating expressions and executing statements. They maintain
@@ -40,7 +39,7 @@ import java.util.List;
  * Each interpreter maintains its own state, including variable scopes and function call stacks.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public interface Interpreter {

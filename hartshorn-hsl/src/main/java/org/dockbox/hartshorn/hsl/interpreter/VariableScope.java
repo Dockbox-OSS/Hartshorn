@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A variable scope represents all declared variables inside a specific scope, with access to a
@@ -76,9 +75,9 @@ public class VariableScope {
             return this.enclosing.get(name);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-            .at(name)
-            .build();
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 
     /**
@@ -113,9 +112,9 @@ public class VariableScope {
             return;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-            .at(name)
-            .build();
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 
     /**
@@ -199,9 +198,9 @@ public class VariableScope {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
-                    .at(name)
-                    .build();
+                        .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
+                        .at(name)
+                        .build();
             }
         }
         return variableScope;

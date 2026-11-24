@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.scope;
 
+import java.util.Objects;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-
-import java.util.Objects;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Specialized {@link ScopeKey} for {@link ScopeAdapter} instances. This tracks both the adaptee
@@ -29,9 +28,9 @@ import java.util.Objects;
  *
  * @see ScopeAdapter
  * @see ScopeKey
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ScopeAdapterKey implements ScopeKey {
@@ -44,13 +43,10 @@ public class ScopeAdapterKey implements ScopeKey {
             throw new IllegalArgumentException("The given type is not a ScopeAdapter");
         }
         if (adapterType.parameters().isEmpty()) {
-            throw new IllegalArgumentException(
-                "The given type is not a parameterized ScopeAdapter"
-            );
+            throw new IllegalArgumentException("The given type is not a parameterized ScopeAdapter");
         }
         if (adapterType.parameters().size() > 1) {
-            throw new IllegalArgumentException(
-                "The given type is a ScopeAdapter with too many parameters");
+            throw new IllegalArgumentException("The given type is a ScopeAdapter with too many parameters");
         }
         this.adapterType = adapterType;
         this.adapteeType = adapterType.parameters().getFirst();
@@ -66,8 +62,9 @@ public class ScopeAdapterKey implements ScopeKey {
      */
     public static <T> ScopeAdapterKey of(ScopeAdapter<T> adapter) {
         ParameterizableType adapteeType = adapter.adapteeType();
-        ParameterizableType adapterType =
-            ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
+        ParameterizableType adapterType = ParameterizableType.builder(ScopeAdapter.class)
+                .parameters(adapteeType)
+                .build();
         return new ScopeAdapterKey(TypeUtils.unchecked(adapterType, ParameterizableType.class));
     }
 
@@ -129,8 +126,8 @@ public class ScopeAdapterKey implements ScopeKey {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("adapterType", this.adapterType)
-            .field("adapteeType", this.adapteeType)
-            .describe();
+                .field("adapterType", this.adapterType)
+                .field("adapteeType", this.adapteeType)
+                .describe();
     }
 }

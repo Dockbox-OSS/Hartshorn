@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Reflection-based implementation of {@link TypeParameterList} for any {@link ParameterizedType}
@@ -37,27 +36,21 @@ import java.util.List;
  * @see ParameterizedType#getActualTypeArguments()
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
-public class ReflectionParameterizedTypeParametersIntrospector<T>
-    extends AbstractReflectionTypeParametersIntrospector {
+public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
 
     private final ParameterizedType parameterizedType;
     private TypeParameterList parameters;
 
     public ReflectionParameterizedTypeParametersIntrospector(
-        TypeView<T> type,
-        ParameterizedType parameterizedType,
-        Introspector introspector
-    ) {
+            TypeView<T> type, ParameterizedType parameterizedType, Introspector introspector) {
         super(type, introspector);
         this.parameterizedType = parameterizedType;
         if (parameterizedType != null && parameterizedType.getRawType() != type.type()) {
-            throw new IllegalArgumentException("Type "
-                + type.qualifiedName()
-                + " is not the raw type of "
-                + parameterizedType.getTypeName());
+            throw new IllegalArgumentException(
+                    "Type " + type.qualifiedName() + " is not the raw type of " + parameterizedType.getTypeName());
         }
     }
 
@@ -68,10 +61,8 @@ public class ReflectionParameterizedTypeParametersIntrospector<T>
             Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
             for (int i = 0; i < actualTypeArguments.length; i++) {
                 Type actualTypeArgument = actualTypeArguments[i];
-                typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument,
-                    this.type(),
-                    i,
-                    this.introspector()));
+                typeParameters.add(
+                        new ReflectionTypeParameterView(actualTypeArgument, this.type(), i, this.introspector()));
             }
             this.parameters = new SimpleTypeParameterList(typeParameters);
         }

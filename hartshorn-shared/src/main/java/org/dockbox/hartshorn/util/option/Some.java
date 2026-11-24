@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +23,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an {@link Option} containing a non-null value.
@@ -78,9 +77,7 @@ public class Some<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public <E extends Throwable> @NonNull T orElseThrow(
-        @NonNull Supplier<@NonNull E> supplier
-    ) throws E {
+    public <E extends Throwable> @NonNull T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E {
         return this.value;
     }
 
@@ -115,9 +112,7 @@ public class Some<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public @NonNull <U> Option<U> flatMap(
-        @NonNull Function<@NonNull T, @NonNull Option<U>> function
-    ) {
+    public @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function) {
         return function.apply(this.value);
     }
 
@@ -138,8 +133,6 @@ public class Some<T> extends DefaultContext implements Option<T> {
 
     @Override
     public @NonNull String toString() {
-        return ObjectDescriber.of(this)
-            .field("value", this.value)
-            .describe();
+        return ObjectDescriber.of(this).field("value", this.value).describe();
     }
 }

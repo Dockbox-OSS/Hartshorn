@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.inject.graph.declaration;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.QualifierKey;
-
-import java.util.Set;
 
 /**
  * A {@link DependencyContext} that supports aliases. Aliases are additional keys that can be used
@@ -41,8 +40,8 @@ public interface AliasableDependencyContext<T> extends DependencyContext<T> {
      */
     default boolean hasConfiguredAliases() {
         return !this.aliasTypes().isEmpty()
-            || !this.aliasKeys().isEmpty()
-            || !this.aliasQualifiers().isEmpty();
+                || !this.aliasKeys().isEmpty()
+                || !this.aliasQualifiers().isEmpty();
     }
 
     /**

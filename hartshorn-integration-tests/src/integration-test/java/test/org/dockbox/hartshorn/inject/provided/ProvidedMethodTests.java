@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.provided;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -26,14 +28,13 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestComponents(ProviderComponent.class)
 @HartshornIntegrationTest(includeBasePackages = false)
 class ProvidedMethodTests {
 
     @Inject
     private ProviderComponent providerComponent;
+
     @Inject
     private Binder binder;
 
@@ -41,13 +42,10 @@ class ProvidedMethodTests {
     void providerWithoutQualifiers() {
         this.binder.bind(String.class).singleton("Hello World");
 
-        assertThat(this.providerComponent)
-                .isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
 
         String message = this.providerComponent.get();
-        assertThat(message)
-                .isNotNull()
-                .isEqualTo("Hello World");
+        assertThat(message).isNotNull().isEqualTo("Hello World");
     }
 
     @Test
@@ -55,38 +53,32 @@ class ProvidedMethodTests {
         this.binder.bind(String.class).singleton("Hello World");
         this.binder.bind(ComponentKey.of(String.class, "test")).singleton("Hello Test World");
 
-        assertThat(this.providerComponent)
-                .isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
 
         String message = this.providerComponent.getNamed();
-        assertThat(message)
-                .isNotNull()
-                .isEqualTo("Hello Test World");
+        assertThat(message).isNotNull().isEqualTo("Hello Test World");
     }
 
     @Test
     void providerWithCustomQualifiers() {
         this.binder.bind(String.class).singleton("Hello Red World");
-        this.binder.bind(ComponentKey.builder(String.class)
-            .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.RED)))
-            .build()
-        ).singleton("Hello Red World");
-        this.binder.bind(ComponentKey.builder(String.class)
-            .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.BLUE)))
-            .build()
-        ).singleton("Hello Blue World");
+        this.binder
+                .bind(ComponentKey.builder(String.class)
+                        .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.RED)))
+                        .build())
+                .singleton("Hello Red World");
+        this.binder
+                .bind(ComponentKey.builder(String.class)
+                        .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.BLUE)))
+                        .build())
+                .singleton("Hello Blue World");
 
-        assertThat(this.providerComponent)
-                .isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
 
         String redMessage = this.providerComponent.getRed();
-        assertThat(redMessage)
-                .isNotNull()
-                .isEqualTo("Hello Red World");
+        assertThat(redMessage).isNotNull().isEqualTo("Hello Red World");
 
         String blueMessage = this.providerComponent.getBlue();
-        assertThat(blueMessage)
-                .isNotNull()
-                .isEqualTo("Hello Blue World");
+        assertThat(blueMessage).isNotNull().isEqualTo("Hello Blue World");
     }
 }

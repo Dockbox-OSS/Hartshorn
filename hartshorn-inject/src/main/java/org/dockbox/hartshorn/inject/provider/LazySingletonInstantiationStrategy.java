@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,10 +49,8 @@ public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstan
 
     @Override
     public Option<ObjectContainer<T>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException {
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException {
         // TODO: Determine if we can avoid caching here, and capture all caching in
         //  owning containers. Thus, we would only call this supplier once per component.
         //  The main problem currently lies in component collections, which rely on the provider
@@ -80,8 +78,6 @@ public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstan
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-                .field("supplier", this.supplier)
-                .describe();
+        return ObjectDescriber.of(this).field("supplier", this.supplier).describe();
     }
 }

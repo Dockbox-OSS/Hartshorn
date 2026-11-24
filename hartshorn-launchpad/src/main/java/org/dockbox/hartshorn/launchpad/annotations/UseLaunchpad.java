@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad.annotations;
 
-import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
-import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
-import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 
 /**
  * Default module activator for Launchpad-based applications, enabling lifecycle observers and
@@ -38,11 +37,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ModuleActivator(
-    binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
-)
+@ModuleActivator(binderPostProcessors = DefaultConfigurationBinderPostProcessor.class)
 @UseLifecycleObservers
 @UseProxying
-public @interface UseLaunchpad {
-
-}
+public @interface UseLaunchpad {}

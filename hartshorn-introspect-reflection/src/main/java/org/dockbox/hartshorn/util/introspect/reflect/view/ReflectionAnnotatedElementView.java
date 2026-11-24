@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -24,19 +25,17 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardElementAnnotationsIntrospector;
 
-import java.lang.reflect.AnnotatedElement;
-
 /**
  * A view that provides access to the annotations of an {@link AnnotatedElement}. This view is
  * backed by a {@link ReflectionElementAnnotationsIntrospector} that is created based on the
  * provided {@link Introspector}.
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class ReflectionAnnotatedElementView extends DefaultContext
-    implements AnnotatedElementView, IntrospectorAwareView {
+        implements AnnotatedElementView, IntrospectorAwareView {
 
     private final Introspector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;
@@ -57,8 +56,8 @@ public abstract class ReflectionAnnotatedElementView extends DefaultContext
         if (this.annotationsIntrospector == null) {
             AnnotatedElement element = this.annotatedElement();
             this.annotationsIntrospector = element != null
-                ? new ReflectionElementAnnotationsIntrospector(this.introspector, element)
-                : new WildcardElementAnnotationsIntrospector();
+                    ? new ReflectionElementAnnotationsIntrospector(this.introspector, element)
+                    : new WildcardElementAnnotationsIntrospector();
         }
         return this.annotationsIntrospector;
     }

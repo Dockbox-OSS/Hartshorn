@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.profiles.support;
 
+import java.util.Map;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
-
-import java.util.Map;
 
 /**
  * A {@link MapPropertyRegistry} that is also a {@link ProfilePropertyRegistry}, meaning it is aware
@@ -32,8 +31,7 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public class ProfileMapPropertyRegistry extends MapPropertyRegistry
-    implements ProfilePropertyRegistry {
+public class ProfileMapPropertyRegistry extends MapPropertyRegistry implements ProfilePropertyRegistry {
 
     private final ProfileRegistry profileRegistry;
 
@@ -41,27 +39,18 @@ public class ProfileMapPropertyRegistry extends MapPropertyRegistry
         this.profileRegistry = profileRegistry;
     }
 
-    public ProfileMapPropertyRegistry(
-        Map<String, ConfiguredProperty> properties,
-        ProfileRegistry profileRegistry
-    ) {
+    public ProfileMapPropertyRegistry(Map<String, ConfiguredProperty> properties, ProfileRegistry profileRegistry) {
         super(properties);
         this.profileRegistry = profileRegistry;
     }
 
-    public ProfileMapPropertyRegistry(
-        PropertyPathStyle pathStyle,
-        ProfileRegistry profileRegistry
-    ) {
+    public ProfileMapPropertyRegistry(PropertyPathStyle pathStyle, ProfileRegistry profileRegistry) {
         super(pathStyle);
         this.profileRegistry = profileRegistry;
     }
 
     public ProfileMapPropertyRegistry(
-        Map<String, ConfiguredProperty> properties,
-        PropertyPathStyle pathStyle,
-        ProfileRegistry profileRegistry
-    ) {
+            Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle, ProfileRegistry profileRegistry) {
         super(properties, pathStyle);
         this.profileRegistry = profileRegistry;
     }

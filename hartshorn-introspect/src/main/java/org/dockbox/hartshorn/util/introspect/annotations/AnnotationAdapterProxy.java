@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.NonNull;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -28,6 +24,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SequencedSet;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A proxy implementation of {@link Annotation} which allows for the creation of a composite
@@ -46,9 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class AnnotationAdapterProxy<A extends Annotation> implements
-    InvocationHandler,
-    AnnotationAdapter {
+public class AnnotationAdapterProxy<A extends Annotation> implements InvocationHandler, AnnotationAdapter {
 
     private final Annotation actual;
     private final Class<A> targetAnnotationClass;
@@ -57,11 +54,10 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
     private final Map<String, Option<Object>> methodsCache = new ConcurrentHashMap<>();
 
     AnnotationAdapterProxy(
-        Annotation actual,
-        Class<A> targetAnnotationClass,
-        SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy,
-        AnnotationLookup owner
-    ) {
+            Annotation actual,
+            Class<A> targetAnnotationClass,
+            SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy,
+            AnnotationLookup owner) {
         this.actual = actual;
         this.targetAnnotationClass = targetAnnotationClass;
         this.actualAnnotationHierarchy = actualAnnotationHierarchy;
@@ -75,18 +71,14 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
         }
 
         if ("hashCode".equals(method.getName())) {
-            return Objects.hash(
-                this.owner.unproxy(this.actual),
-                this.targetAnnotationClass
-            );
+            return Objects.hash(this.owner.unproxy(this.actual), this.targetAnnotationClass);
         }
 
         if ("equals".equals(method.getName()) && method.getParameters().length == 1) {
             if (args[0] instanceof Annotation annotation) {
                 return this.targetAnnotationClass == annotation.annotationType()
-                    && this.actual.equals(this.owner.unproxy(annotation));
-            }
-            else {
+                        && this.actual.equals(this.owner.unproxy(annotation));
+            } else {
                 return this.actual.equals(args[0]);
             }
         }
@@ -94,11 +86,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
         Option<Object> cachedField = this.methodsCache.get(method.getName());
         if (cachedField == null) {
             cachedField = this.searchInHierarchy(
-                this.actual,
-                this.targetAnnotationClass,
-                this.actualAnnotationHierarchy,
-                method
-            );
+                    this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method);
             this.methodsCache.put(method.getName(), cachedField);
         }
         return cachedField.orNull();
@@ -133,25 +121,18 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
     }
 
     private Option<Object> searchInHierarchy(
-        Annotation actual,
-        Class<? extends Annotation> targetAnnotationClass,
-        Collection<Class<? extends Annotation>> hierarchy,
-        Method proxyMethod
-    ) {
+            Annotation actual,
+            Class<? extends Annotation> targetAnnotationClass,
+            Collection<Class<? extends Annotation>> hierarchy,
+            Method proxyMethod) {
         String name = proxyMethod.getName();
         try {
             Method method = actual.annotationType().getMethod(name);
             this.checkAliasType(proxyMethod, method);
             return Option.of(this.safeInvokeAnnotationMethod(method, actual));
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             // search for AliasFor in same annotation type
-            Option<Object> method = this.searchAlias(
-                actual,
-                targetAnnotationClass,
-                proxyMethod,
-                name
-            );
+            Option<Object> method = this.searchAlias(actual, targetAnnotationClass, proxyMethod, name);
             if (method.present()) {
                 return method;
             }
@@ -166,8 +147,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
                 Method targetAnnotationMethod = targetAnnotationClass.getMethod(name);
                 this.checkAliasType(proxyMethod, targetAnnotationMethod);
                 return Option.of(targetAnnotationMethod.getDefaultValue());
-            }
-            catch (NoSuchMethodException noSuchMethodException) {
+            } catch (NoSuchMethodException noSuchMethodException) {
                 throw new RuntimeException(e);
             }
         }
@@ -175,10 +155,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
 
     @NonNull
     private Option<Object> searchSuper(
-        Collection<Class<? extends Annotation>> hierarchy,
-        Method proxyMethod,
-        String name
-    ) {
+            Collection<Class<? extends Annotation>> hierarchy, Method proxyMethod, String name) {
         for (Class<? extends Annotation> klass : hierarchy) {
             try {
                 Method klassMethod = klass.getMethod(name);
@@ -187,8 +164,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
                 if (defaultValue != null) {
                     return Option.of(defaultValue);
                 }
-            }
-            catch (NoSuchMethodException ignored) {
+            } catch (NoSuchMethodException ignored) {
                 // Do not break yet, we might find it in a super class
             }
 
@@ -199,8 +175,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
                         Method method = annotation.annotationType().getMethod(name);
                         this.checkAliasType(proxyMethod, method);
                         return Option.of(this.safeInvokeAnnotationMethod(method, annotation));
-                    }
-                    catch (NoSuchMethodException ignored) {
+                    } catch (NoSuchMethodException ignored) {
                         break;
                     }
                 }
@@ -211,19 +186,9 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
 
     @NonNull
     private Option<Object> searchAlias(
-        Annotation actual,
-        Class<? extends Annotation> targetAnnotationClass,
-        Method proxyMethod,
-        String name
-    ) {
+            Annotation actual, Class<? extends Annotation> targetAnnotationClass, Method proxyMethod, String name) {
         for (Method method : actual.annotationType().getMethods()) {
-            Option<Object> result = this.searchAttributeAlias(
-                actual,
-                targetAnnotationClass,
-                proxyMethod,
-                name,
-                method
-            );
+            Option<Object> result = this.searchAttributeAlias(actual, targetAnnotationClass, proxyMethod, name, method);
 
             if (result.present()) {
                 return result;
@@ -233,20 +198,18 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
     }
 
     private Option<Object> searchAttributeAlias(
-        Annotation actual,
-        Class<? extends Annotation> targetAnnotationClass,
-        Method proxyMethod,
-        String name,
-        Method method
-    ) {
+            Annotation actual,
+            Class<? extends Annotation> targetAnnotationClass,
+            Method proxyMethod,
+            String name,
+            Method method) {
         AttributeAlias attributeAlias = method.getAnnotation(AttributeAlias.class);
         if (attributeAlias == null) {
             return Option.empty();
         }
 
-        if ((attributeAlias.target() == Void.class
-            || attributeAlias.target() == targetAnnotationClass
-        ) && name.equals(attributeAlias.value())) {
+        if ((attributeAlias.target() == Void.class || attributeAlias.target() == targetAnnotationClass)
+                && name.equals(attributeAlias.value())) {
             this.checkAliasType(proxyMethod, method);
             return Option.of(this.safeInvokeAnnotationMethod(method, actual));
         }
@@ -255,13 +218,12 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
 
     private void checkAliasType(Method expected, Method actual) {
         if (expected.getReturnType() != actual.getReturnType()) {
-            throw new IllegalArgumentException(
-                "Attribute %s in %s has different return type than %s in %s".formatted(
-                    actual.getName(),
-                    actual.getDeclaringClass().getSimpleName(),
-                    expected.getName(),
-                    expected.getDeclaringClass().getSimpleName()
-                ));
+            throw new IllegalArgumentException("Attribute %s in %s has different return type than %s in %s"
+                    .formatted(
+                            actual.getName(),
+                            actual.getDeclaringClass().getSimpleName(),
+                            expected.getName(),
+                            expected.getDeclaringClass().getSimpleName()));
         }
     }
 
@@ -271,8 +233,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements
             Object out = method.invoke(annotation);
             method.setAccessible(false);
             return out;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ApplicationRuntimeException(e);
         }
     }

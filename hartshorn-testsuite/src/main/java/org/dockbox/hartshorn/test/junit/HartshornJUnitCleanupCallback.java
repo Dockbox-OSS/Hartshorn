@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * @author Guus Lieben
  */
-public class HartshornJUnitCleanupCallback
-    implements BeforeTestExecutionCallback, AfterAllCallback, AfterEachCallback {
+public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallback, AfterAllCallback, AfterEachCallback {
 
     @Override
     public void beforeTestExecution(ExtensionContext context) {
@@ -62,8 +61,7 @@ public class HartshornJUnitCleanupCallback
     }
 
     private void afterLifecycle(ExtensionContext context) throws Exception {
-        for (HartshornCleanupCallback callback : HartshornJUnitNamespace.collectCleanupCallbacks(
-            context)) {
+        for (HartshornCleanupCallback callback : HartshornJUnitNamespace.collectCleanupCallbacks(context)) {
             callback.closeAfterLifecycle(context);
         }
         // Always last, in case the application is used by the callbacks
@@ -71,9 +69,8 @@ public class HartshornJUnitCleanupCallback
     }
 
     private void tryCloseApplication(ExtensionContext context) throws Exception {
-        Option<ApplicationContext> closeableApplication = HartshornJUnitNamespace
-                .applicationIfPresent(context)
-                .ofType(ApplicationContext.class);
+        Option<ApplicationContext> closeableApplication =
+                HartshornJUnitNamespace.applicationIfPresent(context).ofType(ApplicationContext.class);
 
         if (closeableApplication.present()) {
             ApplicationContext closeable = closeableApplication.get();
@@ -81,8 +78,9 @@ public class HartshornJUnitCleanupCallback
             // Don't auto-close if Jupiter is already enabled to do so for us.
             // If not explicitly set, defaults to true.
             boolean autoClosingEnabled = context.getConfigurationParameter(
-                    "junit.jupiter.extensions.store.close.autocloseable.enabled"
-            ).map(Boolean::parseBoolean).orElse(true);
+                            "junit.jupiter.extensions.store.close.autocloseable.enabled")
+                    .map(Boolean::parseBoolean)
+                    .orElse(true);
 
             if (!autoClosingEnabled && !closeable.isClosed()) {
                 closeable.close();

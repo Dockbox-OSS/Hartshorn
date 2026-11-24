@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The default implementation of {@link Context}. This implementation uses a
@@ -70,8 +69,7 @@ public abstract class DefaultContext implements Context {
     public <C extends ContextView> void addContext(C context) {
         if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
             this.namedContexts().put(named.name(), context);
-        }
-        else if (context != null) {
+        } else if (context != null) {
             this.unnamedContexts().add(context);
         }
     }
@@ -79,12 +77,11 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends ContextView> void addContext(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
-            throw new IllegalArgumentException(("Context name does not match the provided name. " +
-                "Context name: %s, provided name: %s. Either use only the name of the " +
-                "context, or encapsulate the context so the appropriate name is used."
-            ).formatted(named.name(), name));
-        }
-        else if (context != null) {
+            throw new IllegalArgumentException(("Context name does not match the provided name. "
+                            + "Context name: %s, provided name: %s. Either use only the name of the "
+                            + "context, or encapsulate the context so the appropriate name is used.")
+                    .formatted(named.name(), name));
+        } else if (context != null) {
             this.namedContexts().put(name, context);
         }
     }
@@ -93,8 +90,7 @@ public abstract class DefaultContext implements Context {
     public <C extends ContextView> void expireContext(C context) {
         if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
             this.namedContexts().remove(named.name(), context);
-        }
-        else if (context != null) {
+        } else if (context != null) {
             this.unnamedContexts().remove(context);
         }
     }
@@ -102,12 +98,11 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends ContextView> void expireContext(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
-            throw new IllegalArgumentException(("Context name does not match the provided name. " +
-                "Context name: %s, provided name: %s. Either use only the name of the " +
-                "context, or encapsulate the context so the appropriate name is used."
-            ).formatted(named.name(), name));
-        }
-        else if (context != null) {
+            throw new IllegalArgumentException(("Context name does not match the provided name. "
+                            + "Context name: %s, provided name: %s. Either use only the name of the "
+                            + "context, or encapsulate the context so the appropriate name is used.")
+                    .formatted(named.name(), name));
+        } else if (context != null) {
             this.namedContexts().remove(name, context);
         }
     }
@@ -126,12 +121,11 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
-        return Option.of(this.stream(key).findFirst())
-            .orCompute(() -> {
-                C context = key.create();
-                this.addContext(context);
-                return context;
-            });
+        return Option.of(this.stream(key).findFirst()).orCompute(() -> {
+            C context = key.create();
+            this.addContext(context);
+            return context;
+        });
     }
 
     @Override
@@ -151,11 +145,10 @@ public abstract class DefaultContext implements Context {
      */
     protected <C extends ContextView> Stream<C> stream(ContextIdentity<C> key) {
         Stream<ContextView> contexts = StringUtilities.empty(key.name())
-            ? this.unnamedContexts().stream()
-            : this.namedContexts().get(key.name()).stream();
+                ? this.unnamedContexts().stream()
+                : this.namedContexts().get(key.name()).stream();
 
-        return contexts.filter(key.type()::isInstance)
-            .map(key.type()::cast);
+        return contexts.filter(key.type()::isInstance).map(key.type()::cast);
     }
 
     @Override

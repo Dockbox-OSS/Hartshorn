@@ -19,14 +19,13 @@ package org.dockbox.hartshorn.web.support.servlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URI;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * A servlet that serves static resources from the given {@link ResourceLookup}. All requested
@@ -56,14 +55,12 @@ public class StaticResourceServlet extends HttpServlet implements Reportable {
             return;
         }
 
-        Option<URI> resourceUri =
-            this.resourceLookup.lookup(this.staticLocation + resourcePath).stream()
+        Option<URI> resourceUri = this.resourceLookup.lookup(this.staticLocation + resourcePath).stream()
                 .collect(Option.collector());
 
         if (resourceUri.absent()) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-        else {
+        } else {
             resp.setContentType(this.getServletContext().getMimeType(resourcePath));
             resourceUri.get().toURL().openStream().transferTo(resp.getOutputStream());
         }

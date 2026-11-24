@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
 import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A base implementation of {@link ProxyOrchestrator} that provides a default set of
@@ -71,10 +70,10 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     @Override
     public <D, T extends D> Option<D> delegate(Class<D> type, T instance) {
         return this.manager(instance)
-            .map(ProxyManager::advisor)
-            .map(ProxyAdvisor::resolver)
-            .map(resolver -> resolver.type(type))
-            .flatMap(TypeAdvisorResolver::delegate);
+                .map(ProxyManager::advisor)
+                .map(ProxyAdvisor::resolver)
+                .map(resolver -> resolver.type(type))
+                .flatMap(TypeAdvisorResolver::delegate);
     }
 
     @Override

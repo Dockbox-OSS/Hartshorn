@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.ApplicationException;
-
 import java.lang.reflect.Constructor;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * A function that creates a proxy instance. This is used to allow for custom proxy
@@ -27,7 +26,7 @@ import java.lang.reflect.Constructor;
  * @param <T> The type of the proxy
  *
  * @since 0.4.9
- * 
+ *
  * @author Guus Lieben
  */
 public interface ProxyConstructorFunction<T> {

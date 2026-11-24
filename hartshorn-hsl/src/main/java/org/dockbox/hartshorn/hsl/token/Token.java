@@ -121,11 +121,11 @@ public class Token extends ASTNode {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("type", this.type)
-            .field("lexeme", this.lexeme)
-            .field("literal", this.literal)
-            .field("line", this.line())
-            .field("column", this.column())
-            .describe();
+                .field("type", this.type)
+                .field("lexeme", this.lexeme)
+                .field("literal", this.literal)
+                .field("line", this.line())
+                .field("column", this.column())
+                .describe();
     }
 }

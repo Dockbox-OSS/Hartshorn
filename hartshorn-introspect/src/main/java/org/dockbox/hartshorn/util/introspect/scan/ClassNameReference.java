@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
 import java.util.Objects;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * A {@link TypeReference} that references a class by its fully qualified name. This reference can
@@ -40,8 +39,7 @@ public class ClassNameReference implements TypeReference {
     public Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException {
         try {
             return Class.forName(this.name, false, classLoader);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new ClassReferenceLoadException(e);
         }
     }
@@ -79,8 +77,6 @@ public class ClassNameReference implements TypeReference {
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("name", this.name)
-            .describe();
+        return ObjectDescriber.of(this).field("name", this.name).describe();
     }
 }

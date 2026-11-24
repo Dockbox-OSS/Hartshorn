@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.test;
 
+import java.util.List;
 import org.dockbox.hartshorn.inject.ImmutableInjectorConfiguration;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-
-import java.util.List;
 
 /**
  * Composite implementation of {@link TestApplicationCustomizer}, executing the given customizers in

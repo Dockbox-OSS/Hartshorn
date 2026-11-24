@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.lang.classfile.ClassFileElement;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.ClassFileElement;
 
 /**
  * Represents a view of an annotated element, such as a field or method. This view can be used to

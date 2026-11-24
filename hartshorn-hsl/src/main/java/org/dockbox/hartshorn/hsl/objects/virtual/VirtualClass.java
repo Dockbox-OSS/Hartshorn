@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -34,17 +37,13 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * Represents a class definition inside a script. The class is identified by its name, and can carry
  * a variety of additional information such as the super class, methods, and an optional super
  * class.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class VirtualClass extends AbstractFinalizable implements ClassReference {
@@ -58,15 +57,14 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     private final boolean isDynamic;
 
     public VirtualClass(
-        String name,
-        ClassReference superClass,
-        VirtualFunction constructor,
-        VariableScope variableScope,
-        Map<String, VirtualFunction> methods,
-        Map<String, VirtualProperty> fields,
-        boolean finalized,
-        boolean isDynamic
-    ) {
+            String name,
+            ClassReference superClass,
+            VirtualFunction constructor,
+            VariableScope variableScope,
+            Map<String, VirtualFunction> methods,
+            Map<String, VirtualProperty> fields,
+            boolean finalized,
+            boolean isDynamic) {
         super(finalized);
         this.name = name;
         this.superClass = superClass;
@@ -177,30 +175,23 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("name", this.name)
-            .describe();
+        return ObjectDescriber.of(this).field("name", this.name).describe();
     }
 
     @Override
-    public Object call(
-        Token at,
-        Interpreter interpreter,
-        InstanceReference instance,
-        List<Object> arguments
-    ) throws ApplicationException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
+            throws ApplicationException {
         if (instance != null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(at)
-                .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
-                .build();
+                    .at(at)
+                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                    .build();
         }
         if (this.superClass instanceof ExternalClass) {
             CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
             compositeInstance.makeInstance(at, interpreter, arguments, this.constructor());
             return compositeInstance;
-        }
-        else {
+        } else {
             VariableScope currentScope = interpreter.visitingScope();
             InstanceReference virtualInstance = new VirtualInstance(this);
 
@@ -212,11 +203,10 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
                 FieldStatement fieldStatement = property.fieldStatement();
                 if (fieldStatement.initializer() != null) {
                     virtualInstance.set(
-                        interpreter,
-                        fieldStatement.name(),
-                        interpreter.evaluate(fieldStatement.initializer()),
-                        instanceScope
-                    );
+                            interpreter,
+                            fieldStatement.name(),
+                            interpreter.evaluate(fieldStatement.initializer()),
+                            instanceScope);
                 }
             });
             interpreter.enterScope(currentScope);
@@ -244,19 +234,15 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         }
 
         VirtualClass that = (VirtualClass) obj;
-        return Objects.equals(this.name, that.name) &&
-            Objects.equals(this.superClass, that.superClass) &&
-            Objects.equals(this.constructor, that.constructor) &&
-            Objects.equals(this.variableScope, that.variableScope) &&
-            Objects.equals(this.methods, that.methods);
+        return Objects.equals(this.name, that.name)
+                && Objects.equals(this.superClass, that.superClass)
+                && Objects.equals(this.constructor, that.constructor)
+                && Objects.equals(this.variableScope, that.variableScope)
+                && Objects.equals(this.methods, that.methods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name,
-            this.superClass,
-            this.constructor,
-            this.variableScope,
-            this.methods);
+        return Objects.hash(this.name, this.superClass, this.constructor, this.variableScope, this.methods);
     }
 }

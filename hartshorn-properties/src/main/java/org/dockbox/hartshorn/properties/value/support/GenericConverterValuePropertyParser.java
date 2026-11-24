@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,15 +33,13 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public record GenericConverterValuePropertyParser<T>(
-    GenericConverter converter,
-    Class<T> targetType
-) implements ValuePropertyParser<T> {
+public record GenericConverterValuePropertyParser<T>(GenericConverter converter, Class<T> targetType)
+        implements ValuePropertyParser<T> {
 
     @Override
     public Option<T> parse(ValueProperty property) {
         return property.value()
-            .map(value -> this.converter.convert(value, String.class, this.targetType()))
-            .cast(this.targetType());
+                .map(value -> this.converter.convert(value, String.class, this.targetType()))
+                .cast(this.targetType());
     }
 }

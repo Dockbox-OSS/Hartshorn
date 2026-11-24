@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.stream.Stream;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
@@ -32,11 +36,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ArrayComprehensionExpressionTests {
 
@@ -45,12 +44,11 @@ public class ArrayComprehensionExpressionTests {
 
     public static Stream<Arguments> arrayInputs() {
         return Stream.of(
-            Arguments.of(new Array(new Object[] {"test"})),
-            Arguments.of(List.of("test")),
-            // Note: first array is captured as varargs. Inner array
-            // is the actual input array.
-            Arguments.of(new Object[] {new Object[] {"test"}})
-        );
+                Arguments.of(new Array(new Object[] {"test"})),
+                Arguments.of(List.of("test")),
+                // Note: first array is captured as varargs. Inner array
+                // is the actual input array.
+                Arguments.of(new Object[] {new Object[] {"test"}}));
     }
 
     @ParameterizedTest
@@ -59,15 +57,14 @@ public class ArrayComprehensionExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 [x for x in list]
                 """)
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .defineLocal("list", inputArray)
-            .build();
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineLocal("list", inputArray)
+                .build();
 
         Object interpreted = helper.evaluateWith(
-            ArrayComprehensionExpression.class,
-            new ArrayComprehensionExpressionInterpreter()
-        ).interpretValue();
+                        ArrayComprehensionExpression.class, new ArrayComprehensionExpressionInterpreter())
+                .interpretValue();
         Array array = assertThat(interpreted)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
@@ -81,17 +78,16 @@ public class ArrayComprehensionExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 [x + "2" for x in list]
                 """)
-            .expressionParser(new BinaryAdditionExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .defineLocal("list", inputArray)
-            .build();
+                .expressionParser(new BinaryAdditionExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineLocal("list", inputArray)
+                .build();
 
         Object interpreted = helper.evaluateWith(
-            ArrayComprehensionExpression.class,
-            new ArrayComprehensionExpressionInterpreter()
-        ).interpretValue();
+                        ArrayComprehensionExpression.class, new ArrayComprehensionExpressionInterpreter())
+                .interpretValue();
         Array array = assertThat(interpreted)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
@@ -105,16 +101,15 @@ public class ArrayComprehensionExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 [x for x in list if false]
                 """)
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .defineLocal("list", inputArray)
-            .build();
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineLocal("list", inputArray)
+                .build();
 
         Object interpreted = helper.evaluateWith(
-            ArrayComprehensionExpression.class,
-            new ArrayComprehensionExpressionInterpreter()
-        ).interpretValue();
+                        ArrayComprehensionExpression.class, new ArrayComprehensionExpressionInterpreter())
+                .interpretValue();
         Array array = assertThat(interpreted)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();
@@ -127,16 +122,15 @@ public class ArrayComprehensionExpressionTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 [x for x in list if false else "other"]
                 """)
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new ComplexArrayExpressionParser())
-            .defineLocal("list", inputArray)
-            .build();
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineLocal("list", inputArray)
+                .build();
 
         Object interpreted = helper.evaluateWith(
-            ArrayComprehensionExpression.class,
-            new ArrayComprehensionExpressionInterpreter()
-        ).interpretValue();
+                        ArrayComprehensionExpression.class, new ArrayComprehensionExpressionInterpreter())
+                .interpretValue();
         Array array = assertThat(interpreted)
                 .asInstanceOf(InstanceOfAssertFactories.type(Array.class))
                 .actual();

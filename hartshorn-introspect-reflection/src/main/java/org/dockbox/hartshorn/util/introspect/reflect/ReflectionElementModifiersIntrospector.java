@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.AccessModifier;
-import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.dockbox.hartshorn.util.introspect.AccessModifier;
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 
 /**
  * An introspector for element modifiers that uses reflection to determine the modifiers of a given
@@ -50,8 +49,7 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
             Field mandated = modifier.getDeclaredField("MANDATED");
             mandated.setAccessible(true);
             mandatedModifier = (int) mandated.get(null);
-        }
-        catch (NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
             syntheticModifier = 0x00001000;
             mandatedModifier = 0x00008000;
         }

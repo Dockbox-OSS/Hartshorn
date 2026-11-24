@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.classfile.ClassFileElement;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
@@ -25,13 +31,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.classfile.ClassFileElement;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-
 /**
  * A view that provides access to the parameters of a method or constructor. This view is backed by
  * a {@link Parameter} instance.
@@ -39,11 +38,10 @@ import java.lang.reflect.Parameter;
  * @param <T> the type of the parameter
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
-public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
-    implements ParameterView<T> {
+public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView implements ParameterView<T> {
 
     private final Introspector introspector;
     private final Parameter parameter;
@@ -69,8 +67,7 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
     @Override
     public TypeView<T> genericType() {
         if (this.genericType == null) {
-            this.genericType =
-                (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
+            this.genericType = (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
         }
         return this.genericType;
     }
@@ -80,11 +77,10 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
         if (this.name == null) {
             if (this.annotations().has(org.dockbox.hartshorn.util.introspect.Parameter.class)) {
                 this.name = this.annotations()
-                    .get(org.dockbox.hartshorn.util.introspect.Parameter.class)
-                    .get()
-                    .value();
-            }
-            else {
+                        .get(org.dockbox.hartshorn.util.introspect.Parameter.class)
+                        .get()
+                        .value();
+            } else {
                 this.name = this.parameter.getName();
             }
         }
@@ -113,11 +109,9 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
             Executable executable = this.parameter.getDeclaringExecutable();
             if (executable instanceof Method method) {
                 this.declaredBy = this.introspector.introspect(method);
-            }
-            else if (executable instanceof Constructor<?> constructor) {
+            } else if (executable instanceof Constructor<?> constructor) {
                 this.declaredBy = this.introspector.introspect(constructor);
-            }
-            else {
+            } else {
                 throw new RuntimeException("Unexpected executable type: " + executable.getName());
             }
         }

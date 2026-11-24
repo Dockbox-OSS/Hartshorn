@@ -21,9 +21,9 @@ package org.dockbox.hartshorn.inject.condition;
  * the condition matched or not, and a message describing the result.
  *
  * @see Condition
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public final class ConditionResult {
@@ -139,8 +139,7 @@ public final class ConditionResult {
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult notEqual(String what, String expected, String actual) {
-        return new ConditionResult(false,
-            "Expected " + what + " to be " + expected + " but was " + actual);
+        return new ConditionResult(false, "Expected " + what + " to be " + expected + " but was " + actual);
     }
 
     /**
