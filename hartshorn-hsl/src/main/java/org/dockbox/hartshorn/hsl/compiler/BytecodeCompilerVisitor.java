@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.compiler;
 
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ClassDesc;
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.*;
 import org.dockbox.hartshorn.hsl.ast.statement.*;
 import org.dockbox.hartshorn.hsl.compiler.expression.*;
@@ -26,13 +32,6 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.lang.classfile.ClassFile;
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ClassDesc;
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
-import java.util.List;
 
 /**
  * Delegating AST visitor that compiles HSL statements and expressions into standard JVM bytecode using
@@ -75,26 +74,24 @@ public class BytecodeCompilerVisitor implements StatementVisitor<Void>, Expressi
      * @return The compiled bytecode.
      */
     public byte[] compile(List<Statement> statements) {
-        return ClassFile.of().build(
-            ClassDesc.of(this.context.className()),
-            classBuilder -> {
-                classBuilder.withFlags(ClassFile.ACC_PUBLIC);
-                classBuilder.withInterfaceSymbols(ASTNodeCompiler.CD_CompiledScriptExecutable);
+        return ClassFile.of().build(ClassDesc.of(this.context.className()), classBuilder -> {
+            classBuilder.withFlags(ClassFile.ACC_PUBLIC);
+            classBuilder.withInterfaceSymbols(ASTNodeCompiler.CD_CompiledScriptExecutable);
 
-                // Default constructor
-                classBuilder.withMethod(
+            // Default constructor
+            classBuilder.withMethod(
                     ConstantDescs.INIT_NAME,
                     ConstantDescs.MTD_void,
                     ClassFile.ACC_PUBLIC,
                     methodBuilder -> methodBuilder.withCode(codeBuilder -> {
                         codeBuilder.aload(0);
-                        codeBuilder.invokespecial(ConstantDescs.CD_Object, ConstantDescs.INIT_NAME, ConstantDescs.MTD_void);
+                        codeBuilder.invokespecial(
+                                ConstantDescs.CD_Object, ConstantDescs.INIT_NAME, ConstantDescs.MTD_void);
                         codeBuilder.return_();
-                    })
-                );
+                    }));
 
-                // execute(ScriptContext context)
-                classBuilder.withMethod(
+            // execute(ScriptContext context)
+            classBuilder.withMethod(
                     "execute",
                     MethodTypeDesc.of(ConstantDescs.CD_Object, ASTNodeCompiler.CD_ScriptContext),
                     ClassFile.ACC_PUBLIC,
@@ -103,7 +100,10 @@ public class BytecodeCompilerVisitor implements StatementVisitor<Void>, Expressi
 
                         // Initialize root scope: VariableScope scope = HslRuntimeSupport.createRootScope(context);
                         codeBuilder.aload(CompilationContext.CONTEXT_SLOT);
-                        codeBuilder.invokestatic(ASTNodeCompiler.CD_HslRuntimeSupport, "createRootScope", HslRuntimeSupport.MTD_CreateRootScope);
+                        codeBuilder.invokestatic(
+                                ASTNodeCompiler.CD_HslRuntimeSupport,
+                                "createRootScope",
+                                HslRuntimeSupport.MTD_CreateRootScope);
                         codeBuilder.astore(CompilationContext.SCOPE_SLOT);
 
                         for (Statement statement : statements) {
@@ -113,10 +113,8 @@ public class BytecodeCompilerVisitor implements StatementVisitor<Void>, Expressi
                         // Return null if execute didn't explicitly return
                         codeBuilder.aconst_null();
                         codeBuilder.areturn();
-                    })
-                );
-            }
-        );
+                    }));
+        });
     }
 
     @Override
@@ -405,8 +403,7 @@ public class BytecodeCompilerVisitor implements StatementVisitor<Void>, Expressi
     public void compile(Statement statement) {
         if (statement instanceof CustomASTNode<?, ?> customASTNode) {
             customASTNode.compile(this.code, this.context, this);
-        }
-        else {
+        } else {
             statement.accept(this);
         }
     }
@@ -415,8 +412,7 @@ public class BytecodeCompilerVisitor implements StatementVisitor<Void>, Expressi
     public void compile(Expression expression) {
         if (expression instanceof CustomASTNode<?, ?> customASTNode) {
             customASTNode.compile(this.code, this.context, this);
-        }
-        else {
+        } else {
             expression.accept(this);
         }
     }

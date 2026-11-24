@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * during the script's execution, though some runtimes may not support this.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
@@ -123,9 +123,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      */
     public ScriptOutputCapture outputCapture() {
         if (this.outputCapture == null) {
-            this.outputCapture = new Slf4JScriptOutputCapture(
-                LoggerFactory.getLogger(this.scriptName())
-            );
+            this.outputCapture = new Slf4JScriptOutputCapture(LoggerFactory.getLogger(this.scriptName()));
         }
         return this.outputCapture;
     }

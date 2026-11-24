@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
@@ -23,8 +24,6 @@ import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link UnaryExpression} nodes.
@@ -40,13 +39,11 @@ public class UnaryExpressionCompiler implements ExpressionCompiler<UnaryExpressi
         visitor.compile(node.rightExpression());
         switch (node.operator().type()) {
             case ArithmeticTokenType.MINUS ->
-                    code.invokestatic(CD_HslRuntimeSupport, "negate", HslRuntimeSupport.MTD_Negate);
-            case BaseTokenType.BANG ->
-                    code.invokestatic(CD_HslRuntimeSupport, "not", HslRuntimeSupport.MTD_Not);
+                code.invokestatic(CD_HslRuntimeSupport, "negate", HslRuntimeSupport.MTD_Negate);
+            case BaseTokenType.BANG -> code.invokestatic(CD_HslRuntimeSupport, "not", HslRuntimeSupport.MTD_Not);
             case BitwiseTokenType.COMPLEMENT ->
-                    code.invokestatic(CD_HslRuntimeSupport, "complement", HslRuntimeSupport.MTD_Complement);
-            case null, default -> {
-            }
+                code.invokestatic(CD_HslRuntimeSupport, "complement", HslRuntimeSupport.MTD_Complement);
+            case null, default -> {}
         }
     }
 }

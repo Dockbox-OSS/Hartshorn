@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
@@ -44,17 +44,18 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
-                .at(node.operator())
-                .build();
+                    .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
+                    .at(node.operator())
+                    .build();
         }
         double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> leftNumber.doubleValue() + 1;
             case MINUS_MINUS -> leftNumber.doubleValue() - 1;
-            default -> throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
-                .at(node.operator())
-                .build();
+            default ->
+                throw ScriptEvaluationError.builder(Phase.EXECUTING)
+                        .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
+                        .at(node.operator())
+                        .build();
         };
 
         if (node.leftExpression() instanceof VariableExpression variable) {

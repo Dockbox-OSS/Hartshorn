@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link NativeFunctionStatement} nodes.
@@ -32,7 +31,8 @@ import java.lang.classfile.CodeBuilder;
 public class NativeFunctionStatementCompiler implements StatementCompiler<NativeFunctionStatement> {
 
     @Override
-    public void compile(NativeFunctionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            NativeFunctionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         // Handled by runtime environment
     }
 }

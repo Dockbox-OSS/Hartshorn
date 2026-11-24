@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link BitwiseExpression} nodes.
@@ -34,25 +33,25 @@ import java.lang.classfile.CodeBuilder;
 public class BitwiseExpressionCompiler implements ExpressionCompiler<BitwiseExpression> {
 
     @Override
-    public void compile(BitwiseExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            BitwiseExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         visitor.compile(node.leftExpression());
         visitor.compile(node.rightExpression());
 
         switch (node.operator().type()) {
             case BitwiseTokenType.BITWISE_AND ->
-                    code.invokestatic(CD_HslRuntimeSupport, "bitwiseAnd", HslRuntimeSupport.MTD_BitwiseAnd);
+                code.invokestatic(CD_HslRuntimeSupport, "bitwiseAnd", HslRuntimeSupport.MTD_BitwiseAnd);
             case BitwiseTokenType.BITWISE_OR ->
-                    code.invokestatic(CD_HslRuntimeSupport, "bitwiseOr", HslRuntimeSupport.MTD_BitwiseOr);
+                code.invokestatic(CD_HslRuntimeSupport, "bitwiseOr", HslRuntimeSupport.MTD_BitwiseOr);
             case BitwiseTokenType.XOR ->
-                    code.invokestatic(CD_HslRuntimeSupport, "bitwiseXor", HslRuntimeSupport.MTD_BitwiseXor);
+                code.invokestatic(CD_HslRuntimeSupport, "bitwiseXor", HslRuntimeSupport.MTD_BitwiseXor);
             case BitwiseTokenType.SHIFT_LEFT ->
-                    code.invokestatic(CD_HslRuntimeSupport, "shiftLeft", HslRuntimeSupport.MTD_ShiftLeft);
+                code.invokestatic(CD_HslRuntimeSupport, "shiftLeft", HslRuntimeSupport.MTD_ShiftLeft);
             case BitwiseTokenType.SHIFT_RIGHT ->
-                    code.invokestatic(CD_HslRuntimeSupport, "shiftRight", HslRuntimeSupport.MTD_ShiftRight);
+                code.invokestatic(CD_HslRuntimeSupport, "shiftRight", HslRuntimeSupport.MTD_ShiftRight);
             case BitwiseTokenType.LOGICAL_SHIFT_RIGHT ->
-                    code.invokestatic(CD_HslRuntimeSupport, "logicalShiftRight", HslRuntimeSupport.MTD_LogicalShiftRight);
-            case null, default -> {
-            }
+                code.invokestatic(CD_HslRuntimeSupport, "logicalShiftRight", HslRuntimeSupport.MTD_LogicalShiftRight);
+            case null, default -> {}
         }
     }
 }

@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.Label;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.Label;
 
 /**
  * Compiler for {@link TernaryExpression} nodes.
@@ -34,7 +33,8 @@ import java.lang.classfile.Label;
 public class TernaryExpressionCompiler implements ExpressionCompiler<TernaryExpression> {
 
     @Override
-    public void compile(TernaryExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            TernaryExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         Label elseLabel = code.newLabel();
         Label endLabel = code.newLabel();
 

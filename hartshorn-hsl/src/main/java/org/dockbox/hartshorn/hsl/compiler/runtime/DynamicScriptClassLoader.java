@@ -43,9 +43,10 @@ public class DynamicScriptClassLoader extends ClassLoader {
     public static <T> Class<? extends T> loadExecutableClass(String name, byte[] bytecode) {
         try {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            return (Class<? extends T>) lookup.defineHiddenClass(bytecode, true, MethodHandles.Lookup.ClassOption.NESTMATE).lookupClass();
-        }
-        catch (Throwable t) {
+            return (Class<? extends T>)
+                    lookup.defineHiddenClass(bytecode, true, MethodHandles.Lookup.ClassOption.NESTMATE)
+                            .lookupClass();
+        } catch (Throwable t) {
             DynamicScriptClassLoader loader = new DynamicScriptClassLoader();
             return (Class<? extends T>) loader.defineClass(name, bytecode);
         }

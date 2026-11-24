@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.util.List;
 
 /**
  * Compiler for {@link FunctionCallExpression} nodes.
@@ -36,7 +35,8 @@ import java.util.List;
 public class FunctionCallExpressionCompiler implements ExpressionCompiler<FunctionCallExpression> {
 
     @Override
-    public void compile(FunctionCallExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            FunctionCallExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         visitor.compile(node.callee());
 
         List<Expression> args = node.arguments();

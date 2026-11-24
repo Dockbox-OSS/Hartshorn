@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl.support;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -31,16 +33,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class CheckpointModule implements ExpressionModule<CheckpointModule.CheckpointExpression> {
 
     public static final TokenType CHECKPOINT = SimpleTokenType.builder()
-        .representation("checkpoint")
-        .tokenName("checkpoint")
-        .keyword(true)
-        .build();
+            .representation("checkpoint")
+            .tokenName("checkpoint")
+            .keyword(true)
+            .build();
 
     private final Map<String, Integer> checkpoints = new HashMap<>();
 
@@ -64,11 +63,7 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
                 validator.expectAfter(parameters.open(), "checkpoint");
                 Expression expression = parser.expression();
                 validator.expectAfter(parameters.close(), "checkpoint descriptor");
-                return new CheckpointExpression(
-                    parser.previous(),
-                    CheckpointModule.this,
-                    expression
-                );
+                return new CheckpointExpression(parser.previous(), CheckpointModule.this, expression);
             }
             return chain.next(parser, validator);
         };
@@ -92,12 +87,11 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
                 Integer count = this.checkpoints.getOrDefault(string, 0) + 1;
                 this.checkpoints.put(string, count);
                 return count;
-            }
-            else {
+            } else {
                 throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                    .at(node.descriptor())
-                    .message("Checkpoint descriptor must be a string")
-                    .build();
+                        .at(node.descriptor())
+                        .message("Checkpoint descriptor must be a string")
+                        .build();
             }
         };
     }

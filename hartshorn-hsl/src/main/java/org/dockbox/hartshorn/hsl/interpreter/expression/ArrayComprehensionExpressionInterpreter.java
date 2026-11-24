@@ -21,8 +21,8 @@ import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
  * Interpreter for {@link ArrayComprehensionExpression}s

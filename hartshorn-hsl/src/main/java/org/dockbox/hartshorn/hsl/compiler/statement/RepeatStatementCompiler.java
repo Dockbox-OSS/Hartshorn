@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
-import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
-import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
-import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.Label;
 import java.lang.constant.ConstantDescs;
 import java.lang.constant.MethodTypeDesc;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
+import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 
 /**
  * Compiler for {@link RepeatStatement} nodes.

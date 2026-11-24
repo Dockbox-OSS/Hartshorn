@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
@@ -24,15 +26,12 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Tuple;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-
 /**
  * Utilities for HSL executions, providing common functionality that should remain consistent across
  * different implementations and execution strategies.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public final class CodeExecutionUtilities {
@@ -112,9 +111,9 @@ public final class CodeExecutionUtilities {
             return number;
         }
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-            .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
-            .at(operator)
-            .build();
+                .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
+                .at(operator)
+                .build();
     }
 
     /**
@@ -129,18 +128,14 @@ public final class CodeExecutionUtilities {
      *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */
-    public static Tuple<Number, Number> checkNumberOperands(
-        Token operator,
-        Object left,
-        Object right
-    ) {
+    public static Tuple<Number, Number> checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
             return new Tuple<>(leftNumber, rightNumber);
         }
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-            .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
-            .at(operator)
-            .build();
+                .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
+                .at(operator)
+                .build();
     }
 
     /**
@@ -156,15 +151,13 @@ public final class CodeExecutionUtilities {
 
         if (collection instanceof Iterable<?> collectionIterable) {
             return collectionIterable;
-        }
-        else if (collection != null && collection.getClass().isArray()) {
+        } else if (collection != null && collection.getClass().isArray()) {
             return Arrays.asList((Object[]) collection);
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
-                .at(at)
-                .build();
+                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                    .at(at)
+                    .build();
         }
     }
 }

@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
@@ -24,8 +26,6 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests parity between interpreted and compiled HSL execution.
@@ -49,14 +49,11 @@ public class ExecutionModeParityTests {
                 }
                 """;
 
-        ScriptContext interpreted = InterpretedScript
-                .of(this.applicationContext, scriptCode)
-                .evaluate();
+        ScriptContext interpreted =
+                InterpretedScript.of(this.applicationContext, scriptCode).evaluate();
 
-        ScriptContext compiled = CompiledScript
-                .of(this.applicationContext, scriptCode)
-                .compile()
-                .execute();
+        ScriptContext compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile().execute();
 
         assertThat(compiled.result("sum").get())
                 .isEqualTo(interpreted.result("sum").get());
@@ -73,35 +70,26 @@ public class ExecutionModeParityTests {
                 }
                 """;
 
-        ScriptContext interpreted = InterpretedScript
-                .of(this.applicationContext, scriptCode)
-                .evaluate();
+        ScriptContext interpreted =
+                InterpretedScript.of(this.applicationContext, scriptCode).evaluate();
 
-        ScriptContext compiled = CompiledScript
-                .of(this.applicationContext, scriptCode)
-                .compile()
-                .execute();
+        ScriptContext compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile().execute();
 
-        assertThat(interpreted.result("count").get())
-                .isEqualTo(990000.0d);
+        assertThat(interpreted.result("count").get()).isEqualTo(990000.0d);
 
-        assertThat(compiled.result("count").get())
-                .isEqualTo(990000.0d);
+        assertThat(compiled.result("count").get()).isEqualTo(990000.0d);
     }
 
     @Test
     void testExpressionParity() {
-        String scriptCode =
-                "var res = (42 * 1337) / 7 + 1024 - 256;";
+        String scriptCode = "var res = (42 * 1337) / 7 + 1024 - 256;";
 
-        ScriptContext interpreted = InterpretedScript
-                .of(this.applicationContext, scriptCode)
-                .evaluate();
+        ScriptContext interpreted =
+                InterpretedScript.of(this.applicationContext, scriptCode).evaluate();
 
-        ScriptContext compiled = CompiledScript
-                .of(this.applicationContext, scriptCode)
-                .compile()
-                .execute();
+        ScriptContext compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile().execute();
 
         assertThat(compiled.result("res").get())
                 .isEqualTo(interpreted.result("res").get());

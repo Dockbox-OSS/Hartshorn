@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassMemberInterpreter;
@@ -28,12 +33,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The state of an {@link Interpreter}, holding variable scopes, resolved locals, and external
@@ -56,7 +55,7 @@ public class InterpreterState {
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
     private final ExternalClassRegistry externalClassRegistry = new SimpleExternalClassRegistry();
     private final Set<ClassMemberInterpreter<?>> memberInterpreters =
-        Collections.synchronizedSet(new LinkedHashSet<>());
+            Collections.synchronizedSet(new LinkedHashSet<>());
 
     private final Interpreter owner;
 
@@ -160,9 +159,9 @@ public class InterpreterState {
     public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
             TypeView<Object> typeView =
-                this.owner.applicationContext().environment().introspector().introspect(instance);
-            this.externalVariables.put(name,
-                new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
+                    this.owner.applicationContext().environment().introspector().introspect(instance);
+            this.externalVariables.put(
+                    name, new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
         });
     }
 
@@ -199,8 +198,7 @@ public class InterpreterState {
         try {
             this.enterScope(scope);
             runnable.run();
-        }
-        finally {
+        } finally {
             this.enterScope(previous);
         }
     }
@@ -262,24 +260,20 @@ public class InterpreterState {
         if (distance != null) {
             // Find variable value in locales score
             return this.visitingScope().getAt(name, distance);
-        }
-        else if (this.global.contains(name)) {
+        } else if (this.global.contains(name)) {
             // Can't find distance in locales, so it must be global variable
             return this.global.get(name);
-        }
-        else if (this.externalVariables.containsKey(name.lexeme())) {
+        } else if (this.externalVariables.containsKey(name.lexeme())) {
             return this.externalVariables.get(name.lexeme());
-        }
-        else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
-            Option<ExternalClass<?>> externalClass =
-                this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
+        } else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
+            Option<ExternalClass<?>> externalClass = this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
             if (externalClass.present()) {
                 return externalClass.get();
             }
         }
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-            .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
-            .at(name)
-            .build();
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 }

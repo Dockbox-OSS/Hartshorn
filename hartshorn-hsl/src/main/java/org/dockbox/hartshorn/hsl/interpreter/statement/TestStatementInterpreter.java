@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -44,19 +44,17 @@ public class TestStatementInterpreter implements StatementInterpreter<TestStatem
 
         try {
             interpreter.execute(node.body(), variableScope);
-        }
-        catch (Yield yield) {
+        } catch (Yield yield) {
             Object value = yield.value();
             boolean truthy = CodeExecutionUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
                 throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                    .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
-                    .at(node)
-                    .build();
+                        .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
+                        .at(node)
+                        .build();
             }
-        }
-        finally {
+        } finally {
             interpreter.enterScope(previousScope);
         }
         return null;

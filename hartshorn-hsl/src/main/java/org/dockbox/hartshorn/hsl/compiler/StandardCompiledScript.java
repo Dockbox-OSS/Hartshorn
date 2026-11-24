@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.compiler;
 
 import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.compiler.runtime.CompiledScriptExecutable;
@@ -65,11 +64,9 @@ public class StandardCompiledScript extends CompiledScript {
             }
             context.compiledScript(this);
             return context;
-        }
-        catch (ScriptEvaluationError e) {
+        } catch (ScriptEvaluationError e) {
             throw e;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
                     .cause(t)
                     .virtualPosition()

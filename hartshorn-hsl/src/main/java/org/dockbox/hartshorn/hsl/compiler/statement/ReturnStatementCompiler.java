@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
 
 /**
  * Compiler for {@link ReturnStatement} nodes.
@@ -45,12 +44,12 @@ public class ReturnStatementCompiler implements StatementCompiler<ReturnStatemen
         }
         switch (node.returnType()) {
             case RETURN -> code.areturn();
-            case YIELD -> code.invokespecial(
-                            CD_Yield,
-                            ConstantDescs.INIT_NAME,
-                            MethodTypeDesc.of(ConstantDescs.CD_void, ConstantDescs.CD_Object)
-                    )
-                    .athrow();
+            case YIELD ->
+                code.invokespecial(
+                                CD_Yield,
+                                ConstantDescs.INIT_NAME,
+                                MethodTypeDesc.of(ConstantDescs.CD_void, ConstantDescs.CD_Object))
+                        .athrow();
         }
     }
 }

@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
 
 /**
  * Compiler for {@link VariableExpression} nodes.
@@ -35,7 +34,8 @@ import java.lang.constant.MethodTypeDesc;
 public class VariableExpressionCompiler implements ExpressionCompiler<VariableExpression> {
 
     @Override
-    public void compile(VariableExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            VariableExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         code.aload(CompilationContext.CONTEXT_SLOT);
         code.aload(CompilationContext.SCOPE_SLOT);
         code.ldc(node.name().lexeme());
@@ -44,8 +44,7 @@ public class VariableExpressionCompiler implements ExpressionCompiler<VariableEx
         if (distance != null) {
             code.ldc(distance);
             code.invokestatic(CD_Integer, "valueOf", MethodTypeDesc.of(CD_Integer, ConstantDescs.CD_int));
-        }
-        else {
+        } else {
             code.aconst_null();
         }
 

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -26,9 +28,6 @@ import org.dockbox.hartshorn.hsl.semantic.SymbolTable;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Interpreters are responsible for evaluating expressions and executing statements. They maintain
@@ -43,7 +42,7 @@ import java.util.Map;
  * Each interpreter maintains its own state, including variable scopes and function call stacks.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public interface Interpreter extends SymbolTable {

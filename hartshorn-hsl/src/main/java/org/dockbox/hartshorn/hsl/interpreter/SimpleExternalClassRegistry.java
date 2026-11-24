@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -27,11 +31,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A simple implementation of {@link ExternalClassRegistry} that uses an internal bi-directional
@@ -48,8 +47,8 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
     @Override
     public Set<ExternalClass<?>> defineClasses(Map<String, TypeView<?>> imports) {
         return imports.entrySet().stream()
-            .map(entry -> this.defineClass(entry.getValue(), entry.getKey()))
-            .collect(Collectors.toUnmodifiableSet());
+                .map(entry -> this.defineClass(entry.getValue(), entry.getKey()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -62,15 +61,14 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
         ExternalClass<T> externalClass = new ExternalClass<>(this, typeView, as);
         if (this.imports.containsValue(as)) {
             ExternalClass<?> existingClass =
-                CollectionUtilities.first(this.imports.inverse().get(as));
+                    CollectionUtilities.first(this.imports.inverse().get(as));
             if (existingClass.type().equals(typeView)) {
                 return TypeUtils.unchecked(existingClass, ExternalClass.class);
-            }
-            else {
+            } else {
                 throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                    .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
-                    .virtualPosition()
-                    .build();
+                        .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
+                        .virtualPosition()
+                        .build();
             }
         }
         this.imports.put(externalClass, as);
@@ -85,9 +83,10 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
     @Override
     public boolean removeImported(Class<?> type) {
         return this.imports.removeIf((externalClass, alias) -> {
-            TypeView<?> typeView = externalClass.type();
-            return typeView.is(type);
-        }) > 0;
+                    TypeView<?> typeView = externalClass.type();
+                    return typeView.is(type);
+                })
+                > 0;
     }
 
     @Override
@@ -98,23 +97,23 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
     @Override
     public Option<ExternalClass<?>> getByClassNameOrAlias(String name) {
         ExternalClass<?> externalClass =
-            CollectionUtilities.first(this.imports.inverse().get(name));
+                CollectionUtilities.first(this.imports.inverse().get(name));
         return Option.of(externalClass);
     }
 
     @Override
     public Set<String> getNamesForClass(Class<?> type) {
         return this.imports.stream()
-            .filterKeys(externalClass -> externalClass.type().is(type))
-            .values()
-            .flatMap(Collection::stream)
-            .collect(Collectors.toSet());
+                .filterKeys(externalClass -> externalClass.type().is(type))
+                .values()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Map<String, ExternalClass<?>> importedClasses() {
         return EntryStream.of(this.imports.inverse())
-            .mapValues(CollectionUtilities::first)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .mapValues(CollectionUtilities::first)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

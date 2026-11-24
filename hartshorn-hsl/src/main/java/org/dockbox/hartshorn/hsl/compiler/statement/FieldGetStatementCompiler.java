@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link FieldGetStatement} nodes.
@@ -32,7 +31,8 @@ import java.lang.classfile.CodeBuilder;
 public class FieldGetStatementCompiler implements StatementCompiler<FieldGetStatement> {
 
     @Override
-    public void compile(FieldGetStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            FieldGetStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         // Handled in ClassStatement
     }
 }

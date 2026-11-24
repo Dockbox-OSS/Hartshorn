@@ -28,5 +28,4 @@ import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
  *
  * @author Guus Lieben
  */
-public interface StatementCompiler<T extends Statement> extends ASTNodeCompiler<T> {
-}
+public interface StatementCompiler<T extends Statement> extends ASTNodeCompiler<T> {}

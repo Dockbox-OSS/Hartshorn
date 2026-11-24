@@ -28,5 +28,4 @@ import org.dockbox.hartshorn.hsl.compiler.ASTNodeCompiler;
  *
  * @author Guus Lieben
  */
-public interface ExpressionCompiler<T extends Expression> extends ASTNodeCompiler<T> {
-}
+public interface ExpressionCompiler<T extends Expression> extends ASTNodeCompiler<T> {}

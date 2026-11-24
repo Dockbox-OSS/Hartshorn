@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.Duration;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
@@ -26,11 +30,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.Timer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.time.Duration;
-import java.util.function.Supplier;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Performance comparison between interpreted and compiled HSL execution.
@@ -64,15 +63,12 @@ public class ExecutionModeBenchmarkTests {
                 """;
 
         InterpretedScript interpreted = InterpretedScript.of(this.applicationContext, scriptCode);
-        CompiledScript compiled = CompiledScript.of(this.applicationContext, scriptCode).compile();
+        CompiledScript compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile();
 
         compiled.execute();
 
-        benchmark(
-                "Compute loop",
-                interpreted::evaluate,
-                compiled::execute
-        );
+        benchmark("Compute loop", interpreted::evaluate, compiled::execute);
     }
 
     @Test
@@ -87,19 +83,14 @@ public class ExecutionModeBenchmarkTests {
                 """;
 
         InterpretedScript interpreted = InterpretedScript.of(this.applicationContext, scriptCode);
-        CompiledScript compiled = CompiledScript.of(this.applicationContext, scriptCode).compile();
+        CompiledScript compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile();
 
-        BenchmarkResult result = benchmark(
-                "Nested loop",
-                interpreted::evaluate,
-                compiled::execute
-        );
+        BenchmarkResult result = benchmark("Nested loop", interpreted::evaluate, compiled::execute);
 
-        assertThat(result.interpretedResult().result("count").get())
-                .isEqualTo(7600.0d);
+        assertThat(result.interpretedResult().result("count").get()).isEqualTo(7600.0d);
 
-        assertThat(result.compiledResult().result("count").get())
-                .isEqualTo(7600.0d);
+        assertThat(result.compiledResult().result("count").get()).isEqualTo(7600.0d);
     }
 
     @Test
@@ -107,20 +98,14 @@ public class ExecutionModeBenchmarkTests {
         String scriptCode = "var res = (42 * 1337) / 7 + 1024 - 256;";
 
         InterpretedScript interpreted = InterpretedScript.of(this.applicationContext, scriptCode);
-        CompiledScript compiled = CompiledScript.of(this.applicationContext, scriptCode).compile();
+        CompiledScript compiled =
+                CompiledScript.of(this.applicationContext, scriptCode).compile();
 
-        benchmark(
-                "Expression",
-                interpreted::evaluate,
-                compiled::execute
-        );
+        benchmark("Expression", interpreted::evaluate, compiled::execute);
     }
 
     private BenchmarkResult benchmark(
-            String name,
-            Supplier<ScriptContext> interpreted,
-            Supplier<ScriptContext> compiled
-    ) {
+            String name, Supplier<ScriptContext> interpreted, Supplier<ScriptContext> compiled) {
         // Warm up both execution modes.
         for (int i = 0; i < WARMUP_ITERATIONS; i++) {
             interpreted.get();
@@ -133,50 +118,39 @@ public class ExecutionModeBenchmarkTests {
         long interpretedDuration = measure(interpreted);
         long compiledDuration = measure(compiled);
 
-        double interpretedPerOperation =
-                (double) interpretedDuration / BENCHMARK_ITERATIONS;
+        double interpretedPerOperation = (double) interpretedDuration / BENCHMARK_ITERATIONS;
 
-        double compiledPerOperation =
-                (double) compiledDuration / BENCHMARK_ITERATIONS;
+        double compiledPerOperation = (double) compiledDuration / BENCHMARK_ITERATIONS;
 
-        double speedup =
-                interpretedPerOperation / compiledPerOperation;
+        double speedup = interpretedPerOperation / compiledPerOperation;
 
-        System.out.printf(
-                """
-                
+        System.out.printf("""
+
                 %s
                   Interpreted: %.2f µs/op
                   Compiled:    %.2f µs/op
                   Speedup:     %.2fx
-                %n""",
-                name,
-                interpretedPerOperation / 1_000,
-                compiledPerOperation / 1_000,
-                speedup
-        );
+                %n""", name, interpretedPerOperation / 1_000, compiledPerOperation / 1_000, speedup);
 
         return new BenchmarkResult(
                 interpretedResult,
                 compiledResult,
                 Duration.ofNanos(interpretedDuration),
-                Duration.ofNanos(compiledDuration)
-        );
+                Duration.ofNanos(compiledDuration));
     }
 
     private long measure(Supplier<ScriptContext> operation) {
         return Timer.execute(() -> {
-            for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
-                operation.get();
-            }
-        }).toNanos();
+                    for (int i = 0; i < BENCHMARK_ITERATIONS; i++) {
+                        operation.get();
+                    }
+                })
+                .toNanos();
     }
 
     private record BenchmarkResult(
             ScriptContext interpretedResult,
             ScriptContext compiledResult,
             Duration interpretedDuration,
-            Duration compiledDuration
-    ) {
-    }
+            Duration compiledDuration) {}
 }

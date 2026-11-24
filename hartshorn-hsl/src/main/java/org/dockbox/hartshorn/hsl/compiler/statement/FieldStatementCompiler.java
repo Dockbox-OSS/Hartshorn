@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link FieldStatement} nodes.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
@@ -24,8 +26,6 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -38,8 +38,7 @@ class InterpreterTests {
     void ambiguousExternalFunctionsAreAllowedByDefault() {
         InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
-            .module("ambiguous",
-                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+                .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.evaluate();
     }
 
@@ -47,8 +46,7 @@ class InterpreterTests {
     void ambiguousExternalFunctionsAreAllowedWhenEnabled() {
         InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
-            .module("ambiguous",
-                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+                .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
         script.evaluate();
     }
@@ -57,8 +55,7 @@ class InterpreterTests {
     void ambiguousExternalFunctionsAreNotAllowedWhenDisabled() {
         InterpretedScript script = InterpretedScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime()
-            .module("ambiguous",
-                new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
+                .module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
         assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::evaluate);
     }

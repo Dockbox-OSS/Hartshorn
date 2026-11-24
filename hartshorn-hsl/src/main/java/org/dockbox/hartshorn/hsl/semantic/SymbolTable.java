@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-
-import java.util.Map;
 
 /**
  * Contract representing a symbol table and scope resolution state for expressions and modules.

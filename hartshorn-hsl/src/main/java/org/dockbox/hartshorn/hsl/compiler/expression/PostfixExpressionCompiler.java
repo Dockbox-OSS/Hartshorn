@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link PostfixExpression} nodes.
@@ -32,7 +31,8 @@ import java.lang.classfile.CodeBuilder;
 public class PostfixExpressionCompiler implements ExpressionCompiler<PostfixExpression> {
 
     @Override
-    public void compile(PostfixExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            PostfixExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         // Not currently implemented in compilation
     }
 }

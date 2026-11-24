@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
-import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
-import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
-import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ConstantDescs;
 import java.lang.constant.MethodTypeDesc;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
+import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 
 /**
  * Compiler for {@link LiteralExpression} nodes.
@@ -34,7 +33,8 @@ import java.lang.constant.MethodTypeDesc;
 public class LiteralExpressionCompiler implements ExpressionCompiler<LiteralExpression> {
 
     @Override
-    public void compile(LiteralExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            LiteralExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         Object val = node.value();
         switch (val) {
             case null -> code.aconst_null();
@@ -52,8 +52,7 @@ public class LiteralExpressionCompiler implements ExpressionCompiler<LiteralExpr
                 code.ldc(n.doubleValue());
                 code.invokestatic(CD_Double, "valueOf", MethodTypeDesc.of(CD_Double, ConstantDescs.CD_double));
             }
-            default -> {
-            }
+            default -> {}
         }
     }
 }

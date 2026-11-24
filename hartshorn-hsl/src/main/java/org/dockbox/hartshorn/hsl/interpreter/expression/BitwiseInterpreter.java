@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
  * @param <T> the type of AST node this interpreter can handle
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
@@ -63,16 +63,16 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
                 };
             }
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
-                .at(operator)
-                .build();
+                    .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
+                    .at(operator)
+                    .build();
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-            .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
-            .at(operator)
-            .build();
+                .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
+                .at(operator)
+                .build();
     }
 
     /**

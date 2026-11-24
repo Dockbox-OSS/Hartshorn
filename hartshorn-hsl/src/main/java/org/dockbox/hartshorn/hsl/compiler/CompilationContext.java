@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.compiler;
 import java.lang.classfile.Label;
 import java.util.ArrayDeque;
 import java.util.Deque;
-
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.semantic.SymbolTable;

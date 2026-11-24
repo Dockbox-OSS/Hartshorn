@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Interpreter for {@link UnaryExpression} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
@@ -47,36 +47,31 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         if (type instanceof ArithmeticTokenType arithmeticTokenType) {
             newValue = switch (arithmeticTokenType) {
                 case MINUS -> {
-                    Number rightNumber =
-                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield -rightNumber.doubleValue();
                 }
                 case PLUS_PLUS -> {
-                    Number rightNumber =
-                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() + 1;
                 }
                 case MINUS_MINUS -> {
-                    Number rightNumber =
-                        CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
+                    Number rightNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
                     yield rightNumber.doubleValue() - 1;
                 }
                 default -> null;
             };
-        }
-        else if (type == BaseTokenType.BANG) {
+        } else if (type == BaseTokenType.BANG) {
             newValue = !CodeExecutionUtilities.isTruthy(right);
-        }
-        else if (type == BitwiseTokenType.COMPLEMENT) {
+        } else if (type == BitwiseTokenType.COMPLEMENT) {
             Number rightNumber = CodeExecutionUtilities.checkNumberOperand(node.operator(), right);
             int value = rightNumber.intValue();
             newValue = (double) ~value;
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
-                .at(node.operator())
-                .build();
+                    .message(
+                            DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
+                    .at(node.operator())
+                    .build();
         }
 
         if (node.rightExpression() instanceof VariableExpression variable) {

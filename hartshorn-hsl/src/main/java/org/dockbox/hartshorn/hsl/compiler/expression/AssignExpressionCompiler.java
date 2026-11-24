@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
 
 /**
  * Compiler for {@link AssignExpression} nodes.
@@ -50,8 +49,7 @@ public class AssignExpressionCompiler implements ExpressionCompiler<AssignExpres
         if (distance != null) {
             code.ldc(distance);
             code.invokestatic(CD_Integer, "valueOf", MethodTypeDesc.of(CD_Integer, ConstantDescs.CD_int));
-        }
-        else {
+        } else {
             code.aconst_null();
         }
 

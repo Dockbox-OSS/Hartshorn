@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
 
 /**
  * Standard standalone implementation of {@link SymbolTable}.
@@ -34,8 +33,7 @@ public class SimpleSymbolTable implements SymbolTable {
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
 
-    public SimpleSymbolTable() {
-    }
+    public SimpleSymbolTable() {}
 
     public SimpleSymbolTable(Map<String, NativeModule> externalModules) {
         if (externalModules != null) {

@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
  * Interpreter for {@link WhileStatement} nodes.

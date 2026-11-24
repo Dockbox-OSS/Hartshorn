@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  * Interpreter for {@link SwitchStatement} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class SwitchStatementInterpreter implements StatementInterpreter<SwitchStatement> {
@@ -40,9 +40,9 @@ public class SwitchStatementInterpreter implements StatementInterpreter<SwitchSt
         for (SwitchCase switchCase : node.cases()) {
             if (switchCase.isDefault()) {
                 throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                    .message(DiagnosticMessage.UNEXPECTED_DEFAULT_CASE)
-                    .at(switchCase)
-                    .build();
+                        .message(DiagnosticMessage.UNEXPECTED_DEFAULT_CASE)
+                        .at(switchCase)
+                        .build();
             }
             if (CodeExecutionUtilities.isEqual(value, switchCase.expression().value())) {
                 interpreter.execute(switchCase);

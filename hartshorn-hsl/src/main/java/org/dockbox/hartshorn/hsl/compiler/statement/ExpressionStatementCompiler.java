@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link ExpressionStatement} nodes.
@@ -33,7 +32,8 @@ import java.lang.classfile.CodeBuilder;
 public class ExpressionStatementCompiler implements StatementCompiler<ExpressionStatement> {
 
     @Override
-    public void compile(ExpressionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            ExpressionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         visitor.compile(node.expression());
         // Track global result
         code.aload(CompilationContext.CONTEXT_SLOT);

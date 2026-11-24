@@ -16,8 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.InterpretedScript;
@@ -30,8 +31,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -131,15 +130,15 @@ class CompiledScriptTests {
             var choice = 2;
             var output = "none";
             switch (choice) {
-                case 1: {
+                case 1:
                     output = "one";
-                }
-                case 2: {
+                    break;
+                case 2:
                     output = "two";
-                }
-                default: {
+                    break;
+                default:
                     output = "default";
-                }
+                    break;
             }
             """;
         CompiledScript script = CompiledScript.of(this.context, code);
@@ -190,7 +189,9 @@ class CompiledScriptTests {
     }
 
     @ParameterizedTest
-    @EnumSource(value = ExecutionMode.class, names = {"INTERPRETED", "COMPILED"})
+    @EnumSource(
+            value = ExecutionMode.class,
+            names = {"INTERPRETED", "COMPILED"})
     void testExecutionModeParity(ExecutionMode mode) {
         String code = """
             var x = 10;
@@ -203,8 +204,8 @@ class CompiledScriptTests {
             }
             """;
         ExecutableScript script = mode == ExecutionMode.COMPILED
-            ? CompiledScript.of(this.context, code)
-            : InterpretedScript.of(this.context, code);
+                ? CompiledScript.of(this.context, code)
+                : InterpretedScript.of(this.context, code);
         ScriptContext resultContext = script.evaluate();
 
         assertThat(resultContext.result("z").get()).isEqualTo(60.0d);

@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.Label;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.Label;
 
 /**
  * Compiler for {@link LogicalExpression} nodes.
@@ -35,7 +34,8 @@ import java.lang.classfile.Label;
 public class LogicalExpressionCompiler implements ExpressionCompiler<LogicalExpression> {
 
     @Override
-    public void compile(LogicalExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            LogicalExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         Label endLabel = code.newLabel();
 
         visitor.compile(node.leftExpression());
@@ -44,8 +44,7 @@ public class LogicalExpressionCompiler implements ExpressionCompiler<LogicalExpr
 
         if (node.operator().type() == ConditionTokenType.OR) {
             code.ifne(endLabel);
-        }
-        else {
+        } else {
             code.ifeq(endLabel);
         }
 

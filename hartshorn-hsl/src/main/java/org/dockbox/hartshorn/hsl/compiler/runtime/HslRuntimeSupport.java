@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.compiler.runtime;
 
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
@@ -25,8 +33,8 @@ import org.dockbox.hartshorn.hsl.compiler.expression.*;
 import org.dockbox.hartshorn.hsl.compiler.statement.*;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CodeExecutionUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassStatementInterpreter;
 import org.dockbox.hartshorn.hsl.objects.*;
@@ -38,15 +46,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.Tuple;
 
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Runtime helper and dynamic dispatch utility used by compiled JVM bytecode for HSL scripts.
  *
@@ -55,24 +54,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class HslRuntimeSupport {
 
-    private static final MethodTypeDesc UNARY_OBJECT_DESC = MethodTypeDesc.of(
-            ConstantDescs.CD_Object,
-            ConstantDescs.CD_Object
-    );
-    private static final MethodTypeDesc BINARY_OBJECT_DESC = MethodTypeDesc.of(
-            ConstantDescs.CD_Object,
-            ConstantDescs.CD_Object,
-            ConstantDescs.CD_Object
-    );
-    private static final MethodTypeDesc UNARY_PREDICATE_DESC = MethodTypeDesc.of(
-            ConstantDescs.CD_boolean,
-            ConstantDescs.CD_Object
-    );
-    private static final MethodTypeDesc BINARY_PREDICATE_DESC = MethodTypeDesc.of(
-            ConstantDescs.CD_boolean,
-            ConstantDescs.CD_Object,
-            ConstantDescs.CD_Object
-    );
+    private static final MethodTypeDesc UNARY_OBJECT_DESC =
+            MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object);
+    private static final MethodTypeDesc BINARY_OBJECT_DESC =
+            MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object);
+    private static final MethodTypeDesc UNARY_PREDICATE_DESC =
+            MethodTypeDesc.of(ConstantDescs.CD_boolean, ConstantDescs.CD_Object);
+    private static final MethodTypeDesc BINARY_PREDICATE_DESC =
+            MethodTypeDesc.of(ConstantDescs.CD_boolean, ConstantDescs.CD_Object, ConstantDescs.CD_Object);
 
     public static final MethodTypeDesc MTD_Add = BINARY_OBJECT_DESC;
     public static final MethodTypeDesc MTD_Subtract = BINARY_OBJECT_DESC;
@@ -99,30 +88,68 @@ public final class HslRuntimeSupport {
     public static final MethodTypeDesc MTD_LogicalShiftRight = BINARY_OBJECT_DESC;
     public static final MethodTypeDesc MTD_Range = BINARY_OBJECT_DESC;
 
-    public static final MethodTypeDesc MTD_CreateRootScope = MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_ScriptContext);
-    public static final MethodTypeDesc MTD_PushScope = MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_VariableScope);
-    public static final MethodTypeDesc MTD_PopScope = MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_VariableScope);
-    public static final MethodTypeDesc MTD_DeclareVariable = MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_VariableScope, ConstantDescs.CD_String, ConstantDescs.CD_Object, ConstantDescs.CD_boolean);
-    public static final MethodTypeDesc MTD_LookupVariable = MethodTypeDesc.of(ConstantDescs.CD_Object, ASTNodeCompiler.CD_ScriptContext, ASTNodeCompiler.CD_VariableScope, ConstantDescs.CD_String, ConstantDescs.CD_Integer);
-    public static final MethodTypeDesc MTD_AssignVariable = MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ASTNodeCompiler.CD_VariableScope, ConstantDescs.CD_String, ConstantDescs.CD_Integer, ConstantDescs.CD_Object);
-    public static final MethodTypeDesc MTD_GetProperty = MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_String, ASTNodeCompiler.CD_ScriptContext);
-    public static final MethodTypeDesc MTD_SetProperty = MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_String, ConstantDescs.CD_Object, ASTNodeCompiler.CD_ScriptContext);
-    public static final MethodTypeDesc MTD_InvokeFunction = MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object.arrayType(), ASTNodeCompiler.CD_ScriptContext);
-    public static final MethodTypeDesc MTD_CreateArray = MethodTypeDesc.of(ASTNodeCompiler.CD_Array, ConstantDescs.CD_Object.arrayType());
+    public static final MethodTypeDesc MTD_CreateRootScope =
+            MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_ScriptContext);
+    public static final MethodTypeDesc MTD_PushScope =
+            MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_VariableScope);
+    public static final MethodTypeDesc MTD_PopScope =
+            MethodTypeDesc.of(ASTNodeCompiler.CD_VariableScope, ASTNodeCompiler.CD_VariableScope);
+    public static final MethodTypeDesc MTD_DeclareVariable = MethodTypeDesc.of(
+            ConstantDescs.CD_void,
+            ASTNodeCompiler.CD_VariableScope,
+            ConstantDescs.CD_String,
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_boolean);
+    public static final MethodTypeDesc MTD_LookupVariable = MethodTypeDesc.of(
+            ConstantDescs.CD_Object,
+            ASTNodeCompiler.CD_ScriptContext,
+            ASTNodeCompiler.CD_VariableScope,
+            ConstantDescs.CD_String,
+            ConstantDescs.CD_Integer);
+    public static final MethodTypeDesc MTD_AssignVariable = MethodTypeDesc.of(
+            ConstantDescs.CD_void,
+            ASTNodeCompiler.CD_ScriptContext,
+            ASTNodeCompiler.CD_VariableScope,
+            ConstantDescs.CD_String,
+            ConstantDescs.CD_Integer,
+            ConstantDescs.CD_Object);
+    public static final MethodTypeDesc MTD_GetProperty = MethodTypeDesc.of(
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_String,
+            ASTNodeCompiler.CD_ScriptContext);
+    public static final MethodTypeDesc MTD_SetProperty = MethodTypeDesc.of(
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_String,
+            ConstantDescs.CD_Object,
+            ASTNodeCompiler.CD_ScriptContext);
+    public static final MethodTypeDesc MTD_InvokeFunction = MethodTypeDesc.of(
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_Object,
+            ConstantDescs.CD_Object.arrayType(),
+            ASTNodeCompiler.CD_ScriptContext);
+    public static final MethodTypeDesc MTD_CreateArray =
+            MethodTypeDesc.of(ASTNodeCompiler.CD_Array, ConstantDescs.CD_Object.arrayType());
     public static final MethodTypeDesc MTD_ArrayGet = BINARY_OBJECT_DESC;
-    public static final MethodTypeDesc MTD_ArraySet = MethodTypeDesc.of(ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object);
-    public static final MethodTypeDesc MTD_DeclareFunctionById = MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ASTNodeCompiler.CD_VariableScope, ConstantDescs.CD_int);
+    public static final MethodTypeDesc MTD_ArraySet = MethodTypeDesc.of(
+            ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object, ConstantDescs.CD_Object);
+    public static final MethodTypeDesc MTD_DeclareFunctionById = MethodTypeDesc.of(
+            ConstantDescs.CD_void,
+            ASTNodeCompiler.CD_ScriptContext,
+            ASTNodeCompiler.CD_VariableScope,
+            ConstantDescs.CD_int);
     public static final MethodTypeDesc MTD_DeclareClassById = MTD_DeclareFunctionById;
-    public static final MethodTypeDesc MTD_AddResult = MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ConstantDescs.CD_String, ConstantDescs.CD_Object);
-    public static final MethodTypeDesc MTD_AddGlobalResult = MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ConstantDescs.CD_Object);
+    public static final MethodTypeDesc MTD_AddResult = MethodTypeDesc.of(
+            ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ConstantDescs.CD_String, ConstantDescs.CD_Object);
+    public static final MethodTypeDesc MTD_AddGlobalResult =
+            MethodTypeDesc.of(ConstantDescs.CD_void, ASTNodeCompiler.CD_ScriptContext, ConstantDescs.CD_Object);
 
-    private HslRuntimeSupport() {
-    }
+    private HslRuntimeSupport() {}
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic add", "+"}
-    )
+            sources = {"invokestatic add", "+"})
     public static Object add(Object left, Object right) {
         left = CodeExecutionUtilities.unwrap(left);
         right = CodeExecutionUtilities.unwrap(right);
@@ -147,8 +174,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic subtract", "-"}
-    )
+            sources = {"invokestatic subtract", "-"})
     public static Object subtract(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() - tuple.right().doubleValue();
@@ -156,8 +182,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic multiply", "*"}
-    )
+            sources = {"invokestatic multiply", "*"})
     public static Object multiply(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() * tuple.right().doubleValue();
@@ -165,8 +190,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic divide", "/"}
-    )
+            sources = {"invokestatic divide", "/"})
     public static Object divide(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         if (tuple.right().doubleValue() == 0) {
@@ -179,8 +203,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic modulo", "%"}
-    )
+            sources = {"invokestatic modulo", "%"})
     public static Object modulo(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         if (tuple.right().doubleValue() == 0) {
@@ -193,8 +216,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {UnaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic negate", "-"}
-    )
+            sources = {"invokestatic negate", "-"})
     public static Object negate(Object value) {
         value = CodeExecutionUtilities.unwrap(value);
         if (value instanceof Number number) {
@@ -207,63 +229,62 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {UnaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic not", "!"}
-    )
+            sources = {"invokestatic not", "!"})
     public static Object not(Object value) {
         return !isTruthy(value);
     }
 
     @DynamicInvocation(
             callers = {UnaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic complement", "~"}
-    )
+            sources = {"invokestatic complement", "~"})
     public static Object complement(Object value) {
         value = CodeExecutionUtilities.unwrap(value);
         if (value instanceof Number number) {
             return (double) ~number.intValue();
         }
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, value, value != null ? value.getClass().getSimpleName() : null, null, null)
+                .message(
+                        DiagnosticMessage.ILLEGAL_BITWISE_OP,
+                        value,
+                        value != null ? value.getClass().getSimpleName() : null,
+                        null,
+                        null)
                 .build();
     }
 
     @DynamicInvocation(
             callers = {
-                    IfStatementCompiler.class,
-                    WhileStatementCompiler.class,
-                    DoWhileStatementCompiler.class,
-                    ForStatementCompiler.class,
-                    LogicalExpressionCompiler.class,
-                    ElvisExpressionCompiler.class,
-                    TernaryExpressionCompiler.class,
-                    TestStatementCompiler.class,
+                IfStatementCompiler.class,
+                WhileStatementCompiler.class,
+                DoWhileStatementCompiler.class,
+                ForStatementCompiler.class,
+                LogicalExpressionCompiler.class,
+                ElvisExpressionCompiler.class,
+                TernaryExpressionCompiler.class,
+                TestStatementCompiler.class,
             },
-            sources = {"invokestatic isTruthy"}
-    )
+            sources = {"invokestatic isTruthy"})
     public static boolean isTruthy(Object value) {
         return CodeExecutionUtilities.isTruthy(value);
     }
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, SwitchStatementCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic equal", "=="}
-    )
+            sources = {"invokestatic equal", "=="})
     public static boolean equal(Object left, Object right) {
         return CodeExecutionUtilities.isEqual(left, right);
     }
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic notEqual", "!="}
-    )
+            sources = {"invokestatic notEqual", "!="})
     public static boolean notEqual(Object left, Object right) {
         return !CodeExecutionUtilities.isEqual(left, right);
     }
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic greater", ">"}
-    )
+            sources = {"invokestatic greater", ">"})
     public static boolean greater(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() > tuple.right().doubleValue();
@@ -271,8 +292,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic greaterEqual", ">="}
-    )
+            sources = {"invokestatic greaterEqual", ">="})
     public static boolean greaterEqual(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() >= tuple.right().doubleValue();
@@ -280,8 +300,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic less", "<"}
-    )
+            sources = {"invokestatic less", "<"})
     public static boolean less(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() < tuple.right().doubleValue();
@@ -289,8 +308,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BinaryExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic lessEqual", "<="}
-    )
+            sources = {"invokestatic lessEqual", "<="})
     public static boolean lessEqual(Object left, Object right) {
         Tuple<Number, Number> tuple = checkNumbers(left, right);
         return tuple.left().doubleValue() <= tuple.right().doubleValue();
@@ -298,8 +316,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic bitwiseAnd", "&"}
-    )
+            sources = {"invokestatic bitwiseAnd", "&"})
     public static Object bitwiseAnd(Object left, Object right) {
         Tuple<Integer, Integer> tuple = checkInts(left, right);
         return tuple.left() & tuple.right();
@@ -307,8 +324,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic bitwiseOr", "|"}
-    )
+            sources = {"invokestatic bitwiseOr", "|"})
     public static Object bitwiseOr(Object left, Object right) {
         Tuple<Integer, Integer> tuple = checkInts(left, right);
         return tuple.left() | tuple.right();
@@ -316,8 +332,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic bitwiseXor", "^"}
-    )
+            sources = {"invokestatic bitwiseXor", "^"})
     public static Object bitwiseXor(Object left, Object right) {
         left = CodeExecutionUtilities.unwrap(left);
         right = CodeExecutionUtilities.unwrap(right);
@@ -329,8 +344,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic shiftLeft", "<<"}
-    )
+            sources = {"invokestatic shiftLeft", "<<"})
     public static Object shiftLeft(Object left, Object right) {
         Tuple<Integer, Integer> tuple = checkInts(left, right);
         return tuple.left() << tuple.right();
@@ -338,8 +352,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic shiftRight", ">>"}
-    )
+            sources = {"invokestatic shiftRight", ">>"})
     public static Object shiftRight(Object left, Object right) {
         Tuple<Integer, Integer> tuple = checkInts(left, right);
         return tuple.left() >> tuple.right();
@@ -347,8 +360,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BitwiseExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic logicalShiftRight", ">>>"}
-    )
+            sources = {"invokestatic logicalShiftRight", ">>>"})
     public static Object logicalShiftRight(Object left, Object right) {
         Tuple<Integer, Integer> tuple = checkInts(left, right);
         return tuple.left() >>> tuple.right();
@@ -356,16 +368,14 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {ElvisExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic elvis", "?:"}
-    )
+            sources = {"invokestatic elvis", "?:"})
     public static Object elvis(Object condition, Object right) {
         return isTruthy(condition) ? condition : right;
     }
 
     @DynamicInvocation(
             callers = {RangeExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic range", ".."}
-    )
+            sources = {"invokestatic range", ".."})
     public static Object range(Object start, Object end) {
         start = CodeExecutionUtilities.unwrap(start);
         end = CodeExecutionUtilities.unwrap(end);
@@ -398,8 +408,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BytecodeCompilerVisitor.class},
-            sources = {"invokestatic createRootScope"}
-    )
+            sources = {"invokestatic createRootScope"})
     public static VariableScope createRootScope(ScriptContext context) {
         if (context.interpreter() != null) {
             return context.interpreter().visitingScope();
@@ -409,24 +418,21 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {BlockStatementCompiler.class, ForStatementCompiler.class},
-            sources = {"invokestatic pushScope"}
-    )
+            sources = {"invokestatic pushScope"})
     public static VariableScope pushScope(VariableScope parent) {
         return new VariableScope(parent);
     }
 
     @DynamicInvocation(
             callers = {BlockStatementCompiler.class, ForStatementCompiler.class},
-            sources = {"invokestatic popScope"}
-    )
+            sources = {"invokestatic popScope"})
     public static VariableScope popScope(VariableScope current) {
         return current.enclosing() != null ? current.enclosing() : current;
     }
 
     @DynamicInvocation(
             callers = {VariableStatementCompiler.class},
-            sources = {"invokestatic declareVariable"}
-    )
+            sources = {"invokestatic declareVariable"})
     public static void declareVariable(VariableScope scope, String name, Object value, boolean isFinal) {
         scope.define(name, value);
     }
@@ -437,14 +443,13 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {
-                    VariableExpressionCompiler.class,
-                    ArrayGetExpressionCompiler.class,
-                    ArraySetExpressionCompiler.class,
-                    ThisExpressionCompiler.class,
-                    SuperExpressionCompiler.class
+                VariableExpressionCompiler.class,
+                ArrayGetExpressionCompiler.class,
+                ArraySetExpressionCompiler.class,
+                ThisExpressionCompiler.class,
+                SuperExpressionCompiler.class
             },
-            sources = {"invokestatic lookupVariable"}
-    )
+            sources = {"invokestatic lookupVariable"})
     public static Object lookupVariable(ScriptContext context, VariableScope scope, String name, Integer distance) {
         Token token = identifierToken(name);
         if (scope != null) {
@@ -469,9 +474,9 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {AssignExpressionCompiler.class},
-            sources = {"invokestatic assignVariable"}
-    )
-    public static void assignVariable(ScriptContext context, VariableScope scope, String name, Integer distance, Object value) {
+            sources = {"invokestatic assignVariable"})
+    public static void assignVariable(
+            ScriptContext context, VariableScope scope, String name, Integer distance, Object value) {
         Token token = identifierToken(name);
         if (scope != null) {
             try {
@@ -490,8 +495,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {GetExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic getProperty", "bootstrapGetProperty"}
-    )
+            sources = {"invokestatic getProperty", "bootstrapGetProperty"})
     public static Object getProperty(Object target, String name, ScriptContext context) {
         target = CodeExecutionUtilities.unwrap(target);
         if (target instanceof PropertyContainer container) {
@@ -513,8 +517,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {SetExpressionCompiler.class, HslBootstrapMethods.class},
-            sources = {"invokestatic setProperty", "bootstrapSetProperty"}
-    )
+            sources = {"invokestatic setProperty", "bootstrapSetProperty"})
     public static Object setProperty(Object target, String name, Object value, ScriptContext context) {
         target = CodeExecutionUtilities.unwrap(target);
         if (target instanceof PropertyContainer container) {
@@ -530,8 +533,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {HslBootstrapMethods.class},
-            sources = {"invokestatic invoke", "bootstrapInvoke"}
-    )
+            sources = {"invokestatic invoke", "bootstrapInvoke"})
     public static Object invoke(Object target, String methodName, Object[] arguments, ScriptContext context) {
         Object property = getProperty(target, methodName, context);
         return invokeFunction(property, arguments, context);
@@ -539,8 +541,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {HslBootstrapMethods.class, FunctionCallExpressionCompiler.class},
-            sources = {"dynamic callee invocation"}
-    )
+            sources = {"dynamic callee invocation"})
     public static Object invokeFunction(Object callee, Object[] arguments, ScriptContext context) {
         callee = CodeExecutionUtilities.unwrap(callee);
         List<Object> args = arguments != null ? Arrays.asList(arguments) : List.of();
@@ -562,24 +563,20 @@ public final class HslRuntimeSupport {
                 return function.call(token, interpreter, null, args);
             }
         } catch (Exception e) {
-            throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                    .cause(e)
-                    .build();
+            throw ScriptEvaluationError.builder(Phase.EXECUTING).cause(e).build();
         }
     }
 
     @DynamicInvocation(
             callers = {ArrayLiteralExpressionCompiler.class},
-            sources = {"invokestatic createArray"}
-    )
+            sources = {"invokestatic createArray"})
     public static Array createArray(Object[] elements) {
         return new Array(elements != null ? elements : new Object[0]);
     }
 
     @DynamicInvocation(
             callers = {ArrayGetExpressionCompiler.class},
-            sources = {"invokestatic arrayGet"}
-    )
+            sources = {"invokestatic arrayGet"})
     public static Object arrayGet(Object target, Object indexValue) {
         target = CodeExecutionUtilities.unwrap(target);
         indexValue = CodeExecutionUtilities.unwrap(indexValue);
@@ -599,8 +596,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {ArraySetExpressionCompiler.class},
-            sources = {"invokestatic arraySet"}
-    )
+            sources = {"invokestatic arraySet"})
     public static Object arraySet(Object target, Object indexValue, Object value) {
         target = CodeExecutionUtilities.unwrap(target);
         indexValue = CodeExecutionUtilities.unwrap(indexValue);
@@ -637,8 +633,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {FunctionStatementCompiler.class},
-            sources = {"invokestatic declareFunctionById"}
-    )
+            sources = {"invokestatic declareFunctionById"})
     public static void declareFunctionById(ScriptContext context, VariableScope scope, int id) {
         FunctionStatement statement = FUNCTION_REGISTRY.get(id);
         if (statement != null) {
@@ -648,8 +643,7 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {ClassStatementCompiler.class},
-            sources = {"invokestatic declareClassById"}
-    )
+            sources = {"invokestatic declareClassById"})
     public static void declareClassById(ScriptContext context, VariableScope scope, int id) {
         ClassStatement statement = CLASS_REGISTRY.get(id);
         if (statement != null) {
@@ -658,7 +652,9 @@ public final class HslRuntimeSupport {
     }
 
     public static void declareFunction(ScriptContext context, VariableScope scope, FunctionStatement statement) {
-        VariableScope parentScope = scope != null ? scope : (context.interpreter() != null ? context.interpreter().visitingScope() : new VariableScope());
+        VariableScope parentScope = scope != null
+                ? scope
+                : (context.interpreter() != null ? context.interpreter().visitingScope() : new VariableScope());
         VirtualFunction function = new VirtualFunction(statement, parentScope, false);
         parentScope.define(statement.name().lexeme(), function);
     }
@@ -671,20 +667,17 @@ public final class HslRuntimeSupport {
 
     @DynamicInvocation(
             callers = {VariableStatementCompiler.class, TestStatementCompiler.class},
-            sources = {"invokestatic addResult"}
-    )
+            sources = {"invokestatic addResult"})
     public static void addResult(ScriptContext context, String name, Object value) {
         context.addResult(name, value);
     }
 
     @DynamicInvocation(
             callers = {ExpressionStatementCompiler.class},
-            sources = {"invokestatic addGlobalResult"}
-    )
+            sources = {"invokestatic addGlobalResult"})
     public static void addGlobalResult(ScriptContext context, Object value) {
         context.addResult(value);
     }
-
 
     /**
      * Standardized 'to string' function for given objects, converting nulls to "null" and handling
@@ -707,8 +700,6 @@ public final class HslRuntimeSupport {
             return text;
         }
 
-        return object.toString()
-            .replaceAll("\\\\n", "\n")
-            .replaceAll("\\\\t", "\t");
+        return object.toString().replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t");
     }
 }

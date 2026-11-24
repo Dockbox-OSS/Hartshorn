@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link VariableStatement} nodes.
@@ -33,11 +32,11 @@ import java.lang.classfile.CodeBuilder;
 public class VariableStatementCompiler implements StatementCompiler<VariableStatement> {
 
     @Override
-    public void compile(VariableStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            VariableStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         if (node.initializer() != null) {
             visitor.compile(node.initializer());
-        }
-        else {
+        } else {
             code.aconst_null();
         }
 

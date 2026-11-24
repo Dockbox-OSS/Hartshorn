@@ -21,7 +21,6 @@ import java.lang.invoke.ConstantCallSite;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 
 /**
@@ -32,18 +31,11 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
  */
 public final class HslBootstrapMethods {
 
-    private HslBootstrapMethods() {
-    }
+    private HslBootstrapMethods() {}
 
-    @DynamicInvocation(
-            sources = {"invokedynamic bootstrapBinaryOp"}
-    )
-    public static CallSite bootstrapBinaryOp(
-            MethodHandles.Lookup lookup,
-            String name,
-            MethodType type,
-            String operator
-    ) throws Throwable {
+    @DynamicInvocation(sources = {"invokedynamic bootstrapBinaryOp"})
+    public static CallSite bootstrapBinaryOp(MethodHandles.Lookup lookup, String name, MethodType type, String operator)
+            throws Throwable {
         String methodName = switch (operator) {
             case "+" -> "add";
             case "-" -> "subtract";
@@ -70,25 +62,22 @@ public final class HslBootstrapMethods {
                 HslRuntimeSupport.class,
                 methodName,
                 MethodType.methodType(
-                        methodName.equals("equal") || methodName.equals("notEqual")
-                                || methodName.equals("greater") || methodName.equals("greaterEqual")
-                                || methodName.equals("less") || methodName.equals("lessEqual")
-                                ? boolean.class : Object.class,
-                        Object.class, Object.class
-                )
-        );
+                        methodName.equals("equal")
+                                        || methodName.equals("notEqual")
+                                        || methodName.equals("greater")
+                                        || methodName.equals("greaterEqual")
+                                        || methodName.equals("less")
+                                        || methodName.equals("lessEqual")
+                                ? boolean.class
+                                : Object.class,
+                        Object.class,
+                        Object.class));
         return new ConstantCallSite(target.asType(type));
     }
 
-    @DynamicInvocation(
-            sources = {"invokedynamic bootstrapUnaryOp"}
-    )
-    public static CallSite bootstrapUnaryOp(
-            MethodHandles.Lookup lookup,
-            String name,
-            MethodType type,
-            String operator
-    ) throws Throwable {
+    @DynamicInvocation(sources = {"invokedynamic bootstrapUnaryOp"})
+    public static CallSite bootstrapUnaryOp(MethodHandles.Lookup lookup, String name, MethodType type, String operator)
+            throws Throwable {
         String methodName = switch (operator) {
             case "-" -> "negate";
             case "!" -> "not";
@@ -96,58 +85,36 @@ public final class HslBootstrapMethods {
             default -> throw new IllegalArgumentException("Unknown unary operator: " + operator);
         };
         MethodHandle target = lookup.findStatic(
-                HslRuntimeSupport.class,
-                methodName,
-                MethodType.methodType(Object.class, Object.class)
-        );
+                HslRuntimeSupport.class, methodName, MethodType.methodType(Object.class, Object.class));
         return new ConstantCallSite(target.asType(type));
     }
 
-    @DynamicInvocation(
-            sources = {"invokedynamic bootstrapGetProperty"}
-    )
-    public static CallSite bootstrapGetProperty(
-            MethodHandles.Lookup lookup,
-            String name,
-            MethodType type
-    ) throws Throwable {
+    @DynamicInvocation(sources = {"invokedynamic bootstrapGetProperty"})
+    public static CallSite bootstrapGetProperty(MethodHandles.Lookup lookup, String name, MethodType type)
+            throws Throwable {
         MethodHandle target = lookup.findStatic(
                 HslRuntimeSupport.class,
                 "getProperty",
-                MethodType.methodType(Object.class, Object.class, String.class, ScriptContext.class)
-        );
+                MethodType.methodType(Object.class, Object.class, String.class, ScriptContext.class));
         return new ConstantCallSite(target.asType(type));
     }
 
-    @DynamicInvocation(
-            sources = {"invokedynamic bootstrapSetProperty"}
-    )
-    public static CallSite bootstrapSetProperty(
-            MethodHandles.Lookup lookup,
-            String name,
-            MethodType type
-    ) throws Throwable {
+    @DynamicInvocation(sources = {"invokedynamic bootstrapSetProperty"})
+    public static CallSite bootstrapSetProperty(MethodHandles.Lookup lookup, String name, MethodType type)
+            throws Throwable {
         MethodHandle target = lookup.findStatic(
                 HslRuntimeSupport.class,
                 "setProperty",
-                MethodType.methodType(Object.class, Object.class, String.class, Object.class, ScriptContext.class)
-        );
+                MethodType.methodType(Object.class, Object.class, String.class, Object.class, ScriptContext.class));
         return new ConstantCallSite(target.asType(type));
     }
 
-    @DynamicInvocation(
-            sources = {"invokedynamic bootstrapInvoke"}
-    )
-    public static CallSite bootstrapInvoke(
-            MethodHandles.Lookup lookup,
-            String name,
-            MethodType type
-    ) throws Throwable {
+    @DynamicInvocation(sources = {"invokedynamic bootstrapInvoke"})
+    public static CallSite bootstrapInvoke(MethodHandles.Lookup lookup, String name, MethodType type) throws Throwable {
         MethodHandle target = lookup.findStatic(
                 HslRuntimeSupport.class,
                 "invoke",
-                MethodType.methodType(Object.class, Object.class, String.class, Object[].class, ScriptContext.class)
-        );
+                MethodType.methodType(Object.class, Object.class, String.class, Object[].class, ScriptContext.class));
         return new ConstantCallSite(target.asType(type));
     }
 }

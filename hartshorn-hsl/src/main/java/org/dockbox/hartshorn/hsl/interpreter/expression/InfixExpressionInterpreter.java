@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -24,9 +26,6 @@ import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Interpreter for {@link InfixExpression} nodes.
@@ -39,22 +38,23 @@ public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, In
 
     @Override
     public Object interpret(InfixExpression node, Interpreter interpreter) {
-        CallableNode value =
-            (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
+        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
         List<Object> args = new ArrayList<>();
         args.add(interpreter.evaluate(node.leftExpression()));
         args.add(interpreter.evaluate(node.rightExpression()));
 
         try {
             return value.call(node.infixOperatorName(), interpreter, null, args);
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .message(DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
-                    "infix", node.infixOperatorName(), e.getMessage())
-                .cause(e)
-                .at(node)
-                .build();
+                    .message(
+                            DiagnosticMessage.ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR,
+                            "infix",
+                            node.infixOperatorName(),
+                            e.getMessage())
+                    .cause(e)
+                    .at(node)
+                    .build();
         }
     }
 }

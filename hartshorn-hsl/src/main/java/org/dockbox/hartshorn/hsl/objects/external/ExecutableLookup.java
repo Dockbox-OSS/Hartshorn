@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 /**
  * Utility class to lookup an executable by name and a list of arguments. The lookup may either use
@@ -53,19 +52,15 @@ public class ExecutableLookup {
      * @return The found executable.
      */
     public static <T> MethodView<T, ?> method(
-        Token at,
-        TypeView<T> declaring,
-        String function,
-        List<Object> arguments
-    ) {
+            Token at, TypeView<T> declaring, String function, List<Object> arguments) {
         Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
         List<MethodView<T, ?>> methods = declaring.methods().all().stream()
-            .filter(method -> method.name().equals(function))
-            .filter(method -> method.parameters().count() == arguments.size())
-            .toList();
+                .filter(method -> method.name().equals(function))
+                .filter(method -> method.parameters().count() == arguments.size())
+                .toList();
 
         MethodView<T, ?> executable = executable(methods, arguments);
         if (executable != null) {
@@ -73,12 +68,9 @@ public class ExecutableLookup {
         }
 
         throw ScriptEvaluationError.builder(Phase.EXECUTING)
-            .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS,
-                function,
-                arguments,
-                declaring.name())
-            .at(at)
-            .build();
+                .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, function, arguments, declaring.name())
+                .at(at)
+                .build();
     }
 
     /**
@@ -94,10 +86,7 @@ public class ExecutableLookup {
      *
      * @return The found executable.
      */
-    public static <P, T extends ExecutableElementView<P>> T executable(
-        List<T> executables,
-        List<Object> arguments
-    ) {
+    public static <P, T extends ExecutableElementView<P>> T executable(List<T> executables, List<Object> arguments) {
         for (T executable : executables) {
             boolean pass = true;
             if (executable.parameters().count() != arguments.size()) {

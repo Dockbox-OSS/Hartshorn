@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.compiler;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-
-import java.util.List;
 
 /**
  * Service contract for compiling HSL AST statements into reusable {@link CompiledScript} instances.

@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.Label;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.Label;
 
 /**
  * Compiler for {@link ElvisExpression} nodes.

@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.util.List;
 
 /**
  * Compiler for {@link ArrayLiteralExpression} nodes.
@@ -36,7 +35,8 @@ import java.util.List;
 public class ArrayLiteralExpressionCompiler implements ExpressionCompiler<ArrayLiteralExpression> {
 
     @Override
-    public void compile(ArrayLiteralExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            ArrayLiteralExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         List<Expression> elements = node.elements();
         code.ldc(elements.size());
         code.anewarray(ConstantDescs.CD_Object);

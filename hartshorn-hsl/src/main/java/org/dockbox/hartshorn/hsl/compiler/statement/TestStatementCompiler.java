@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
-import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
-import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
-import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
-import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.TypeKind;
 import java.lang.constant.ConstantDescs;
 import java.lang.constant.MethodTypeDesc;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
+import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
+import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
 
 /**
  * Compiler for {@link TestStatement} nodes.
@@ -46,7 +45,8 @@ public class TestStatementCompiler implements StatementCompiler<TestStatement> {
                         int yieldSlot = catchBlock.allocateLocal(TypeKind.REFERENCE);
 
                         // addResult(ScriptContext, name, Boolean.valueOf(isTruthy(yield.value())).
-                        catchBlock.astore(yieldSlot)
+                        catchBlock
+                                .astore(yieldSlot)
                                 .aload(CompilationContext.CONTEXT_SLOT)
                                 .ldc(node.name().lexeme())
                                 .aload(yieldSlot)
@@ -54,10 +54,12 @@ public class TestStatementCompiler implements StatementCompiler<TestStatement> {
                                 .invokestatic(CD_HslRuntimeSupport, "isTruthy", HslRuntimeSupport.MTD_IsTruthy)
                                 // Wrap in Boolean.valueOf to explicitly convert primitive 0/1 to Boolean, otherwise it
                                 // will be treated as an int.
-                                .invokestatic(ConstantDescs.CD_Boolean, "valueOf", MethodTypeDesc.of(ConstantDescs.CD_Boolean, ConstantDescs.CD_boolean))
+                                .invokestatic(
+                                        ConstantDescs.CD_Boolean,
+                                        "valueOf",
+                                        MethodTypeDesc.of(ConstantDescs.CD_Boolean, ConstantDescs.CD_boolean))
                                 .invokestatic(CD_HslRuntimeSupport, "addResult", HslRuntimeSupport.MTD_AddResult);
                     });
-                }
-        );
+                });
     }
 }

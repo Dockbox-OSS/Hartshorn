@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.compiler.statement;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link FunctionStatement} nodes.
@@ -33,7 +32,8 @@ import java.lang.classfile.CodeBuilder;
 public class FunctionStatementCompiler implements StatementCompiler<FunctionStatement> {
 
     @Override
-    public void compile(FunctionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            FunctionStatement node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         int id = HslRuntimeSupport.registerFunction(node);
         code.aload(CompilationContext.CONTEXT_SLOT);
         code.aload(CompilationContext.SCOPE_SLOT);

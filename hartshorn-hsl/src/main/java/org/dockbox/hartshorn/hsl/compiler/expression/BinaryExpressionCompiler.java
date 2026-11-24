@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ConstantDescs;
+import java.lang.constant.MethodTypeDesc;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ConstantDescs;
-import java.lang.constant.MethodTypeDesc;
 
 /**
  * Compiler for {@link BinaryExpression} nodes.
@@ -44,16 +43,15 @@ public class BinaryExpressionCompiler implements ExpressionCompiler<BinaryExpres
         visitor.compile(node.rightExpression());
 
         switch (node.operator().type()) {
-            case ArithmeticTokenType.PLUS ->
-                    code.invokestatic(CD_HslRuntimeSupport, "add", HslRuntimeSupport.MTD_Add);
+            case ArithmeticTokenType.PLUS -> code.invokestatic(CD_HslRuntimeSupport, "add", HslRuntimeSupport.MTD_Add);
             case ArithmeticTokenType.MINUS ->
-                    code.invokestatic(CD_HslRuntimeSupport, "subtract", HslRuntimeSupport.MTD_Subtract);
+                code.invokestatic(CD_HslRuntimeSupport, "subtract", HslRuntimeSupport.MTD_Subtract);
             case ArithmeticTokenType.STAR ->
-                    code.invokestatic(CD_HslRuntimeSupport, "multiply", HslRuntimeSupport.MTD_Multiply);
+                code.invokestatic(CD_HslRuntimeSupport, "multiply", HslRuntimeSupport.MTD_Multiply);
             case ArithmeticTokenType.SLASH ->
-                    code.invokestatic(CD_HslRuntimeSupport, "divide", HslRuntimeSupport.MTD_Divide);
+                code.invokestatic(CD_HslRuntimeSupport, "divide", HslRuntimeSupport.MTD_Divide);
             case ArithmeticTokenType.MODULO ->
-                    code.invokestatic(CD_HslRuntimeSupport, "modulo", HslRuntimeSupport.MTD_Modulo);
+                code.invokestatic(CD_HslRuntimeSupport, "modulo", HslRuntimeSupport.MTD_Modulo);
             case ConditionTokenType.EQUAL_EQUAL -> {
                 code.invokestatic(CD_HslRuntimeSupport, "equal", HslRuntimeSupport.MTD_Equal);
                 code.invokestatic(CD_Boolean, "valueOf", MTD_BooleanValueOf);
@@ -78,8 +76,7 @@ public class BinaryExpressionCompiler implements ExpressionCompiler<BinaryExpres
                 code.invokestatic(CD_HslRuntimeSupport, "lessEqual", HslRuntimeSupport.MTD_LessEqual);
                 code.invokestatic(CD_Boolean, "valueOf", MTD_BooleanValueOf);
             }
-            case null, default -> {
-            }
+            case null, default -> {}
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
@@ -30,18 +32,14 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Interpreter for {@link FunctionCallExpression} nodes.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class FunctionCallExpressionInterpreter
-    implements ASTNodeInterpreter<Object, FunctionCallExpression> {
+public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
 
     @Override
     public Object interpret(FunctionCallExpression node, Interpreter interpreter) {
@@ -60,27 +58,24 @@ public class FunctionCallExpressionInterpreter
         Token openParenthesis = node.openParenthesis();
         if (!(callee instanceof CallableNode function)) {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .at(openParenthesis)
-                .message(DiagnosticMessage.NON_CALLABLE_CALLEE, callee)
-                .build();
+                    .at(openParenthesis)
+                    .message(DiagnosticMessage.NON_CALLABLE_CALLEE, callee)
+                    .build();
         }
 
         try {
             if (callee instanceof InstanceReference instance) {
                 return function.call(openParenthesis, interpreter, instance, arguments);
-            }
-            else if (callee instanceof BindableNode<?> bindable) {
+            } else if (callee instanceof BindableNode<?> bindable) {
                 return function.call(openParenthesis, interpreter, bindable.bound(), arguments);
-            }
-            else {
+            } else {
                 return function.call(openParenthesis, interpreter, null, arguments);
             }
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw ScriptEvaluationError.builder(Phase.EXECUTING)
-                .at(openParenthesis)
-                .cause(e)
-                .build();
+                    .at(openParenthesis)
+                    .cause(e)
+                    .build();
         }
     }
 }

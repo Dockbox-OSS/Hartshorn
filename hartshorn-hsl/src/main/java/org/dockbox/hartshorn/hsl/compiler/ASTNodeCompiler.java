@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.compiler;
 
+import java.lang.classfile.CodeBuilder;
+import java.lang.constant.ClassDesc;
+import java.lang.constant.ConstantDescs;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.compiler.runtime.CompiledScriptExecutable;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
@@ -23,10 +26,6 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.constant.ClassDesc;
-import java.lang.constant.ConstantDescs;
 
 /**
  * Interface for compiling AST nodes to JVM bytecode instructions.

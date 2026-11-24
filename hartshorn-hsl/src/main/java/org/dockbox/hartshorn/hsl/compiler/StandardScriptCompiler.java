@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.compiler;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import org.dockbox.hartshorn.hsl.CompiledScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -24,9 +26,6 @@ import org.dockbox.hartshorn.hsl.compiler.runtime.DynamicScriptClassLoader;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Standard implementation of {@link ScriptCompiler} that emits and defines JVM bytecode classes.
@@ -46,12 +45,13 @@ public class StandardScriptCompiler implements ScriptCompiler {
         BytecodeCompilerVisitor visitor = new BytecodeCompilerVisitor(compilationContext);
         byte[] bytecode = visitor.compile(statements);
 
-        Class<? extends CompiledScriptExecutable> executableClass = DynamicScriptClassLoader.loadExecutableClass(className, bytecode);
+        Class<? extends CompiledScriptExecutable> executableClass =
+                DynamicScriptClassLoader.loadExecutableClass(className, bytecode);
         try {
-            CompiledScriptExecutable executable = executableClass.getDeclaredConstructor().newInstance();
+            CompiledScriptExecutable executable =
+                    executableClass.getDeclaredConstructor().newInstance();
             return new StandardCompiledScript(context.runtime(), executable, bytecode);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw ScriptEvaluationError.builder(Phase.COMPILING)
                     .virtualPosition()
                     .cause(e)

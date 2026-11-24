@@ -16,9 +16,10 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.hsl.CompiledExpressionScript;
 import org.dockbox.hartshorn.hsl.CompiledScript;
-import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.InterpretedExpressionScript;
 import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
@@ -28,8 +29,6 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation

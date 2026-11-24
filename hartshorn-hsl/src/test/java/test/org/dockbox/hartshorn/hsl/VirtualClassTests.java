@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import java.util.stream.Stream;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.InterpretedScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
@@ -31,8 +32,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class VirtualClassTests {
@@ -42,53 +41,52 @@ public class VirtualClassTests {
 
     public static Stream<Arguments> propertyAccessors() {
         FormattedDiagnostic readPrivateMessage = FormattedDiagnostic.builder()
-            .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
-            .argument("read")
-            .argument("name")
-            .argument("User")
-            .argument("private")
-            .argument("no members")
-            .build();
+                .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
+                .argument("read")
+                .argument("name")
+                .argument("User")
+                .argument("private")
+                .argument("no members")
+                .build();
         FormattedDiagnostic writePrivateMessage = FormattedDiagnostic.builder()
-            .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
-            .argument("assign to")
-            .argument("name")
-            .argument("User")
-            .argument("private")
-            .argument("no members")
-            .build();
+                .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
+                .argument("assign to")
+                .argument("name")
+                .argument("User")
+                .argument("private")
+                .argument("no members")
+                .build();
         FormattedDiagnostic reassignFinalMessage = FormattedDiagnostic.builder()
-            .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT)
-            .argument("property")
-            .argument("name")
-            .argument("User")
-            .build();
+                .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT)
+                .argument("property")
+                .argument("name")
+                .argument("User")
+                .build();
         return Stream.of(
-            Arguments.of("public", "getName()", null),
-            Arguments.of("private", "getName()", null),
-            Arguments.of("", "getName()", null),
-            Arguments.of("public", "name", null),
-            Arguments.of("private", "name", readPrivateMessage),
-            Arguments.of("", "name", null),
-            Arguments.of("public", "setName(\"Foo\")", null),
-            Arguments.of("private", "setName(\"Foo\")", null),
-            Arguments.of("", "setName(\"Foo\")", null),
-            Arguments.of("public", "name = \"Foo\"", null),
-            Arguments.of("private", "name = \"Foo\"", writePrivateMessage),
-            Arguments.of("", "name = \"Foo\"", null),
-            Arguments.of("public final", "getName()", null),
-            Arguments.of("private final", "getName()", null),
-            Arguments.of("final", "getName()", null),
-            Arguments.of("public final", "name", null),
-            Arguments.of("private final", "name", readPrivateMessage),
-            Arguments.of("final", "name", null),
-            Arguments.of("public final", "setName(\"Foo\")", reassignFinalMessage),
-            Arguments.of("private final", "setName(\"Foo\")", reassignFinalMessage),
-            Arguments.of("final", "setName(\"Foo\")", reassignFinalMessage),
-            Arguments.of("public final", "name = \"Foo\"", reassignFinalMessage),
-            Arguments.of("private final", "name = \"Foo\"", writePrivateMessage),
-            Arguments.of("final", "name = \"Foo\"", reassignFinalMessage)
-        );
+                Arguments.of("public", "getName()", null),
+                Arguments.of("private", "getName()", null),
+                Arguments.of("", "getName()", null),
+                Arguments.of("public", "name", null),
+                Arguments.of("private", "name", readPrivateMessage),
+                Arguments.of("", "name", null),
+                Arguments.of("public", "setName(\"Foo\")", null),
+                Arguments.of("private", "setName(\"Foo\")", null),
+                Arguments.of("", "setName(\"Foo\")", null),
+                Arguments.of("public", "name = \"Foo\"", null),
+                Arguments.of("private", "name = \"Foo\"", writePrivateMessage),
+                Arguments.of("", "name = \"Foo\"", null),
+                Arguments.of("public final", "getName()", null),
+                Arguments.of("private final", "getName()", null),
+                Arguments.of("final", "getName()", null),
+                Arguments.of("public final", "name", null),
+                Arguments.of("private final", "name", readPrivateMessage),
+                Arguments.of("final", "name", null),
+                Arguments.of("public final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("private final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("public final", "name = \"Foo\"", reassignFinalMessage),
+                Arguments.of("private final", "name = \"Foo\"", writePrivateMessage),
+                Arguments.of("final", "name = \"Foo\"", reassignFinalMessage));
     }
 
     @ParameterizedTest
@@ -113,11 +111,11 @@ public class VirtualClassTests {
 
         // If an error message is expected, assert that the script evaluation fails with the expected message
         if (message != null) {
-            ScriptEvaluationError error =
-                assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::evaluate).actual();
+            ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                    .isThrownBy(script::evaluate)
+                    .actual();
             ScriptAssertions.assertEvaluationError(error, message);
-        }
-        else {
+        } else {
             script.evaluate();
         }
     }

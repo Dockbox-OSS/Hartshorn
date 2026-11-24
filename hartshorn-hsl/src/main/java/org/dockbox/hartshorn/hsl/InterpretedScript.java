@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionMode;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -90,8 +89,7 @@ public class InterpretedScript extends ExecutableScript {
         if (this.scriptContext() != null) {
             ScriptContext context = this.getOrCreateRuntime().runOnly(this.scriptContext(), Phase.EXECUTING);
             this.scriptContext(context);
-        }
-        else {
+        } else {
             this.resolve();
             this.evaluate();
         }

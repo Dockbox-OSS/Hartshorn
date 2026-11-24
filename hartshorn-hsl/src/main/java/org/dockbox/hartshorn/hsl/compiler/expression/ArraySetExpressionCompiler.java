@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.compiler.expression;
 
+import java.lang.classfile.CodeBuilder;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.compiler.CompilationChain;
 import org.dockbox.hartshorn.hsl.compiler.CompilationContext;
 import org.dockbox.hartshorn.hsl.compiler.runtime.HslRuntimeSupport;
-
-import java.lang.classfile.CodeBuilder;
 
 /**
  * Compiler for {@link ArraySetExpression} nodes.
@@ -33,7 +32,8 @@ import java.lang.classfile.CodeBuilder;
 public class ArraySetExpressionCompiler implements ExpressionCompiler<ArraySetExpression> {
 
     @Override
-    public void compile(ArraySetExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
+    public void compile(
+            ArraySetExpression node, CodeBuilder code, CompilationContext context, CompilationChain visitor) {
         code.aload(CompilationContext.CONTEXT_SLOT);
         code.aload(CompilationContext.SCOPE_SLOT);
         code.ldc(node.name().lexeme());
