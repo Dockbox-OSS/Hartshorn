@@ -37,10 +37,7 @@
         </property>
       </activation>
       <modules>
-        <module>hartshorn-proxy-test-fixtures</module>
-        <module>hartshorn-introspect-test-fixtures</module>
         <module>hartshorn-integration-tests</module>
-        <module>hartshorn-web-test-fixtures</module>
         <module>hartshorn-launchpad-samples</module>
         <module>hartshorn-assembly/architecture-rules</module>
       </modules>
@@ -77,6 +74,9 @@
         <module>hartshorn-web-jetty</module>
         <module>hartshorn-test-assertions</module>
         <module>hartshorn-testsuite</module>
+        <module>hartshorn-proxy-test-fixtures</module>
+        <module>hartshorn-introspect-test-fixtures</module>
+        <module>hartshorn-web-test-fixtures</module>
         <module>hartshorn-support</module>
         <module>hartshorn-launchpad-kotlin-extensions</module>
         <module>hartshorn-launchpad-starter</module>
