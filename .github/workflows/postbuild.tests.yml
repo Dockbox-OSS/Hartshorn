@@ -16,7 +16,7 @@ jobs:
       - name: Run tests
         id: test
         run: "mvn clean verify 
-        -P ci 
+        -Dci 
         -Djacoco.haltOnFailure=true 
         -Djacoco.skip=false 
         -Dcoverage.skip=false"
@@ -38,7 +38,7 @@ jobs:
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
         # Note that coverage should still be enabled here, as specific instructions may differ per platform
         run: "mvn clean verify 
-        -P ci 
+        -Dci 
         -Djacoco.haltOnFailure=true 
         -Djacoco.skip=false 
         -Dcoverage.skip=false"

@@ -33,7 +33,7 @@
       <id>local</id>
       <activation>
         <property>
-          <name>!excludeLocal</name>
+          <name>!release</name>
         </property>
       </activation>
       <modules>
@@ -49,6 +49,9 @@
       <id>default</id>
       <activation>
         <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!excludeDefault</name>
+        </property>
       </activation>
       <modules>
         <!-- Platform and base modules -->
@@ -81,6 +84,11 @@
     </profile>
     <profile>
       <id>ci</id>
+      <activation>
+        <property>
+          <name>ci</name>
+        </property>
+      </activation>
       <properties>
         <jacoco.skip>true</jacoco.skip>
         <javadoc.skip>true</javadoc.skip>

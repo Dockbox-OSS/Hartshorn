@@ -14,8 +14,7 @@
               <option value="clean" />
               <option value="install" />
               <option value="-DskipTests" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
             </list>
           </option>
           <option name="multimoduleDir" />

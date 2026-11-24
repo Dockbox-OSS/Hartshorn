@@ -27,7 +27,8 @@ jobs:
           REVISION="${GITHUB_REF_NAME#release/}"
           REVISION="${REVISION#v}"
           mvn clean deploy \
-            -P ci,default,release \
+            -Dci \
+            -Drelease \
             -Djavadoc.skip=false \ 
             -DexcludeLocal \
             -DskipTests \

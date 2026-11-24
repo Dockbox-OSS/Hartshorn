@@ -51,6 +51,11 @@
     <profile>
       <!-- CI profile, so we can opt-in to goals, instead of having to opt-out -->
       <id>ci</id>
+      <activation>
+        <property>
+          <name>ci</name>
+        </property>
+      </activation>
       <properties>
         <spotless.check.skip>true</spotless.check.skip>
         <spotless.apply.skip>true</spotless.apply.skip>

@@ -14,8 +14,7 @@
               <option value="clean" />
               <option value="verify" />
               <option value="-DskipTests" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
               <option value="-Dspotless.skip=false" />
               <option value="-Derrorprone.skip=false" />
             </list>

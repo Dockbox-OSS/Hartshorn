@@ -14,8 +14,7 @@
               <option value="verify" />
               <option value="-DskipTests" />
               <option value="-Dowasp.skip=false" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
             </list>
           </option>
           <option name="multimoduleDir" />
