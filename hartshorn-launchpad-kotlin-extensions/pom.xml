@@ -22,9 +22,6 @@
     </dependency>
   </dependencies>
 
-  <!-- TODO: Review what is required/redundant,
-        perhaps can move this to platform-build for mixed support?
-  -->
   <build>
     <plugins>
       <plugin>

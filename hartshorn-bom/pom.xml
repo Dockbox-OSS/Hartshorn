@@ -42,114 +42,114 @@
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-shared</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-properties</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-profiles</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-spi</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-proxy</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-proxy-test-fixtures</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-proxy-javassist</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-introspect</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-introspect-test-fixtures</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-introspect-reflection</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-inject</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-inject-configurations</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-launchpad</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-launchpad-kotlin-extensions</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-reporting</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-hsl</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-web</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-web-jetty</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-web-test-fixtures</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-support</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-test-assertions</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-testsuite</artifactId>
-        <version>${revision}</version>
+        <version>${hartshorn.version}</version>
         <scope>test</scope>
       </dependency>
 

@@ -43,9 +43,6 @@
         <module>hartshorn-web-test-fixtures</module>
         <module>hartshorn-launchpad-samples</module>
         <module>hartshorn-assembly/architecture-rules</module>
-
-        <!-- TODO: Verify if this can be included by default for deployments -->
-        <module>hartshorn-launchpad-starter</module>
       </modules>
     </profile>
     <profile>
@@ -79,6 +76,7 @@
         <module>hartshorn-testsuite</module>
         <module>hartshorn-support</module>
         <module>hartshorn-launchpad-kotlin-extensions</module>
+        <module>hartshorn-launchpad-starter</module>
       </modules>
     </profile>
     <profile>
