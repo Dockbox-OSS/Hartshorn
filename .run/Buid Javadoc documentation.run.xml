@@ -15,8 +15,7 @@
               <option value="install" />
               <option value="site" />
               <option value="-DskipTests" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
               <option value="-Djavadoc.skip=false" />
             </list>
           </option>

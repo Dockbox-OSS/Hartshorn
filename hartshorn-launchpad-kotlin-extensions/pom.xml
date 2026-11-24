@@ -8,7 +8,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-platform-support</artifactId>
     <version>${revision}</version>
-    <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
+    <relativePath>../hartshorn-assembly/hartshorn-platform-support</relativePath>
   </parent>
 
   <name>Hartshorn Launchpad Kotlin Extensions</name>
@@ -21,4 +21,69 @@
       <artifactId>hartshorn-launchpad</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*.kt</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jetbrains.dokka</groupId>
+        <artifactId>dokka-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <executions>
+          <execution>
+            <id>kotlin-javadoc</id>
+            <phase>package</phase>
+            <goals>
+              <goal>javadocJar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <skip>${javadoc.skip}</skip>
+          <sourceDirectories>
+            <dir>${project.basedir}/src/main/kotlin</dir>
+          </sourceDirectories>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>none</phase>
+            <configuration>
+              <skip>${javadoc.skip}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-kotlin-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/kotlin</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

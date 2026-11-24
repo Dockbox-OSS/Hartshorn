@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Build project" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="Build project (CI mode)" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -14,8 +14,7 @@
               <option value="clean" />
               <option value="install" />
               <option value="-DskipTests" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
             </list>
           </option>
           <option name="multimoduleDir" />

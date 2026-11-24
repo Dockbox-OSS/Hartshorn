@@ -8,7 +8,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-launchpad-starter</artifactId>
     <version>${revision}</version>
-    <relativePath>../../hartshorn-launchpad-starter/pom.xml</relativePath>
+    <relativePath>../../hartshorn-launchpad-starter</relativePath>
   </parent>
 
   <name>Hartshorn Sample: Scopes</name>

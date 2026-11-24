@@ -11,11 +11,9 @@
           </option>
           <option name="goals">
             <list>
-              <option value="mvn" />
               <option value="clean" />
               <option value="verify" />
-              <option value="-P" />
-              <option value="ci" />
+              <option value="-Dci" />
               <option value="-Djacoco.haltOnFailure=true" />
               <option value="-Djacoco.skip=false" />
               <option value="-Dcoverage.skip=false" />

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Checkstyle" type="MavenRunConfiguration" factoryName="Maven" folderName="Verification">
+  <configuration default="false" name="Build project (full)" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -12,12 +12,7 @@
           <option name="goals">
             <list>
               <option value="clean" />
-              <option value="verify" />
-              <option value="-DskipTests" />
-              <option value="-P" />
-              <option value="ci" />
-              <option value="-Dcheckstyle.skip=false" />
-              <option value="-Derrorprone.skip=false" />
+              <option value="install" />
             </list>
           </option>
           <option name="multimoduleDir" />

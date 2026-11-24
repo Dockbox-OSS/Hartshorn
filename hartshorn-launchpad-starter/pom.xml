@@ -12,11 +12,51 @@
   <name>Hartshorn Launchpad Starter</name>
   <description>Launchpad configuration for Maven artifacts</description>
 
+  <url>https://hartshorn.dockbox.org/</url>
+  <inceptionYear>2019</inceptionYear>
+  <organization>
+    <name>Dockbox OSS</name>
+    <url>https://dockbox.org/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/Dockbox-OSS/Hartshorn</url>
+    <connection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</connection>
+    <developerConnection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Guus Lieben</name>
+      <email>guuslieben@dockbox.org</email>
+      <url>https://github.com/GuusLieben</url>
+      <organization>Dockbox OSS</organization>
+      <organizationUrl>https://dockbox.org/</organizationUrl>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://www.github.com/Dockbox-OSS/Hartshorn/issues</url>
+  </issueManagement>
+
   <properties>
     <revision>0.7.0</revision>
     <java.version>25</java.version>
-    <hartshorn.version>${project.version}</hartshorn.version>
+    <hartshorn.version>${revision}</hartshorn.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Maven plugin versions, in alphabetical order -->
+    <plugin.compiler.version>3.16.0</plugin.compiler.version>
+    <plugin.flatten.version>1.9.0</plugin.flatten.version>
   </properties>
 
   <dependencyManagement>
@@ -76,7 +116,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>${plugin.compiler.version}</version>
         <configuration>
           <release>${java.version}</release>
           <fork>false</fork>
@@ -88,4 +128,70 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.12.0</version>
+            <extensions>true</extensions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <version>${plugin.flatten.version}</version>
+            <configuration>
+              <updatePomFile>true</updatePomFile>
+              <flattenMode>resolveCiFriendliesOnly</flattenMode>
+              <pomElements>
+                <build>keep</build>
+                <profiles>remove</profiles>
+              </pomElements>
+            </configuration>
+            <executions>
+              <execution>
+                <id>flatten</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>flatten</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>flatten.clean</id>
+                <phase>clean</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.8</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

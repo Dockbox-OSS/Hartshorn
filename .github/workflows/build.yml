@@ -14,4 +14,4 @@ jobs:
           java-version: 25
           distribution: temurin
       - name: "Build (source JDK)"
-        run: mvn clean install -DskipTests -P ci
+        run: mvn clean install -DskipTests -Dci

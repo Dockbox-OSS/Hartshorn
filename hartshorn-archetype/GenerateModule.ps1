@@ -57,8 +57,8 @@ Write-Host "  </dependency>" -ForegroundColor DarkGray
 Write-Host "`nAfter completing the above manual steps, please:" -ForegroundColor DarkYellow
 Write-Host "- Review the generated module at 'hartshorn-$Module' and make any necessary adjustments." -ForegroundColor Yellow
 Write-Host "- Build the project to ensure everything is set up correctly." -ForegroundColor Yellow
-Write-Host "  `$ mvn clean install -DskipTests -P ci" -ForegroundColor DarkGray
+Write-Host "  `$ mvn clean install -DskipTests -Dci" -ForegroundColor DarkGray
 if (-NOT $NoDocs) {
     Write-Host "- Verify that the documentation for the new module is correctly integrated into the Antora site." -ForegroundColor Yellow
-    Write-Host "  `$ mvn clean install -DskipTests -P ci,local -Dantora.skip=false -Dantora.playbook=playbook-local.yml" -ForegroundColor DarkGray
+    Write-Host "  `$ mvn clean install -DskipTests -Dci -Dantora.skip=false -Dantora.playbook=playbook-local.yml" -ForegroundColor DarkGray
 }

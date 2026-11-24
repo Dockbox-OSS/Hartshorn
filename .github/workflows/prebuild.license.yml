@@ -17,4 +17,4 @@ jobs:
           java-version: 25
           distribution: temurin
       - name: Check license headers
-        run: mvn clean verify -DskipTests -P ci -Dlicense-check.skip=false
+        run: mvn clean verify -DskipTests -Dci -Dlicense-check.skip=false

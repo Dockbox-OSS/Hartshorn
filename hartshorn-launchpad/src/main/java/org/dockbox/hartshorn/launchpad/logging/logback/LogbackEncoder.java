@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,18 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  */
 public class LogbackEncoder extends PatternLayoutEncoder {
 
+    private static final String PROCESS_ID = "process_id";
+
     @Override
     public void start() {
-        PatternLayout.DEFAULT_CONVERTER_MAP.put("process_id", LogbackPIDConverter.class.getName());
+        PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put(
+            PROCESS_ID,
+            LogbackPIDConverter::new
+        );
+        PatternLayout.CONVERTER_CLASS_TO_KEY_MAP.put(
+            LogbackPIDConverter.class.getName(),
+            PROCESS_ID
+        );
         super.start();
     }
 }

@@ -182,8 +182,11 @@ public final class ConfigurableApplicationEnvironment
 
         Class<?> mainClass = bootstrapContext.mainClass();
         TypeView<?> mainType = this.introspector().introspect(mainClass);
-        this.componentRegistry()
-            .addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
+        // For short form, we only register the main class as a component if it has a constructor
+        if (mainType.constructors().count() > 0) {
+            this.componentRegistry()
+                    .addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
+        }
 
         this.resourceLookup = this.configure(
             environmentInitializerContext,
