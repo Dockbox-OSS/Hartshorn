@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import org.dockbox.hartshorn.context.SingleElementContext;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.dockbox.hartshorn.context.SingleElementContext;
 
 /**
  * A functional interface for initializing objects. This interface is similar to {@link Initializer}
@@ -106,8 +105,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that delegates to the given initializer.
      */
     static <I1, I2 extends I1, T> ContextualInitializer<I2, T> defer(
-        Supplier<ContextualInitializer<I1, T>> initializer
-    ) {
+            Supplier<ContextualInitializer<I1, T>> initializer) {
         return input -> initializer.get().initialize(input);
     }
 

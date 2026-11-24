@@ -16,12 +16,11 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.web.HttpStatusSeries;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 public class HttpStatusSeriesTests {
 
@@ -43,8 +42,7 @@ public class HttpStatusSeriesTests {
                 Arguments.of(550, HttpStatusSeries.SERVER_ERROR),
                 Arguments.of(599, HttpStatusSeries.SERVER_ERROR),
                 Arguments.of(99, HttpStatusSeries.UNKNOWN),
-                Arguments.of(600, HttpStatusSeries.UNKNOWN)
-        );
+                Arguments.of(600, HttpStatusSeries.UNKNOWN));
     }
 
     @ParameterizedTest

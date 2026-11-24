@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -26,10 +29,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.TypeHierarchyGraph;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Resolver for type parameters of types in a type hierarchy. This allows you to trace the type
@@ -75,40 +74,33 @@ public class TypeParameterResolver {
      * @throws TypeParameterResolutionException if the type parameters cannot be resolved, for
      * example if the parent type is not found in the hierarchy
      */
-    public List<TypeParameterView> resolveInputForParent(
-        TypeView<?> baseType,
-        TypeView<?> forParent
-    ) throws TypeParameterResolutionException {
+    public List<TypeParameterView> resolveInputForParent(TypeView<?> baseType, TypeView<?> forParent)
+            throws TypeParameterResolutionException {
         TypeHierarchyGraph baseTypeHierarchy = TypeHierarchyGraph.of(baseType);
         try {
-            Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(baseTypeHierarchy,
-                node -> node.type() == forParent.type());
+            Graph<TypeView<?>> inverted =
+                    new GraphInverter().invertGraph(baseTypeHierarchy, node -> node.type() == forParent.type());
             return this.resolveFromHierarchy(forParent, inverted);
-        }
-        catch (GraphException e) {
-            throw new TypeParameterResolutionException("Failed to resolve type parameters for "
-                + forParent.type().getName()
-                + " from hierarchy graph", e);
+        } catch (GraphException e) {
+            throw new TypeParameterResolutionException(
+                    "Failed to resolve type parameters for " + forParent.type().getName() + " from hierarchy graph", e);
         }
     }
 
-    private List<TypeParameterView> resolveFromHierarchy(
-        TypeView<?> parent,
-        Graph<TypeView<?>> graph
-    ) throws TypeParameterResolutionException {
+    private List<TypeParameterView> resolveFromHierarchy(TypeView<?> parent, Graph<TypeView<?>> graph)
+            throws TypeParameterResolutionException {
         TypeParameterView[] parameters =
-            new TypeParameterView[parent.typeParameters().allInput().count()];
+                new TypeParameterView[parent.typeParameters().allInput().count()];
         Set<GraphNode<TypeView<?>>> roots = graph.roots();
         if (roots.size() != 1) {
-            throw new TypeParameterResolutionException("Expected exactly one root node, found "
-                + roots.size());
+            throw new TypeParameterResolutionException("Expected exactly one root node, found " + roots.size());
         }
         GraphNode<TypeView<?>> root = CollectionUtilities.first(roots);
         // Compare type, not view, as the view is likely parameterized and thus a different
         // non-equal instance
         if (root.value().type() != parent.type()) {
-            throw new TypeParameterResolutionException("Expected root node to be " + parent.type()
-                .getName() + ", found " + root.value().type().getName());
+            throw new TypeParameterResolutionException("Expected root node to be "
+                    + parent.type().getName() + ", found " + root.value().type().getName());
         }
 
         this.visit(root, parameters);
@@ -119,17 +111,15 @@ public class TypeParameterResolver {
 
     private void visit(GraphNode<TypeView<?>> node, TypeParameterView[] parameters) {
         TypeView<?> currentValue = node.value();
-        List<TypeParameterView> inputParameters = currentValue.typeParameters().allInput().asList();
+        List<TypeParameterView> inputParameters =
+                currentValue.typeParameters().allInput().asList();
         for (int i = 0; i < inputParameters.size(); i++) {
             TypeParameterView parameter = inputParameters.get(i);
             parameters[i] = this.resolveParameter(node, parameter);
         }
     }
 
-    private TypeParameterView resolveParameter(
-        GraphNode<TypeView<?>> node,
-        TypeParameterView parameter
-    ) {
+    private TypeParameterView resolveParameter(GraphNode<TypeView<?>> node, TypeParameterView parameter) {
         int index = parameter.index();
         TypeView<?> typeView = node.value();
         Class<?> type = typeView.type();
@@ -143,8 +133,7 @@ public class TypeParameterResolver {
             if (typeView.isParameterized() && parameter.declaredBy().is(typeView.type())) {
                 return this.resolveFromGenericParent(parameter, typeView);
             }
-        }
-        else {
+        } else {
             // Definition is available, so we can resolve the parameter from the type definition.
             // This may still be a type variable, but we can recursively resolve it further down
             // the hierarchy.
@@ -155,10 +144,7 @@ public class TypeParameterResolver {
         return null;
     }
 
-    private TypeParameterView resolveFromGenericParent(
-        TypeParameterView parameter,
-        TypeView<?> typeView
-    ) {
+    private TypeParameterView resolveFromGenericParent(TypeParameterView parameter, TypeView<?> typeView) {
         TypeParameterList parameterViews = typeView.typeParameters().allInput();
         Option<TypeParameterView> parameterAtIndex = parameterViews.atIndex(parameter.index());
         if (parameterAtIndex.present()) {
@@ -171,10 +157,7 @@ public class TypeParameterResolver {
     }
 
     private TypeParameterView resolveFromTypeDefinition(
-        int index,
-        Class<?> type,
-        Set<GraphNode<TypeView<?>>> children
-    ) {
+            int index, Class<?> type, Set<GraphNode<TypeView<?>>> children) {
         for (GraphNode<TypeView<?>> child : children) {
             TypeParameterList outputParameters = child.value().typeParameters().outputFor(type);
             // If there are no output parameters for the given type, we don't have anything to
@@ -188,8 +171,7 @@ public class TypeParameterResolver {
                 // If we're immediately at a concrete type parameter, return it.
                 if (!parameterView.isVariable()) {
                     return parameterView;
-                }
-                else {
+                } else {
                     // If the parameter is a variable, we need to resolve it further down the
                     // hierarchy.
                     Option<TypeParameterView> definition = parameterView.definition();

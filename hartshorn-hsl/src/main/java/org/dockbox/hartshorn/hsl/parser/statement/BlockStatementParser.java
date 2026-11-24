@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -32,18 +31,15 @@ import org.dockbox.hartshorn.util.option.Option;
  * A parser for block statements which respects the block token pair defined in the token registry.
  *
  * @see BlockStatement
- * 
+ *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class BlockStatementParser implements StatementParser<BlockStatement> {
 
     @Override
-    public Option<? extends BlockStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.check(block.open())) {
             Token start = parser.advance();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.proxy.advice.stub;
  * @param <T> The type of the proxy instance
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ErrorResponseMethodStub<T> implements MethodStub<T> {
@@ -34,9 +34,9 @@ public class ErrorResponseMethodStub<T> implements MethodStub<T> {
         String className = targetClass == null ? "" : targetClass.getSimpleName() + ".";
         String name = stubContext.target().name();
         throw new AbstractMethodError("Cannot invoke method '"
-            + className
-            + name
-            + "' because it is abstract. "
-            + "This type is proxied, but no advisor was found for the method.");
+                + className
+                + name
+                + "' because it is abstract. "
+                + "This type is proxied, but no advisor was found for the method.");
     }
 }

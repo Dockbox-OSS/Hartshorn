@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.inject.aliases;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.configuration.BindingAlias;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
@@ -27,18 +31,12 @@ import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class BindingAliasingTests {
 
     @Test
     void aliasBindingsCanBeResolved(@Inject ApplicationContext applicationContext) {
-        applicationContext.bind(String.class)
-            .alias(CharSequence.class)
-            .singleton("Hello world");
+        applicationContext.bind(String.class).alias(CharSequence.class).singleton("Hello world");
 
         String helloWorldString = applicationContext.get(String.class);
         CharSequence helloWorldCharSequence = applicationContext.get(CharSequence.class);
@@ -57,25 +55,26 @@ class BindingAliasingTests {
 
     @Test
     @TestComponents(OverlappingDefaultAndAliasBindingConfiguration.class)
-    void overlappingDefaultAndAliasBindingsFromConfigurationCanResolve(
-        @Inject ComponentProvider provider
-    ) {
+    void overlappingDefaultAndAliasBindingsFromConfigurationCanResolve(@Inject ComponentProvider provider) {
         assertThatCode(() -> provider.get(String.class)).doesNotThrowAnyException();
         assertThatCode(() -> provider.get(CharSequence.class)).doesNotThrowAnyException();
     }
 
     @Test
     void overlappingPriorityAliasBindingsFails(@Inject ApplicationContext applicationContext) {
-        applicationContext.bind(String.class)
-            .alias(CharSequence.class)
-            .priority(1)
-            .singleton("Hello world");
-        applicationContext.bind(StringBuilder.class)
-            .alias(CharSequence.class)
-            .priority(1)
-            .singleton(new StringBuilder("Hello world"));
+        applicationContext
+                .bind(String.class)
+                .alias(CharSequence.class)
+                .priority(1)
+                .singleton("Hello world");
+        applicationContext
+                .bind(StringBuilder.class)
+                .alias(CharSequence.class)
+                .priority(1)
+                .singleton(new StringBuilder("Hello world"));
 
-        assertThatExceptionOfType(AmbiguousComponentException.class).isThrownBy(() -> applicationContext.get(CharSequence.class));
+        assertThatExceptionOfType(AmbiguousComponentException.class)
+                .isThrownBy(() -> applicationContext.get(CharSequence.class));
     }
 
     @Configuration

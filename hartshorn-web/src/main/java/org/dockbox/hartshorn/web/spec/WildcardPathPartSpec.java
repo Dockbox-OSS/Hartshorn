@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.web.spec;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Specification for a path part that represents a wildcard match. A wildcard part matches any value

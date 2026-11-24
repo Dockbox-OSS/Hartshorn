@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.Converter;
-import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToCollectionConverterFactory;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +26,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToCollectionConverterFactory;
+import org.junit.jupiter.api.Test;
 
 class CollectionToCollectionConverterFactoryTests {
 
@@ -39,11 +38,10 @@ class CollectionToCollectionConverterFactoryTests {
         Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3));
         List<Integer> expectedOutput = Arrays.asList(1, 2, 3);
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            ArrayList.class,
-            ArrayList::new);
+        Introspector introspector =
+                ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
         Converter<Collection<?>, ArrayList> converter =
-            new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
+                new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
         List<Integer> output = converter.convert(input);
 
         assertThat(output)
@@ -57,11 +55,10 @@ class CollectionToCollectionConverterFactoryTests {
         Set<String> input = new LinkedHashSet<>(Arrays.asList("foo", "bar", "baz"));
         List<String> expectedOutput = new LinkedList<>(Arrays.asList("foo", "bar", "baz"));
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            LinkedList.class,
-            LinkedList::new);
+        Introspector introspector =
+                ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedList.class, LinkedList::new);
         Converter<Collection<?>, LinkedList> converter =
-            new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
+                new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
         List<String> output = converter.convert(input);
 
         assertThat(output)
@@ -75,16 +72,13 @@ class CollectionToCollectionConverterFactoryTests {
         Set<Integer> input = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
         Set<Integer> expectedOutput = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
 
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            LinkedHashSet.class,
-            LinkedHashSet::new);
+        Introspector introspector =
+                ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedHashSet.class, LinkedHashSet::new);
         Converter<Collection<?>, LinkedHashSet> converter =
-            new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
+                new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
         Set<?> output = converter.convert(input);
 
-        assertThat(output)
-                .isInstanceOf(LinkedHashSet.class)
-                .hasSameSizeAs(expectedOutput);
+        assertThat(output).isInstanceOf(LinkedHashSet.class).hasSameSizeAs(expectedOutput);
 
         // Assert order is preserved
         List<?> outputList = new ArrayList<>(output);

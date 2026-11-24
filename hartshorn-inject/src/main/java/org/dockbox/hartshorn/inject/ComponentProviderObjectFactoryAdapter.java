@@ -28,8 +28,7 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  *
  * @author Guus Lieben
  */
-public record ComponentProviderObjectFactoryAdapter(ComponentProvider componentProvider)
-    implements ObjectFactory {
+public record ComponentProviderObjectFactoryAdapter(ComponentProvider componentProvider) implements ObjectFactory {
 
     @Override
     public <T> T create(Class<T> type) {

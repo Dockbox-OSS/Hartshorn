@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
+import java.util.Set;
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * An adapter {@link HierarchicalBinderPostProcessor} that delegates to another
@@ -36,16 +35,13 @@ import java.util.function.Predicate;
  *
  * @author Guus Lieben
  */
-public class ScopeFilteredDelegateBinderPostProcessor
-    extends AbstractScopeFilteredBinderPostProcessor {
+public class ScopeFilteredDelegateBinderPostProcessor extends AbstractScopeFilteredBinderPostProcessor {
 
     private final HierarchicalBinderPostProcessor processor;
     private final Predicate<ScopeKey> scopeFilter;
 
     public ScopeFilteredDelegateBinderPostProcessor(
-        HierarchicalBinderPostProcessor processor,
-        Predicate<ScopeKey> scopeFilter
-    ) {
+            HierarchicalBinderPostProcessor processor, Predicate<ScopeKey> scopeFilter) {
         this.processor = processor;
         this.scopeFilter = scopeFilter;
     }
@@ -60,9 +56,7 @@ public class ScopeFilteredDelegateBinderPostProcessor
      * @return the scope-filtered delegate processor
      */
     public static ScopeFilteredDelegateBinderPostProcessor create(
-        HierarchicalBinderPostProcessor processor,
-        Predicate<ScopeKey> scopeFilter
-    ) {
+            HierarchicalBinderPostProcessor processor, Predicate<ScopeKey> scopeFilter) {
         return new ScopeFilteredDelegateBinderPostProcessor(processor, scopeFilter);
     }
 
@@ -76,19 +70,12 @@ public class ScopeFilteredDelegateBinderPostProcessor
      * @return the scope-filtered delegate processor
      */
     public static ScopeFilteredDelegateBinderPostProcessor create(
-        HierarchicalBinderPostProcessor processor,
-        ScopeKey... permittedScopes
-    ) {
-        return new ScopeFilteredDelegateBinderPostProcessor(processor,
-            Set.of(permittedScopes)::contains);
+            HierarchicalBinderPostProcessor processor, ScopeKey... permittedScopes) {
+        return new ScopeFilteredDelegateBinderPostProcessor(processor, Set.of(permittedScopes)::contains);
     }
 
     @Override
-    protected void processBinder(
-        InjectionCapableApplication application,
-        Scope scope,
-        HierarchicalBinder binder
-    ) {
+    protected void processBinder(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
         this.processor.process(application, scope, binder);
     }
 

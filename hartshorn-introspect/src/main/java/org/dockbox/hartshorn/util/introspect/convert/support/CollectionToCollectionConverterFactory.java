@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Objects;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
-
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source
@@ -34,11 +33,10 @@ import java.util.Objects;
  * @see CollectionDefaultValueProviderFactory
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class CollectionToCollectionConverterFactory
-    implements ConverterFactory<Collection<?>, Collection<?>> {
+public class CollectionToCollectionConverterFactory implements ConverterFactory<Collection<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
@@ -47,17 +45,13 @@ public class CollectionToCollectionConverterFactory
     }
 
     public CollectionToCollectionConverterFactory(
-        DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory
-    ) {
+            DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
 
     @Override
     public <O extends Collection<?>> Converter<Collection<?>, O> create(Class<O> targetType) {
-        return new CollectionToCollectionConverter<>(
-            this.defaultValueProviderFactory.create(targetType),
-            targetType
-        );
+        return new CollectionToCollectionConverter<>(this.defaultValueProviderFactory.create(targetType), targetType);
     }
 
     /**
@@ -72,15 +66,12 @@ public class CollectionToCollectionConverterFactory
      * @author Guus Lieben
      */
     public static class CollectionToCollectionConverter<O extends Collection<?>>
-        implements Converter<Collection<?>, O> {
+            implements Converter<Collection<?>, O> {
 
         private final DefaultValueProvider<O> defaultValueProvider;
         private final Class<O> targetType;
 
-        public CollectionToCollectionConverter(
-            DefaultValueProvider<O> defaultValueProvider,
-            Class<O> targetType
-        ) {
+        public CollectionToCollectionConverter(DefaultValueProvider<O> defaultValueProvider, Class<O> targetType) {
             this.defaultValueProvider = defaultValueProvider;
             this.targetType = targetType;
         }
@@ -88,8 +79,7 @@ public class CollectionToCollectionConverterFactory
         @Override
         public O convert(Collection<?> source, Context... contexts) {
             //noinspection unchecked
-            Collection<Object> collection = (Collection<Object>) this.defaultValueProvider
-                .defaultValue();
+            Collection<Object> collection = (Collection<Object>) this.defaultValueProvider.defaultValue();
             Objects.requireNonNull(collection).addAll(source);
             return this.targetType.cast(collection);
         }

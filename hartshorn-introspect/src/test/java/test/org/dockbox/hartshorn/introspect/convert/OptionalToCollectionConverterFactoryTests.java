@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -48,19 +46,15 @@ class OptionalToCollectionConverterFactoryTests {
         Optional<String> option = Optional.of("test");
 
         Collection<?> converted = converter.convert(option);
-        assertThat(converted)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(converted).isNotEmpty().hasSize(1);
         assertThat(CollectionUtilities.first(converted)).isEqualTo("test");
     }
 
     @SuppressWarnings("NonApiType")
     private static Converter<Optional<?>, ArrayList> createConverter() {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(
-            ArrayList.class,
-            ArrayList::new);
-        ConverterFactory<Optional<?>, Collection<?>> factory =
-            new OptionalToCollectionConverterFactory(introspector);
+        Introspector introspector =
+                ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
+        ConverterFactory<Optional<?>, Collection<?>> factory = new OptionalToCollectionConverterFactory(introspector);
         return factory.create(ArrayList.class);
     }
 }

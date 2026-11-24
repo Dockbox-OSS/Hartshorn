@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.profiles.support;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
 import java.net.URI;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
  * Exception thrown when a profile could not be loaded from a given resource. This exception
@@ -31,10 +30,6 @@ import java.net.URI;
  */
 public class ProfileLoadingFailedException extends ApplicationRuntimeException {
     public ProfileLoadingFailedException(String profile, URI resource, Throwable cause) {
-        super("Profile with name '"
-            + profile
-            + "' could not be loaded from resource '"
-            + resource
-            + "'", cause);
+        super("Profile with name '" + profile + "' could not be loaded from resource '" + resource + "'", cause);
     }
 }

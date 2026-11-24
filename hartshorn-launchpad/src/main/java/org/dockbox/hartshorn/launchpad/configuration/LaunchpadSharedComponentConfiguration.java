@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
@@ -47,8 +48,6 @@ import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Supplier;
-
 /**
  * Configuration for core components that are required by the framework. This includes the
  * {@link Logger} and {@link ConversionService}.
@@ -76,18 +75,18 @@ public class LaunchpadSharedComponentConfiguration {
     @InfrastructurePriority
     @RequiresProperty(name = "hartshorn.logging.naming.use-container-names", withValue = "true")
     public Logger logger(
-        @Required(false) InjectionPoint injectionPoint,
-        ComponentRegistry componentRegistry,
-        InjectionPointDeclarationResolver declarationResolver
-    ) {
+            @Required(false) InjectionPoint injectionPoint,
+            ComponentRegistry componentRegistry,
+            InjectionPointDeclarationResolver declarationResolver) {
         if (injectionPoint == null) {
             return this.defaultLogger();
         }
         return this.loggerForInjectionPoint(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
-            return componentRegistry.container(declaringType)
-                .map(ComponentContainer::name)
-                .orElseGet(declaringType::getName);
+            return componentRegistry
+                    .container(declaringType)
+                    .map(ComponentContainer::name)
+                    .orElseGet(declaringType::getName);
         });
     }
 
@@ -104,9 +103,7 @@ public class LaunchpadSharedComponentConfiguration {
     @InfrastructurePriority
     @RequiresAbsentBinding(Logger.class)
     public Logger logger(
-        @Required(false) InjectionPoint injectionPoint,
-        InjectionPointDeclarationResolver declarationResolver
-    ) {
+            @Required(false) InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
         if (injectionPoint == null) {
             return this.defaultLogger();
         }
@@ -116,20 +113,19 @@ public class LaunchpadSharedComponentConfiguration {
         });
     }
 
-    private Logger loggerForInjectionPoint(
-        InjectionPoint injectionPoint,
-        Supplier<String> defaultNameSupplier
-    ) {
-        String name = injectionPoint.injectionPoint().annotations()
-            .get(LoggerMeta.class)
-            .map(meta -> {
-                if (meta.context() != Void.class) {
-                    return meta.context().getName();
-                }
-                return meta.name();
-            })
-            .filter(StringUtilities::notEmpty)
-            .orElseGet(defaultNameSupplier);
+    private Logger loggerForInjectionPoint(InjectionPoint injectionPoint, Supplier<String> defaultNameSupplier) {
+        String name = injectionPoint
+                .injectionPoint()
+                .annotations()
+                .get(LoggerMeta.class)
+                .map(meta -> {
+                    if (meta.context() != Void.class) {
+                        return meta.context().getName();
+                    }
+                    return meta.name();
+                })
+                .filter(StringUtilities::notEmpty)
+                .orElseGet(defaultNameSupplier);
 
         return LoggerFactory.getLogger(name);
     }
@@ -170,10 +166,8 @@ public class LaunchpadSharedComponentConfiguration {
             @Fuzzy ComponentCollection<GenericConverter> genericConverters,
             @Fuzzy ComponentCollection<ConverterFactory<?, ?>> converterFactories,
             @Fuzzy ComponentCollection<Converter<?, ?>> converters,
-            @Fuzzy ComponentCollection<ConvertersCustomizer> customizers
-    ) {
-        StandardConversionService service = new StandardConversionService(introspector)
-            .withDefaults();
+            @Fuzzy ComponentCollection<ConvertersCustomizer> customizers) {
+        StandardConversionService service = new StandardConversionService(introspector).withDefaults();
 
         genericConverters.forEach(service::addConverter);
         converterFactories.forEach(service::addConverterFactory);
@@ -196,9 +190,7 @@ public class LaunchpadSharedComponentConfiguration {
     public ConvertersCustomizer additionalInternalConvertersCustomizer() {
         return (conversionService, converterRegistry) -> {
             converterRegistry.addConverterFactory(
-                ValueProperty.class,
-                new ValuePropertyToObjectConverterFactory(conversionService)
-            );
+                    ValueProperty.class, new ValuePropertyToObjectConverterFactory(conversionService));
         };
     }
 

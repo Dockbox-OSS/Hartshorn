@@ -41,10 +41,7 @@ public class MultiMapDeserializer extends StdDeserializer<MultiMap<?, ?>> {
     }
 
     @Override
-    public MultiMap<?, ?> deserialize(
-            JsonParser parser,
-            DeserializationContext context
-    ) throws JacksonException {
+    public MultiMap<?, ?> deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
         MultiMap<Object, Object> map = new ArrayListMultiMap<>();
         while (parser.nextToken() != null) {
             String key = parser.currentName();

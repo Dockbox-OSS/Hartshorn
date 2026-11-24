@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package test.org.dockbox.hartshorn.launchpad.resources;
 
-import org.dockbox.hartshorn.launchpad.resources.Resources;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import org.dockbox.hartshorn.launchpad.resources.Resources;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.junit.jupiter.api.Test;
 
 class ResourcesTests {
 
@@ -61,11 +60,7 @@ class ResourcesTests {
     @Test
     void getResourceURLsReturnsValidURLs() throws Exception {
         Set<URL> urls = Resources.getResourceURLs("sample.txt");
-        assertThat(urls)
-                .isNotEmpty()
-                .hasSize(1)
-                .first()
-                .isNotNull();
+        assertThat(urls).isNotEmpty().hasSize(1).first().isNotNull();
     }
 
     @Test
@@ -78,9 +73,7 @@ class ResourcesTests {
     @Test
     void getResourceAsFilesReturnsValidFiles() throws Exception {
         Set<InputStream> files = Resources.getResourcesAsInputStreams("sample.txt");
-        assertThat(files)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(files).isNotEmpty().hasSize(1);
 
         InputStream file = CollectionUtilities.first(files);
         assertThat(file).isNotNull();

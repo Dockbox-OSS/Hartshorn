@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import java.util.List;
-
-import org.dockbox.hartshorn.context.Context;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
@@ -53,8 +52,7 @@ class ContextTests {
 
         ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
         List<TestContext> all = context.contexts(key);
-        assertThat(all)
-                .hasSize(1);
+        assertThat(all).hasSize(1);
     }
 
     @Test
@@ -64,8 +62,7 @@ class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<ContextView> key =
-            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         Option<ContextView> first = context.firstContext(key);
         assertThat(first.present()).isTrue();
         assertThat(first.get()).isSameAs(named);
@@ -79,7 +76,7 @@ class ContextTests {
         context.addContext(named);
 
         ContextIdentity<NamedTestContext> key =
-            new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+                new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         Option<NamedTestContext> first = context.firstContext(key);
         assertThat(first.present()).isTrue();
         assertThat(first.get()).isSameAs(named);
@@ -92,8 +89,7 @@ class ContextTests {
 
         context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<ContextView> key =
-            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         Option<ContextView> first = context.firstContext(key);
         assertThat(first.present()).isTrue();
         assertThat(first.get()).isSameAs(child);
@@ -106,11 +102,9 @@ class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<ContextView> key =
-            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
-        assertThat(all)
-                .hasSize(1);
+        assertThat(all).hasSize(1);
     }
 
     @Test
@@ -121,10 +115,9 @@ class ContextTests {
         context.addContext(named);
 
         ContextIdentity<NamedTestContext> key =
-            new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+                new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         List<NamedTestContext> all = context.contexts(key);
-        assertThat(all)
-                .hasSize(1);
+        assertThat(all).hasSize(1);
     }
 
     @Test
@@ -134,15 +127,12 @@ class ContextTests {
 
         context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<ContextView> key =
-            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
-        assertThat(all)
-                .hasSize(1);
+        assertThat(all).hasSize(1);
     }
 
-    public static class TestContext extends DefaultContext {
-    }
+    public static class TestContext extends DefaultContext {}
 
     public static class NamedTestContext extends DefaultNamedContext {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package test.org.dockbox.hartshorn.util.introspect.support.basic;
 
-import java.util.Locale;
-
-import org.dockbox.hartshorn.util.introspect.annotations.Property;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Locale;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleElementAnnotation;
 
 /**
@@ -37,13 +36,17 @@ public class ConcreteTestType extends ParentTestType {
 
     @MultipleElementAnnotation
     public static String publicStaticField = "publicStaticField";
+
     private static String privateStaticField = "privateStaticField";
     public final String finalPublicField = "finalPublicField";
     private final String finalPrivateField = "finalPrivateField";
+
     @Property(name = "propertyField")
     public String publicField = "publicField";
+
     @MultipleElementAnnotation
     private String privateField = "privateField";
+
     @Property(getter = "field", setter = "field")
     private String accessorField;
 
@@ -89,10 +92,8 @@ public class ConcreteTestType extends ParentTestType {
     }
 
     @MultipleElementAnnotation
-    public void publicAnnotatedMethod() {
-    }
+    public void publicAnnotatedMethod() {}
 
     @MultipleElementAnnotation
-    private void privateAnnotatedMethod() {
-    }
+    private void privateAnnotatedMethod() {}
 }

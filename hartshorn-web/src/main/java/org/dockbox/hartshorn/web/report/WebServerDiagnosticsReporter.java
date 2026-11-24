@@ -39,10 +39,7 @@ public class WebServerDiagnosticsReporter implements CategorizedDiagnosticsRepor
     private final WebServer webServer;
     private final HandlerMappingRegistry handlerMappingRegistry;
 
-    public WebServerDiagnosticsReporter(
-            WebServer webServer,
-            HandlerMappingRegistry handlerMappingRegistry
-    ) {
+    public WebServerDiagnosticsReporter(WebServer webServer, HandlerMappingRegistry handlerMappingRegistry) {
         this.webServer = webServer;
         this.handlerMappingRegistry = handlerMappingRegistry;
     }
@@ -60,8 +57,10 @@ public class WebServerDiagnosticsReporter implements CategorizedDiagnosticsRepor
             collector.property("server").writeDelegate(reportable);
         }
         MultiMap<PathSpec, PathHandlerSpec> mappings = handlerMappingRegistry.mappings();
-        collector.property("routes").writeDelegates(mappings.stream()
-                .map(HandlerMappingDiagnosticsReporter::new)
-                .toArray(Reportable[]::new));
+        collector
+                .property("routes")
+                .writeDelegates(mappings.stream()
+                        .map(HandlerMappingDiagnosticsReporter::new)
+                        .toArray(Reportable[]::new));
     }
 }

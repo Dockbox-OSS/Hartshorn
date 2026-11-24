@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.token;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
-
 import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
@@ -35,44 +34,35 @@ import org.dockbox.hartshorn.util.option.Option;
  * </ul>
  *
  * @see CommentTokenList
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class DefaultCommentTokenList implements CommentTokenList {
 
-    private static final TokenType LINE_COMMENT_START = buildCommentType(
-        "LINE_COMMENT_START",
-        DefaultTokenCharacter.SLASH, DefaultTokenCharacter.SLASH
-    );
+    private static final TokenType LINE_COMMENT_START =
+            buildCommentType("LINE_COMMENT_START", DefaultTokenCharacter.SLASH, DefaultTokenCharacter.SLASH);
 
-    private static final TokenType HASH_COMMENT_START = buildCommentType(
-        "HASH_COMMENT_START",
-        DefaultTokenCharacter.HASH
-    );
+    private static final TokenType HASH_COMMENT_START =
+            buildCommentType("HASH_COMMENT_START", DefaultTokenCharacter.HASH);
 
-    private static final TokenType BLOCK_COMMENT_START = buildCommentType(
-        "BLOCK_COMMENT_START",
-        DefaultTokenCharacter.SLASH, DefaultTokenCharacter.STAR
-    );
+    private static final TokenType BLOCK_COMMENT_START =
+            buildCommentType("BLOCK_COMMENT_START", DefaultTokenCharacter.SLASH, DefaultTokenCharacter.STAR);
 
-    private static final TokenType BLOCK_COMMENT_END = buildCommentType(
-        "BLOCK_COMMENT_END",
-        DefaultTokenCharacter.STAR, DefaultTokenCharacter.SLASH
-    );
+    private static final TokenType BLOCK_COMMENT_END =
+            buildCommentType("BLOCK_COMMENT_END", DefaultTokenCharacter.STAR, DefaultTokenCharacter.SLASH);
 
     private static final MultiMap<CommentType, TokenTypePair> COMMENT_TYPES =
-        MultiMap.<CommentType, TokenTypePair>builder()
-            .mapSupplier(() -> new EnumMap<>(CommentType.class))
-            .collectionSupplier(LinkedHashSet::new)
-            .build();
+            MultiMap.<CommentType, TokenTypePair>builder()
+                    .mapSupplier(() -> new EnumMap<>(CommentType.class))
+                    .collectionSupplier(LinkedHashSet::new)
+                    .build();
 
     static {
         COMMENT_TYPES.put(CommentType.LINE, new TokenTypePair(LINE_COMMENT_START, null));
         COMMENT_TYPES.put(CommentType.LINE, new TokenTypePair(HASH_COMMENT_START, null));
-        COMMENT_TYPES.put(CommentType.BLOCK,
-            new TokenTypePair(BLOCK_COMMENT_START, BLOCK_COMMENT_END));
+        COMMENT_TYPES.put(CommentType.BLOCK, new TokenTypePair(BLOCK_COMMENT_START, BLOCK_COMMENT_END));
     }
 
     /**
@@ -86,14 +76,14 @@ public class DefaultCommentTokenList implements CommentTokenList {
      */
     protected static TokenType buildCommentType(String name, TokenCharacter... characters) {
         return SimpleTokenType.builder()
-            .tokenName(name)
-            .keyword(false)
-            .standaloneStatement(false)
-            .reserved(false)
-            .assignsWith(null)
-            .defaultLexeme(null)
-            .characters(characters)
-            .build();
+                .tokenName(name)
+                .keyword(false)
+                .standaloneStatement(false)
+                .reserved(false)
+                .assignsWith(null)
+                .defaultLexeme(null)
+                .characters(characters)
+                .build();
     }
 
     @Override
@@ -105,17 +95,17 @@ public class DefaultCommentTokenList implements CommentTokenList {
     public Option<CommentType> resolveFromOpenToken(TokenType tokenType) {
         MultiMap<CommentType, TokenTypePair> commentTypes = this.commentTypes();
         return Option.of(commentTypes.keySet().stream()
-            .filter(type -> {
-                Collection<TokenTypePair> tokenTypePairs = commentTypes.get(type);
-                return tokenTypePairs.stream().anyMatch(pair -> pair.open().equals(tokenType));
-            })
-            .findFirst());
+                .filter(type -> {
+                    Collection<TokenTypePair> tokenTypePairs = commentTypes.get(type);
+                    return tokenTypePairs.stream().anyMatch(pair -> pair.open().equals(tokenType));
+                })
+                .findFirst());
     }
 
     @Override
     public Option<TokenTypePair> resolveTokenPairFromOpen(TokenType tokenType) {
         return Option.of(this.commentTypes().allValues().stream()
-            .filter(pair -> pair.open().equals(tokenType))
-            .findFirst());
+                .filter(pair -> pair.open().equals(tokenType))
+                .findFirst());
     }
 }

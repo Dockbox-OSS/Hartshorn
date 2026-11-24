@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ import java.util.stream.Stream;
  *
  * @author Guus Lieben
  */
-public class ValueAdapterDiagnosticsPropertyWriterConsumer
-    implements DiagnosticsPropertyWriterConsumer {
+public class ValueAdapterDiagnosticsPropertyWriterConsumer implements DiagnosticsPropertyWriterConsumer {
 
     private final Object object;
 
@@ -50,9 +49,7 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer
             case Enum enumValue -> writer.writeEnum(enumValue);
             case Reportable reportable -> writer.writeDelegate(reportable);
             case Class<?> clazz -> writer.writeString(clazz.getCanonicalName());
-            case Annotation annotation -> writer.writeDelegate(
-                new AnnotationReporter<>(annotation)
-            );
+            case Annotation annotation -> writer.writeDelegate(new AnnotationReporter<>(annotation));
             case String[] strings -> writer.writeStrings(strings);
             case int[] integers -> writer.writeInts(integers);
             case long[] longs -> writer.writeLongs(longs);
@@ -62,15 +59,12 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer
             case Enum[] enums -> writer.writeEnums(enums);
             case Reportable[] reportables -> writer.writeDelegates(reportables);
             case Class[] clazz -> {
-                String[] array = Stream.of(clazz)
-                    .map(Class::getCanonicalName)
-                    .toArray(String[]::new);
+                String[] array = Stream.of(clazz).map(Class::getCanonicalName).toArray(String[]::new);
                 writer.writeStrings(array);
             }
             case Annotation[] annotations -> {
-                AnnotationReporter[] array = Stream.of(annotations)
-                    .map(AnnotationReporter::new)
-                    .toArray(AnnotationReporter[]::new);
+                AnnotationReporter[] array =
+                        Stream.of(annotations).map(AnnotationReporter::new).toArray(AnnotationReporter[]::new);
                 writer.writeDelegates(array);
             }
             default -> throw new IllegalStateException("Unexpected value: " + this.object);

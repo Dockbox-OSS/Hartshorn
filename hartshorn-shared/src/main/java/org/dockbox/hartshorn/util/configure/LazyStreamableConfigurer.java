@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import org.dockbox.hartshorn.context.SingleElementContext;
-
 import java.util.List;
+import org.dockbox.hartshorn.context.SingleElementContext;
 
 /**
  * A wrapper around {@link StreamableConfigurer} which allows for lazy configuration of the
@@ -58,9 +57,7 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      *
      * @return this instance
      */
-    public LazyStreamableConfigurer<I, O> customizer(
-        Customizer<StreamableConfigurer<I, O>> customizer
-    ) {
+    public LazyStreamableConfigurer<I, O> customizer(Customizer<StreamableConfigurer<I, O>> customizer) {
         // Note order, existing customizer is applied first, so the new customizer can override
         // it if needed
         this.customizer = customizer.compose(this.customizer);
@@ -97,11 +94,8 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      *
      * @return the new instance
      */
-    public static <I, O> LazyStreamableConfigurer<I, O> of(
-        Customizer<StreamableConfigurer<I, O>> customizer
-    ) {
-        return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty())
-            .customizer(customizer);
+    public static <I, O> LazyStreamableConfigurer<I, O> of(Customizer<StreamableConfigurer<I, O>> customizer) {
+        return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty()).customizer(customizer);
     }
 
     /**
@@ -114,9 +108,7 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      *
      * @return the new instance
      */
-    public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(
-        ContextualInitializer<I, O> initializer
-    ) {
+    public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.ofInitializer(initializer));
     }
 

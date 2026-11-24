@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,6 @@ public class StandardTokenStepValidator implements TokenStepValidator {
 
     @Override
     public Token expectAround(TokenType type, String where, String position) {
-        return this.parser.consume(type,
-            EXPECTED_X_AROUND_Y.formatted(type.representation(), position, where));
+        return this.parser.consume(type, EXPECTED_X_AROUND_Y.formatted(type.representation(), position, where));
     }
 }

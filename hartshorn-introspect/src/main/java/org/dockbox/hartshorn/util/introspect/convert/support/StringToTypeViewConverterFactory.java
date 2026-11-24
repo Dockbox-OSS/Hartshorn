@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.List;
 import org.dockbox.hartshorn.util.ContextUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
@@ -23,8 +24,6 @@ import org.dockbox.hartshorn.util.introspect.convert.AdditionalTargetTypeContext
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
 
 /**
  * Converts a {@link String} to a {@link TypeView} by introspecting the string as a type name.
@@ -46,27 +45,23 @@ public class StringToTypeViewConverterFactory implements ConverterFactory<String
         return (input, contexts) -> {
             //noinspection unchecked
             AdditionalTargetTypeContext<O> additionalTypeContext = ContextUtilities.first(
-                    contexts,
-                    AdditionalTargetTypeContext.class
-            ).orElseGet(() -> {
-                return new AdditionalTargetTypeContext<>(targetType, null);
-            });
+                            contexts, AdditionalTargetTypeContext.class)
+                    .orElseGet(() -> {
+                        return new AdditionalTargetTypeContext<>(targetType, null);
+                    });
 
             if (input != null) {
                 TypeView<?> type = this.introspector.introspect(input);
                 if (!type.isVoid()) {
-                    ParameterizableType parameterizableType = additionalTypeContext
-                        .parameterizableType();
+                    ParameterizableType parameterizableType = additionalTypeContext.parameterizableType();
                     if (!isValidBound(parameterizableType, type)) {
                         throw new IllegalArgumentException(
-                                ("Cannot convert '%s' to type %s: " +
-                                        "Target type %s is not within bound %s"
-                                ).formatted(
-                                        input,
-                                        targetType.getName(),
-                                        parameterizableType.toQualifiedString(),
-                                        type.qualifiedName()
-                                ));
+                                ("Cannot convert '%s' to type %s: " + "Target type %s is not within bound %s")
+                                        .formatted(
+                                                input,
+                                                targetType.getName(),
+                                                parameterizableType.toQualifiedString(),
+                                                type.qualifiedName()));
                     }
                     return targetType.cast(type);
                 }
@@ -75,13 +70,9 @@ public class StringToTypeViewConverterFactory implements ConverterFactory<String
         };
     }
 
-    private static boolean isValidBound(
-            ParameterizableType parameterizableType,
-            TypeView<?> type
-    ) {
+    private static boolean isValidBound(ParameterizableType parameterizableType, TypeView<?> type) {
         if (parameterizableType != null) {
-            List<ParameterizableType> parameters = parameterizableType
-                    .parameters();
+            List<ParameterizableType> parameters = parameterizableType.parameters();
             if (!parameters.isEmpty()) {
                 ParameterizableType valueBound = parameters.getFirst();
                 return type.isChildOf(valueBound.type());

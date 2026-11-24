@@ -30,8 +30,4 @@ import org.dockbox.hartshorn.web.HttpMethod;
  *
  * @author Guus Lieben
  */
-public record PathHandlerSpec(
-        HttpMethod method,
-        RequestHandler handler
-) {
-}
+public record PathHandlerSpec(HttpMethod method, RequestHandler handler) {}

@@ -17,7 +17,6 @@
 package test.org.dockbox.hartshorn.inject.strategies;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
-
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Required;
 

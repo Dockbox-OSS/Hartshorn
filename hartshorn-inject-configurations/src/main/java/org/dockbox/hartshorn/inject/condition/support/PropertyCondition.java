@@ -32,9 +32,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @see RequiresProperty
  * @see Condition
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class PropertyCondition implements IntrospectionCondition, CacheableCondition {
@@ -42,43 +42,39 @@ public class PropertyCondition implements IntrospectionCondition, CacheableCondi
     @Override
     public ConditionResult matches(IntrospectedConditionContext context) {
         return context.annotatedElement()
-            .annotations()
-            .get(RequiresProperty.class)
-            .map(condition -> {
-                String name = condition.name();
-                Option<ValueProperty> result = context.application()
-                    .environment()
-                    .propertyRegistry()
-                    .get(name);
-                if (result.absent()) {
-                    if (condition.matchIfMissing()) {
-                        return ConditionResult.matched();
+                .annotations()
+                .get(RequiresProperty.class)
+                .map(condition -> {
+                    String name = condition.name();
+                    Option<ValueProperty> result = context.application()
+                            .environment()
+                            .propertyRegistry()
+                            .get(name);
+                    if (result.absent()) {
+                        if (condition.matchIfMissing()) {
+                            return ConditionResult.matched();
+                        }
+                        return ConditionResult.notFound("property", name);
                     }
-                    return ConditionResult.notFound("property", name);
-                }
 
-                ValueProperty property = result.get();
-                Option<String> value = property.value();
-                if (condition.withValue().isEmpty()) {
-                    return ConditionResult.matched();
-                }
-                else if (value.absent()) {
-                    return ConditionResult.notFound("property", name);
-                }
-                else {
-                    String actualValue = value.get();
-                    boolean matched = condition.caseSensitive()
-                            ? condition.withValue().equals(actualValue)
-                            : condition.withValue().equalsIgnoreCase(actualValue);
-                    return matched
-                            ? ConditionResult.matched()
-                            : ConditionResult.notEqual(
-                            String.format("property '%s'", name),
-                            condition.withValue(),
-                            actualValue);
-                }
-            })
-            .orCompute(() -> ConditionResult.invalidCondition("property"))
-            .get();
+                    ValueProperty property = result.get();
+                    Option<String> value = property.value();
+                    if (condition.withValue().isEmpty()) {
+                        return ConditionResult.matched();
+                    } else if (value.absent()) {
+                        return ConditionResult.notFound("property", name);
+                    } else {
+                        String actualValue = value.get();
+                        boolean matched = condition.caseSensitive()
+                                ? condition.withValue().equals(actualValue)
+                                : condition.withValue().equalsIgnoreCase(actualValue);
+                        return matched
+                                ? ConditionResult.matched()
+                                : ConditionResult.notEqual(
+                                        String.format("property '%s'", name), condition.withValue(), actualValue);
+                    }
+                })
+                .orCompute(() -> ConditionResult.invalidCondition("property"))
+                .get();
     }
 }

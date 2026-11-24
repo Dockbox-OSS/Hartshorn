@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package test.org.dockbox.hartshorn.inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Map;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 class QualifierKeyTests {
 
@@ -49,23 +48,20 @@ class QualifierKeyTests {
 
     @Test
     void qualifierWithMetaFailsIfTypeDoesNotRequireMeta() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> QualifierKey.of(SampleQualifier.class, Map.of("value", "sample")));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> QualifierKey.of(SampleQualifier.class, Map.of("value", "sample")));
     }
 
     @Test
     void compositeKeyEqualsIfKeysEqual() {
-        QualifierKey<Named> namedQualifierOneA =
-            QualifierKey.of(Named.class, Map.of("value", "sampleA"));
-        QualifierKey<Named> namedQualifierOneB =
-            QualifierKey.of(Named.class, Map.of("value", "sampleB"));
+        QualifierKey<Named> namedQualifierOneA = QualifierKey.of(Named.class, Map.of("value", "sampleA"));
+        QualifierKey<Named> namedQualifierOneB = QualifierKey.of(Named.class, Map.of("value", "sampleB"));
         CompositeQualifier compositeQualifierOne = new CompositeQualifier();
         compositeQualifierOne.add(namedQualifierOneA);
         compositeQualifierOne.add(namedQualifierOneB);
 
-        QualifierKey<Named> namedQualifierTwoA =
-            QualifierKey.of(Named.class, Map.of("value", "sampleA"));
-        QualifierKey<Named> namedQualifierTwoB =
-            QualifierKey.of(Named.class, Map.of("value", "sampleB"));
+        QualifierKey<Named> namedQualifierTwoA = QualifierKey.of(Named.class, Map.of("value", "sampleA"));
+        QualifierKey<Named> namedQualifierTwoB = QualifierKey.of(Named.class, Map.of("value", "sampleB"));
         CompositeQualifier compositeQualifierTwo = new CompositeQualifier();
         compositeQualifierTwo.add(namedQualifierTwoA);
         compositeQualifierTwo.add(namedQualifierTwoB);
@@ -75,19 +71,16 @@ class QualifierKeyTests {
 
     @Test
     void compositeKeyDoesNotEqualIfOneKeyDoesNotEqual() {
-        QualifierKey<Named> namedQualifierOneA =
-            QualifierKey.of(Named.class, Map.of("value", "sampleA"));
+        QualifierKey<Named> namedQualifierOneA = QualifierKey.of(Named.class, Map.of("value", "sampleA"));
         CompositeQualifier compositeQualifierOne = new CompositeQualifier();
         compositeQualifierOne.add(namedQualifierOneA);
 
-        QualifierKey<Named> namedQualifierTwoB =
-            QualifierKey.of(Named.class, Map.of("value", "sampleB"));
+        QualifierKey<Named> namedQualifierTwoB = QualifierKey.of(Named.class, Map.of("value", "sampleB"));
         CompositeQualifier compositeQualifierTwo = new CompositeQualifier();
         compositeQualifierTwo.add(namedQualifierTwoB);
 
         assertThat(compositeQualifierTwo).isNotEqualTo(compositeQualifierOne);
     }
 
-    public @interface SampleQualifier {
-    }
+    public @interface SampleQualifier {}
 }

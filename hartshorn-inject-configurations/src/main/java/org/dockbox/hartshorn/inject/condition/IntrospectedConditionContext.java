@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
+import java.util.Objects;
 import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-
-import java.util.Objects;
 
 /**
  * A context that is used during the evaluation of a condition. This includes the annotated element
@@ -35,16 +34,15 @@ import java.util.Objects;
  * @author Guus Lieben
  */
 public non-sealed class IntrospectedConditionContext extends ConditionContext
-    implements InjectionApplicationAwareContext {
+        implements InjectionApplicationAwareContext {
 
     private final InjectionCapableApplication application;
     private final AnnotatedElementView annotatedElement;
 
     public IntrospectedConditionContext(
-        InjectionCapableApplication application,
-        AnnotatedElementView annotatedElement,
-        ConditionDeclaration condition
-    ) {
+            InjectionCapableApplication application,
+            AnnotatedElementView annotatedElement,
+            ConditionDeclaration condition) {
         super(condition);
         this.application = application;
         this.annotatedElement = annotatedElement;

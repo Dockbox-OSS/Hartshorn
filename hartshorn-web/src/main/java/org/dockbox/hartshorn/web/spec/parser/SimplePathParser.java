@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.web.spec.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.spec.PathPartSpec;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * A simple implementation of {@link PathParser} that parses path patterns by splitting them into
@@ -48,10 +47,7 @@ public class SimplePathParser implements PathParser {
 
     @Override
     public PathSpec parse(String pattern) {
-        String[] parts = StringUtilities.trimWith(
-                this.pathSeparator,
-                pattern
-        ).split(pathSeparatorPattern);
+        String[] parts = StringUtilities.trimWith(this.pathSeparator, pattern).split(pathSeparatorPattern);
         List<PathPartSpec> specs = new ArrayList<>();
         for (String part : parts) {
             Option<? extends PathPartSpec> spec = this.parsePart(part);

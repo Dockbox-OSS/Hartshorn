@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * Represents a view of a type parameter, whether it is a {@link #isWildcard() wildcard},
@@ -174,7 +173,7 @@ public interface TypeParameterView extends AnnotatedElementView {
      * the set of type parameters that are declared on the type, but consumed by its parents. For
      * example, given the following type declaration:
      *
-     * <pre>{@code 
+     * <pre>{@code
      *   List&lt;E<sub>1</sub>&gt; extends
      *     Collection&lt;E<sub>2</sub>&gt;,
      *     Iterable&lt;E<sub>3</sub>&gt;

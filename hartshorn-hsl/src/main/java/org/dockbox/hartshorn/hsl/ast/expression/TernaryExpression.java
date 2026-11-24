@@ -44,10 +44,7 @@ public class TernaryExpression extends Expression {
     private final Expression secondExp;
 
     public TernaryExpression(
-        Expression condition, Token ternaryOp,
-        Expression firstExp, Token colon,
-        Expression secondExp
-    ) {
+            Expression condition, Token ternaryOp, Expression firstExp, Token colon, Expression secondExp) {
         super(condition);
         this.condition = condition;
         this.ternaryOp = ternaryOp;

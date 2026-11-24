@@ -77,8 +77,7 @@ public class ReportingConfiguration {
     @Singleton
     @SupportPriority
     public AggregateReporterConfiguration aggregateReporterConfiguration(
-            @Fuzzy ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters
-    ) {
+            @Fuzzy ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters) {
         AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
         configuration.addAll(diagnosticsReporters);
         return configuration;
@@ -111,9 +110,7 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(
-        ApplicationContext applicationContext
-    ) {
+    public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ApplicationDiagnosticsReporter(applicationContext);
     }
 
@@ -130,9 +127,7 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    public CategorizedDiagnosticsReporter componentDiagnosticsReporter(
-        ApplicationContext applicationContext
-    ) {
+    public CategorizedDiagnosticsReporter componentDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentDiagnosticsReporter(applicationContext);
     }
 
@@ -149,9 +144,7 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(
-        ApplicationContext applicationContext
-    ) {
+    public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentProcessorDiagnosticsReporter(applicationContext);
     }
 
@@ -191,9 +184,7 @@ public class ReportingConfiguration {
          */
         @Singleton
         @SupportPriority
-        public ReportSerializer<String> objectMapperReportSerializer(
-                ObjectMapper objectMapper
-        ) {
+        public ReportSerializer<String> objectMapperReportSerializer(ObjectMapper objectMapper) {
             return new ObjectMapperReportSerializer(objectMapper);
         }
     }

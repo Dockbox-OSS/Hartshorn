@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.function.Function;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.QualifierKey;
@@ -40,8 +41,6 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.jspecify.annotations.NonNull;
 
-import java.util.function.Function;
-
 /**
  * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The
  * hierarchy is provided by the owning {@link Binder}.
@@ -50,7 +49,7 @@ import java.util.function.Function;
  *
  * @see Binder
  * @see BindingHierarchy
- * 
+ *
  * @since 0.4.11
  *
  * @author Guus Lieben
@@ -70,13 +69,12 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(
-        AliasableBindingHierarchy<T> hierarchy,
-        HierarchicalBinder binder,
-        SingletonCache singletonCache,
-        Scope scope,
-        ScopeModuleContext moduleContext,
-        BindingAliasNormalizer bindingAliasNormalizer
-    ) {
+            AliasableBindingHierarchy<T> hierarchy,
+            HierarchicalBinder binder,
+            SingletonCache singletonCache,
+            Scope scope,
+            ScopeModuleContext moduleContext,
+            BindingAliasNormalizer bindingAliasNormalizer) {
         this.hierarchy = hierarchy;
         this.binder = binder;
         this.singletonCache = singletonCache;
@@ -97,10 +95,9 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     protected BindingHierarchy<T> hierarchy() {
         if (this.scopeKey != null && !this.moduleContext.isApplicationScope(this.scopeKey)) {
             return new AliasableBindingHierarchyAdapter<>(this.moduleContext.hierarchy(
-                    this.scopeKey, this.hierarchy.key().mutable().scope(this.scope).build()
-            ));
-        }
-        else {
+                    this.scopeKey,
+                    this.hierarchy.key().mutable().scope(this.scope).build()));
+        } else {
             return this.hierarchy;
         }
     }
@@ -130,8 +127,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
-        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(),
-            aliasQualifier));
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasQualifier));
     }
 
     @Override
@@ -139,8 +135,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         BindingHierarchy<T> hierarchy = this.hierarchy();
         if (hierarchy instanceof AliasableBindingHierarchy<T> aliasableBindingHierarchy) {
             aliasableBindingHierarchy.alias(aliasKey);
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Delegate hierarchy does not support aliasing");
         }
         return this;
@@ -149,13 +144,13 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public AliasBindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
         boolean expandingApplicationScope = this.moduleContext.isApplicationScope(this.scopeKey)
-            || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
+                || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
 
         if (!expandingApplicationScope) {
             throw new IllegalScopeException("Cannot install binding to child scope "
-                + scopeKey.name()
-                + " as the binding is already installed to child scope "
-                + this.scope.installableScopeType().name());
+                    + scopeKey.name()
+                    + " as the binding is already installed to child scope "
+                    + this.scope.installableScopeType().name());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be
         // expanded, so this is a safe check
@@ -181,10 +176,9 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder to(Class<? extends T> type) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalModificationException(
-                ("Cannot overwrite singleton binding for %s in a hierarchy, "
-                    + "ensure the new binding is a singleton").formatted(
-                    this.hierarchy().key()));
+            throw new IllegalModificationException(("Cannot overwrite singleton binding for %s in a hierarchy, "
+                            + "ensure the new binding is a singleton")
+                    .formatted(this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
         return this.add(PrototypeConstructorInstantiationStrategy.forPrototype(key));
@@ -198,10 +192,9 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder to(CheckedSupplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalModificationException(
-                ("Cannot overwrite singleton binding for %s in a hierarchy, "
-                    + "ensure the new binding is a singleton").formatted(
-                    this.hierarchy().key()));
+            throw new IllegalModificationException(("Cannot overwrite singleton binding for %s in a hierarchy, "
+                            + "ensure the new binding is a singleton")
+                    .formatted(this.hierarchy().key()));
         }
         return this.add(new SupplierInstantiationStrategy<>(supplier));
     }
@@ -218,8 +211,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         }
         if (this.processAfterInitialization) {
             return this.add(new SingletonInstantiationStrategy<>(instance));
-        }
-        else {
+        } else {
             // If no processing should happen, then we can immediately cache the instance
             this.singletonCache.put(this.hierarchy.key(), instance);
             for (ComponentKey<? super T> alias : this.hierarchy.aliases()) {
@@ -242,17 +234,12 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
-        ComponentKey<ComponentCollection<T>> collectionComponentKey =
-            this.createCollectionComponentKey();
+        ComponentKey<ComponentCollection<T>> collectionComponentKey = this.createCollectionComponentKey();
 
-        BindingHierarchy<ComponentCollection<T>> existingHierarchy =
-            this.hierarchy(collectionComponentKey);
+        BindingHierarchy<ComponentCollection<T>> existingHierarchy = this.hierarchy(collectionComponentKey);
 
-        HierarchyCollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(
-                this.binder,
-                existingHierarchy,
-                this.priority
-        );
+        HierarchyCollectorBindingFunction<T> function =
+                new HierarchyCollectorBindingFunction<>(this.binder, existingHierarchy, this.priority);
         collector.configure(function);
         return this.binder;
     }
@@ -265,9 +252,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     }
 
     private ComponentKey<ComponentCollection<T>> createCollectionComponentKey() {
-        return this.hierarchy().key().mutable()
-                .scope(this.scope)
-                .collector().build();
+        return this.hierarchy().key().mutable().scope(this.scope).collector().build();
     }
 
     /**
@@ -279,8 +264,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
      * @return the binder
      */
     protected Binder add(InstantiationStrategy<T> strategy) {
-        strategy =
-            strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
+        strategy = strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
         this.hierarchy().add(this.priority, strategy);
         return this.binder();
     }
@@ -302,7 +286,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
      * @author Guus Lieben
      */
     private record ProcessAfterInitializationFunction<T>(boolean processAfterInitialization)
-        implements Function<ObjectContainer<T>, ObjectContainer<T>> {
+            implements Function<ObjectContainer<T>, ObjectContainer<T>> {
 
         @Override
         public ObjectContainer<T> apply(ObjectContainer<T> container) {
@@ -313,8 +297,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         @Override
         public String toString() {
             return ObjectDescriber.of(this)
-                .field("processAfterInitialization", this.processAfterInitialization)
-                .describe();
+                    .field("processAfterInitialization", this.processAfterInitialization)
+                    .describe();
         }
     }
 }

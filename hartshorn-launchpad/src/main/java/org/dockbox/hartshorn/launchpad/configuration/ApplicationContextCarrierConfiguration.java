@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
-import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier;

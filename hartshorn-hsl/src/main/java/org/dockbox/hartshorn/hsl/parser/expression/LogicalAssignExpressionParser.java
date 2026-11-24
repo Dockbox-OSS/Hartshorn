@@ -31,9 +31,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * assignment operators such as {@code &=} and {@code |=}.
  *
  * @see org.dockbox.hartshorn.hsl.token.type.BitwiseAssignmentTokenType
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class LogicalAssignExpressionParser extends AbstractBitwiseOrLogicalExpressionParser {
@@ -41,9 +41,8 @@ public class LogicalAssignExpressionParser extends AbstractBitwiseOrLogicalExpre
     private final TokenType[] assignmentTokens;
 
     public LogicalAssignExpressionParser(TokenRegistry registry) {
-        this.assignmentTokens = registry
-            .tokenTypes(token -> token.assignsWith() != null)
-            .toArray(TokenType[]::new);
+        this.assignmentTokens =
+                registry.tokenTypes(token -> token.assignsWith() != null).toArray(TokenType[]::new);
     }
 
     @Override
@@ -55,12 +54,11 @@ public class LogicalAssignExpressionParser extends AbstractBitwiseOrLogicalExpre
     protected Expression define(Expression expression, Token operator, Expression right) {
         if (expression instanceof VariableExpression variable) {
             return new LogicalAssignExpression(variable.name(), operator, right);
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
-                .at(operator)
-                .build();
+                    .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expression)
+                    .at(operator)
+                    .build();
         }
     }
 }

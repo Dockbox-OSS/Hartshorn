@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  * @see Boolean#parseBoolean(String)
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StringToBooleanConverter implements Converter<String, Boolean> {

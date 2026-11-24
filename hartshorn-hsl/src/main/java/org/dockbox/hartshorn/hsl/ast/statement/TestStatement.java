@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class TestStatement extends BodyStatement implements NamedNode {
@@ -47,9 +47,9 @@ public class TestStatement extends BodyStatement implements NamedNode {
         super(name, body);
         if (name.literal() == null) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.EMPTY_TEST_NAME)
-                .at(name)
-                .build();
+                    .message(DiagnosticMessage.EMPTY_TEST_NAME)
+                    .at(name)
+                    .build();
         }
         this.name = name;
     }

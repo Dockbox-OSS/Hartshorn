@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.populate;
 
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -29,9 +31,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * A {@link ComponentPopulator} that populates components using a set of
@@ -58,10 +57,10 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     private final ComponentInjectionPointsResolver injectionPointsResolver;
 
     public StrategyComponentPopulator(
-        InjectionCapableApplication application, ProxyOrchestrator proxyOrchestrator,
-        ComponentInjectionPointsResolver injectionPointsResolver,
-        List<ComponentPopulationStrategy> strategies
-    ) {
+            InjectionCapableApplication application,
+            ProxyOrchestrator proxyOrchestrator,
+            ComponentInjectionPointsResolver injectionPointsResolver,
+            List<ComponentPopulationStrategy> strategies) {
         this.application = application;
         this.proxyOrchestrator = proxyOrchestrator;
         this.injectionPointsResolver = injectionPointsResolver;
@@ -74,23 +73,16 @@ public class StrategyComponentPopulator implements ComponentPopulator {
             T modifiableInstance = instance;
             if (this.proxyOrchestrator.isProxy(instance)) {
                 modifiableInstance = this.proxyOrchestrator
-                    .manager(instance)
-                    .flatMap(ProxyManager::delegate)
-                    .orElse(modifiableInstance);
+                        .manager(instance)
+                        .flatMap(ProxyManager::delegate)
+                        .orElse(modifiableInstance);
             }
-            TypeView<T> typeView =
-                this.proxyOrchestrator.introspector().introspect(modifiableInstance);
-            PopulateComponentContext<T> context = new PopulateComponentContext<>(
-                modifiableInstance,
-                instance,
-                typeView,
-                scope,
-                this.application
-            );
+            TypeView<T> typeView = this.proxyOrchestrator.introspector().introspect(modifiableInstance);
+            PopulateComponentContext<T> context =
+                    new PopulateComponentContext<>(modifiableInstance, instance, typeView, scope, this.application);
             this.populate(context);
             return instance;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -106,19 +98,19 @@ public class StrategyComponentPopulator implements ComponentPopulator {
      */
     protected <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
-        Set<ComponentInjectionPoint<T>> injectionPoints =
-            this.injectionPointsResolver.resolve(type);
+        Set<ComponentInjectionPoint<T>> injectionPoints = this.injectionPointsResolver.resolve(type);
 
         for (ComponentPopulationStrategy strategy : this.strategies) {
             for (ComponentInjectionPoint<T> injectionPoint : injectionPoints) {
                 try {
                     strategy.populate(context, injectionPoint);
-                }
-                catch (ApplicationException e) {
-                    throw new ComponentPopulateException("Could not populate injection point "
-                        + injectionPoint.qualifiedName()
-                        + " in type "
-                        + type.qualifiedName(), e);
+                } catch (ApplicationException e) {
+                    throw new ComponentPopulateException(
+                            "Could not populate injection point "
+                                    + injectionPoint.qualifiedName()
+                                    + " in type "
+                                    + type.qualifiedName(),
+                            e);
                 }
             }
         }
@@ -133,21 +125,18 @@ public class StrategyComponentPopulator implements ComponentPopulator {
      * @return a new contextual initializer for a strategy component populator
      */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPopulator> create(
-        Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            List<ComponentPopulationStrategy> populationStrategies =
-                configurer.strategies.initialize(context);
+            List<ComponentPopulationStrategy> populationStrategies = configurer.strategies.initialize(context);
             InjectionCapableApplication application = context.input();
             InjectorEnvironment environment = application.environment();
             return new StrategyComponentPopulator(
-                application,
-                environment.proxyOrchestrator(),
-                environment.injectionPointsResolver(),
-                List.copyOf(populationStrategies)
-            );
+                    application,
+                    environment.proxyOrchestrator(),
+                    environment.injectionPointsResolver(),
+                    List.copyOf(populationStrategies));
         };
     }
 
@@ -162,10 +151,10 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     public static class Configurer {
 
         // checkstyle:off LineLength
-        private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>
-            strategies = LazyStreamableConfigurer.of(collection -> {
-            collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
-        });
+        private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy> strategies =
+                LazyStreamableConfigurer.of(collection -> {
+                    collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
+                });
         // checkstyle:on LineLength
 
         /**
@@ -212,7 +201,8 @@ public class StrategyComponentPopulator implements ComponentPopulator {
          * @return this configurer
          */
         // checkstyle:off LineLength
-        public Configurer strategies(Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
+        public Configurer strategies(
+                Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
         }

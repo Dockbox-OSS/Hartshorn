@@ -44,9 +44,9 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
  *
  * @see ComponentKey#strict()
  * @see ComponentKey.Builder#strict(boolean)
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})

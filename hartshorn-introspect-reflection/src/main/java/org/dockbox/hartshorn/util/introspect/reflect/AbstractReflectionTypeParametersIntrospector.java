@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
@@ -25,10 +28,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.TypeHierarchyGraph;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A base implementation of {@link TypeParametersIntrospector} that uses reflection to introspect
@@ -40,8 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractReflectionTypeParametersIntrospector
-    implements TypeParametersIntrospector {
+public abstract class AbstractReflectionTypeParametersIntrospector implements TypeParametersIntrospector {
 
     private final TypeView<?> type;
     private final Introspector introspector;
@@ -51,10 +49,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector
     private TypeHierarchyGraph typeHierarchy;
     private TypeParameterList outputParameters;
 
-    protected AbstractReflectionTypeParametersIntrospector(
-        TypeView<?> type,
-        Introspector introspector
-    ) {
+    protected AbstractReflectionTypeParametersIntrospector(TypeView<?> type, Introspector introspector) {
         this.type = type;
         this.introspector = introspector;
     }
@@ -88,12 +83,12 @@ public abstract class AbstractReflectionTypeParametersIntrospector
     public TypeParameterList inputFor(Class<?> fromParentType) {
         if (this.type().is(fromParentType)) {
             return this.allInput();
-        }
-        else if (this.type().isChildOf(fromParentType)) {
+        } else if (this.type().isChildOf(fromParentType)) {
             TypeView<?> parentType = this.introspector().introspect(fromParentType);
             TypeParametersIntrospector typeParameters = parentType.typeParameters();
             // No point in resolving if there are no type parameters
-            if (!(typeParameters.allOutput().isEmpty() && typeParameters.allInput().isEmpty())) {
+            if (!(typeParameters.allOutput().isEmpty()
+                    && typeParameters.allInput().isEmpty())) {
                 return this.tryResolveInputForParent(parentType);
             }
         }
@@ -104,21 +99,17 @@ public abstract class AbstractReflectionTypeParametersIntrospector
         if (this.type.isChildOf(parent.type())) {
             return this.resolvedParameters.computeIfAbsent(parent.type(), parentType -> {
                 try {
-                    List<TypeParameterView> parameters = new TypeParameterResolver()
-                        .resolveInputForParent(this.type(), parent);
+                    List<TypeParameterView> parameters =
+                            new TypeParameterResolver().resolveInputForParent(this.type(), parent);
                     return new SimpleTypeParameterList(parameters);
-                }
-                catch (TypeParameterResolutionException e) {
+                } catch (TypeParameterResolutionException e) {
                     // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this
                     // should never happen. If it does, it indicates something was unexpectedly
                     // modified in the implementation.
-                    throw new IllegalStateException(
-                        "Unexpected graph exception while resolving type parameters",
-                        e);
+                    throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
                 }
             });
-        }
-        else {
+        } else {
             return new SimpleTypeParameterList(List.of());
         }
     }
@@ -128,13 +119,12 @@ public abstract class AbstractReflectionTypeParametersIntrospector
         if (this.outputParameters == null) {
             TypeView<?> genericSuperClass = this.type().genericSuperClass();
             List<TypeParameterView> superInput =
-                genericSuperClass.typeParameters().allInput().asList();
+                    genericSuperClass.typeParameters().allInput().asList();
             List<TypeParameterView> interfacesInput = this.type().genericInterfaces().stream()
-                .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
-                .toList();
+                    .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
+                    .toList();
 
-            List<TypeParameterView> allInputParameters =
-                CollectionUtilities.mergeList(superInput, interfacesInput);
+            List<TypeParameterView> allInputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
             this.outputParameters = new SimpleTypeParameterList(allInputParameters);
         }
         return this.outputParameters;
@@ -144,8 +134,8 @@ public abstract class AbstractReflectionTypeParametersIntrospector
     public TypeParameterList outputFor(Class<?> fromParentType) {
         if (this.type().isChildOf(fromParentType)) {
             List<TypeParameterView> consumedByParent = this.allOutput().stream()
-                .filter(parameter -> parameter.consumedBy().is(fromParentType))
-                .toList();
+                    .filter(parameter -> parameter.consumedBy().is(fromParentType))
+                    .toList();
             return new SimpleTypeParameterList(consumedByParent);
         }
         return new SimpleTypeParameterList(List.of());

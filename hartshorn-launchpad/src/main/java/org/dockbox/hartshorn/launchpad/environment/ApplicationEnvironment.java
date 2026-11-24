@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
  * @author Guus Lieben
  */
 public interface ApplicationEnvironment
-    extends ApplicationContextCarrier, ExceptionHandler, ManagedComponentEnvironment {
+        extends ApplicationContextCarrier, ExceptionHandler, ManagedComponentEnvironment {
 
     /**
      * Gets the {@link FileSystemProvider file system provider} for the current environment. The

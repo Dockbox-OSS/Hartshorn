@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import org.dockbox.hartshorn.launchpad.properties.ApplicationArgumentParser;
-
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.dockbox.hartshorn.launchpad.properties.ApplicationArgumentParser;
 
 /**
  * A simple implementation of {@link ApplicationArgumentParser} that parses arguments in the form of

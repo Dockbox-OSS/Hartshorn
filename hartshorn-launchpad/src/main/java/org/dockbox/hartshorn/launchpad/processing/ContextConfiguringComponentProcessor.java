@@ -34,11 +34,10 @@ import org.jspecify.annotations.Nullable;
  * @param <C> The type of the context that is being configured
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public abstract class ContextConfiguringComponentProcessor<C extends ContextView>
-    extends ComponentPostProcessor {
+public abstract class ContextConfiguringComponentProcessor<C extends ContextView> extends ComponentPostProcessor {
 
     private final Class<C> contextType;
 
@@ -48,13 +47,14 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
 
     @Override
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         if (this.supports(processingContext)) {
-            C componentContext = processingContext.firstContext(ContextKey.of(this.contextType))
-                .orCompute(() -> this.createContext(application, processingContext)).orNull();
+            C componentContext = processingContext
+                    .firstContext(ContextKey.of(this.contextType))
+                    .orCompute(() -> this.createContext(application, processingContext))
+                    .orNull();
 
             if (componentContext != null) {
                 this.configure(application, componentContext, processingContext);
@@ -62,8 +62,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
 
             if (instance instanceof Context contextInstance) {
                 contextInstance.addContext(componentContext);
-            }
-            else if (processingContext.containsKey(ProxyFactory.class)) {
+            } else if (processingContext.containsKey(ProxyFactory.class)) {
                 ProxyFactory<T> proxyFactory = processingContext.get(ProxyFactory.class);
                 proxyFactory.contextContainer().addContext(componentContext);
             }
@@ -77,9 +76,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
      *
      * @return true if the processor supports the context, false otherwise
      */
-    protected abstract boolean supports(
-        ComponentProcessingContext<?> processingContext
-    );
+    protected abstract boolean supports(ComponentProcessingContext<?> processingContext);
 
     /**
      * Configures the given component context for the component being processed.
@@ -90,10 +87,9 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
      * @param <T> the type of the component being processed
      */
     protected abstract <T> void configure(
-        InjectionCapableApplication application,
-        C componentContext,
-        ComponentProcessingContext<T> processingContext
-    );
+            InjectionCapableApplication application,
+            C componentContext,
+            ComponentProcessingContext<T> processingContext);
 
     /**
      * Creates the context to be configured. This context should be specific to the component being
@@ -106,7 +102,5 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
      * @return the created context
      */
     protected abstract C createContext(
-        InjectionCapableApplication application,
-        ComponentProcessingContext<?> processingContext
-    );
+            InjectionCapableApplication application, ComponentProcessingContext<?> processingContext);
 }

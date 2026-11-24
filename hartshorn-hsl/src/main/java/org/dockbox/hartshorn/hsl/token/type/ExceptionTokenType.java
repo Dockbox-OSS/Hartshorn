@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
  * this enum are reserved keywords that will not be used in the current version of the language.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum ExceptionTokenType implements EnumTokenType {
@@ -63,10 +63,10 @@ public enum ExceptionTokenType implements EnumTokenType {
 
     ExceptionTokenType(boolean standalone) {
         this.metaData = TokenMetaData.builder(this)
-            .reserved(true)
-            .standaloneStatement(standalone)
-            .keyword(true)
-            .build();
+                .reserved(true)
+                .standaloneStatement(standalone)
+                .keyword(true)
+                .build();
     }
 
     @Override

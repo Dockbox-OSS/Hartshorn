@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
-
-import java.util.Set;
 
 /**
  * An interpreter for {@link FunctionStatement} class members.
@@ -33,11 +32,7 @@ import java.util.Set;
 public class MethodMemberInterpreter implements ClassMemberInterpreter<FunctionStatement> {
 
     @Override
-    public void interpret(
-        FunctionStatement method,
-        Interpreter interpreter,
-        VirtualClassBuilder builder
-    ) {
+    public void interpret(FunctionStatement method, Interpreter interpreter, VirtualClassBuilder builder) {
         VirtualFunction function = new VirtualFunction(method, interpreter.visitingScope(), false);
         builder.method(method.name().lexeme(), function);
     }

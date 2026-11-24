@@ -41,8 +41,8 @@ public class NetworkConnectorReporter implements Reportable {
         collector.property("port").writeInt(this.connector.getPort());
         collector.property("localPort").writeInt(this.connector.getLocalPort());
         collector.property("idleTimeout").writeLong(this.connector.getIdleTimeout());
-        collector.property("protocols").writeStrings(
-                this.connector.getProtocols().toArray(String[]::new)
-        );
+        collector
+                .property("protocols")
+                .writeStrings(this.connector.getProtocols().toArray(String[]::new));
     }
 }

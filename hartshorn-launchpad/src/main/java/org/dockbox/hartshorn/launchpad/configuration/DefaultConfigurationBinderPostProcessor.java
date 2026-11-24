@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,37 +58,28 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 public class DefaultConfigurationBinderPostProcessor implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(
-        InjectionCapableApplication application,
-        Scope scope,
-        HierarchicalBinder binder
-    ) {
+    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
         this.processEnvironmentBindings(application, binder);
         this.processApplicationBindings(application, binder);
         this.processCommonBindings(binder);
     }
 
-    private void processEnvironmentBindings(
-        InjectionCapableApplication application,
-        Binder binder
-    ) {
+    private void processEnvironmentBindings(InjectionCapableApplication application, Binder binder) {
         binder.bind(InjectorEnvironment.class).singleton(application.environment());
         if (application.environment() instanceof ApplicationEnvironment applicationEnvironment) {
             binder.bind(ApplicationEnvironment.class).singleton(applicationEnvironment);
             binder.bind(FileSystemProvider.class).singleton(applicationEnvironment.fileSystem());
-            binder.bind(ClasspathResourceLocator.class)
-                .singleton(applicationEnvironment.classpath());
+            binder.bind(ClasspathResourceLocator.class).singleton(applicationEnvironment.classpath());
             binder.bind(ResourceLookup.class).singleton(applicationEnvironment.resourceLookup());
             binder.bind(ComponentRegistry.class)
-                .processAfterInitialization(false)
-                .singleton(applicationEnvironment.componentRegistry());
+                    .processAfterInitialization(false)
+                    .singleton(applicationEnvironment.componentRegistry());
         }
         binder.bind(Introspector.class).singleton(application.environment().introspector());
         binder.bind(AnnotationLookup.class)
-            .singleton(application.environment().introspector().annotations());
+                .singleton(application.environment().introspector().annotations());
         binder.bind(ProxyLookup.class).singleton(application.environment().proxyOrchestrator());
-        binder.bind(ProxyOrchestrator.class)
-            .singleton(application.environment().proxyOrchestrator());
+        binder.bind(ProxyOrchestrator.class).singleton(application.environment().proxyOrchestrator());
         binder.bind(PropertyRegistry.class).singleton(application.environment().propertyRegistry());
 
         if (application instanceof ObservableApplicationEnvironment observableEnvironment) {
@@ -96,19 +87,16 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
         }
     }
 
-    private void processApplicationBindings(
-        InjectionCapableApplication application,
-        Binder binder
-    ) {
+    private void processApplicationBindings(InjectionCapableApplication application, Binder binder) {
         binder.bind(InjectionCapableApplication.class).singleton(application);
         if (application instanceof ApplicationContext applicationContext) {
             if (binder instanceof AliasCapableBinder aliasCapableBinder) {
-                aliasCapableBinder.bind(ApplicationContext.class)
-                    .alias(ExceptionHandler.class)
-                    .alias(ConfigurableActivationInjectionCapableApplication.class)
-                    .singleton(applicationContext);
-            }
-            else {
+                aliasCapableBinder
+                        .bind(ApplicationContext.class)
+                        .alias(ExceptionHandler.class)
+                        .alias(ConfigurableActivationInjectionCapableApplication.class)
+                        .singleton(applicationContext);
+            } else {
                 binder.bind(ApplicationContext.class).singleton(applicationContext);
                 binder.bind(ExceptionHandler.class).singleton(applicationContext);
             }
@@ -117,22 +105,15 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
 
         if (application instanceof DelegatingApplicationContext delegatingApplicationContext) {
             ComponentProvider componentProvider = delegatingApplicationContext.componentProvider();
-            binder.bind(Scope.class)
-                .processAfterInitialization(false)
-                .singleton(componentProvider.scope());
+            binder.bind(Scope.class).processAfterInitialization(false).singleton(componentProvider.scope());
 
-            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator
-                scopeAwareComponentProvider
-            ) {
-                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider
-                    .applicationProvider();
+            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator scopeAwareComponentProvider) {
+                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
 
-                if (applicationProvider instanceof SingletonCacheComponentProvider
-                    singletonCacheComponentProvider
-                ) {
+                if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
                     binder.bind(SingletonCache.class)
-                        .processAfterInitialization(false)
-                        .lazySingleton(scope -> singletonCacheComponentProvider.singletonCache());
+                            .processAfterInitialization(false)
+                            .lazySingleton(scope -> singletonCacheComponentProvider.singletonCache());
                 }
             }
         }

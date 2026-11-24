@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.lang.classfile.FieldModel;
+import java.lang.reflect.Field;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.FieldModel;
-import java.lang.reflect.Field;
 
 /**
  * Represents a view of a field. This view is used to access the field's value, and to set the
@@ -34,8 +33,7 @@ import java.lang.reflect.Field;
  *
  * @author Guus Lieben
  */
-public interface FieldView<Parent, FieldType>
-    extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
+public interface FieldView<Parent, FieldType> extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
 
     /**
      * Returns the {@link Field} represented by this view, if available.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 
 package test.org.dockbox.hartshorn.properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.profiles.support.ConfigurationProfileRegistryFactory;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
+import org.dockbox.hartshorn.profiles.support.ConfigurationProfileRegistryFactory;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.test.HartshornAssertions;
@@ -28,9 +31,6 @@ import org.dockbox.hartshorn.test.annotations.TestProfiles;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @TestProfiles("ProfilePropertiesTests")
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -47,9 +47,8 @@ class ProfilePropertiesTests {
         ProfileRegistry profileRegistry = registry.profileRegistry();
         assertThat(profileRegistry.profiles()).hasSize(2);
 
-        assertThat(profileRegistry.profile(
-                ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME
-        )).present();
+        assertThat(profileRegistry.profile(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME))
+                .present();
         assertThat(profileRegistry.profile("ProfilePropertiesTests")).present();
     }
 

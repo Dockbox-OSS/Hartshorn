@@ -16,20 +16,19 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ConverterTests {
 
     @Test
     void converterChainingFollowsCorrectOrder() {
         Converter<String, Double> base = (s, _) -> Double.parseDouble(s);
-        Converter<String, Byte> converter = base
-            .andThen((input, _) -> input.longValue())
-            .andThen((input, _) -> input.intValue())
-            .andThen((input, _) -> input.byteValue());
+        Converter<String, Byte> converter = base.andThen((input, _) -> input.longValue())
+                .andThen((input, _) -> input.intValue())
+                .andThen((input, _) -> input.byteValue());
 
         byte result = converter.convert("1.0");
         assertThat(result).isOne();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.test.junit;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.HartshornIntegrationTestInitializer;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
 
 /**
  * A callback that initializes the Hartshorn application context before a test lifecycle has been
@@ -33,14 +32,12 @@ import java.lang.reflect.Method;
  * {@link HartshornIntegrationTestInitializer}.
  *
  * @see HartshornIntegrationTestInitializer
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
-public class HartshornJUnitIntegrationTestBootstrapCallback implements
-    BeforeAllCallback,
-    BeforeEachCallback {
+public class HartshornJUnitIntegrationTestBootstrapCallback implements BeforeAllCallback, BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) throws ApplicationException {
@@ -69,14 +66,13 @@ public class HartshornJUnitIntegrationTestBootstrapCallback implements
      * @param testComponentSources optional sources of test components, such as test methods
      */
     protected void beforeLifecycle(
-        ExtensionContext context,
-        Class<?> testClass,
-        Object testInstance,
-        AnnotatedElement... testComponentSources
-    ) {
+            ExtensionContext context,
+            Class<?> testClass,
+            Object testInstance,
+            AnnotatedElement... testComponentSources) {
         HartshornIntegrationTestInitializer initializer = new HartshornIntegrationTestInitializer();
         ApplicationContext applicationContext =
-            initializer.createTestApplicationContext(testClass, testInstance, testComponentSources);
+                initializer.createTestApplicationContext(testClass, testInstance, testComponentSources);
         HartshornJUnitNamespace.application(context, applicationContext);
     }
 }

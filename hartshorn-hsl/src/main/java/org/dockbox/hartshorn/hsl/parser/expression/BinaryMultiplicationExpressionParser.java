@@ -36,9 +36,7 @@ public class BinaryMultiplicationExpressionParser extends AbstractBitwiseOrLogic
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-            ArithmeticTokenType.SLASH,
-            ArithmeticTokenType.STAR,
-            ArithmeticTokenType.MODULO,
+            ArithmeticTokenType.SLASH, ArithmeticTokenType.STAR, ArithmeticTokenType.MODULO,
         };
     }
 

@@ -16,6 +16,12 @@
 
 package test.org.dockbox.hartshorn.inject.collection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -32,13 +38,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class CollectionScopeTests {
 
@@ -54,15 +53,14 @@ class CollectionScopeTests {
         });
 
         ComponentKey<ComponentCollection<String>> componentKey = ComponentKey.collect(String.class);
-        BindingHierarchy<ComponentCollection<String>> hierarchy = this.applicationContext
-                .hierarchy(componentKey);
+        BindingHierarchy<ComponentCollection<String>> hierarchy = this.applicationContext.hierarchy(componentKey);
         assertThat(hierarchy).isInstanceOf(CollectionBindingHierarchy.class);
 
         assertThat(hierarchy.size()).isOne();
 
         int highestPriority = hierarchy.highestPriority();
         Option<? extends InstantiationStrategy<ComponentCollection<String>>> candidateProvider =
-            hierarchy.get(highestPriority);
+                hierarchy.get(highestPriority);
         assertThat(candidateProvider).present();
 
         InstantiationStrategy<ComponentCollection<String>> strategy = candidateProvider.get();
@@ -78,18 +76,13 @@ class CollectionScopeTests {
     void collectionComponentsCanBeProvided() {
         ComponentKey<String> nameKey = ComponentKey.of(String.class, "names");
         List<String> names = List.of("John", "Jane", "Joe");
-        this.applicationContext.bind(nameKey)
-            .collect(collector -> names.forEach(collector::singleton));
+        this.applicationContext.bind(nameKey).collect(collector -> names.forEach(collector::singleton));
 
         ComponentKey<ComponentCollection<String>> collectionKey =
-            nameKey.mutable().collector().build();
+                nameKey.mutable().collector().build();
         ComponentCollection<String> nameCollection = this.applicationContext.get(collectionKey);
 
-        assertThat(nameCollection)
-                .hasSize(3)
-                .contains("John")
-                .contains("Jane")
-                .contains("Joe");
+        assertThat(nameCollection).hasSize(3).contains("John").contains("Jane").contains("Joe");
     }
 
     @Test
@@ -103,13 +96,10 @@ class CollectionScopeTests {
         });
 
         ComponentWithCollectionDependencies component =
-            this.applicationContext.get(ComponentWithCollectionDependencies.class);
+                this.applicationContext.get(ComponentWithCollectionDependencies.class);
         List<String> names = component.names();
 
-        assertThat(names)
-                .hasSize(2)
-                .contains("Foo")
-                .contains("Bar");
+        assertThat(names).hasSize(2).contains("Foo").contains("Bar");
     }
 
     @Test
@@ -123,31 +113,24 @@ class CollectionScopeTests {
         });
 
         ComponentWithCollectionDependencies component =
-            this.applicationContext.get(ComponentWithCollectionDependencies.class);
+                this.applicationContext.get(ComponentWithCollectionDependencies.class);
         Set<Integer> ages = component.ages();
 
-        assertThat(ages)
-                .isInstanceOf(TreeSet.class)
-                .hasSize(2)
-                .contains(1)
-                .contains(2);
+        assertThat(ages).isInstanceOf(TreeSet.class).hasSize(2).contains(1).contains(2);
     }
 
     @Test
     @DisplayName("Collection components can be obtained with a collection component key")
     @TestComponents(CompositeMembersConfiguration.class)
     void collectionsAreCollected() {
-        ComponentKey<ComponentCollection<StaticComponent>> componentKey =
-            ComponentKey.collect(StaticComponent.class);
+        ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
         // Even if no bindings are present, the collection should be created
         assertThat(collection).isNotNull();
         assertThat(collection).isEmpty();
 
         String[] names = {
-            CompositeMembersConfiguration.USER,
-            CompositeMembersConfiguration.ADMIN,
-            CompositeMembersConfiguration.GUEST
+            CompositeMembersConfiguration.USER, CompositeMembersConfiguration.ADMIN, CompositeMembersConfiguration.GUEST
         };
         for (String name : names) {
             componentKey = componentKey.mutable().name(name).build();

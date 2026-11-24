@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,22 +46,20 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
             // Don't evaluate right if left is not truthy
             Object right = interpreter.evaluate(node.rightExpression());
             return InterpreterUtilities.isTruthy(right);
-        }
-        else if (type == ConditionTokenType.OR) {
+        } else if (type == ConditionTokenType.OR) {
             if (InterpreterUtilities.isTruthy(left)) {
                 return true;
             }
             // No need to evaluate right if left is already truthy
             Object right = interpreter.evaluate(node.rightExpression());
             return InterpreterUtilities.isTruthy(right);
-        }
-        else if (type == BitwiseTokenType.XOR) {
+        } else if (type == BitwiseTokenType.XOR) {
             Object right = interpreter.evaluate(node.rightExpression());
             return this.xor(left, right);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-            .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
-            .at(node.operator())
-            .build();
+                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
+                .at(node.operator())
+                .build();
     }
 }

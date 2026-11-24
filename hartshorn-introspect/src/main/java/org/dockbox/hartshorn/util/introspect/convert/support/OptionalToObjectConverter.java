@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Optional;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Optional;
 
 /**
  * Converts an {@link Optional} to an {@link Object}. If the optional is empty, {@code null} is
@@ -32,8 +31,7 @@ import java.util.Optional;
  *
  * @author Guus Lieben
  */
-public class OptionalToObjectConverter
-    implements Converter<Optional<?>, Object>, ConditionalConverter {
+public class OptionalToObjectConverter implements Converter<Optional<?>, Object>, ConditionalConverter {
 
     @Override
     public @Nullable Object convert(@Nullable Optional<?> input, Context... contexts) {

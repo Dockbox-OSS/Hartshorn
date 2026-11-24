@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,41 +30,36 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class UnproxyParameterLoaderRule
-    implements ParameterLoaderRule<ProxyParameterLoaderContext> {
+public class UnproxyParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override
-    public boolean accepts(
-        ParameterView<?> parameter,
-        int index,
-        ProxyParameterLoaderContext context,
-        Object... args
-    ) {
-        return parameter.annotations().has(Unproxy.class) || parameter.declaredBy()
-            .annotations()
-            .has(Unproxy.class);
+    public boolean accepts(ParameterView<?> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+        return parameter.annotations().has(Unproxy.class)
+                || parameter.declaredBy().annotations().has(Unproxy.class);
     }
 
     @Override
     public <T> Option<T> load(
-        ParameterView<T> parameter,
-        int index,
-        ProxyParameterLoaderContext context,
-        Object... args
-    ) {
+            ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
         Object argument = args[index];
         Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
-        return handler.flatMap(ProxyManager::delegate).orCompute(() -> {
-            Unproxy unproxy = parameter.annotations()
-                .get(Unproxy.class)
-                .orCompute(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull())
-                .get();
-            if (unproxy.fallbackToProxy()) {
-                return argument;
-            }
-            else {
-                return null;
-            }
-        }).cast(parameter.type().type());
+        return handler.flatMap(ProxyManager::delegate)
+                .orCompute(() -> {
+                    Unproxy unproxy = parameter
+                            .annotations()
+                            .get(Unproxy.class)
+                            .orCompute(() -> parameter
+                                    .declaredBy()
+                                    .annotations()
+                                    .get(Unproxy.class)
+                                    .orNull())
+                            .get();
+                    if (unproxy.fallbackToProxy()) {
+                        return argument;
+                    } else {
+                        return null;
+                    }
+                })
+                .cast(parameter.type().type());
     }
 }

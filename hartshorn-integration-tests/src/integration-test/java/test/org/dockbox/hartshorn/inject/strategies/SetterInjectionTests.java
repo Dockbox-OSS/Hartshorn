@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.inject.strategies;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -24,9 +27,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.inject.context.SampleContext;
 import test.org.dockbox.hartshorn.inject.stereotype.ComponentType;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class SetterInjectionTests {
@@ -37,8 +37,7 @@ class SetterInjectionTests {
     @Test
     @TestComponents({SetterInjectedComponent.class, ComponentType.class})
     void setterInjectionWithRegularComponent() {
-        SetterInjectedComponent component =
-            this.applicationContext.get(SetterInjectedComponent.class);
+        SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         assertThat(component).isNotNull();
         assertThat(component.component()).isNotNull();
     }
@@ -47,17 +46,13 @@ class SetterInjectionTests {
     @TestComponents(SetterInjectedComponentWithAbsentBinding.class)
     void setterInjectionWithAbsentRequiredComponent() {
         assertThatExceptionOfType(ComponentResolutionException.class)
-                .isThrownBy(() -> this.applicationContext.get(
-                        SetterInjectedComponentWithAbsentBinding.class
-                ));
+                .isThrownBy(() -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
     @TestComponents(SetterInjectedComponentWithNonRequiredAbsentBinding.class)
     void setterInjectionWithAbsentComponent() {
-        var component = this.applicationContext.get(
-                SetterInjectedComponentWithNonRequiredAbsentBinding.class
-        );
+        var component = this.applicationContext.get(SetterInjectedComponentWithNonRequiredAbsentBinding.class);
         assertThat(component).isNotNull();
         assertThat(component.object()).isNull();
     }
@@ -67,8 +62,7 @@ class SetterInjectionTests {
     void setterInjectionWithContext() {
         SampleContext sampleContext = new SampleContext("setter");
         this.applicationContext.addContext("setter", sampleContext);
-        SetterInjectedComponent component =
-            this.applicationContext.get(SetterInjectedComponent.class);
+        SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         assertThat(component).isNotNull();
         assertThat(component.context()).isNotNull();
         assertThat(component.context()).isSameAs(sampleContext);

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import java.util.List;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
@@ -29,8 +30,6 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 /**
  * A resolver for component constructors, which is responsible for finding the optimal constructor
@@ -54,11 +53,10 @@ public final class ComponentConstructorResolver {
     private final InjectorConfiguration configuration;
 
     private ComponentConstructorResolver(
-        ComponentInjectionPointsResolver injectionPointsResolver,
-        Introspector introspector,
-        HierarchyLookup hierarchyLookup,
-        InjectorConfiguration configuration
-    ) {
+            ComponentInjectionPointsResolver injectionPointsResolver,
+            Introspector introspector,
+            HierarchyLookup hierarchyLookup,
+            InjectorConfiguration configuration) {
         this.injectionPointsResolver = injectionPointsResolver;
         this.introspector = introspector;
         this.hierarchyLookup = hierarchyLookup;
@@ -76,15 +74,12 @@ public final class ComponentConstructorResolver {
      * @return a new component constructor resolver
      */
     public static ComponentConstructorResolver create(
-        InjectorEnvironment environment,
-        HierarchyLookup hierarchyLookup
-    ) {
+            InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         return new ComponentConstructorResolver(
-            environment.injectionPointsResolver(),
-            environment.introspector(),
-            hierarchyLookup,
-            environment.configuration()
-        );
+                environment.injectionPointsResolver(),
+                environment.introspector(),
+                hierarchyLookup,
+                environment.configuration());
     }
 
     /**
@@ -96,9 +91,7 @@ public final class ComponentConstructorResolver {
      *
      * @return a new component constructor resolver
      */
-    public static ComponentConstructorResolver create(
-        InjectionCapableApplication applicationContext
-    ) {
+    public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
         return create(applicationContext.environment(), applicationContext.defaultBinder());
     }
 
@@ -118,7 +111,7 @@ public final class ComponentConstructorResolver {
      * @throws NoSuchProviderException if no suitable provider is found for the given type
      */
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypeView<C> type)
-        throws MissingInjectConstructorException, NoSuchProviderException {
+            throws MissingInjectConstructorException, NoSuchProviderException {
         TypePathNode<C> node = new TypePathNode<>(type, ComponentKey.of(type), type);
         return this.findConstructor(node);
     }
@@ -139,20 +132,18 @@ public final class ComponentConstructorResolver {
      * @throws NoSuchProviderException if no suitable provider is found for the given type
      */
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypePathNode<C> node)
-        throws MissingInjectConstructorException, NoSuchProviderException {
+            throws MissingInjectConstructorException, NoSuchProviderException {
         BindingHierarchy<C> hierarchy = this.hierarchyLookup.hierarchy(node.componentKey());
         int highestPriority = hierarchy.highestPriority();
         Option<? extends InstantiationStrategy<C>> providerOption = hierarchy.get(highestPriority);
         return providerOption.absent()
-            ? this.findConstructorInImplementation(node.type())
-            : this.findConstructorInHierarchy(node, providerOption);
+                ? this.findConstructorInImplementation(node.type())
+                : this.findConstructorInHierarchy(node, providerOption);
     }
 
     private <C> Option<ConstructorView<? extends C>> findConstructorInHierarchy(
-        TypePathNode<C> node,
-        Option<? extends InstantiationStrategy<C>> providerOption
-    )
-        throws NoSuchProviderException, MissingInjectConstructorException {
+            TypePathNode<C> node, Option<? extends InstantiationStrategy<C>> providerOption)
+            throws NoSuchProviderException, MissingInjectConstructorException {
         InstantiationStrategy<C> strategy = providerOption.get();
         if (strategy instanceof CompositeInstantiationStrategy<C> composite) {
             strategy = composite.provider();
@@ -164,24 +155,20 @@ public final class ComponentConstructorResolver {
         }
 
         if (strategy instanceof TypeAwareInstantiationStrategy<C> typeAwareInstantiationStrategy) {
-            TypeView<? extends C> typeView =
-                this.introspector.introspect(typeAwareInstantiationStrategy.type());
+            TypeView<? extends C> typeView = this.introspector.introspect(typeAwareInstantiationStrategy.type());
             return this.findConstructorInImplementation(typeView);
         }
-        throw new NoSuchProviderException(NoSuchProviderException.ProviderType.TYPE_AWARE,
-            node.componentKey());
+        throw new NoSuchProviderException(NoSuchProviderException.ProviderType.TYPE_AWARE, node.componentKey());
     }
 
-    private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(
-        TypeView<? extends C> type
-    ) throws MissingInjectConstructorException {
+    private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(TypeView<? extends C> type)
+            throws MissingInjectConstructorException {
         if (type.modifiers().isAbstract()) {
             return Option.empty();
         }
 
         ConstructorView<? extends C> optimalConstructor;
-        List<? extends ConstructorView<? extends C>> constructors =
-            this.findAvailableConstructors(type);
+        List<? extends ConstructorView<? extends C>> constructors = this.findAvailableConstructors(type);
         if (constructors.isEmpty()) {
             throw new MissingInjectConstructorException(type);
         }
@@ -190,7 +177,8 @@ public final class ComponentConstructorResolver {
         // many dependencies can be satiated at once.
         optimalConstructor = constructors.getFirst();
         for (ConstructorView<? extends C> constructor : constructors) {
-            if (optimalConstructor.parameters().count() < constructor.parameters().count()) {
+            if (optimalConstructor.parameters().count()
+                    < constructor.parameters().count()) {
                 optimalConstructor = constructor;
             }
         }
@@ -200,16 +188,14 @@ public final class ComponentConstructorResolver {
 
     private <C> List<ConstructorView<C>> findAvailableConstructors(TypeView<C> type) {
         List<ConstructorView<C>> constructors = type.constructors().all().stream()
-            .filter(this.injectionPointsResolver::isInjectable)
-            .toList();
+                .filter(this.injectionPointsResolver::isInjectable)
+                .toList();
         if (constructors.isEmpty()) {
-            Option<ConstructorView<C>> defaultConstructor =
-                type.constructors().defaultConstructor();
+            Option<ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.present()) {
                 return List.of(defaultConstructor.get());
-            }
-            else if (this.configuration.allowFallbackToSingleConstructor()
-                && type.constructors().count() == 1) {
+            } else if (this.configuration.allowFallbackToSingleConstructor()
+                    && type.constructors().count() == 1) {
                 return List.of(type.constructors().all().getFirst());
             }
         }

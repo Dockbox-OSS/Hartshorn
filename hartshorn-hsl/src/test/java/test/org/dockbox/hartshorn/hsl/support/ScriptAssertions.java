@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,61 +16,50 @@
 
 package test.org.dockbox.hartshorn.hsl.support;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Locale;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.util.StringUtilities;
 
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 public class ScriptAssertions {
 
-    public static void assertEvaluationFails(
-        ExecutableScript executableScript,
-        FormattedDiagnostic diagnosticMessage
-    ) {
-        ScriptEvaluationError error =
-            assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(executableScript::evaluate).actual();
+    public static void assertEvaluationFails(ExecutableScript executableScript, FormattedDiagnostic diagnosticMessage) {
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(executableScript::evaluate)
+                .actual();
         assertEvaluationError(error, diagnosticMessage);
     }
 
-    public static void assertEvaluationError(
-        ScriptEvaluationError error,
-        FormattedDiagnostic diagnosticMessage
-    ) {
+    public static void assertEvaluationError(ScriptEvaluationError error, FormattedDiagnostic diagnosticMessage) {
         if (diagnosticMessage.message().phase() != null) {
             assertThat(error.phase()).isEqualTo(diagnosticMessage.message().phase());
         }
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String expectedMessageStart = diagnosticMessage.format();
-        String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
+        String actualMessageStart =
+                error.getMessage().split("While " + phase)[0].trim();
         assertThat(actualMessageStart).isEqualTo(expectedMessageStart);
     }
 
-    public static void assertEvaluationError(
-        ScriptEvaluationError error,
-        DiagnosticMessage diagnosticMessage
-    ) {
+    public static void assertEvaluationError(ScriptEvaluationError error, DiagnosticMessage diagnosticMessage) {
         if (diagnosticMessage.phase() != null) {
             assertThat(error.phase()).isEqualTo(diagnosticMessage.phase());
         }
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
-        String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
+        String actualMessageStart =
+                error.getMessage().split("While " + phase)[0].trim();
         String rawMessage = diagnosticMessage.format();
-        assertThat(StringUtilities.matchesFormatted(rawMessage, actualMessageStart)).as("Expected message to match:\n" +
-            rawMessage + "\nbut was:\n" +
-            actualMessageStart).isTrue();
+        assertThat(StringUtilities.matchesFormatted(rawMessage, actualMessageStart))
+                .as("Expected message to match:\n" + rawMessage + "\nbut was:\n" + actualMessageStart)
+                .isTrue();
     }
 
-    public static void assertEvaluationFailedAtPosition(
-        ScriptEvaluationError error,
-        int line,
-        int column
-    ) {
+    public static void assertEvaluationFailedAtPosition(ScriptEvaluationError error, int line, int column) {
         assertThat(error.line()).isEqualTo(line);
         assertThat(error.column()).isEqualTo(column);
     }

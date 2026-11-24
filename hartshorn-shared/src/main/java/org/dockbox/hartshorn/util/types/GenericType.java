@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Generic type reference, allowing for generic type reading. This is derived from Jackson's
@@ -38,9 +37,7 @@ public abstract class GenericType<T> {
     protected GenericType() {
         Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
-            throw new IllegalArgumentException(
-                "GenericType constructed without actual type information"
-            );
+            throw new IllegalArgumentException("GenericType constructed without actual type information");
         }
         this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }

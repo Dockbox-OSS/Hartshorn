@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.application.AbstractProcessingPriorityReportable;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
-
-import java.util.Collection;
 
 /**
  * A {@link Reportable} that reports all provided {@link ComponentProcessor}s.
@@ -35,21 +34,21 @@ public class ComponentProcessorsReportable extends AbstractProcessingPriorityRep
 
     private final NavigableMultiMap<Integer, ? extends ComponentProcessor> processors;
 
-    public ComponentProcessorsReportable(
-        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors
-    ) {
+    public ComponentProcessorsReportable(NavigableMultiMap<Integer, ? extends ComponentProcessor> processors) {
         this.processors = processors;
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector propertyCollector) {
         Reportable[] reportables = this.processors.values().stream()
-            .flatMap(Collection::stream)
-            .map(processor -> (Reportable) processorCollector -> {
-                processorCollector.property("name")
-                    .writeString(processor.getClass().getCanonicalName());
-                reportPriority(processorCollector, processor.priority());
-            }).toArray(Reportable[]::new);
+                .flatMap(Collection::stream)
+                .map(processor -> (Reportable) processorCollector -> {
+                    processorCollector
+                            .property("name")
+                            .writeString(processor.getClass().getCanonicalName());
+                    reportPriority(processorCollector, processor.priority());
+                })
+                .toArray(Reportable[]::new);
 
         propertyCollector.property("processors").writeDelegates(reportables);
     }

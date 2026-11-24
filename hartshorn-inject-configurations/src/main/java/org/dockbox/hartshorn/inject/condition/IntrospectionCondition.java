@@ -23,9 +23,9 @@ package org.dockbox.hartshorn.inject.condition;
  *
  * @see ConditionMatcher
  * @see Condition
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -43,9 +43,7 @@ public non-sealed interface IntrospectionCondition extends Condition {
         if (context instanceof IntrospectedConditionContext introspectedConditionContext) {
             return this.matches(introspectedConditionContext);
         }
-        return ConditionResult.notMatched(
-                "ConditionContext is not an instance of IntrospectedConditionContext"
-        );
+        return ConditionResult.notMatched("ConditionContext is not an instance of IntrospectedConditionContext");
     }
 
     /**

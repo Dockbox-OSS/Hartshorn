@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,8 @@ public class FromPropertyProfileNameResolver implements ProfileNameResolver {
 
     @Override
     public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
-        return rootRegistry.list(PROFILES_PROPERTY)
-            .stream(list -> list.values().stream())
-            .flatMap(property -> property.value().stream())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return rootRegistry.list(PROFILES_PROPERTY).stream(list -> list.values().stream())
+                .flatMap(property -> property.value().stream())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

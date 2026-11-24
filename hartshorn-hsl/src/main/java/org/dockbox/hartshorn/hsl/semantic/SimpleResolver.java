@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword.ScopeType;
@@ -32,11 +36,6 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 /**
  * Standard resolver to perform semantic analysis and type checking before a collection of
  * statements is interpreted. This allows illegal references to identifiers to be found and reported
@@ -47,9 +46,9 @@ import java.util.Stack;
  * the tracking of resolved items.
  *
  * @see ResolverVisitor
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class SimpleResolver implements Resolver {
@@ -143,8 +142,7 @@ public class SimpleResolver implements Resolver {
     public void resolve(Statement statement) {
         if (statement instanceof CustomStatement<?> customStatement) {
             customStatement.resolve(this);
-        }
-        else {
+        } else {
             statement.accept(this.visitor);
         }
     }
@@ -153,8 +151,7 @@ public class SimpleResolver implements Resolver {
     public void resolve(Expression expression) {
         if (expression instanceof CustomExpression<?> customExpression) {
             customExpression.resolve(this);
-        }
-        else {
+        } else {
             expression.accept(this.visitor);
         }
     }
@@ -197,9 +194,9 @@ public class SimpleResolver implements Resolver {
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
-                .at(name)
-                .build();
+                    .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
+                    .at(name)
+                    .build();
         }
         scope.put(name.lexeme(), false);
     }
@@ -218,11 +215,9 @@ public class SimpleResolver implements Resolver {
         if (this.finals.peek().containsKey(name.lexeme())) {
             String existingWhat = this.finals.peek().get(name.lexeme());
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT,
-                    existingWhat,
-                    name.lexeme())
-                .at(name)
-                .build();
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, existingWhat, name.lexeme())
+                    .at(name)
+                    .build();
         }
     }
 

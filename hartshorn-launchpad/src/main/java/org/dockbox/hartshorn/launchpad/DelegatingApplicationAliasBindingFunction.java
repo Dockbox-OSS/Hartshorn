@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,16 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
  *
  * @see ApplicationContext
  * @see BindingFunction
- * 
+ *
  * @since 0.4.11
- * 
+ *
  * @author Guus Lieben
  */
-public class DelegatingApplicationAliasBindingFunction<T>
-    extends DelegatingApplicationBindingFunction<T> implements AliasBindingFunction<T> {
+public class DelegatingApplicationAliasBindingFunction<T> extends DelegatingApplicationBindingFunction<T>
+        implements AliasBindingFunction<T> {
 
     public DelegatingApplicationAliasBindingFunction(
-        ApplicationContext applicationContext,
-        AliasBindingFunction<T> delegate
-    ) {
+            ApplicationContext applicationContext, AliasBindingFunction<T> delegate) {
         super(applicationContext, delegate);
     }
 
@@ -81,8 +79,6 @@ public class DelegatingApplicationAliasBindingFunction<T>
 
     @Override
     public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
-        return (AliasBindingFunction<T>) super.processAfterInitialization(
-            processAfterInitialization
-        );
+        return (AliasBindingFunction<T>) super.processAfterInitialization(processAfterInitialization);
     }
 }

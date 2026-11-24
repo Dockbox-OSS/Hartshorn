@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.lang.classfile.ClassModel;
+import java.util.List;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.ClassModel;
-import java.util.List;
 
 /**
  * A view of a type, which may be a {@link Class}, {@link java.lang.reflect.ParameterizedType}, or

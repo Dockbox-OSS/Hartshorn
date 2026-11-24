@@ -16,6 +16,12 @@
 
 package test.org.dockbox.hartshorn.inject.conditions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.lang.classfile.Annotation;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
+import java.util.stream.Stream;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -45,21 +51,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.classfile.Annotation;
-import java.lang.classfile.ClassModel;
-import java.lang.classfile.MethodModel;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SuppressWarnings("unused")
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents(ConditionalConfiguration.class)
-@TestProperties({
-    "property.c=o",
-    "property.d=d",
-    "property.e=otherValue"
-})
+@TestProperties({"property.c=o", "property.d=d", "property.e=otherValue"})
 @DemoActivator
 public class ConditionTests {
 
@@ -68,13 +63,12 @@ public class ConditionTests {
 
     public static Stream<Arguments> properties() {
         return Stream.of(
-            Arguments.of("a", true),
-            Arguments.of("b", false),
-            Arguments.of("c", true),
-            Arguments.of("d", true),
-            Arguments.of("e", false),
-            Arguments.of("f", true)
-        );
+                Arguments.of("a", true),
+                Arguments.of("b", false),
+                Arguments.of("c", true),
+                Arguments.of("d", true),
+                Arguments.of("e", false),
+                Arguments.of("f", true));
     }
 
     @ParameterizedTest
@@ -88,27 +82,27 @@ public class ConditionTests {
         String value = this.applicationContext.get(key);
         if (present) {
             assertThat(value).isEqualTo(name);
-        }
-        else {
+        } else {
             assertThat(value).isEmpty(); // Default value, not null
         }
     }
 
     @Test
     void activatorConditions() {
-        assertThat(this.applicationContext.activators()
-            .hasActivator(DemoActivator.class)).isTrue();
+        assertThat(this.applicationContext.activators().hasActivator(DemoActivator.class))
+                .isTrue();
 
-        MethodView<ConditionTests, ?> method = this.applicationContext.environment()
-            .introspector()
-            .introspect(ConditionTests.class)
-            .methods()
-            .named("requiresActivator")
-            .get();
-        RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
+        MethodView<ConditionTests, ?> method = this.applicationContext
+                .environment()
+                .introspector()
+                .introspect(ConditionTests.class)
+                .methods()
+                .named("requiresActivator")
+                .get();
+        RequiresCondition annotation =
+                method.annotations().get(RequiresCondition.class).get();
         AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
-        ConditionContext context =
-            new IntrospectedConditionContext(this.applicationContext, method, declaration);
+        ConditionContext context = new IntrospectedConditionContext(this.applicationContext, method, declaration);
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
@@ -116,68 +110,57 @@ public class ConditionTests {
     }
 
     @RequiresActivator(DemoActivator.class)
-    private void requiresActivator() {
-    }
+    private void requiresActivator() {}
 
     @Test
     void classConditionOnPresentClass() {
-        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
+        ClassModel model =
+                ClassFileUtilities.getClassModel(ConditionTests.class).get();
         Condition condition = new ClassCondition();
 
-        MethodModel requiresClass = ClassFileUtilities.getMethod(model, "requiresClass").get();
-        Annotation annotationForPresent = ClassFileUtilities.getAnnotation(
-            requiresClass,
-            RequiresClass.class
-        ).get();
+        MethodModel requiresClass =
+                ClassFileUtilities.getMethod(model, "requiresClass").get();
+        Annotation annotationForPresent = ClassFileUtilities.getAnnotation(requiresClass, RequiresClass.class)
+                .get();
         ReferenceConditionDeclaration declarationForPresent =
-            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForPresent);
-        ConditionContext contextForPresent = new ReferenceConditionContext(
-            declarationForPresent,
-                requiresClass
-        );
+                ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForPresent);
+        ConditionContext contextForPresent = new ReferenceConditionContext(declarationForPresent, requiresClass);
         assertThat(condition.matches(contextForPresent).matches()).isTrue();
     }
 
     @Test
     void classConditionOnAbsentClass() {
-        ClassModel model = ClassFileUtilities.getClassModel(ConditionTests.class).get();
+        ClassModel model =
+                ClassFileUtilities.getClassModel(ConditionTests.class).get();
         Condition condition = new ClassCondition();
 
-        MethodModel requiresAbsentClass = ClassFileUtilities.getMethod(
-            model,
-            "requiresAbsentClass"
-        ).get();
-        Annotation annotationForAbsent = ClassFileUtilities.getAnnotation(
-            requiresAbsentClass,
-            RequiresClass.class
-        ).get();
+        MethodModel requiresAbsentClass =
+                ClassFileUtilities.getMethod(model, "requiresAbsentClass").get();
+        Annotation annotationForAbsent = ClassFileUtilities.getAnnotation(requiresAbsentClass, RequiresClass.class)
+                .get();
         ReferenceConditionDeclaration declarationForAbsent =
-            ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForAbsent);
-        ConditionContext contextForAbsent = new ReferenceConditionContext(
-            declarationForAbsent,
-                requiresAbsentClass
-        );
+                ReferenceConditionDeclaration.createFromMetaAnnotation(annotationForAbsent);
+        ConditionContext contextForAbsent = new ReferenceConditionContext(declarationForAbsent, requiresAbsentClass);
         assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }
 
     @RequiresClass(classes = String.class)
-    private void requiresClass() {
-    }
+    private void requiresClass() {}
 
     @RequiresClass(classNames = "java.gnal.String")
-    private void requiresAbsentClass() {
-    }
+    private void requiresAbsentClass() {}
 
     @Test
     void enclosedViewsIncludeParentCondition() {
         TypeView<ParentClass> type =
-            this.applicationContext.environment().introspector().introspect(ParentClass.class);
+                this.applicationContext.environment().introspector().introspect(ParentClass.class);
         ConditionMatcher matcher = new ConditionMatcher(() -> this.applicationContext);
         assertThat(matcher.match(type))
                 .extracting(ConditionResult::matches, InstanceOfAssertFactories.BOOLEAN)
                 .isFalse();
 
-        MethodView<ParentClass, ?> methodView = type.methods().named("requiresClass").get();
+        MethodView<ParentClass, ?> methodView =
+                type.methods().named("requiresClass").get();
         matcher.includeEnclosingConditions(false);
         assertThat(matcher.match(methodView))
                 .extracting(ConditionResult::matches, InstanceOfAssertFactories.BOOLEAN)
@@ -192,7 +175,6 @@ public class ConditionTests {
     @RequiresClass(classNames = "java.gnal.String")
     public static class ParentClass {
         @RequiresClass(classes = String.class)
-        public void requiresClass() {
-        }
+        public void requiresClass() {}
     }
 }

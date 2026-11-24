@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.inject.collection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -47,10 +47,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     private final int priority;
 
     public HierarchyCollectorBindingFunction(
-        Binder binder,
-        BindingHierarchy<ComponentCollection<T>> hierarchy,
-        int priority
-    ) {
+            Binder binder, BindingHierarchy<ComponentCollection<T>> hierarchy, int priority) {
         this.binder = binder;
         this.hierarchy = hierarchy;
         this.priority = priority;
@@ -58,14 +55,13 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder provider(InstantiationStrategy<T> strategy) {
-        this.hierarchy.get(this.priority)
+        this.hierarchy
+                .get(this.priority)
                 .ofType(CollectionInstantiationStrategy.class)
                 .peek(collector -> collector.add(strategy))
                 .orElseThrow(() -> {
-                    return new IllegalStateException(
-                        "Cannot add provider to collection hierarchy: "
-                            + "No collection provider found at priority " + this.priority
-                    );
+                    return new IllegalStateException("Cannot add provider to collection hierarchy: "
+                            + "No collection provider found at priority " + this.priority);
                 });
         return this.binder;
     }
@@ -87,7 +83,8 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder type(Class<? extends T> type) {
-        ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
+        ComponentKey<? extends T> componentKey =
+                this.hierarchy.key().mutable().type(type).build();
         return this.provider(PrototypeConstructorInstantiationStrategy.forPrototype(componentKey));
     }
 

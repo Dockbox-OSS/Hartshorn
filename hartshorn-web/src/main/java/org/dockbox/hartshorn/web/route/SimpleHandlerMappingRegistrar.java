@@ -36,11 +36,7 @@ public class SimpleHandlerMappingRegistrar implements HandlerMappingRegistrar {
     }
 
     @Override
-    public HandlerMappingRegistrar add(
-            HttpMethod method,
-            PathSpec pathSpec,
-            RequestHandler handler
-    ) {
+    public HandlerMappingRegistrar add(HttpMethod method, PathSpec pathSpec, RequestHandler handler) {
         this.registry.add(method, pathSpec, handler);
         return this;
     }

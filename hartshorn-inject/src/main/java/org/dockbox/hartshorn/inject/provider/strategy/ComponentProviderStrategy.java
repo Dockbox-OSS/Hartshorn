@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public interface ComponentProviderStrategy {
      * @throws ApplicationException if the component could not be initialized or processed
      */
     <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException, ApplicationException;
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ComponentResolutionException, ApplicationException;
 }

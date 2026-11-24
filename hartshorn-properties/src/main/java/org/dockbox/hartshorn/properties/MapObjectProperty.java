@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.properties;
 
+import java.util.Map;
+import java.util.Set;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import org.dockbox.hartshorn.properties.object.ObjectPropertyParser;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Basic implementation of {@link ObjectProperty} that uses a map to store
@@ -34,11 +33,7 @@ import java.util.Set;
  */
 public class MapObjectProperty extends AbstractMapProperty<String> implements ObjectProperty {
 
-    public MapObjectProperty(
-        String name,
-        Map<String, ConfiguredProperty> properties,
-        PropertyPathStyle pathStyle
-    ) {
+    public MapObjectProperty(String name, Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
         super(name, properties, pathStyle);
     }
 
@@ -55,7 +50,8 @@ public class MapObjectProperty extends AbstractMapProperty<String> implements Ob
     @Override
     protected String key(String prefix, ConfiguredProperty property) {
         // Remove prefix from name
-        return property.name().substring(this.name().length() + this.accessor(prefix).length());
+        return property.name()
+                .substring(this.name().length() + this.accessor(prefix).length());
     }
 
     @Override

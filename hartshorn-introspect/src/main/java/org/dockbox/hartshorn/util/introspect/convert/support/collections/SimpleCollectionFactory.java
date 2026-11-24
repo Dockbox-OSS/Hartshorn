@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support.collections;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
@@ -37,6 +31,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simple implementation of {@link CollectionFactory} that uses {@link CollectionProvider}s if
@@ -77,9 +76,7 @@ public class SimpleCollectionFactory implements CollectionFactory {
      * @return the current instance
      */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(
-        Class<T> type,
-        CollectionProvider<T> provider
-    ) {
+            Class<T> type, CollectionProvider<T> provider) {
         this.defaults.put(type, provider);
         return this;
     }
@@ -99,14 +96,8 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @return the current instance
      */
-    public <T extends Collection<?>> SimpleCollectionFactory withDefault(
-        Class<T> type,
-        Supplier<T> supplier
-    ) {
-        this.defaults.put(type, new SupplierCollectionProvider<>(
-            supplier,
-            capacity -> supplier.get()
-        ));
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
+        this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacity -> supplier.get()));
         return this;
     }
 
@@ -124,10 +115,7 @@ public class SimpleCollectionFactory implements CollectionFactory {
      * @return the current instance
      */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(
-        Class<T> type,
-        Supplier<T> supplier,
-        IntFunction<T> capacityConstructor
-    ) {
+            Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacityConstructor));
         return this;
     }
@@ -146,30 +134,21 @@ public class SimpleCollectionFactory implements CollectionFactory {
      * @return the current instance
      */
     public SimpleCollectionFactory withDefaults() {
-        return this
-            .withDefault(Collection.class, ArrayList::new, ArrayList::new)
-            .withDefault(List.class, ArrayList::new, ArrayList::new)
-            .withDefault(Set.class, HashSet::new, HashSet::new)
-            .withDefault(SortedSet.class, TreeSet::new)
-            .withDefault(Queue.class, LinkedList::new)
-            .withDefault(Deque.class, LinkedList::new)
-            ;
+        return this.withDefault(Collection.class, ArrayList::new, ArrayList::new)
+                .withDefault(List.class, ArrayList::new, ArrayList::new)
+                .withDefault(Set.class, HashSet::new, HashSet::new)
+                .withDefault(SortedSet.class, TreeSet::new)
+                .withDefault(Queue.class, LinkedList::new)
+                .withDefault(Deque.class, LinkedList::new);
     }
 
     @Override
-    public <O extends Collection<E>, E> O createCollection(
-        Class<O> targetType,
-        Class<E> elementType
-    ) {
+    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType) {
         return this.createCollection(targetType, elementType, USE_COLLECTION_DEFAULT_CAPACITY);
     }
 
     @Override
-    public <O extends Collection<E>, E> O createCollection(
-        Class<O> targetType,
-        Class<E> elementType,
-        int length
-    ) {
+    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType, int length) {
         O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType, length);
         if (collection != null) {
             return collection;
@@ -184,48 +163,32 @@ public class SimpleCollectionFactory implements CollectionFactory {
         if (collection != null) {
             return collection;
         }
-        throw new IllegalArgumentException(
-            "Unsupported Collection implementation: " + targetType.getName()
-        );
+        throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
     }
 
-    private <O extends Collection> @Nullable O createCollectionWithCapacity(
-        Class<O> targetType,
-        int length
-    ) {
-        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType)
-            .constructors();
-        Option<ConstructorView<O>> defaultCapacityConstructor = constructors
-            .withParameters(int.class);
+    private <O extends Collection> @Nullable O createCollectionWithCapacity(Class<O> targetType, int length) {
+        TypeConstructorsIntrospector<O> constructors =
+                this.introspector.introspect(targetType).constructors();
+        Option<ConstructorView<O>> defaultCapacityConstructor = constructors.withParameters(int.class);
         if (defaultCapacityConstructor.present()) {
             try {
                 return defaultCapacityConstructor.get().create(length);
-            }
-            catch (Throwable e) {
-                throw new IllegalArgumentException(
-                    "Failed to create collection of type " + targetType.getName(),
-                    e
-                );
+            } catch (Throwable e) {
+                throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
             }
         }
         return null;
     }
 
-    private <O extends Collection> @Nullable O createCollectionWithDefaultConstructor(
-        Class<O> targetType
-    ) {
-        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType)
-            .constructors();
+    private <O extends Collection> @Nullable O createCollectionWithDefaultConstructor(Class<O> targetType) {
+        TypeConstructorsIntrospector<O> constructors =
+                this.introspector.introspect(targetType).constructors();
         Option<ConstructorView<O>> defaultConstructor = constructors.defaultConstructor();
         if (defaultConstructor.present()) {
             try {
                 return defaultConstructor.get().create();
-            }
-            catch (Throwable e) {
-                throw new IllegalArgumentException(
-                    "Failed to create collection of type " + targetType.getName(),
-                    e
-                );
+            } catch (Throwable e) {
+                throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
             }
         }
         return null;
@@ -233,21 +196,16 @@ public class SimpleCollectionFactory implements CollectionFactory {
 
     @SuppressWarnings("unchecked")
     private <O extends Collection> @Nullable O maybeCreateCollectionFromDefaults(
-        Class<O> targetType,
-        Class<?> elementType,
-        int length
-    ) {
+            Class<O> targetType, Class<?> elementType, int length) {
         CollectionProvider<?> supplier = this.defaults.get(targetType);
         if (supplier != null) {
             return length != USE_COLLECTION_DEFAULT_CAPACITY
-                ? (O) supplier.createWithCapacity(length)
-                : (O) supplier.createEmpty();
-        }
-        else if (targetType == EnumSet.class || EnumSet.class.isAssignableFrom(targetType)) {
+                    ? (O) supplier.createWithCapacity(length)
+                    : (O) supplier.createEmpty();
+        } else if (targetType == EnumSet.class || EnumSet.class.isAssignableFrom(targetType)) {
             if (elementType.isEnum()) {
                 return (O) EnumSet.noneOf((Class<? extends Enum>) elementType);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("EnumSet must be created with an enum type");
             }
         }

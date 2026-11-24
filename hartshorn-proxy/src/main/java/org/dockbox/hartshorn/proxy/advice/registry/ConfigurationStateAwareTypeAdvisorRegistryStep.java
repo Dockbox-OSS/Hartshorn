@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.proxy.advice.registry;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Basic implementation of {@link StateAwareTypeAdvisorRegistryStep}. This implementation is used to
@@ -32,20 +31,16 @@ import java.lang.reflect.Modifier;
  * @param <T> the type of the proxy object
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T>
-    implements StateAwareTypeAdvisorRegistryStep<S, T> {
+public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements StateAwareTypeAdvisorRegistryStep<S, T> {
 
     private final StateAwareAdvisorRegistry<T> registry;
     private final Class<S> type;
     private S delegate;
 
-    public ConfigurationStateAwareTypeAdvisorRegistryStep(
-        StateAwareAdvisorRegistry<T> registry,
-        Class<S> type
-    ) {
+    public ConfigurationStateAwareTypeAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Class<S> type) {
         this.registry = registry;
         this.type = type;
     }
@@ -90,15 +85,12 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T>
 
     private void delegateAbstractOverrideCandidate(S delegateInstance, Method declaredMethod) {
         try {
-            Method override = this.registry.advisedType()
-                .getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-            if (!Modifier.isAbstract(override.getModifiers())
-                || override.isDefault()
-                || declaredMethod.isDefault()) {
+            Method override =
+                    this.registry.advisedType().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
                 return;
             }
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             // Ignore error, delegate is not concrete
         }
         this.addDelegateAdvice(delegateInstance, declaredMethod);

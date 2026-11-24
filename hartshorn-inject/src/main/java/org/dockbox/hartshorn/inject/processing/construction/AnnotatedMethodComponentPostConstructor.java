@@ -16,12 +16,15 @@
 
 package org.dockbox.hartshorn.inject.processing.construction;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
@@ -32,10 +35,6 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A component post-constructor that invokes methods annotated with {@link OnInitialized} on the
@@ -52,9 +51,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     private final Set<Class<? extends Annotation>> annotations;
 
     protected AnnotatedMethodComponentPostConstructor(
-        SingleElementContext<? extends InjectionCapableApplication> initializerContext,
-        Configurer configurer
-    ) {
+            SingleElementContext<? extends InjectionCapableApplication> initializerContext, Configurer configurer) {
         this.introspector = initializerContext.input().environment().introspector();
         this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext);
         this.annotations = Set.copyOf(configurer.annotations.initialize(initializerContext));
@@ -63,19 +60,14 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     @Override
     public <T> T doPostConstruct(T instance, Scope scope) throws ApplicationException {
         TypeView<T> typeView = this.introspector.introspect(instance);
-        List<MethodView<T, ?>> annotatedMethods =
-            typeView.methods().annotatedWithAny(this.annotations);
+        List<MethodView<T, ?>> annotatedMethods = typeView.methods().annotatedWithAny(this.annotations);
 
         for (MethodView<T, ?> annotatedMethod : annotatedMethods) {
             try {
-                this.contextAdapter
-                        .scope(scope)
-                        .invoke(annotatedMethod, instance);
-            }
-            catch (ApplicationException e) {
+                this.contextAdapter.scope(scope).invoke(annotatedMethod, instance);
+            } catch (ApplicationException e) {
                 throw e;
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 throw new ApplicationException(e);
             }
         }
@@ -91,18 +83,17 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
      *
      * @return The contextual initializer for the post-constructor
      */
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor>
-    create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> create(
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
             AnnotatedMethodComponentPostConstructor postConstructor =
-                new AnnotatedMethodComponentPostConstructor(context, configurer);
+                    new AnnotatedMethodComponentPostConstructor(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentPostConstructor.class).singleton(postConstructor);
-                binder.bind(ComponentExecutableInvocationAdapter.class)
-                    .singleton(postConstructor.contextAdapter);
+                binder.bind(ComponentExecutableInvocationAdapter.class).singleton(postConstructor.contextAdapter);
             });
             return postConstructor;
         };
@@ -119,10 +110,10 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
 
         // checkstyle:off LineLength
         private final LazyStreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>> annotations =
-            LazyStreamableConfigurer.of(OnInitialized.class);
+                LazyStreamableConfigurer.of(OnInitialized.class);
 
-        private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter =
-            ContextualInitializer.of(InjectorExecutableInvocationAdapter::new);
+        private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter>
+                viewContextAdapter = ContextualInitializer.of(InjectorExecutableInvocationAdapter::new);
         // checkstyle:on LineLength
 
         /**
@@ -133,10 +124,8 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
          * @return The current configurer, for chaining
          */
         public Configurer viewContextAdapter(
-            ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter
-        ) {
-            return this.viewContextAdapter(ContextualInitializer.of(
-                lazyComponentExecutableInvocationAdapter));
+                ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter) {
+            return this.viewContextAdapter(ContextualInitializer.of(lazyComponentExecutableInvocationAdapter));
         }
 
         /**
@@ -147,9 +136,8 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
          * @return The current configurer, for chaining
          */
         public Configurer viewContextAdapter(
-            ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter>
-                viewContextAdapter
-        ) {
+                ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter>
+                        viewContextAdapter) {
             this.viewContextAdapter = viewContextAdapter;
             return this;
         }
@@ -190,7 +178,8 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
          * @return The current configurer, for chaining
          */
         // checkstyle:off LineLength
-        public Configurer annotations(Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
+        public Configurer annotations(
+                Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
         }
@@ -205,7 +194,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.forName("javax.annotation.PostConstruct", Annotation.class)
-                    .peek(collection::add);
+                        .peek(collection::add);
             });
         }
 
@@ -218,7 +207,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct", Annotation.class)
-                    .peek(collection::add);
+                        .peek(collection::add);
             });
         }
     }

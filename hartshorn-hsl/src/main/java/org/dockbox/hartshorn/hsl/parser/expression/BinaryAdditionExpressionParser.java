@@ -35,8 +35,7 @@ public class BinaryAdditionExpressionParser extends AbstractBitwiseOrLogicalExpr
     @Override
     protected TokenType[] whileMatching() {
         return new TokenType[] {
-            ArithmeticTokenType.MINUS,
-            ArithmeticTokenType.PLUS,
+            ArithmeticTokenType.MINUS, ArithmeticTokenType.PLUS,
         };
     }
 

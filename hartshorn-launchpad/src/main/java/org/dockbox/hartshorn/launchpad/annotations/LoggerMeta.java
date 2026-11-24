@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * customization of the logger.
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)

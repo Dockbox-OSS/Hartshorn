@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
-import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 /**
  * A diagnostics reporter that aggregates multiple other reporters, which can be used to report all
@@ -35,8 +34,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class AggregateDiagnosticsReporter
-        implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {
+public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {
 
     private final AggregateReporterConfiguration configuration;
 
@@ -47,18 +45,15 @@ public class AggregateDiagnosticsReporter
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
-        Map<String, CategorizedDiagnosticsReporter> collectorsByCategory = reporters
-                .stream()
-                .collect(Collectors.toMap(
-                        CategorizedDiagnosticsReporter::category,
-                        Function.identity()
-                ));
+        Map<String, CategorizedDiagnosticsReporter> collectorsByCategory = reporters.stream()
+                .collect(Collectors.toMap(CategorizedDiagnosticsReporter::category, Function.identity()));
         TreeSet<String> sortedCategories = new TreeSet<>(collectorsByCategory.keySet());
 
         collector.property("reporters").writeDelegate(reporterCollector -> {
             for (String category : sortedCategories) {
                 var reporter = collectorsByCategory.get(category);
-                reporterCollector.property(category)
+                reporterCollector
+                        .property(category)
                         .writeString(reporter.getClass().getCanonicalName());
             }
         });

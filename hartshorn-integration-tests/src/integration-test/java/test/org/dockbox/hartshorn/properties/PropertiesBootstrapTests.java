@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
@@ -28,21 +31,14 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
-
 @PropertiesSource("classpath:it-additional-config.yml")
 @HartshornIntegrationTest(includeBasePackages = false)
 class PropertiesBootstrapTests {
 
     @Test
-    void configurationValueWasLoadedAccessedByRegistry(
-        @Inject PropertyRegistry propertyRegistry
-    ) {
-        Option<Boolean> isAdditionalConfigPresent = propertyRegistry.value(
-            "hartshorn.test.additional-config",
-            StandardValuePropertyParsers.BOOLEAN
-        );
+    void configurationValueWasLoadedAccessedByRegistry(@Inject PropertyRegistry propertyRegistry) {
+        Option<Boolean> isAdditionalConfigPresent =
+                propertyRegistry.value("hartshorn.test.additional-config", StandardValuePropertyParsers.BOOLEAN);
         assertThat(isAdditionalConfigPresent)
                 .value(InstanceOfAssertFactories.BOOLEAN)
                 .isTrue();
@@ -50,15 +46,13 @@ class PropertiesBootstrapTests {
 
     @Test
     void configurationValueWasLoadedAccessedByInjector(
-        @PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig
-    ) {
+            @PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig) {
         assertThat(additionalConfig).isTrue();
     }
 
     @Test
     void configurationPropertyWasLoadedAccessedByInjector(
-        @PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property
-    ) {
+            @PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property) {
         assertThat(property)
                 .extracting(ValueProperty::value, HartshornAssertions.option(String.class))
                 .value()

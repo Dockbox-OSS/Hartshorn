@@ -41,10 +41,7 @@ public class OptionDeserializer extends StdDeserializer<Option<?>> {
     }
 
     @Override
-    public Option<?> deserialize(
-            JsonParser parser,
-            DeserializationContext context
-    ) throws JacksonException {
+    public Option<?> deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
         Object value = parser.readValueAs(Object.class);
         if (value == null) {
             return Option.empty();

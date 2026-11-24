@@ -39,19 +39,14 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * }</pre>
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
-public class ConstructorStatement extends ParametricExecutableBodyStatement
-    implements ClassMemberStatement {
+public class ConstructorStatement extends ParametricExecutableBodyStatement implements ClassMemberStatement {
 
     private final Token keyword;
 
-    public ConstructorStatement(
-        Token keyword,
-        List<Parameter> params,
-        BlockStatement body
-    ) {
+    public ConstructorStatement(Token keyword, List<Parameter> params, BlockStatement body) {
         super(keyword, params, body);
         this.keyword = keyword;
     }
@@ -74,9 +69,9 @@ public class ConstructorStatement extends ParametricExecutableBodyStatement
      */
     public Token initializerIdentifier() {
         return Token.of(this.type())
-            .literal(this.keyword().line())
-            .position(this.keyword())
-            .build();
+                .literal(this.keyword().line())
+                .position(this.keyword())
+                .build();
     }
 
     /**

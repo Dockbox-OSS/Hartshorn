@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,20 +171,12 @@ public abstract class AbstractDelegateStream<T> implements Stream<T> {
     }
 
     @Override
-    public <U> U reduce(
-        U identity,
-        BiFunction<U, ? super T, U> accumulator,
-        BinaryOperator<U> combiner
-    ) {
+    public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
         return this.delegate.reduce(identity, accumulator, combiner);
     }
 
     @Override
-    public <R> R collect(
-        Supplier<R> supplier,
-        BiConsumer<R, ? super T> accumulator,
-        BiConsumer<R, R> combiner
-    ) {
+    public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
         return this.delegate.collect(supplier, accumulator, combiner);
     }
 

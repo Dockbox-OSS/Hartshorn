@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class StringToBooleanConverterTests {
 
@@ -27,23 +27,20 @@ class StringToBooleanConverterTests {
     void trueCanConvert() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("true");
-        assertThat(converted)
-                .isTrue();
+        assertThat(converted).isTrue();
     }
 
     @Test
     void falseCanConvert() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("false");
-        assertThat(converted)
-                .isFalse();
+        assertThat(converted).isFalse();
     }
 
     @Test
     void nonDefinedValuesConvertToFalse() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("test");
-        assertThat(converted)
-                .isFalse();
+        assertThat(converted).isFalse();
     }
 }

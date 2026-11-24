@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.graph.declaration;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
@@ -27,8 +28,6 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-
 /**
  * A simple implementation of {@link DependencyContext} that is used for components that are not
  * managed by the container, and rely on metadata that is provided by the declaration of the
@@ -38,9 +37,9 @@ import java.util.Set;
  * @param <T> the type of the component
  *
  * @see DependencyContext
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
@@ -68,21 +67,22 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
 
     protected AbstractDependencyContext(DependencyContext<T> dependencyContext) {
         this(
-            dependencyContext.componentKey(),
-            dependencyContext.dependencies(),
-            dependencyContext.scope().orNull(),
-            dependencyContext.priority(),
-            dependencyContext.memberType()
-        );
+                dependencyContext.componentKey(),
+                dependencyContext.dependencies(),
+                dependencyContext.scope().orNull(),
+                dependencyContext.priority(),
+                dependencyContext.memberType());
         this.lazy = dependencyContext.lazy();
         this.lifecycleType = dependencyContext.lifecycleType();
         this.processAfterInitialization = dependencyContext.processAfterInitialization();
     }
 
     protected AbstractDependencyContext(
-        ComponentKey<T> componentKey, DependencyMap dependencies,
-        ScopeKey scope, int priority, ComponentMemberType memberType
-    ) {
+            ComponentKey<T> componentKey,
+            DependencyMap dependencies,
+            ScopeKey scope,
+            int priority,
+            ComponentMemberType memberType) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
@@ -130,9 +130,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      *
      * @return this context
      */
-    public AbstractDependencyContext<T> processAfterInitialization(
-        boolean processAfterInitialization
-    ) {
+    public AbstractDependencyContext<T> processAfterInitialization(boolean processAfterInitialization) {
         this.processAfterInitialization = processAfterInitialization;
         return this;
     }
@@ -224,12 +222,13 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      * @param describer the describer to customize
      */
     protected void customizeDescriber(ObjectDescriber<?> describer) {
-        describer.field("key", this.componentKey)
-            .field("priority", this.priority)
-            .field("scope", this.scope)
-            .field("memberType", this.memberType)
-            .field("lifecycleType", this.lifecycleType)
-            .field("lazy", this.lazy);
+        describer
+                .field("key", this.componentKey)
+                .field("priority", this.priority)
+                .field("scope", this.scope)
+                .field("memberType", this.memberType)
+                .field("lifecycleType", this.lifecycleType)
+                .field("lazy", this.lazy);
     }
 
     /**
@@ -245,10 +244,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      *
      * @author Guus Lieben
      */
-    public abstract static class AbstractDependencyContextBuilder<
-        T,
-        B extends AbstractDependencyContextBuilder<T, B>
-        > {
+    public abstract static class AbstractDependencyContextBuilder<T, B extends AbstractDependencyContextBuilder<T, B>> {
 
         private final ComponentKey<T> componentKey;
 

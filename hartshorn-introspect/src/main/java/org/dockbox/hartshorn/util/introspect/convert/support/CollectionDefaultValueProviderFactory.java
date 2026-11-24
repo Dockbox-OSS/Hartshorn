@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.util.introspect.convert.support.collections.Collect
 import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Collection;
-import java.util.function.Supplier;
 
 /**
  * A {@link DefaultValueProviderFactory} for {@link Collection}s, backed by a
@@ -36,11 +35,10 @@ import java.util.function.Supplier;
  * @see SimpleCollectionFactory
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class CollectionDefaultValueProviderFactory
-    implements DefaultValueProviderFactory<Collection<?>> {
+public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
 
     private final Introspector introspector;
     private final SimpleCollectionFactory helperFactory;
@@ -62,15 +60,11 @@ public class CollectionDefaultValueProviderFactory
      *
      * @return a new {@link DefaultValueProvider}
      */
-    public <E, O extends Collection<E>> DefaultValueProvider<O> create(
-        Class<O> targetType,
-        Class<E> elementType
-    ) {
+    public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
         return () -> {
             try {
                 return this.helperFactory.createCollection(targetType, elementType);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
         };
@@ -81,12 +75,12 @@ public class CollectionDefaultValueProviderFactory
     public <O extends Collection<?>> DefaultValueProvider<O> create(Class<O> targetType) {
         TypeView<O> type = this.introspector.introspect(targetType);
         Class<?> componentType = type.typeParameters()
-            .inputFor(Collection.class)
-            .atIndex(0)
-            .flatMap(TypeParameterView::resolvedType)
-            .map(TypeView::type)
-            .map(Class.class::cast)
-            .orElse(Object.class);
+                .inputFor(Collection.class)
+                .atIndex(0)
+                .flatMap(TypeParameterView::resolvedType)
+                .map(TypeView::type)
+                .map(Class.class::cast)
+                .orElse(Object.class);
 
         return this.create((Class) targetType, componentType);
     }
@@ -117,9 +111,7 @@ public class CollectionDefaultValueProviderFactory
      * @see SimpleCollectionFactory#withDefault(Class, Supplier)
      */
     public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(
-        Class<T> type,
-        CollectionProvider<T> provider
-    ) {
+            Class<T> type, CollectionProvider<T> provider) {
         this.helperFactory.withDefault(type, provider);
         return this;
     }

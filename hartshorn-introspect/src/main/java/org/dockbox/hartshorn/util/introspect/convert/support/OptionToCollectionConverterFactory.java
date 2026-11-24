@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
 
 /**
  * Converts an {@link Option} to a {@link Collection}. If the {@link Option} is empty, an empty
@@ -33,8 +32,7 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public class OptionToCollectionConverterFactory
-    implements ConverterFactory<Option<?>, Collection<?>> {
+public class OptionToCollectionConverterFactory implements ConverterFactory<Option<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
@@ -42,9 +40,7 @@ public class OptionToCollectionConverterFactory
         this(new CollectionDefaultValueProviderFactory(introspector).withDefaults());
     }
 
-    public OptionToCollectionConverterFactory(
-        DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory
-    ) {
+    public OptionToCollectionConverterFactory(DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
 
@@ -52,8 +48,8 @@ public class OptionToCollectionConverterFactory
     public <O extends Collection<?>> Converter<Option<?>, O> create(Class<O> targetType) {
         return (input, _) -> {
             //noinspection unchecked
-            Collection<Object> collection = (Collection<Object>) this.defaultValueProviderFactory
-                .create(targetType).defaultValue();
+            Collection<Object> collection = (Collection<Object>)
+                    this.defaultValueProviderFactory.create(targetType).defaultValue();
             input.peek(collection::add);
             return targetType.cast(collection);
         };

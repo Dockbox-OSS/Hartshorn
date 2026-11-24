@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,6 @@ public interface ComponentProviderPostProcessor {
      * the error by the caller
      */
     <T> T processInstance(
-        ComponentKey<T> componentKey,
-        ObjectContainer<T> objectContainer,
-        ComponentRequestContext requestContext
-    ) throws ApplicationException;
+            ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
+            throws ApplicationException;
 }

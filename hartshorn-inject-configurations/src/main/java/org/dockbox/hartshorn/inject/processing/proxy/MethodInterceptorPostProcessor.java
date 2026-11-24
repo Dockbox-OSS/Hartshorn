@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
@@ -25,17 +26,15 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-
 /**
  * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors
  * for methods matching the specified criteria. This is useful for adding method-level interceptors
  * to components.
  *
  * @see AnnotatedMethodInterceptorPostProcessor
- * 
+ *
  * @since 0.4.8
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class MethodInterceptorPostProcessor extends ComponentPostProcessor {
@@ -47,10 +46,9 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
 
     @Override
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
@@ -60,18 +58,14 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
 
         for (MethodView<T, ?> method : methods) {
             MethodProxyContext<T> context =
-                new SimpleMethodProxyContext<>(application, processingContext.type(), method);
+                    new SimpleMethodProxyContext<>(application, processingContext.type(), method);
 
             if (this.preconditions(application, context, processingContext)) {
-                MethodInterceptor<T, ?> function =
-                    this.process(application, context, processingContext);
+                MethodInterceptor<T, ?> function = this.process(application, context, processingContext);
                 if (function != null) {
-                    factory.advisors()
-                        .method(method)
-                        .intercept(TypeUtils.unchecked(function, MethodInterceptor.class));
+                    factory.advisors().method(method).intercept(TypeUtils.unchecked(function, MethodInterceptor.class));
                 }
-            }
-            else {
+            } else {
                 if (this.failOnPrecondition()) {
                     throw new ProxyMethodBindingException(method);
                 }
@@ -88,8 +82,7 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * @return the modifiable methods
      */
     protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(
-        ComponentProcessingContext<T> processingContext
-    );
+            ComponentProcessingContext<T> processingContext);
 
     /**
      * Checks whether the preconditions for applying the interceptor are met.
@@ -102,10 +95,9 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * @return true if the preconditions are met, false otherwise
      */
     public abstract <T> boolean preconditions(
-        InjectionCapableApplication application,
-        MethodProxyContext<T> methodContext,
-        ComponentProcessingContext<T> processingContext
-    );
+            InjectionCapableApplication application,
+            MethodProxyContext<T> methodContext,
+            ComponentProcessingContext<T> processingContext);
 
     /**
      * Processes the method and returns a {@link MethodInterceptor} to be applied.
@@ -119,10 +111,9 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * @return the method interceptor
      */
     public abstract <T, R> MethodInterceptor<T, R> process(
-        InjectionCapableApplication application,
-        MethodProxyContext<T> methodContext,
-        ComponentProcessingContext<T> processingContext
-    );
+            InjectionCapableApplication application,
+            MethodProxyContext<T> methodContext,
+            ComponentProcessingContext<T> processingContext);
 
     /**
      * Determines whether to fail when preconditions are not met. By default, this method returns

@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.graph.support;
 
+import java.util.Iterator;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.View;
-
-import java.util.Iterator;
 
 /**
  * Thrown when a cyclic dependency is detected during component discovery. This exception contains
@@ -108,25 +107,20 @@ public class CyclicComponentException extends ApplicationException {
             builder.append(CYCLE_NODE.formatted(
                     node.node().qualifiedName(),
                     StringUtilities.capitalize(node.lifecycleType().name().toLowerCase()),
-                    node.node().origin().qualifiedName()
-            ));
+                    node.node().origin().qualifiedName()));
             if (node.fromBinding()) {
                 builder.append(CYCLE_BINDING.formatted(node.actualType().qualifiedName()));
-            }
-            else if (iterator.hasNext()) {
+            } else if (iterator.hasNext()) {
                 builder.append(CYCLE_PATH);
             }
         }
         builder.append(CYCLE_BOTTOM);
 
         DiscoveredComponent origin = path.getOrigin();
-        String typeName =
-            origin.fromBinding() ? origin.actualType().name() : origin.node().qualifiedName();
-        return ("Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:"
-            + "%n%s").formatted(
-            typeName,
-            view.qualifiedName(),
-            builder.toString()
-        );
+        String typeName = origin.fromBinding()
+                ? origin.actualType().name()
+                : origin.node().qualifiedName();
+        return ("Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:" + "%n%s")
+                .formatted(typeName, view.qualifiedName(), builder.toString());
     }
 }

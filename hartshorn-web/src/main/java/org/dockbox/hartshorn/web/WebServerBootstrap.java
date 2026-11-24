@@ -44,22 +44,16 @@ public class WebServerBootstrap implements LifecycleObserver {
     public void onStarted(ApplicationContext applicationContext) {
         try {
             if (this.server.running()) {
-                LOG.warn(
-                        "Web server is already running on port {}, skipping lifecycle start",
-                        this.server.port()
-                );
-            }
-            else {
+                LOG.warn("Web server is already running on port {}, skipping lifecycle start", this.server.port());
+            } else {
                 Timer timer = Timer.start();
                 this.server.start();
                 LOG.info(
                         "Web server started on port {} in {} ms",
                         this.server.port(),
-                        timer.stop().toMillis()
-                );
+                        timer.stop().toMillis());
             }
-        }
-        catch (ServerException e) {
+        } catch (ServerException e) {
             applicationContext.handle("Failed to start web server", e);
         }
     }
@@ -69,12 +63,10 @@ public class WebServerBootstrap implements LifecycleObserver {
         try {
             if (!this.server.running()) {
                 LOG.warn("Web server is already stopped, skipping lifecycle stop");
-            }
-            else {
+            } else {
                 this.server.stop();
             }
-        }
-        catch (ServerException e) {
+        } catch (ServerException e) {
             applicationContext.handle("Failed to stop web server", e);
         }
     }

@@ -24,9 +24,9 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * logback configuration, using the syntax {@code %process_id}.
  *
  * @see LogbackPIDConverter
- * 
+ *
  * @since 0.4.8
- * 
+ *
  * @author Guus Lieben
  */
 public class LogbackEncoder extends PatternLayoutEncoder {
@@ -35,14 +35,8 @@ public class LogbackEncoder extends PatternLayoutEncoder {
 
     @Override
     public void start() {
-        PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put(
-            PROCESS_ID,
-            LogbackPIDConverter::new
-        );
-        PatternLayout.CONVERTER_CLASS_TO_KEY_MAP.put(
-            LogbackPIDConverter.class.getName(),
-            PROCESS_ID
-        );
+        PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put(PROCESS_ID, LogbackPIDConverter::new);
+        PatternLayout.CONVERTER_CLASS_TO_KEY_MAP.put(LogbackPIDConverter.class.getName(), PROCESS_ID);
         super.start();
     }
 }

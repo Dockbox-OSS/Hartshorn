@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ class MemberSequenceGenerator {
     private static final int[] MEMBER_SEQUENCE = new int[Phase.values().length + 1];
 
     static int nextMember(Phase phase) {
-        int group = phase == null
-            ? Phase.values().length
-            : phase.ordinal();
+        int group = phase == null ? Phase.values().length : phase.ordinal();
         MEMBER_SEQUENCE[group]++;
         return MEMBER_SEQUENCE[group];
     }

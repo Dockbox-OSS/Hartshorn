@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning.discover;
 
-import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.components.CountingComponentPreProcessor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.components.CountingComponentPreProcessor;
 
 @ModuleActivator(
-    scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning.components",
-    componentPreProcessors = CountingComponentPreProcessor.class
-)
+        scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning.components",
+        componentPreProcessors = CountingComponentPreProcessor.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ScanSpecificPackageActivator {
-}
+public @interface ScanSpecificPackageActivator {}

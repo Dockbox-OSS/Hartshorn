@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.UUID;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.jspecify.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * Converts a {@link String} to a {@link UUID}.
@@ -28,7 +27,7 @@ import java.util.UUID;
  * @see UUID#fromString(String)
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StringToUUIDConverter implements Converter<String, UUID> {
@@ -38,8 +37,7 @@ public class StringToUUIDConverter implements Converter<String, UUID> {
         if (input != null) {
             try {
                 return UUID.fromString(input);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  */
 public final class HartshornApplication {
 
-    private HartshornApplication() {
-    }
+    private HartshornApplication() {}
 
     /**
      * Creates a new application context for the given main class, arguments, and modifiers. This
@@ -56,10 +55,13 @@ public final class HartshornApplication {
      * @return The application context
      */
     public static ApplicationBootstrap createApplication(Class<?> mainClass, String... arguments) {
-        return customizer -> HartshornApplicationConfigurer.createInitializer(builder -> {
-            builder.mainClass(mainClass);
-            builder.arguments(arguments);
-        }, customizer).initialize();
+        return customizer -> HartshornApplicationConfigurer.createInitializer(
+                        builder -> {
+                            builder.mainClass(mainClass);
+                            builder.arguments(arguments);
+                        },
+                        customizer)
+                .initialize();
     }
 
     /**
@@ -87,10 +89,13 @@ public final class HartshornApplication {
      * @return The application context
      */
     public static ApplicationBootstrap createApplication(String... arguments) {
-        return customizer -> HartshornApplicationConfigurer.createInitializer(builder -> {
-            builder.inferMainClass();
-            builder.arguments(arguments);
-        }, customizer).initialize();
+        return customizer -> HartshornApplicationConfigurer.createInitializer(
+                        builder -> {
+                            builder.inferMainClass();
+                            builder.arguments(arguments);
+                        },
+                        customizer)
+                .initialize();
     }
 
     /**
@@ -119,12 +124,10 @@ public final class HartshornApplication {
      * @return The application context
      */
     public static ApplicationContext create(Customizer<Configurer> customizer) {
-        Customizer<Configurer> defaultCustomizer =
-            StandardApplicationBuilder.Configurer::inferMainClass;
+        Customizer<Configurer> defaultCustomizer = StandardApplicationBuilder.Configurer::inferMainClass;
         return HartshornApplicationConfigurer.createInitializer(
-            defaultCustomizer.compose(customizer),
-            Customizer.useDefaults()
-        ).initialize();
+                        defaultCustomizer.compose(customizer), Customizer.useDefaults())
+                .initialize();
     }
 
     /**

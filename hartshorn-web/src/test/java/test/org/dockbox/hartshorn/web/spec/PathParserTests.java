@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.web.spec;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.ofType;
+
+import java.util.List;
 import org.dockbox.hartshorn.web.spec.ParameterPathPartSpec;
 import org.dockbox.hartshorn.web.spec.PathPartSpec;
 import org.dockbox.hartshorn.web.spec.PathSpec;
@@ -25,20 +29,12 @@ import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.ofType;
-
 public class PathParserTests {
 
     @Test
     void testPathParser() {
-        PathParser parser = new SimplePathParser('/', List.of(
-                WildcardPathPartSpec::parse,
-                ParameterPathPartSpec::parse,
-                StaticPathPartSpec::parse
-        ));
+        PathParser parser = new SimplePathParser(
+                '/', List.of(WildcardPathPartSpec::parse, ParameterPathPartSpec::parse, StaticPathPartSpec::parse));
         String unparsedPattern = "users/{id}/posts/*/{id:\\w+}/{*wid}";
         PathSpec spec = parser.parse(unparsedPattern);
         assertThat(spec.pattern()).isEqualTo(unparsedPattern);
@@ -50,25 +46,21 @@ public class PathParserTests {
                                 .isInstanceOf(StaticPathPartSpec.class)
                                 .extracting(PathPartSpec::stringValue)
                                 .isEqualTo("users"),
-
                         part -> assertThat(part)
                                 .asInstanceOf(ofType(ParameterPathPartSpec.class))
                                 .extracting(ParameterPathPartSpec::parameterName)
                                 .isEqualTo("id"),
-
                         part -> assertThat(part)
                                 .isInstanceOf(StaticPathPartSpec.class)
                                 .extracting(PathPartSpec::stringValue)
                                 .isEqualTo("posts"),
-
                         part -> assertThat(part)
                                 .isInstanceOf(WildcardPathPartSpec.class)
                                 .extracting(PathPartSpec::stringValue)
                                 .isEqualTo("*"),
-
                         part -> {
-                            var parameterWithPattern = assertThat(part)
-                                    .asInstanceOf(ofType(ParameterPathPartSpec.class));
+                            var parameterWithPattern =
+                                    assertThat(part).asInstanceOf(ofType(ParameterPathPartSpec.class));
                             parameterWithPattern
                                     .extracting(ParameterPathPartSpec::parameterName)
                                     .isEqualTo("id");
@@ -76,17 +68,14 @@ public class PathParserTests {
                                     .extracting(ParameterPathPartSpec::pattern)
                                     .matches(p -> p.pattern().equals("\\w+"));
                         },
-
                         part -> {
-                            var wildcardCapturePart = assertThat(part)
-                                    .asInstanceOf(ofType(WildcardPathPartSpec.class));
+                            var wildcardCapturePart = assertThat(part).asInstanceOf(ofType(WildcardPathPartSpec.class));
                             wildcardCapturePart
                                     .extracting(WildcardPathPartSpec::captureName)
                                     .isEqualTo("wid");
                             wildcardCapturePart
                                     .extracting(PathPartSpec::stringValue)
                                     .isEqualTo("{*wid}");
-                        }
-                );
+                        });
     }
 }

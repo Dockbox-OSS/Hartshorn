@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.lang.reflect.Array;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Array;
 
 /**
  * Provides default values for array types.
@@ -31,9 +30,7 @@ import java.lang.reflect.Array;
  *
  * @author Guus Lieben
  */
-public class ArrayDefaultValueProviderFactory implements
-    DefaultValueProviderFactory<Object>,
-    ConditionalConverter {
+public class ArrayDefaultValueProviderFactory implements DefaultValueProviderFactory<Object>, ConditionalConverter {
 
     @Override
     public <O> DefaultValueProvider<O> create(Class<O> targetType) {

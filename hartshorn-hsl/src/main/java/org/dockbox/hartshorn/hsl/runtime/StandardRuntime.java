@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import java.util.Map;
-
-import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as defined in
@@ -37,26 +36,19 @@ import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
  * to allow each executor to be customized through standard DI principles.
  *
  * @see ExpressionConditionContext
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class StandardRuntime extends SimpleScriptRuntime {
 
-    public StandardRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory
-    ) {
-        this(applicationContext, factory, parser -> {
-        });
+    public StandardRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
+        this(applicationContext, factory, parser -> {});
     }
 
     public StandardRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory,
-        ParserCustomizer parserCustomizer
-    ) {
+            ApplicationContext applicationContext, ScriptComponentFactory factory, ParserCustomizer parserCustomizer) {
         super(applicationContext, factory, parserCustomizer);
         this.customizer(new InlineStandardLibraryCustomizer());
     }

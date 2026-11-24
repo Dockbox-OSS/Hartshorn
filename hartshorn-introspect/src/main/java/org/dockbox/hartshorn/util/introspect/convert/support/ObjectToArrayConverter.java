@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.lang.reflect.Array;
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Array;
-import java.util.Set;
 
 /**
  * Converts any object to an array of the same type, containing only the object. If the given object
@@ -43,10 +42,7 @@ public class ObjectToArrayConverter implements GenericConverter {
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         if (sourceType.isPrimitive()) {
             return this.convertPrimitive(source, sourceType);
         }
@@ -98,9 +94,7 @@ public class ObjectToArrayConverter implements GenericConverter {
                 doubleArray[0] = (double) source;
                 return doubleArray;
             }
-            default -> throw new IllegalArgumentException(
-                "Unsupported primitive type: " + sourceType.getName()
-            );
+            default -> throw new IllegalArgumentException("Unsupported primitive type: " + sourceType.getName());
         }
     }
 }

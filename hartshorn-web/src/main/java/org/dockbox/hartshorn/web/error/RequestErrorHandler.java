@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.web.error;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 /**
@@ -42,9 +41,5 @@ public interface RequestErrorHandler<E extends Throwable> {
      * @param response the servlet response to write to
      * @throws IOException if an I/O error occurs while writing to the response
      */
-    void handle(
-            E exception,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException;
+    void handle(E exception, HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

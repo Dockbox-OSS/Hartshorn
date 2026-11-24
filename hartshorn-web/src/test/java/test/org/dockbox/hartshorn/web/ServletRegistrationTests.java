@@ -19,6 +19,9 @@ package test.org.dockbox.hartshorn.web;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -34,10 +37,6 @@ import org.dockbox.hartshorn.web.spec.parser.PathParser;
 import org.dockbox.hartshorn.web.support.servlet.StaticResourceServlet;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class ServletRegistrationTests {
 
@@ -70,10 +69,8 @@ public class ServletRegistrationTests {
         configuration.contextCustomizer(registry).configure(registrations::put);
 
         Assertions.assertThat(registrations).hasSize(2);
-        Assertions.assertThat(registrations.get(sharedPath))
-                .isInstanceOf(RequestRoutingServlet.class);
-        Assertions.assertThat(registrations.get(otherPath))
-                .isInstanceOf(RequestRoutingServlet.class);
+        Assertions.assertThat(registrations.get(sharedPath)).isInstanceOf(RequestRoutingServlet.class);
+        Assertions.assertThat(registrations.get(otherPath)).isInstanceOf(RequestRoutingServlet.class);
 
         HttpServletRequest getRequest = request("GET", "/api/test");
         HttpServletResponse getResponse = Mockito.mock(HttpServletResponse.class);
@@ -99,11 +96,7 @@ public class ServletRegistrationTests {
         Map<PathSpec, Servlet> registrations = new HashMap<>();
 
         Customizer<ServletRegistrar> customizer = configuration.contextStaticPathCustomizer(
-                resourceLookup,
-                "/assets",
-                configuration.pathParser(),
-                "classpath:public/"
-        );
+                resourceLookup, "/assets", configuration.pathParser(), "classpath:public/");
         customizer.configure(registrations::put);
 
         Assertions.assertThat(registrations).hasSize(1);
@@ -126,12 +119,10 @@ public class ServletRegistrationTests {
         WebServerConfiguration configuration = new WebServerConfiguration();
         Map<PathSpec, Servlet> registrations = new HashMap<>();
 
-        configuration.contextStaticPathCustomizer(
-                path -> Set.of(),
-                "/assets/*",
-                configuration.pathParser(),
-                "classpath:public"
-        ).configure(registrations::put);
+        configuration
+                .contextStaticPathCustomizer(
+                        path -> Set.of(), "/assets/*", configuration.pathParser(), "classpath:public")
+                .configure(registrations::put);
 
         Assertions.assertThat(registrations.keySet())
                 .singleElement()

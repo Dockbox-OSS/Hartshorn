@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * A parser for a specific type of AST node. This parser is used to parse the tokens of a script
@@ -50,8 +49,7 @@ public interface StatementParser<T extends Statement> {
      *
      * @throws ScriptEvaluationError if an error occurs during the parsing of the tokens.
      */
-    Option<? extends T> parse(TokenParser parser, TokenStepValidator validator)
-        throws ScriptEvaluationError;
+    Option<? extends T> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError;
 
     /**
      * The types of AST nodes that this parser can produce. This should include all possible

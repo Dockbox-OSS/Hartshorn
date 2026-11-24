@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.annotation.Annotation;
-import java.util.Collection;
 
 /**
  * An abstract {@link ComponentPostProcessor} that allows implementations to process methods
@@ -40,8 +39,7 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public abstract class AnnotatedMethodPostProcessor<M extends Annotation>
-    extends ComponentPostProcessor {
+public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends ComponentPostProcessor {
 
     /**
      * Returns the annotation that should be present on methods to be processed by this post
@@ -53,15 +51,18 @@ public abstract class AnnotatedMethodPostProcessor<M extends Annotation>
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
+        return !processingContext
+                .type()
+                .methods()
+                .annotatedWith(this.annotation())
+                .isEmpty();
     }
 
     @Override
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
         for (MethodView<T, ?> method : methods) {
@@ -79,11 +80,10 @@ public abstract class AnnotatedMethodPostProcessor<M extends Annotation>
      * @param <T> the type of the component
      */
     protected abstract <T> void process(
-        InjectionCapableApplication application,
-        ComponentKey<T> key,
-        @Nullable T instance,
-        MethodView<T, ?> method
-    );
+            InjectionCapableApplication application,
+            ComponentKey<T> key,
+            @Nullable T instance,
+            MethodView<T, ?> method);
 
     /**
      * Returns the methods that may be modified by this post processor.

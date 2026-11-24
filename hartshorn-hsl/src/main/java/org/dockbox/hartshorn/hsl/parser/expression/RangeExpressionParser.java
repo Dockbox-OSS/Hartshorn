@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * end value, denoted by the range operator (e.g., {@code 1..10}).
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class RangeExpressionParser extends AbstractBitwiseOrLogicalExpressionParser {

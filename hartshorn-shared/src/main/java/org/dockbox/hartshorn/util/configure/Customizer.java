@@ -64,7 +64,6 @@ public interface Customizer<T> {
      * @return A customizer that does nothing.
      */
     static <T> Customizer<T> useDefaults() {
-        return _ -> {
-        };
+        return _ -> {};
     }
 }

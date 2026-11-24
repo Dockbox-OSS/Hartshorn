@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
@@ -33,10 +36,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The dependency graph initializer is responsible for initializing the dependency graph. It does so
@@ -62,27 +61,22 @@ public final class DependencyGraphInitializer {
     private final DependencyGraphValidator graphValidator;
 
     private DependencyGraphInitializer(
-        SingleElementContext<? extends InjectionCapableApplication> initializerContext,
-        Configurer configurer
-    ) {
+            SingleElementContext<? extends InjectionCapableApplication> initializerContext, Configurer configurer) {
         initializerContext.firstContext(InjectionCapableApplication.class).onEmpty(() -> {
             initializerContext.addContext(initializerContext.input());
         });
         this.introspector = initializerContext.input().environment().introspector();
 
-        List<DependencyResolver> resolvers = configurer.dependencyResolvers
-            .initialize(initializerContext);
+        List<DependencyResolver> resolvers = configurer.dependencyResolvers.initialize(initializerContext);
         this.dependencyResolver = new CompositeDependencyResolver(Set.copyOf(resolvers));
 
-        this.graphBuilder = configurer.dependencyGraphBuilder
-            .initialize(initializerContext.transform(this.dependencyResolver));
+        this.graphBuilder =
+                configurer.dependencyGraphBuilder.initialize(initializerContext.transform(this.dependencyResolver));
 
-        this.dependencyVisitor = configurer.dependencyVisitor
-            .initialize(initializerContext);
+        this.dependencyVisitor = configurer.dependencyVisitor.initialize(initializerContext);
 
-        this.graphValidator = new CompositeDependencyGraphValidator(
-            configurer.graphValidator.initialize(initializerContext)
-        );
+        this.graphValidator =
+                new CompositeDependencyGraphValidator(configurer.graphValidator.initialize(initializerContext));
     }
 
     /**
@@ -98,30 +92,22 @@ public final class DependencyGraphInitializer {
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
     public DependencyGraph initializeDependencyGraph(
-        Collection<DependencyDeclarationContext<?>> containers,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            Collection<DependencyDeclarationContext<?>> containers, ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(containers);
-        this.graphValidator.validateBeforeConfiguration(dependencyGraph,
-            this.introspector,
-            orchestrator);
+        this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.introspector, orchestrator);
 
-        Set<GraphNode<DependencyContext<?>>> visitedDependencies =
-            this.dependencyVisitor.iterate(dependencyGraph);
-        this.graphValidator.validateAfterConfiguration(dependencyGraph,
-            this.introspector,
-            visitedDependencies,
-            orchestrator);
+        Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
+        this.graphValidator.validateAfterConfiguration(
+                dependencyGraph, this.introspector, visitedDependencies, orchestrator);
 
         LOG.debug("Validated {} dependencies", visitedDependencies.size());
         return dependencyGraph;
     }
 
-    private DependencyGraph buildDependencyGraph(
-        Collection<DependencyDeclarationContext<?>> containers
-    ) throws DependencyResolutionException {
-        Collection<DependencyContext<?>> dependencyContexts =
-            this.dependencyResolver.resolve(containers);
+    private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers)
+            throws DependencyResolutionException {
+        Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers);
         return this.graphBuilder.buildDependencyGraph(dependencyContexts);
     }
 
@@ -133,8 +119,8 @@ public final class DependencyGraphInitializer {
      *
      * @return the new {@link DependencyGraphInitializer}
      */
-    public static ContextualInitializer<InjectionCapableApplication, DependencyGraphInitializer>
-    create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, DependencyGraphInitializer> create(
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -152,22 +138,21 @@ public final class DependencyGraphInitializer {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyResolver>
-            dependencyResolvers = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyResolver> dependencyResolvers =
+                LazyStreamableConfigurer.empty();
 
-        private ContextualInitializer<DependencyResolver, DependencyGraphBuilder>
-            dependencyGraphBuilder = DependencyGraphBuilder.create();
+        private ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder =
+                DependencyGraphBuilder.create();
 
-        private ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor>
-            dependencyVisitor = ContextualInitializer.of(SkipConfigurationDependencyVisitor::new);
+        private ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor> dependencyVisitor =
+                ContextualInitializer.of(SkipConfigurationDependencyVisitor::new);
 
         // checkstyle:off LineLength
-        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator>
-            graphValidator = LazyStreamableConfigurer.of(List.of(
-            new CyclicDependencyGraphValidator(),
-            new DependenciesVisitedGraphValidator(),
-            new OverlappingAliasDependencyGraphValidator()
-        ));
+        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator> graphValidator =
+                LazyStreamableConfigurer.of(List.of(
+                        new CyclicDependencyGraphValidator(),
+                        new DependenciesVisitedGraphValidator(),
+                        new OverlappingAliasDependencyGraphValidator()));
         // checkstyle:on LineLength
 
         /**
@@ -190,9 +175,7 @@ public final class DependencyGraphInitializer {
          * @return the current instance
          */
         public Configurer dependencyResolver(
-            ContextualInitializer<InjectionCapableApplication, DependencyResolver>
-                dependencyResolver
-        ) {
+                ContextualInitializer<InjectionCapableApplication, DependencyResolver> dependencyResolver) {
             return this.dependencyResolvers(resolvers -> resolvers.add(dependencyResolver));
         }
 
@@ -204,9 +187,7 @@ public final class DependencyGraphInitializer {
          * @return the current instance
          */
         public Configurer dependencyResolvers(
-            Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyResolver>>
-                customizer
-        ) {
+                Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyResolver>> customizer) {
             this.dependencyResolvers.customizer(customizer);
             return this;
         }
@@ -231,8 +212,7 @@ public final class DependencyGraphInitializer {
          * @return the current instance
          */
         public Configurer dependencyGraphBuilder(
-            ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder
-        ) {
+                ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder) {
             this.dependencyGraphBuilder = dependencyGraphBuilder;
             return this;
         }
@@ -258,9 +238,7 @@ public final class DependencyGraphInitializer {
          * @return the current instance
          */
         public Configurer dependencyVisitor(
-            ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor>
-                dependencyVisitor
-        ) {
+                ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor> dependencyVisitor) {
             this.dependencyVisitor = dependencyVisitor;
             return this;
         }
@@ -273,9 +251,8 @@ public final class DependencyGraphInitializer {
          * @return the current instance
          */
         public Configurer graphValidator(
-            Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator>>
-                graphValidator
-        ) {
+                Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator>>
+                        graphValidator) {
             this.graphValidator.customizer(graphValidator);
             return this;
         }

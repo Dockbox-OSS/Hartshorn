@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
@@ -34,18 +37,14 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.Tristate;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class FuzzyInjectionTest {
 
     @Test
     void fuzzyModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
-        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
-                .fuzzy()
-                .build();
+        ComponentKey<CharSequence> key =
+                ComponentKey.builder(CharSequence.class).fuzzy().build();
         CharSequence sequence = context.get(key);
         assertThat(sequence).isEqualTo("Hello World");
     }
@@ -53,9 +52,8 @@ public class FuzzyInjectionTest {
     @Test
     void strictModeOnlyMatchesExactBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
-        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
-                .strict()
-                .build();
+        ComponentKey<CharSequence> key =
+                ComponentKey.builder(CharSequence.class).strict().build();
         assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> context.get(key));
     }
 
@@ -68,10 +66,11 @@ public class FuzzyInjectionTest {
     @Test
     void environmentStrictModeIsEnabledByDefault() {
         ApplicationEnvironment environment = HartshornApplication.create(FuzzyInjectionTest.class, application -> {
-            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
-                constructor.includeBasePackages(false);
-            }));
-        }).environment();
+                    application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                        constructor.includeBasePackages(false);
+                    }));
+                })
+                .environment();
         assertThat(environment.configuration().isStrictMode()).isTrue();
     }
 
@@ -79,8 +78,8 @@ public class FuzzyInjectionTest {
     void customizingEnvironmentStrictModeAffectsLookup() {
         // Could usually be simplified by calling HartshornApplication#createApplication, but as we
         // need to disable base package scanning, we have to go through the 'full' factory setup.
-        ApplicationContext applicationContext = HartshornApplication
-                .createApplication(FuzzyInjectionTest.class).initialize(application -> {
+        ApplicationContext applicationContext = HartshornApplication.createApplication(FuzzyInjectionTest.class)
+                .initialize(application -> {
                     application.includeBasePackages(false);
                     application.disableStrictMode();
                 });
@@ -88,7 +87,8 @@ public class FuzzyInjectionTest {
         assertThat(environment.configuration().isStrictMode()).isFalse();
 
         applicationContext.bind(String.class).singleton("Hello World");
-        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class).build();
+        ComponentKey<CharSequence> key =
+                ComponentKey.builder(CharSequence.class).build();
         assertThat(key.strict()).isSameAs(Tristate.UNDEFINED);
 
         CharSequence sequence = applicationContext.get(key);
@@ -96,95 +96,60 @@ public class FuzzyInjectionTest {
     }
 
     @Test
-    void fuzzyMatchingGlobalScopeShouldIncludeGlobalMembers(
-        @Inject ApplicationContext applicationContext
-    ) throws IllegalScopeException {
+    void fuzzyMatchingGlobalScopeShouldIncludeGlobalMembers(@Inject ApplicationContext applicationContext)
+            throws IllegalScopeException {
         configureValuesInParentAndChildScope(applicationContext);
 
-        ComponentCollection<String> strings = applicationContext.get(
-            ComponentKey.collect(String.class)
-        );
-        assertThat(strings)
-            .hasSize(1)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                    ApplicationContext.class.getName()
-            ));
+        ComponentCollection<String> strings = applicationContext.get(ComponentKey.collect(String.class));
+        assertThat(strings).hasSize(1).anySatisfy(s -> assertThat(s).isEqualTo(ApplicationContext.class.getName()));
 
         ComponentCollection<CharSequence> charSequences = applicationContext.get(
-            ComponentKey.builder(CharSequence.class)
-                .collector()
-                .fuzzy()
-                .build()
-        );
+                ComponentKey.builder(CharSequence.class).collector().fuzzy().build());
         assertThat(charSequences)
-            .hasSize(1)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                    ApplicationContext.class.getName()
-            ));
+                .hasSize(1)
+                .anySatisfy(s -> assertThat(s).isEqualTo(ApplicationContext.class.getName()));
     }
 
     @Test
     @HartshornIntegrationTest(customizers = EnableIncludeParentScopeMembers.class)
     void enablingFuzzyMatchingParentScopeMembersShouldIncludeGlobalMembers(
-        @Inject ApplicationContext applicationContext
-    ) throws IllegalScopeException {
+            @Inject ApplicationContext applicationContext) throws IllegalScopeException {
         configureValuesInParentAndChildScope(applicationContext);
 
         // Should still match on global scope
-        ComponentCollection<String> strings = applicationContext.get(
-            ComponentKey.collect(String.class)
-        );
-        assertThat(strings)
-            .hasSize(1)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                    ApplicationContext.class.getName()
-            ));
+        ComponentCollection<String> strings = applicationContext.get(ComponentKey.collect(String.class));
+        assertThat(strings).hasSize(1).anySatisfy(s -> assertThat(s).isEqualTo(ApplicationContext.class.getName()));
 
         ComponentCollection<CharSequence> stringsInChild =
-            applicationContext.get(ComponentKey.builder(CharSequence.class)
-                .scope(new SampleScope())
-                .collector()
-                .fuzzy()
-                .build());
+                applicationContext.get(ComponentKey.builder(CharSequence.class)
+                        .scope(new SampleScope())
+                        .collector()
+                        .fuzzy()
+                        .build());
 
         assertThat(stringsInChild)
-            .hasSize(2)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                ApplicationContext.class.getName()
-            ))
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                SampleScope.class.getName()
-            ));
+                .hasSize(2)
+                .anySatisfy(s -> assertThat(s).isEqualTo(ApplicationContext.class.getName()))
+                .anySatisfy(s -> assertThat(s).isEqualTo(SampleScope.class.getName()));
     }
 
     @Test
     @HartshornIntegrationTest(customizers = DisableIncludeParentScopeMembers.class)
     void disablingFuzzyMatchingParentScopeMembersShouldExcludeGlobalMembers(
-        @Inject ApplicationContext applicationContext
-    ) throws IllegalScopeException {
+            @Inject ApplicationContext applicationContext) throws IllegalScopeException {
         configureValuesInParentAndChildScope(applicationContext);
         // Should still match on global scope
-        ComponentCollection<String> strings = applicationContext.get(
-            ComponentKey.collect(String.class)
-        );
-        assertThat(strings)
-            .hasSize(1)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                    ApplicationContext.class.getName()
-            ));
+        ComponentCollection<String> strings = applicationContext.get(ComponentKey.collect(String.class));
+        assertThat(strings).hasSize(1).anySatisfy(s -> assertThat(s).isEqualTo(ApplicationContext.class.getName()));
 
         // Should not match on child scope, as parent scope members are excluded from fuzzy matching
         ComponentCollection<CharSequence> stringsInChild =
-            applicationContext.get(ComponentKey.builder(CharSequence.class)
-                .scope(new SampleScope())
-                .collector()
-                .fuzzy()
-                .build());
-        assertThat(stringsInChild)
-            .hasSize(1)
-            .anySatisfy(s -> assertThat(s).isEqualTo(
-                SampleScope.class.getName()
-            ));
+                applicationContext.get(ComponentKey.builder(CharSequence.class)
+                        .scope(new SampleScope())
+                        .collector()
+                        .fuzzy()
+                        .build());
+        assertThat(stringsInChild).hasSize(1).anySatisfy(s -> assertThat(s).isEqualTo(SampleScope.class.getName()));
     }
 
     public static class SampleScope implements Scope {
@@ -209,18 +174,17 @@ public class FuzzyInjectionTest {
         }
     }
 
-    private static void configureValuesInParentAndChildScope(
-        ApplicationContext applicationContext
-    ) throws IllegalScopeException {
-        applicationContext.bind(String.class)
-                .collect(collector -> {
-                    collector.singleton(ApplicationContext.class.getName());
-                });
+    private static void configureValuesInParentAndChildScope(ApplicationContext applicationContext)
+            throws IllegalScopeException {
+        applicationContext.bind(String.class).collect(collector -> {
+            collector.singleton(ApplicationContext.class.getName());
+        });
 
-        applicationContext.bind(String.class)
-            .installTo(DirectScopeKey.of(SampleScope.class))
-            .collect(collector -> {
-                collector.singleton(SampleScope.class.getName());
-            });
+        applicationContext
+                .bind(String.class)
+                .installTo(DirectScopeKey.of(SampleScope.class))
+                .collect(collector -> {
+                    collector.singleton(SampleScope.class.getName());
+                });
     }
 }

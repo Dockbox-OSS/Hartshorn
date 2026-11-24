@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
@@ -36,20 +35,18 @@ import java.util.function.Supplier;
  * @param <C> The type to be provided.
  *
  * @see InstantiationStrategy
- * 
+ *
  * @since 0.4.3
- * 
+ *
  * @author Guus Lieben
  */
 public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier)
-    implements NonTypeAwareInstantiationStrategy<C> {
+        implements NonTypeAwareInstantiationStrategy<C> {
 
     @Override
     public Option<ObjectContainer<C>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException {
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException {
         C instance = this.supplier.get();
         return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }
@@ -66,8 +63,6 @@ public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier)
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("supplier", this.supplier)
-            .describe();
+        return ObjectDescriber.of(this).field("supplier", this.supplier).describe();
     }
 }

@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  * @author Guus Lieben
  */
 public class ExecutableElementContextParameterLoader
-    extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
+        extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
     private final RequireInjectionPointRule requireRule;
     private final InjectionCapableApplication application;
@@ -48,43 +48,32 @@ public class ExecutableElementContextParameterLoader
     public ExecutableElementContextParameterLoader(InjectionCapableApplication application) {
         super(ApplicationBoundParameterLoaderContext.class);
         this.application = application;
-        this.requireRule = new AnnotatedInjectionPointRequireRule(
-                application.environment().configuration()
-        );
+        this.requireRule =
+                new AnnotatedInjectionPointRequireRule(application.environment().configuration());
         this.add(new ContextParameterLoaderRule(
-                application,
-                application.environment().configuration()
-        ));
+                application, application.environment().configuration()));
         this.add(new PropertyParameterLoaderRule(
-                application.defaultProvider(),
-                application.environment().configuration()
-        ));
+                application.defaultProvider(), application.environment().configuration()));
         this.add(new ScopeParameterLoaderRule());
     }
 
     @Override
     protected <T> T loadDefault(
-        ParameterView<T> parameter,
-        int index,
-        ApplicationBoundParameterLoaderContext context,
-        Object... args
-    ) {
-        ComponentKey<?> componentKey = this.application.environment()
-            .componentKeyResolver()
-            .resolve(parameter, context.scope());
+            ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+        ComponentKey<?> componentKey =
+                this.application.environment().componentKeyResolver().resolve(parameter, context.scope());
         InjectionPoint injectionPoint = new InjectionPoint(parameter);
-        ComponentRequestContext requestContext =
-            ComponentRequestContext.createForInjectionPoint(injectionPoint);
+        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object out = context.provider().get(componentKey, requestContext);
 
         boolean required = this.requireRule.isRequired(injectionPoint);
 
         if (required && out == null) {
             throw new ComponentRequiredException("Parameter "
-                + parameter.name()
-                + " on "
-                + parameter.declaredBy().qualifiedName()
-                + " is required");
+                    + parameter.name()
+                    + " on "
+                    + parameter.declaredBy().qualifiedName()
+                    + " is required");
         }
         return parameter.type().cast(out);
     }

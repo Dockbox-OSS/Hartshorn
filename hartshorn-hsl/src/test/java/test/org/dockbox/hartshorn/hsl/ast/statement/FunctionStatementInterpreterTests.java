@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -36,20 +39,15 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class FunctionStatementInterpreterTests {
 
     @Test
-    void regularFunctionWithoutExplicitReturnDeclarationIsDefined(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void regularFunctionWithoutExplicitReturnDeclarationIsDefined(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "function greet(name) { }")
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .build();
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .build();
 
         helper.interpret();
 
@@ -68,18 +66,13 @@ class FunctionStatementInterpreterTests {
     }
 
     @Test
-    void regularFunctionWithExplicitReturnDeclarationIsDefined(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper = HSLTestHelper.of(
-                applicationContext,
-                "function greet(name) { return null; }"
-            )
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .statementParser(new ReturnStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+    void regularFunctionWithExplicitReturnDeclarationIsDefined(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "function greet(name) { return null; }")
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .statementParser(new ReturnStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         helper.interpret();
 
@@ -98,11 +91,8 @@ class FunctionStatementInterpreterTests {
     }
 
     @Test
-    void prefixFunctionDeclarationWithOneParameterIsDefined(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper =
-            HSLTestHelper.of(applicationContext, "prefix function greet(name) { }")
+    void prefixFunctionDeclarationWithOneParameterIsDefined(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "prefix function greet(name) { }")
                 .statementParser(new FunctionStatementParser())
                 .statementParser(new BlockStatementParser())
                 .build();
@@ -121,57 +111,44 @@ class FunctionStatementInterpreterTests {
         assertThat(functionStatement.parameters()).hasSize(1);
         assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("name");
 
-        Option<FunctionParserContext> functionParserContext = helper.context()
-                .parser()
-                .firstContext(FunctionParserContext.class);
+        Option<FunctionParserContext> functionParserContext =
+                helper.context().parser().firstContext(FunctionParserContext.class);
 
         HartshornAssertions.assertThat(functionParserContext)
                 .value()
-                .extracting(
-                        FunctionParserContext::prefixFunctions,
-                        InstanceOfAssertFactories.collection(String.class)
-                ).contains("greet");
+                .extracting(FunctionParserContext::prefixFunctions, InstanceOfAssertFactories.collection(String.class))
+                .contains("greet");
     }
 
     @Test
-    void prefixFunctionDeclarationWithMultipleParametersFails(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper = HSLTestHelper.of(
-                applicationContext,
-                "prefix function greet(name, other) { }"
-            )
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .build();
+    void prefixFunctionDeclarationWithMultipleParametersFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "prefix function greet(name, other) { }")
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X);
     }
 
     @Test
-    void prefixFunctionDeclarationWithZeroParametersFails(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper = HSLTestHelper.of(
-                applicationContext,
-                "prefix function greet() { }"
-            )
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .build();
+    void prefixFunctionDeclarationWithZeroParametersFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "prefix function greet() { }")
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
-        ScriptAssertions.assertEvaluationError(error,
-            DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
     }
 
     @Test
-    void infixFunctionDeclarationWithTwoParametersIsDefined(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper =
-            HSLTestHelper.of(applicationContext, "infix function combine(a, b) { }")
+    void infixFunctionDeclarationWithTwoParametersIsDefined(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "infix function combine(a, b) { }")
                 .statementParser(new FunctionStatementParser())
                 .statementParser(new BlockStatementParser())
                 .build();
@@ -190,43 +167,36 @@ class FunctionStatementInterpreterTests {
         assertThat(functionStatement.parameters().getFirst().name().lexeme()).isEqualTo("a");
         assertThat(functionStatement.parameters().getLast().name().lexeme()).isEqualTo("b");
 
-        Option<FunctionParserContext> functionParserContext = helper.context().parser()
-            .firstContext(FunctionParserContext.class);
+        Option<FunctionParserContext> functionParserContext =
+                helper.context().parser().firstContext(FunctionParserContext.class);
         assertThat(functionParserContext.present()).isTrue();
         FunctionParserContext context = functionParserContext.get();
         assertThat(context.infixFunctions()).contains("combine");
     }
 
     @Test
-    void infixFunctionDeclarationWithTooManyParametersFails(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper = HSLTestHelper.of(
-                applicationContext,
-                "infix function combine(a, b, c) { }"
-            )
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .build();
+    void infixFunctionDeclarationWithTooManyParametersFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "infix function combine(a, b, c) { }")
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X);
     }
 
     @Test
-    void infixFunctionDeclarationWithTooFewParametersFails(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper = HSLTestHelper.of(
-                applicationContext,
-                "infix function combine(a) { }"
-            )
-            .statementParser(new FunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .build();
+    void infixFunctionDeclarationWithTooFewParametersFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "infix function combine(a) { }")
+                .statementParser(new FunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
-        ScriptAssertions.assertEvaluationError(error,
-            DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.NOT_ENOUGH_PARAMETERS_FOR_X);
     }
 }

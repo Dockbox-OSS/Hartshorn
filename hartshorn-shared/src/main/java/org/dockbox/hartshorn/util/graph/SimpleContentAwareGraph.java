@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.graph;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
  * A {@link Graph} implementation that tracks all nodes that have been added to the graph. This
@@ -34,9 +33,8 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class SimpleContentAwareGraph<T>
-    extends SimpleGraph<T>
-    implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
+public class SimpleContentAwareGraph<T> extends SimpleGraph<T>
+        implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
 
     private final Set<GraphNode<T>> nodes = new HashSet<>();
 
@@ -51,8 +49,7 @@ public class SimpleContentAwareGraph<T>
         try {
             this.visitSingle(collected, root);
             this.nodes.addAll(collected);
-        }
-        catch (GraphException e) {
+        } catch (GraphException e) {
             throw new ApplicationRuntimeException(e);
         }
         super.addRoot(root);

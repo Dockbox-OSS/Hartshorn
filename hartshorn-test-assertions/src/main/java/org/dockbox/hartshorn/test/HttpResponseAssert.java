@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.test;
 
-import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.ObjectAssert;
-
 import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.function.Consumer;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ObjectAssert;
 
 /**
  * Custom assertions for {@link HttpResponse} instances.
@@ -149,9 +148,7 @@ public class HttpResponseAssert<T> extends AbstractAssert<HttpResponseAssert<T>,
      */
     public HttpResponseAssert<T> hasBody(T expected) {
         isNotNull();
-        Assertions.assertThat(actual.body())
-                .as("HTTP response body")
-                .isEqualTo(expected);
+        Assertions.assertThat(actual.body()).as("HTTP response body").isEqualTo(expected);
         return myself;
     }
 
@@ -162,9 +159,7 @@ public class HttpResponseAssert<T> extends AbstractAssert<HttpResponseAssert<T>,
      */
     public HttpResponseAssert<T> hasNoBody() {
         isNotNull();
-        Assertions.assertThat(actual.body())
-                .as("HTTP response body")
-                .isNull();
+        Assertions.assertThat(actual.body()).as("HTTP response body").isNull();
         return myself;
     }
 

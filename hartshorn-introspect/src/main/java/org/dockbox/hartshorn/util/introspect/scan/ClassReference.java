@@ -57,8 +57,6 @@ public class ClassReference implements TypeReference {
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("type", this.type.getName())
-            .describe();
+        return ObjectDescriber.of(this).field("type", this.type.getName()).describe();
     }
 }

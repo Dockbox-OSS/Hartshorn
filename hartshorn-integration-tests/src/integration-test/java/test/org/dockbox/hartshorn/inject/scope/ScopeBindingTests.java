@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.scope;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -27,8 +29,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.inject.scope.ScopedBindingConfiguration.SampleScope;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class ScopeBindingTests {
 
@@ -38,13 +38,13 @@ class ScopeBindingTests {
     @Test
     void scopeBindingIsNotAccessibleFromApplication() throws IllegalScopeException {
         Scope scope = ScopeAdapter.of(new Object());
-        this.applicationContext.bind(String.class)
+        this.applicationContext
+                .bind(String.class)
                 .installTo(scope.installableScopeType())
                 .singleton("test");
 
-        ComponentKey<String> key = ComponentKey.builder(String.class)
-                .scope(scope)
-                .build();
+        ComponentKey<String> key =
+                ComponentKey.builder(String.class).scope(scope).build();
         String value = this.applicationContext.get(key);
         assertThat(value).isEqualTo("test");
 
@@ -59,9 +59,8 @@ class ScopeBindingTests {
         this.applicationContext.bind(String.class).singleton("test");
 
         Scope scope = ScopeAdapter.of(new Object());
-        ComponentKey<String> key = ComponentKey.builder(String.class)
-            .scope(scope)
-            .build();
+        ComponentKey<String> key =
+                ComponentKey.builder(String.class).scope(scope).build();
 
         String value = this.applicationContext.get(key);
         assertThat(value).isEqualTo("test");
@@ -71,9 +70,8 @@ class ScopeBindingTests {
     @TestComponents(ScopedBindingConfiguration.class)
     void configurationScopedValuesAreInstalled() {
         String applicationScope = this.applicationContext.get(String.class);
-        String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class)
-            .scope(new SampleScope())
-            .build());
+        String scopedValue = this.applicationContext.get(
+                ComponentKey.builder(String.class).scope(new SampleScope()).build());
         assertThat(applicationScope).isEmpty();
         assertThat(scopedValue).isEqualTo("test");
     }

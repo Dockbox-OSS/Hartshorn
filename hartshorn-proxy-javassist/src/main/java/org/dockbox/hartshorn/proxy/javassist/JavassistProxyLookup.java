@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.lookup.StandardProxyLookup;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
-import org.dockbox.hartshorn.util.option.Option;
-
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.lookup.StandardProxyLookup;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A proxy lookup implementation that uses Javassist to determine whether a given instance is a
@@ -39,9 +38,9 @@ import javassist.util.proxy.ProxyFactory;
  * @see ProxyFactory#getHandler(Proxy)
  * @see Proxy
  * @see JavassistProxyMethodHandler
- * 
+ *
  * @since 0.4.9
- * 
+ *
  * @author Guus Lieben
  */
 public class JavassistProxyLookup implements StandardProxyLookup {
@@ -52,7 +51,7 @@ public class JavassistProxyLookup implements StandardProxyLookup {
             MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
                 Class<?> targetClass =
-                    javassistProxyMethodHandler.interceptor().manager().targetClass();
+                        javassistProxyMethodHandler.interceptor().manager().targetClass();
                 Class<T> adjustedTargetClass = TypeUtils.unchecked(targetClass, Class.class);
                 return Option.of(adjustedTargetClass);
             }
@@ -70,10 +69,10 @@ public class JavassistProxyLookup implements StandardProxyLookup {
         if (instance instanceof Proxy proxy) {
             MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
-                ProxyManager<?> manager = javassistProxyMethodHandler.interceptor().manager();
+                ProxyManager<?> manager =
+                        javassistProxyMethodHandler.interceptor().manager();
                 if (manager.proxy() == instance) {
-                    ProxyManager<T> adjustedManager =
-                        TypeUtils.unchecked(manager, ProxyManager.class);
+                    ProxyManager<T> adjustedManager = TypeUtils.unchecked(manager, ProxyManager.class);
                     return Option.of(adjustedManager);
                 }
             }

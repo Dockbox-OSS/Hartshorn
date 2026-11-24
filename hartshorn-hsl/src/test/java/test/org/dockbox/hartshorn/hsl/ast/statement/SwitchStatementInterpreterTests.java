@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
@@ -30,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class SwitchStatementInterpreterTests {
 
@@ -45,12 +45,12 @@ class SwitchStatementInterpreterTests {
                         break
                 }
                 """)
-            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-            .statementParser(new BreakStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("value", "some-value")
-            .build();
+                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+                .statementParser(new BreakStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("value", "some-value")
+                .build();
 
         helper.interpret();
 
@@ -69,12 +69,12 @@ class SwitchStatementInterpreterTests {
                         break
                 }
                 """)
-            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-            .statementParser(new BreakStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("value", "match")
-            .build();
+                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+                .statementParser(new BreakStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("value", "match")
+                .build();
 
         helper.interpret();
 
@@ -88,16 +88,15 @@ class SwitchStatementInterpreterTests {
                 switch (value) {
                 }
                 """)
-            .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("value", "some-value")
-            .build();
+                .statementParser(new SwitchStatementParser(new CaseBodyStatementParser()))
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("value", "some-value")
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
-        ScriptAssertions.assertEvaluationError(
-            error,
-            DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT
-        );
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT);
     }
 }

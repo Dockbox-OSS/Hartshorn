@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-
 import java.lang.annotation.Annotation;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
  * A {@link ParameterLoaderRule} that accepts parameters that are annotated with a specific
@@ -31,10 +30,8 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  */
-public abstract class AnnotatedParameterLoaderRule<
-    A extends Annotation,
-    C extends ParameterLoaderContext
-    > implements ParameterLoaderRule<C> {
+public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext>
+        implements ParameterLoaderRule<C> {
 
     /**
      * The annotation that this rule accepts.

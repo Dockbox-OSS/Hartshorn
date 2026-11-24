@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.SequencedCollection;
 import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.SequencedCollection;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Represents a field that can be injected into inside a component. Additional handling is in place
@@ -48,32 +47,26 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
 
     @Override
     public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject)
-        throws ApplicationException {
+            throws ApplicationException {
         if (objectsToInject.size() == 1) {
             Object objectToInject = objectsToInject.getFirst();
             T instance = context.instance();
             try {
                 if (objectToInject instanceof Collection<?> collection) {
                     Option<?> previousValue = this.field.get(instance);
-                    if (previousValue.present()
-                        && previousValue.get() instanceof Collection<?> existingCollection) {
-                        existingCollection.addAll(TypeUtils.unchecked(collection,
-                            Collection.class));
+                    if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
+                        existingCollection.addAll(TypeUtils.unchecked(collection, Collection.class));
                         return;
                     }
                 }
                 this.field.set(instance, objectToInject);
-            }
-            catch (ApplicationException e) {
+            } catch (ApplicationException e) {
                 throw e;
-            }
-            catch (Throwable throwable) {
+            } catch (Throwable throwable) {
                 throw new ApplicationException(throwable);
             }
-        }
-        else {
-            throw new UnsupportedOperationException(
-                "Cannot inject multiple objects into a single field");
+        } else {
+            throw new UnsupportedOperationException("Cannot inject multiple objects into a single field");
         }
     }
 

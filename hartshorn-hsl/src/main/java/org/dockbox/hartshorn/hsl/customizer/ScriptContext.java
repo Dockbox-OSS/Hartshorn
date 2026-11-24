@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
@@ -30,10 +33,6 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
  * {@link org.dockbox.hartshorn.hsl.runtime.StandardRuntime} to track the state of the script's
@@ -41,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * during the script's execution, though some runtimes may not support this.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {

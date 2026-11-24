@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LogicalExpressionParser;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -26,10 +29,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class LogicalExpressionTests {
 
@@ -38,21 +37,13 @@ public class LogicalExpressionTests {
 
     @ParameterizedTest(name = "{0} {1} {2} = {3}")
     @MethodSource("logicalCases")
-    void verifyLogicalExpression(
-        Object left,
-        String operator,
-        Object right,
-        Object expected
-    ) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(
-                this.applicationContext,
-                "left %s right".formatted(operator)
-            )
-            .defineLocal("left", left)
-            .defineLocal("right", right)
-            .expressionParser(new LogicalExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+    void verifyLogicalExpression(Object left, String operator, Object right, Object expected) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, "left %s right".formatted(operator))
+                .defineLocal("left", left)
+                .defineLocal("right", right)
+                .expressionParser(new LogicalExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value).isEqualTo(expected);
@@ -60,32 +51,26 @@ public class LogicalExpressionTests {
 
     public static Stream<Arguments> logicalCases() {
         return Stream.of(
-            // XOR
-            logical(true, "^", true, false),
-            logical(true, "^", false, true),
-            logical(false, "^", true, true),
-            logical(false, "^", false, false),
+                // XOR
+                logical(true, "^", true, false),
+                logical(true, "^", false, true),
+                logical(false, "^", true, true),
+                logical(false, "^", false, false),
 
-            // OR
-            logical(true, "||", true, true),
-            logical(true, "||", false, true),
-            logical(false, "||", true, true),
-            logical(false, "||", false, false),
+                // OR
+                logical(true, "||", true, true),
+                logical(true, "||", false, true),
+                logical(false, "||", true, true),
+                logical(false, "||", false, false),
 
-            // AND
-            logical(true, "&&", true, true),
-            logical(true, "&&", false, false),
-            logical(false, "&&", true, false),
-            logical(false, "&&", false, false)
-        );
+                // AND
+                logical(true, "&&", true, true),
+                logical(true, "&&", false, false),
+                logical(false, "&&", true, false),
+                logical(false, "&&", false, false));
     }
 
-    public static Arguments logical(
-        Object left,
-        String operator,
-        Object right,
-        Object expected
-    ) {
+    public static Arguments logical(Object left, String operator, Object right, Object expected) {
         return Arguments.of(left, operator, right, expected);
     }
 }

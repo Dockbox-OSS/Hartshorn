@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
@@ -23,22 +27,16 @@ import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Standard context providing configurable collections containing all global variables, imports,
  * customizers, and external modules for an HSL runtime. This is most commonly used by the
  * {@link ExpressionCondition} to allow for customization of the runtime.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
-public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
-    implements ScriptConditionContext {
+public class ExpressionConditionContext extends DefaultFallbackCompatibleContext implements ScriptConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     private final Map<String, TypeView<?>> imports = new ConcurrentHashMap<>();
@@ -140,8 +138,8 @@ public class ExpressionConditionContext extends DefaultFallbackCompatibleContext
      */
     @Override
     public void imports(String name, Class<?> type) {
-        this.imports.put(name,
-            this.applicationContext.environment().introspector().introspect(type));
+        this.imports.put(
+                name, this.applicationContext.environment().introspector().introspect(type));
     }
 
     @Override

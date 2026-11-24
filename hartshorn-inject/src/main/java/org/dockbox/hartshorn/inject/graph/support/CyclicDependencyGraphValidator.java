@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.graph.support;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphValidator;
@@ -29,10 +32,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A validator that can be used to detect cyclic dependencies in a {@link DependencyGraph}. A cyclic
@@ -53,32 +52,30 @@ import java.util.Set;
  *
  * @see CyclicComponentException
  * @see ComponentDiscoveryList
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
     @Override
     public void validateBeforeConfiguration(
-        DependencyGraph dependencyGraph, Introspector introspector,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            DependencyGraph dependencyGraph, Introspector introspector, ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         for (GraphNode<DependencyContext<?>> node : nodes) {
             if (node.isLeaf()) {
                 continue;
             }
-            if (node instanceof ContainableGraphNode<DependencyContext<?>>
-                contextContainableGraphNode && contextContainableGraphNode.isRoot()) {
+            if (node instanceof ContainableGraphNode<DependencyContext<?>> contextContainableGraphNode
+                    && contextContainableGraphNode.isRoot()) {
                 continue;
             }
             List<GraphNode<DependencyContext<?>>> graphNodes =
-                this.checkNodeNotCyclicRecursive(node, new ArrayList<>());
+                    this.checkNodeNotCyclicRecursive(node, new ArrayList<>());
             if (!graphNodes.isEmpty()) {
-                ComponentDiscoveryList discoveryList =
-                    this.createDiscoveryList(graphNodes, introspector);
+                ComponentDiscoveryList discoveryList = this.createDiscoveryList(graphNodes, introspector);
                 throw new CyclicComponentException(discoveryList, node.value().origin());
             }
         }
@@ -95,9 +92,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
      * dependency was found
      */
     public List<GraphNode<DependencyContext<?>>> checkNodeNotCyclicRecursive(
-        GraphNode<DependencyContext<?>> node,
-        List<GraphNode<DependencyContext<?>>> knownNodes
-    ) {
+            GraphNode<DependencyContext<?>> node, List<GraphNode<DependencyContext<?>>> knownNodes) {
         if (knownNodes.contains(node)) {
             return List.of(node);
         }
@@ -109,10 +104,9 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
             ComponentKey<?> dependencyCandidate = node.value().componentKey();
             // If none of the parents need immediate resolution, then we can cut potential cyclic
             // graphs short.
-            needsImmediateResolution = containableGraphNode.children().stream()
-                    .anyMatch(parent -> {
-                        return parent.value().needsImmediateResolution(dependencyCandidate);
-                    });
+            needsImmediateResolution = containableGraphNode.children().stream().anyMatch(parent -> {
+                return parent.value().needsImmediateResolution(dependencyCandidate);
+            });
         }
 
         // If the node doesn't need immediate resolution, then we can skip it. Note that this does
@@ -125,8 +119,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         knownNodes.add(node);
 
         for (GraphNode<DependencyContext<?>> child : node.children()) {
-            List<GraphNode<DependencyContext<?>>> graphNodes =
-                this.checkNodeNotCyclicRecursive(child, knownNodes);
+            List<GraphNode<DependencyContext<?>>> graphNodes = this.checkNodeNotCyclicRecursive(child, knownNodes);
             if (!graphNodes.isEmpty()) {
                 List<GraphNode<DependencyContext<?>>> path = new ArrayList<>();
                 path.add(node);
@@ -148,29 +141,23 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
      * @return a discovery list that describes the cyclic dependency
      */
     public ComponentDiscoveryList createDiscoveryList(
-        List<GraphNode<DependencyContext<?>>> path,
-        Introspector introspector
-    ) {
+            List<GraphNode<DependencyContext<?>>> path, Introspector introspector) {
         ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
         for (GraphNode<DependencyContext<?>> node : path) {
             DependencyContext<?> dependencyContext = node.value();
-            if (dependencyContext instanceof ImplementationDependencyContext<?, ?>
-                implementationDependencyContext) {
+            if (dependencyContext instanceof ImplementationDependencyContext<?, ?> implementationDependencyContext) {
                 ComponentKey<?> componentKey =
-                    implementationDependencyContext.declarationContext().componentKey();
-                TypePathNode<?> typePathNode = this.createTypePathNode(componentKey,
-                    implementationDependencyContext.origin(),
-                    introspector);
-                TypeView<?> actualType =
-                    introspector.introspect(implementationDependencyContext.implementationContext()
+                        implementationDependencyContext.declarationContext().componentKey();
+                TypePathNode<?> typePathNode =
+                        this.createTypePathNode(componentKey, implementationDependencyContext.origin(), introspector);
+                TypeView<?> actualType = introspector.introspect(implementationDependencyContext
+                        .implementationContext()
                         .componentKey()
                         .parameterizedType());
                 discoveryList.add(typePathNode, actualType, dependencyContext.lifecycleType());
-            }
-            else {
-                TypePathNode<?> pathNode = this.createTypePathNode(dependencyContext.componentKey(),
-                    dependencyContext.origin(),
-                    introspector);
+            } else {
+                TypePathNode<?> pathNode = this.createTypePathNode(
+                        dependencyContext.componentKey(), dependencyContext.origin(), introspector);
                 discoveryList.add(pathNode, dependencyContext.lifecycleType());
             }
         }
@@ -178,10 +165,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
     }
 
     private <T> TypePathNode<T> createTypePathNode(
-        ComponentKey<T> componentKey,
-        View origin,
-        Introspector introspector
-    ) {
+            ComponentKey<T> componentKey, View origin, Introspector introspector) {
         TypeView<T> view = introspector.introspect(componentKey.type());
         return new TypePathNode<>(view, componentKey, origin);
     }

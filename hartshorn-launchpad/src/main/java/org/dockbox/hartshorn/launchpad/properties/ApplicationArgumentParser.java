@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-
 import java.util.List;
 import java.util.Properties;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 
 /**
  * Argument parsers are responsible for parsing the arguments passed to the application. The
@@ -28,7 +27,7 @@ import java.util.Properties;
  * typically passed to the {@link ApplicationEnvironment} as part of the bootstrap process.
  *
  * @since 0.4.9
- * 
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface

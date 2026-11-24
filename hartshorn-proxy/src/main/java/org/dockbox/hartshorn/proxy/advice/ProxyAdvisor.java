@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,8 +56,6 @@ public interface ProxyAdvisor<T> {
      *
      * @throws Throwable any exception that is thrown by the function
      */
-    <U> U safeWrapIntercept(
-        ProxyCallbackContext<T> context,
-        ProxyInterceptFunction<U> interceptFunction
-    ) throws Throwable;
+    <U> U safeWrapIntercept(ProxyCallbackContext<T> context, ProxyInterceptFunction<U> interceptFunction)
+            throws Throwable;
 }

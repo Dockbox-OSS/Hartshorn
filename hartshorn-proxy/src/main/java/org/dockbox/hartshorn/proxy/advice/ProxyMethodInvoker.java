@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,12 +53,12 @@ public interface ProxyMethodInvoker<T> {
      * @throws Throwable if an error occurs during the method invocation
      */
     <R> R invokeInterceptor(
-        T self,
-        MethodView<T, R> source,
-        Object[] args,
-        MethodInterceptor<T, R> interceptor,
-        CustomInvocation<R> customInvocation
-    ) throws Throwable;
+            T self,
+            MethodView<T, R> source,
+            Object[] args,
+            MethodInterceptor<T, R> interceptor,
+            CustomInvocation<R> customInvocation)
+            throws Throwable;
 
     /**
      * Invokes the given {@code target} method on the given {@code self} object. The {@code target}

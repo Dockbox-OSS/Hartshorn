@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.web.error;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Simple implementation of {@link ErrorHandlerRegistry}, capable of resolving nearest-type
@@ -32,23 +31,16 @@ import java.util.stream.Collectors;
  */
 public class SimpleErrorHandlerRegistry implements ErrorHandlerRegistry {
 
-    private final Map<
-            Class<? extends Throwable>,
-            RequestErrorHandler<? extends Throwable>
-            > handlers = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Throwable>, RequestErrorHandler<? extends Throwable>> handlers =
+            new ConcurrentHashMap<>();
 
     @Override
-    public <E extends Throwable> void register(
-            Class<E> exceptionType,
-            RequestErrorHandler<E> handler
-    ) {
+    public <E extends Throwable> void register(Class<E> exceptionType, RequestErrorHandler<E> handler) {
         this.handlers.put(exceptionType, handler);
     }
 
     @Override
-    public Option<RequestErrorHandler<? extends Throwable>> getHandler(
-            Class<? extends Throwable> exceptionType
-    ) {
+    public Option<RequestErrorHandler<? extends Throwable>> getHandler(Class<? extends Throwable> exceptionType) {
         // If there's an exact match, always prefer that
         if (this.handlers.containsKey(exceptionType)) {
             return Option.of(this.handlers.get(exceptionType));
@@ -57,10 +49,9 @@ public class SimpleErrorHandlerRegistry implements ErrorHandlerRegistry {
         return Option.of(this.handlers.keySet().stream()
                 .filter(handlerType -> handlerType.isAssignableFrom(exceptionType))
                 .collect(Collectors.toMap(
-                        handlerType -> handlerType,
-                        handlerType -> this.distance(exceptionType, handlerType)
-                ))
-                .entrySet().stream()
+                        handlerType -> handlerType, handlerType -> this.distance(exceptionType, handlerType)))
+                .entrySet()
+                .stream()
                 .min(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .map(this.handlers::get));
@@ -74,10 +65,7 @@ public class SimpleErrorHandlerRegistry implements ErrorHandlerRegistry {
      * @param sourceType The source type (in registry)
      * @return The distance in type hierarchy, or -1 if not assignable
      */
-    private int distance(
-            Class<? extends Throwable> targetType,
-            Class<? extends Throwable> sourceType
-    ) {
+    private int distance(Class<? extends Throwable> targetType, Class<? extends Throwable> sourceType) {
         if (!sourceType.isAssignableFrom(targetType)) {
             return -1;
         }

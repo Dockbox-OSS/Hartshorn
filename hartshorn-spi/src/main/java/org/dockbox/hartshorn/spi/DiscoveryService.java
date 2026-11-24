@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.spi;
 
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.jspecify.annotations.NonNull;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -29,6 +24,10 @@ import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A service that allows for the discovery of implementations of a given type. This service is a
@@ -55,9 +54,9 @@ import java.util.Set;
  * <p>Implementations are cached, and will only be released if an override is modified.
  *
  * @see ServiceLoader
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public final class DiscoveryService {
@@ -67,10 +66,8 @@ public final class DiscoveryService {
     private final MultiMap<Class<?>, Class<?>> types = new ConcurrentSetMultiMap<>();
     private final MultiMap<String, String> overrideDiscoveryFiles = new ConcurrentSetMultiMap<>();
     private final Set<ClassLoader> classLoaders = new HashSet<>(List.of(
-        // List, as context class loader may be same as service's class loader
-        Thread.currentThread().getContextClassLoader(),
-        DiscoveryService.class.getClassLoader()
-    ));
+            // List, as context class loader may be same as service's class loader
+            Thread.currentThread().getContextClassLoader(), DiscoveryService.class.getClassLoader()));
 
     private DiscoveryService() {
         if (DISCOVERY_SERVICE != null) {
@@ -78,8 +75,7 @@ public final class DiscoveryService {
         }
         // Check that the class is being created by itself
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        if (stackTrace.length < 3 || !stackTrace[2].getClassName()
-            .equals(DiscoveryService.class.getName())) {
+        if (stackTrace.length < 3 || !stackTrace[2].getClassName().equals(DiscoveryService.class.getName())) {
             throw new IllegalStateException("Cannot instantiate outside of class");
         }
     }
@@ -108,8 +104,7 @@ public final class DiscoveryService {
      * @return {@code true} if an implementation is available, {@code false} otherwise
      */
     public boolean contains(Class<?> type) {
-        if (this.types.containsKey(type)
-            || this.overrideDiscoveryFiles.containsKey(type.getName())) {
+        if (this.types.containsKey(type) || this.overrideDiscoveryFiles.containsKey(type.getName())) {
             return true;
         }
         for (ClassLoader classLoader : this.classLoaders) {
@@ -142,19 +137,17 @@ public final class DiscoveryService {
         try {
             Set<T> objects = this.tryLoadDiscoveryFile(type);
             if (objects.size() > 1) {
-                throw new ServiceDiscoveryException("Multiple implementations found for type "
-                    + type.getCanonicalName());
+                throw new ServiceDiscoveryException(
+                        "Multiple implementations found for type " + type.getCanonicalName());
             }
             T object = CollectionUtilities.first(objects);
             if (object != null) {
                 return object;
             }
-        }
-        catch (NoAvailableImplementationException e) {
+        } catch (NoAvailableImplementationException e) {
             throw new ServiceDiscoveryException(e.getMessage(), e);
         }
-        throw new ServiceDiscoveryException("No implementation found for type "
-            + type.getCanonicalName());
+        throw new ServiceDiscoveryException("No implementation found for type " + type.getCanonicalName());
     }
 
     /**
@@ -172,8 +165,7 @@ public final class DiscoveryService {
     public <T> Set<T> discoverAll(Class<T> type) throws ServiceDiscoveryException {
         try {
             return this.tryLoadDiscoveryFile(type);
-        }
-        catch (NoAvailableImplementationException e) {
+        } catch (NoAvailableImplementationException e) {
             throw new ServiceDiscoveryException(e.getMessage(), e);
         }
     }
@@ -189,12 +181,9 @@ public final class DiscoveryService {
     public void override(Class<?> type, Class<?> implementation) {
         if (type.isAssignableFrom(implementation)) {
             this.override(type, implementation.getName());
-        }
-        else {
-            throw new IllegalArgumentException("Implementation "
-                + implementation.getName()
-                + " is not assignable from type "
-                + type.getName());
+        } else {
+            throw new IllegalArgumentException(
+                    "Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
         }
     }
 
@@ -230,32 +219,29 @@ public final class DiscoveryService {
                 instances.add(this.tryCreateFromImplementationClass(type, implementationClass));
             }
             return instances;
-        }
-        else {
+        } else {
             return this.tryLoadFromSPI(type);
         }
     }
 
     private <T> T tryCreateFromImplementationClass(Class<T> type, Class<?> implementationClass)
-        throws ServiceDiscoveryException {
+            throws ServiceDiscoveryException {
         if (type.isAssignableFrom(implementationClass)) {
             this.verifyAndStoreType(type, implementationClass);
             return this.loadServiceInstance(type, implementationClass);
-        }
-        else {
+        } else {
             throw new ServiceDiscoveryException("Implementation "
-                + implementationClass.getName()
-                + " is not assignable from type "
-                + type.getName());
+                    + implementationClass.getName()
+                    + " is not assignable from type "
+                    + type.getName());
         }
     }
 
     private <T> Collection<Class<?>> tryLoadImplementationClass(Class<T> type)
-        throws NoAvailableImplementationException {
+            throws NoAvailableImplementationException {
         if (this.types.containsKey(type)) {
             return this.types.get(type);
-        }
-        else if (this.overrideDiscoveryFiles.containsKey(type.getName())) {
+        } else if (this.overrideDiscoveryFiles.containsKey(type.getName())) {
             Collection<String> resourceStrings = this.overrideDiscoveryFiles.get(type.getName());
             Set<Class<?>> classes = new HashSet<>();
             for (String resourceString : resourceStrings) {
@@ -263,8 +249,7 @@ public final class DiscoveryService {
             }
             this.types.putAll(type, classes);
             return classes;
-        }
-        else {
+        } else {
             return Set.of();
         }
     }
@@ -274,18 +259,15 @@ public final class DiscoveryService {
         this.types.put(type, implementationType);
     }
 
-    private Class<?> tryLoadClassFromName(String qualifiedName)
-        throws NoAvailableImplementationException {
+    private Class<?> tryLoadClassFromName(String qualifiedName) throws NoAvailableImplementationException {
         for (ClassLoader classLoader : this.classLoaders) {
             try {
                 return Class.forName(qualifiedName, true, classLoader);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 // Ignore, may be in another class loader
             }
         }
-        throw new NoAvailableImplementationException("No implementation found for type "
-            + qualifiedName);
+        throw new NoAvailableImplementationException("No implementation found for type " + qualifiedName);
     }
 
     private <T> Set<T> tryLoadFromSPI(Class<T> type) throws NoAvailableImplementationException {
@@ -300,37 +282,31 @@ public final class DiscoveryService {
     }
 
     private <T> ServiceLoader<T> getServiceLoader(Class<T> type, ClassLoader classLoader)
-        throws NoAvailableImplementationException {
+            throws NoAvailableImplementationException {
         try {
             return ServiceLoader.load(type, classLoader);
-        }
-        catch (ServiceConfigurationError e) {
-            throw new NoAvailableImplementationException("Cannot access service loader for type "
-                + type.getName(), e);
+        } catch (ServiceConfigurationError e) {
+            throw new NoAvailableImplementationException("Cannot access service loader for type " + type.getName(), e);
         }
     }
 
     @SuppressWarnings("ReturnValueIgnored")
     private void verifyRegistration(Class<?> type, Class<?> implementation) {
         if (!type.isAssignableFrom(implementation)) {
-            throw new IllegalArgumentException("Implementation "
-                + implementation.getName()
-                + " is not assignable from type "
-                + type.getName());
+            throw new IllegalArgumentException(
+                    "Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
         }
         try {
             // Ignore result, as we only want to check if the constructor is available
             implementation.getConstructor();
-        }
-        catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Implementation "
-                + implementation.getName()
-                + " does not have a default constructor");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(
+                    "Implementation " + implementation.getName() + " does not have a default constructor");
         }
     }
 
     private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass)
-        throws NoAvailableImplementationException {
+            throws NoAvailableImplementationException {
         try {
             Constructor<?> constructor = implementationClass.getConstructor();
 
@@ -339,15 +315,12 @@ public final class DiscoveryService {
             constructor.setAccessible(false);
 
             return type.cast(instance);
-        }
-        catch (NoSuchMethodException e) {
-            throw new NoAvailableImplementationException("Implementation "
-                + implementationClass.getName()
-                + " does not have a default constructor", e);
-        }
-        catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            throw new NoAvailableImplementationException("Cannot instantiate implementation "
-                + implementationClass.getName(), e);
+        } catch (NoSuchMethodException e) {
+            throw new NoAvailableImplementationException(
+                    "Implementation " + implementationClass.getName() + " does not have a default constructor", e);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            throw new NoAvailableImplementationException(
+                    "Cannot instantiate implementation " + implementationClass.getName(), e);
         }
     }
 }

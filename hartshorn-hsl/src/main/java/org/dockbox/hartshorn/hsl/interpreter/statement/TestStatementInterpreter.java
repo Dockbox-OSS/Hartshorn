@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,19 +44,17 @@ public class TestStatementInterpreter implements StatementInterpreter<TestStatem
 
         try {
             interpreter.execute(node.body(), variableScope);
-        }
-        catch (Yield yield) {
+        } catch (Yield yield) {
             Object value = yield.value();
             boolean truthy = InterpreterUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
-                    .at(node)
-                    .build();
+                        .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
+                        .at(node)
+                        .build();
             }
-        }
-        finally {
+        } finally {
             interpreter.enterScope(previousScope);
         }
         return null;

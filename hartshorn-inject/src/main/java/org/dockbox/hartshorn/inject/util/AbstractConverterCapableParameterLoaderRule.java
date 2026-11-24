@@ -33,15 +33,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractConverterCapableParameterLoaderRule<
-        C extends ParameterLoaderContext
-        > implements ParameterLoaderRule<C> {
+public abstract class AbstractConverterCapableParameterLoaderRule<C extends ParameterLoaderContext>
+        implements ParameterLoaderRule<C> {
 
     private final ConversionService conversionService;
 
-    protected AbstractConverterCapableParameterLoaderRule(
-            ConversionService conversionService
-    ) {
+    protected AbstractConverterCapableParameterLoaderRule(ConversionService conversionService) {
         this.conversionService = conversionService;
     }
 
@@ -59,25 +56,13 @@ public abstract class AbstractConverterCapableParameterLoaderRule<
      * @return the raw parameter value
      */
     protected abstract <T> Object loadRawParameterValue(
-            ParameterView<T> parameter,
-            int index,
-            C context,
-            Object... args
-    );
+            ParameterView<T> parameter, int index, C context, Object... args);
 
     @Override
-    public final <T> Option<T> load(
-        ParameterView<T> parameter,
-        int index,
-        C context,
-        Object... args
-    ) {
+    public final <T> Option<T> load(ParameterView<T> parameter, int index, C context, Object... args) {
         Object value = this.loadRawParameterValue(parameter, index, context, args);
         T converted = this.conversionService.convert(
-                value,
-                parameter.type().type(),
-                new AdditionalTargetTypeContext<>(parameter.type())
-        );
+                value, parameter.type().type(), new AdditionalTargetTypeContext<>(parameter.type()));
         return Option.of(converted);
     }
 }

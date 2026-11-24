@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.constraint.support;
 
+import java.lang.annotation.Annotation;
+import java.util.Set;
 import org.dockbox.hartshorn.proxy.constraint.ProxyConstraint;
 import org.dockbox.hartshorn.proxy.constraint.ProxyConstraintViolation;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.lang.annotation.Annotation;
-import java.util.Set;
 
 /**
  * A constraint that prevents the creation of proxies for Groovy traits. This constraint is applied
@@ -41,8 +40,8 @@ public class GroovyTraitConstraint implements ProxyConstraint {
     @Override
     public Set<ProxyConstraintViolation> validate(TypeView<?> typeView) {
         if (this.isGroovyTrait(typeView.type())) {
-            return Set.of(new ProxyConstraintViolation("Cannot create proxy for Groovy trait "
-                + typeView.qualifiedName()));
+            return Set.of(
+                    new ProxyConstraintViolation("Cannot create proxy for Groovy trait " + typeView.qualifiedName()));
         }
         return Set.of();
     }
@@ -58,10 +57,8 @@ public class GroovyTraitConstraint implements ProxyConstraint {
     protected boolean isGroovyTrait(Class<?> type) {
         try {
             Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
-            return groovyTrait.isAnnotation()
-                && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
-        }
-        catch (ClassNotFoundException e) {
+            return groovyTrait.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
+        } catch (ClassNotFoundException e) {
             return false;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -28,10 +31,6 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * A parser for the body of a case statement. A case may take two forms: a block of statements, or a
  * single expression statement. A block statement should be indicated by the use of a
@@ -43,38 +42,37 @@ import java.util.Set;
  * the {@link #types()} method returns an empty set.
  *
  * @see SwitchStatementParser
- * 
+ *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class CaseBodyStatementParser implements StatementParser<Statement> {
 
     @Override
     public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator)
-        throws ScriptEvaluationError {
+            throws ScriptEvaluationError {
         if (parser.match(BaseTokenType.COLON)) {
             Token colon = parser.previous();
             List<Statement> statements = new ArrayList<>();
-            while (!parser.check(ControlTokenType.CASE,
-                ControlTokenType.DEFAULT,
-                parser.tokenRegistry().tokenPairs().block().close())) {
+            while (!parser.check(
+                    ControlTokenType.CASE,
+                    ControlTokenType.DEFAULT,
+                    parser.tokenRegistry().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
             return Option.of(new BlockStatement(colon, statements));
-        }
-        else if (parser.match(ControlTokenType.ARROW)) {
+        } else if (parser.match(ControlTokenType.ARROW)) {
             return Option.of(parser.expressionStatement());
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.EXPECTED_X_OR_Y,
-                    BaseTokenType.COLON.representation(),
-                    ControlTokenType.ARROW.representation(),
-                    parser.peek().lexeme()
-                )
-                .at(parser.peek())
-                .build();
+                    .message(
+                            DiagnosticMessage.EXPECTED_X_OR_Y,
+                            BaseTokenType.COLON.representation(),
+                            ControlTokenType.ARROW.representation(),
+                            parser.peek().lexeme())
+                    .at(parser.peek())
+                    .build();
         }
     }
 

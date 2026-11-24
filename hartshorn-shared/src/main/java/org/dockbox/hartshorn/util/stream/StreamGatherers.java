@@ -42,13 +42,11 @@ public class StreamGatherers {
      * @return a gatherer that filters elements by their type
      */
     public static <T, R> Gatherer<T, ?, R> filterByType(Class<R> type) {
-        return Gatherer.of(
-                (_, element, downstream) -> {
-                    if (type.isInstance(element)) {
-                        return downstream.push(type.cast(element));
-                    }
-                    return true;
-                }
-        );
+        return Gatherer.of((_, element, downstream) -> {
+            if (type.isInstance(element)) {
+                return downstream.push(type.cast(element));
+            }
+            return true;
+        });
     }
 }

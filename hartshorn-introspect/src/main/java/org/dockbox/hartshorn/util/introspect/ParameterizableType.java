@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import java.util.function.Predicate;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A wrapper for parameterized types that allows for the retrieval of the type and its parameters.
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
  * @see ParameterizableParameterizedTypeWrapper
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public final class ParameterizableType implements Reportable {
@@ -102,23 +101,21 @@ public final class ParameterizableType implements Reportable {
      * @return a new {@link Builder} for the given type
      */
     public static Builder builder(TypeView<?> type) {
-        List<ParameterizableType> parameters = type.typeParameters()
-            .allInput()
-            .asList()
-            .stream()
-            .flatMap(parameter -> parameter.resolvedType()
-                .filter(Predicate.not(TypeView::isWildcard))
-                .orComputeFlat(() -> {
-                    Set<TypeView<?>> bounds = parameter.upperBounds();
-                    if (bounds.size() == 1) {
-                        return Option.of(bounds.iterator().next());
-                    }
-                    return Option.empty();
-                }).map(ParameterizableType::create)
-                .orCompute(() -> ParameterizableType.create(Object.class))
-                .stream()
-            )
-            .collect(Collectors.toList());
+        List<ParameterizableType> parameters = type.typeParameters().allInput().asList().stream()
+                .flatMap(parameter -> parameter
+                        .resolvedType()
+                        .filter(Predicate.not(TypeView::isWildcard))
+                        .orComputeFlat(() -> {
+                            Set<TypeView<?>> bounds = parameter.upperBounds();
+                            if (bounds.size() == 1) {
+                                return Option.of(bounds.iterator().next());
+                            }
+                            return Option.empty();
+                        })
+                        .map(ParameterizableType::create)
+                        .orCompute(() -> ParameterizableType.create(Object.class))
+                        .stream())
+                .collect(Collectors.toList());
         return new Builder(type.type()).parameters(parameters);
     }
 
@@ -161,8 +158,7 @@ public final class ParameterizableType implements Reportable {
             return false;
         }
         ParameterizableType that = (ParameterizableType) o;
-        return Objects.equals(this.type, that.type)
-            && Objects.equals(this.parameters, that.parameters);
+        return Objects.equals(this.type, that.type) && Objects.equals(this.parameters, that.parameters);
     }
 
     @Override
@@ -178,16 +174,15 @@ public final class ParameterizableType implements Reportable {
      */
     public String toQualifiedString() {
         String parameters = this.parameters.stream()
-            .map(ParameterizableType::toQualifiedString)
-            .collect(Collectors.joining(", "));
+                .map(ParameterizableType::toQualifiedString)
+                .collect(Collectors.joining(", "));
         return this.type.getName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
     @Override
     public String toString() {
-        String parameters = this.parameters.stream()
-            .map(ParameterizableType::toString)
-            .collect(Collectors.joining(", "));
+        String parameters =
+                this.parameters.stream().map(ParameterizableType::toString).collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
@@ -230,8 +225,7 @@ public final class ParameterizableType implements Reportable {
             int expectedSize = this.type.getTypeParameters().length;
             if (parameters.size() != expectedSize) {
                 throw new IllegalArgumentException(
-                    "Expected %d parameters, but got %d".formatted(expectedSize, parameters.size())
-                );
+                        "Expected %d parameters, but got %d".formatted(expectedSize, parameters.size()));
             }
             this.parameters = parameters;
             return this;

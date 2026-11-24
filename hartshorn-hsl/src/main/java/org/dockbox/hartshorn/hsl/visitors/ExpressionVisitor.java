@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
@@ -30,6 +29,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;

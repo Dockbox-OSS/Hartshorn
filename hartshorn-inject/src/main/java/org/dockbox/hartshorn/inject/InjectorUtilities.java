@@ -25,8 +25,7 @@ package org.dockbox.hartshorn.inject;
  */
 public final class InjectorUtilities {
 
-    private InjectorUtilities() {
-    }
+    private InjectorUtilities() {}
 
     /**
      * Determines whether the given key should be treated in strict mode. If the key has a defined
@@ -56,12 +55,9 @@ public final class InjectorUtilities {
      *
      * @see InjectorConfiguration#includeParentScopeForFuzzyMatching()
      */
-    public static boolean includeParentScope(
-            ComponentKey<?> key,
-            InjectorConfiguration configuration
-    ) {
-        return key.includeParentScopes().booleanValue(() ->
-                !isStrict(key, configuration) && configuration.includeParentScopeForFuzzyMatching()
-        );
+    public static boolean includeParentScope(ComponentKey<?> key, InjectorConfiguration configuration) {
+        return key.includeParentScopes()
+                .booleanValue(
+                        () -> !isStrict(key, configuration) && configuration.includeParentScopeForFuzzyMatching());
     }
 }

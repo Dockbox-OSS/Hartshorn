@@ -36,10 +36,7 @@ public class JettyServletRegistrar implements ServletRegistrar {
     private final ServletContextHandler handler;
     private final JettyPathSpecTransformer transformer;
 
-    public JettyServletRegistrar(
-            ServletContextHandler handler,
-            JettyPathSpecTransformer transformer
-    ) {
+    public JettyServletRegistrar(ServletContextHandler handler, JettyPathSpecTransformer transformer) {
         this.handler = handler;
         this.transformer = transformer;
     }
@@ -48,10 +45,8 @@ public class JettyServletRegistrar implements ServletRegistrar {
     public void register(PathSpec pathSpec, Servlet servlet) {
         String jettyPathSpec = this.transformer.toJettyPathSpec(pathSpec);
         switch (servlet) {
-            case HttpServlet httpServlet ->
-                    this.handler.addServlet(httpServlet, jettyPathSpec);
-            case ServletHolder servletHolder ->
-                    this.handler.addServlet(servletHolder, jettyPathSpec);
+            case HttpServlet httpServlet -> this.handler.addServlet(httpServlet, jettyPathSpec);
+            case ServletHolder servletHolder -> this.handler.addServlet(servletHolder, jettyPathSpec);
             case null -> throw new IllegalArgumentException("Servlet cannot be null");
             default -> {
                 ServletHolder servletHolder = new ServletHolder(servlet);

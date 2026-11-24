@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,12 +64,13 @@ public class NoSuchProviderException extends ApplicationException {
     }
 
     public NoSuchProviderException(ProviderType providerType, ComponentKey<?> componentKey) {
-        super("No %s found for component key '%s'".formatted(
-            switch (providerType) {
-                case TYPE_AWARE -> "type-aware provider";
-                case NON_TYPE_AWARE -> "non type-aware provider";
-                case ANY -> "provider";
-            },
-            componentKey));
+        super("No %s found for component key '%s'"
+                .formatted(
+                        switch (providerType) {
+                            case TYPE_AWARE -> "type-aware provider";
+                            case NON_TYPE_AWARE -> "non type-aware provider";
+                            case ANY -> "provider";
+                        },
+                        componentKey));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
@@ -28,21 +31,16 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class PostfixExpressionTests {
 
     @Test
-    void postFixIncrementYieldsOriginalValueAndIncrementsVariable(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void postFixIncrementYieldsOriginalValueAndIncrementsVariable(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a++")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("a", 5)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("a", 5)
+                .build();
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
@@ -56,27 +54,25 @@ class PostfixExpressionTests {
     void postFixIncrementOnNonNumberValueFails(@Inject ApplicationContext applicationContext) {
         String actual = "not a number";
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a++")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("a", actual)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("a", actual)
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpretValue)
+                .actual();
         ScriptAssertions.assertEvaluationError(
-            error,
-            FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
-        );
+                error, FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual));
     }
 
     @Test
-    void postFixDecrementYieldsOriginalValueAndDecrementsVariable(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void postFixDecrementYieldsOriginalValueAndDecrementsVariable(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a--")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("a", 5)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("a", 5)
+                .build();
 
         Object expressionResult = helper.interpretValue();
         // Note that the result is expected to be int 5, rather than double 5.0
@@ -90,15 +86,15 @@ class PostfixExpressionTests {
     void postFixDecrementOnNonNumberValueFails(@Inject ApplicationContext applicationContext) {
         String actual = "not a number";
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "a--")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("a", actual)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("a", actual)
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpretValue).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpretValue)
+                .actual();
         ScriptAssertions.assertEvaluationError(
-            error,
-            FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual)
-        );
+                error, FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, actual));
     }
 }

@@ -48,16 +48,14 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return processingContext.permitsProxying() && processingContext.type()
-            .isChildOf(this.parentTarget());
+        return processingContext.permitsProxying() && processingContext.type().isChildOf(this.parentTarget());
     }
 
     @Override
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         ProxyFactory<P> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
@@ -72,8 +70,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
                 factory.advisors().type().delegate(this.parentTarget().cast(instance));
             }
             factory.advisors().type(this.parentTarget()).delegateAbstractOnly(concreteDelegator);
-        }
-        else {
+        } else {
             factory.advisors().type(this.parentTarget()).delegate(concreteDelegator);
         }
     }
@@ -89,10 +86,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
      * @return the concrete delegator instance
      */
     protected P concreteDelegator(
-        InjectionCapableApplication application,
-        ProxyFactory<P> handler,
-        Class<? extends P> parent
-    ) {
+            InjectionCapableApplication application, ProxyFactory<P> handler, Class<? extends P> parent) {
         return application.defaultProvider().get(this.parentTarget());
     }
 

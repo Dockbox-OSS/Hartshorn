@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.classfile.MethodModel;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a {@link Method} instance. This view provides access various properties of
@@ -37,7 +36,7 @@ import java.util.Collection;
  * @author Guus Lieben
  */
 public interface MethodView<Parent, ReturnType>
-    extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
+        extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
 
     /**
      * Returns the {@link Method} instance represented by this view, if it exists.

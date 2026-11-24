@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
@@ -31,7 +35,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.parser.statement.ClassMemberParser;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -43,11 +46,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
-
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class DynamicClassMemberExtensionTests {
@@ -86,14 +84,10 @@ public class DynamicClassMemberExtensionTests {
         }
     }
 
-    public static class CustomMemberParser
-        implements ClassMemberParser<CustomMemberStatement> {
+    public static class CustomMemberParser implements ClassMemberParser<CustomMemberStatement> {
 
         @Override
-        public Option<? extends CustomMemberStatement> parse(
-            TokenParser parser,
-            TokenStepValidator validator
-        ) {
+        public Option<? extends CustomMemberStatement> parse(TokenParser parser, TokenStepValidator validator) {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             if (parser.check(identifier) && "custom_prop".equals(parser.peek().lexeme())) {
                 Token keyword = parser.advance();
@@ -102,8 +96,7 @@ public class DynamicClassMemberExtensionTests {
                 if (parser.match(BaseTokenType.EQUAL)) {
                     initializer = parser.expression();
                 }
-                validator.expectAfter(parser.tokenRegistry().statementEnd(),
-                    "custom property declaration");
+                validator.expectAfter(parser.tokenRegistry().statementEnd(), "custom property declaration");
                 return Option.of(new CustomMemberStatement(keyword, name, initializer));
             }
             return Option.empty();
@@ -115,17 +108,11 @@ public class DynamicClassMemberExtensionTests {
         }
     }
 
-    public static class CustomMemberInterpreter
-        implements ClassMemberInterpreter<CustomMemberStatement> {
+    public static class CustomMemberInterpreter implements ClassMemberInterpreter<CustomMemberStatement> {
 
         @Override
-        public void interpret(
-            CustomMemberStatement node,
-            Interpreter interpreter,
-            VirtualClassBuilder builder
-        ) {
-            FieldStatement fieldStatement =
-                new FieldStatement(node.keyword(), node.name(), node.initializer(), false);
+        public void interpret(CustomMemberStatement node, Interpreter interpreter, VirtualClassBuilder builder) {
+            FieldStatement fieldStatement = new FieldStatement(node.keyword(), node.name(), node.initializer(), false);
             VirtualProperty virtualProperty = new VirtualProperty(fieldStatement);
             builder.field(node.name().lexeme(), virtualProperty);
         }
@@ -145,11 +132,11 @@ public class DynamicClassMemberExtensionTests {
                 var server = Server();
                 capture(server.port)
                 """)
-            .withCaptureModule()
-            .parser(new DefaultScriptStatementsParserCustomizer())
-            .classMemberParser(new CustomMemberParser())
-            .classMemberInterpreter(new CustomMemberInterpreter())
-            .build();
+                .withCaptureModule()
+                .parser(new DefaultScriptStatementsParserCustomizer())
+                .classMemberParser(new CustomMemberParser())
+                .classMemberInterpreter(new CustomMemberInterpreter())
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value).isEqualTo(8080.0);
@@ -162,16 +149,15 @@ public class DynamicClassMemberExtensionTests {
                     123;
                 }
                 """)
-            .parser(new DefaultScriptStatementsParserCustomizer())
-            .build();
+                .parser(new DefaultScriptStatementsParserCustomizer())
+                .build();
 
         FormattedDiagnostic expectedMessage = FormattedDiagnostic.builder()
-            .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT)
-            .argument("number")
-            .build();
+                .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT)
+                .argument("number")
+                .build();
 
-        ScriptEvaluationError error =
-            assertThatExceptionOfType(ScriptEvaluationError.class)
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
                 .isThrownBy(helper::interpret)
                 .actual();
 
@@ -195,11 +181,11 @@ public class DynamicClassMemberExtensionTests {
                 var user = User("House");
                 capture(user.fullTitle())
                 """)
-            .withCaptureModule()
-            .parser(new DefaultScriptStatementsParserCustomizer())
-            .classMemberParser(new CustomMemberParser())
-            .classMemberInterpreter(new CustomMemberInterpreter())
-            .build();
+                .withCaptureModule()
+                .parser(new DefaultScriptStatementsParserCustomizer())
+                .classMemberParser(new CustomMemberParser())
+                .classMemberInterpreter(new CustomMemberInterpreter())
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value).isEqualTo("Dr House (Cardiology)");

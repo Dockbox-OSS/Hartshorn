@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.inject.graph.support;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
@@ -28,11 +32,6 @@ import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 class OverlappingAliasDependencyGraphValidatorTests {
 
     @Test
@@ -40,19 +39,19 @@ class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString =
-            createMockCharSequenceDependencyContext(String.class);
+        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
         AliasableDependencyContext<StringBuilder> declarationStringBuilder =
-            createMockCharSequenceDependencyContext(StringBuilder.class);
+                createMockCharSequenceDependencyContext(StringBuilder.class);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
         graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
 
         AliasCapableComponentProviderOrchestrator orchestrator =
-            Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
-        Mockito.when(orchestrator.aliasNormalizer())
-            .thenReturn(new DefaultBindingAliasNormalizer());
-        AmbiguousAliasException exception = assertThatExceptionOfType(AmbiguousAliasException.class).isThrownBy(() -> validator.validateBeforeConfiguration(graph, null, orchestrator)).actual();
+                Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
+        Mockito.when(orchestrator.aliasNormalizer()).thenReturn(new DefaultBindingAliasNormalizer());
+        AmbiguousAliasException exception = assertThatExceptionOfType(AmbiguousAliasException.class)
+                .isThrownBy(() -> validator.validateBeforeConfiguration(graph, null, orchestrator))
+                .actual();
 
         assertThat(exception.contexts()).hasSize(2);
         assertThat(exception.componentKey()).isEqualTo(ComponentKey.of(CharSequence.class));
@@ -63,29 +62,25 @@ class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString =
-            createMockCharSequenceDependencyContext(String.class);
+        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
         Mockito.when(declarationString.priority()).thenReturn(1);
 
         AliasableDependencyContext<StringBuilder> declarationStringBuilder =
-            createMockCharSequenceDependencyContext(StringBuilder.class);
+                createMockCharSequenceDependencyContext(StringBuilder.class);
         Mockito.when(declarationStringBuilder.priority()).thenReturn(2);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
         graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
 
         AliasCapableComponentProviderOrchestrator orchestrator =
-            Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
-        Mockito.when(orchestrator.aliasNormalizer())
-            .thenReturn(new DefaultBindingAliasNormalizer());
+                Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
+        Mockito.when(orchestrator.aliasNormalizer()).thenReturn(new DefaultBindingAliasNormalizer());
         validator.validateBeforeConfiguration(graph, null, orchestrator);
     }
 
     private static <T extends CharSequence> AliasableDependencyContext<T> createMockCharSequenceDependencyContext(
-        Class<T> keyType
-    ) {
-        AliasableDependencyContext<T> declarationString =
-            Mockito.mock(AliasableDependencyContext.class);
+            Class<T> keyType) {
+        AliasableDependencyContext<T> declarationString = Mockito.mock(AliasableDependencyContext.class);
         Mockito.when(declarationString.componentKey()).thenReturn(ComponentKey.of(keyType));
         Mockito.when(declarationString.describe()).thenReturn("mockLocation");
         Mockito.when(declarationString.aliasTypes()).thenReturn(Set.of(CharSequence.class));

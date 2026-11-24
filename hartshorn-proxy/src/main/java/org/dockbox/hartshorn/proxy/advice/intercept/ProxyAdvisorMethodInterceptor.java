@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
-import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.advice.IntrospectionProxyResultValidator;
 import org.dockbox.hartshorn.proxy.advice.ProxyMethodInterceptHandler;
 import org.dockbox.hartshorn.proxy.advice.ProxyMethodInvoker;
@@ -26,11 +26,11 @@ import org.dockbox.hartshorn.proxy.advice.ReflectionProxyMethodInterceptHandler;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
 import org.dockbox.hartshorn.proxy.loaders.ProxyParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * The default method interceptor used by the
@@ -61,10 +61,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     private final ProxyOrchestrator proxyOrchestrator;
     private final ParameterLoader parameterLoader = new UnproxyingParameterLoader();
 
-    public ProxyAdvisorMethodInterceptor(
-        ProxyManager<T> manager,
-        ProxyOrchestrator proxyOrchestrator
-    ) {
+    public ProxyAdvisorMethodInterceptor(ProxyManager<T> manager, ProxyOrchestrator proxyOrchestrator) {
         this.manager = manager;
         this.introspector = proxyOrchestrator.introspector();
         this.proxyOrchestrator = proxyOrchestrator;
@@ -79,24 +76,16 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     }
 
     @Override
-    public Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args)
-        throws Throwable {
+    public Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args) throws Throwable {
         T instance = this.manager().targetClass().cast(self);
         T callbackTarget = this.manager().delegate().orElse(instance);
-        MethodView<T, ?> methodView =
-            TypeUtils.unchecked(source.toIntrospector(), MethodView.class);
+        MethodView<T, ?> methodView = TypeUtils.unchecked(source.toIntrospector(), MethodView.class);
 
-        CustomInvocation<?> customInvocation =
-            this.createDefaultInvocation(source, proxy, callbackTarget);
+        CustomInvocation<?> customInvocation = this.createDefaultInvocation(source, proxy, callbackTarget);
         Object[] arguments = this.resolveArgs(source, self, args);
 
-        Object result = this.interceptAndNotify(instance,
-            source,
-            proxy,
-            callbackTarget,
-            methodView,
-            customInvocation,
-            arguments);
+        Object result = this.interceptAndNotify(
+                instance, source, proxy, callbackTarget, methodView, customInvocation, arguments);
         return this.resultValidator.validateResult(source, result);
     }
 
@@ -121,35 +110,29 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * @throws Throwable if an error occurs during the method invocation or interception
      */
     protected Object interceptAndNotify(
-        T self, MethodInvokable source, Invokable proxy, T callbackTarget,
-        MethodView<T, ?> methodView, CustomInvocation<?> defaultInvocation,
-        Object[] arguments
-    ) throws Throwable {
+            T self,
+            MethodInvokable source,
+            Invokable proxy,
+            T callbackTarget,
+            MethodView<T, ?> methodView,
+            CustomInvocation<?> defaultInvocation,
+            Object[] arguments)
+            throws Throwable {
 
-        ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget,
-            TypeUtils.unchecked(self, Object.class),
-            methodView,
-            arguments);
+        ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(
+                callbackTarget, TypeUtils.unchecked(self, Object.class), methodView, arguments);
         return this.manager().advisor().safeWrapIntercept(callbackContext, () -> {
             Option<MethodInterceptor<T, Object>> interceptor = this.manager()
-                .advisor()
-                .resolver()
-                .method(source.toMethod())
-                .interceptor();
+                    .advisor()
+                    .resolver()
+                    .method(source.toMethod())
+                    .interceptor();
 
             if (interceptor.present()) {
-                return this.interceptHandler.handleInterceptedMethod(source,
-                    callbackTarget,
-                    defaultInvocation,
-                    arguments,
-                    interceptor.get());
-            }
-            else {
-                return this.interceptHandler.handleNonInterceptedMethod(self,
-                    source,
-                    proxy,
-                    callbackTarget,
-                    arguments);
+                return this.interceptHandler.handleInterceptedMethod(
+                        source, callbackTarget, defaultInvocation, arguments, interceptor.get());
+            } else {
+                return this.interceptHandler.handleNonInterceptedMethod(self, source, proxy, callbackTarget, arguments);
             }
         });
     }
@@ -167,16 +150,11 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      *
      * @return a {@link CustomInvocation} that defines how the method should be invoked
      */
-    protected CustomInvocation<?> createDefaultInvocation(
-        Invokable source,
-        Invokable proxy,
-        T callbackTarget
-    ) {
+    protected CustomInvocation<?> createDefaultInvocation(Invokable source, Invokable proxy, T callbackTarget) {
         return interceptorArgs -> {
             if (this.manager().delegate().present()) {
-                return this.methodInvoker.invokeDelegate(this.manager().delegate().get(),
-                    source,
-                    interceptorArgs);
+                return this.methodInvoker.invokeDelegate(
+                        this.manager().delegate().get(), source, interceptorArgs);
             }
             if (proxy == null) {
                 return this.introspector.introspect(source.returnType()).defaultOrNull();
@@ -203,7 +181,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
         MethodView<?, ?> methodView = method.toIntrospector();
         ProxyParameterLoaderContext context =
-            new ProxyParameterLoaderContext(methodView, instance, this.proxyOrchestrator);
+                new ProxyParameterLoaderContext(methodView, instance, this.proxyOrchestrator);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 

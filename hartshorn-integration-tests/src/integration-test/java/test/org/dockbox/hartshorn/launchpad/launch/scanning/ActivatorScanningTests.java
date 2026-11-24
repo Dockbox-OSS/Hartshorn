@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -24,15 +27,11 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.junit.jupiter.api.Test;
-
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ConcreteDiscoverableComponent;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponentConfiguration;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponent;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ComponentInterface;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ConcreteDiscoverableComponent;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponent;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponentConfiguration;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.PackageScanningActivator;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @PackageScanningActivator
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -42,7 +41,7 @@ class ActivatorScanningTests {
     void prefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
             if (collector instanceof ClasspathTypeReferenceCollector referenceCollector
-                && referenceCollector.packageNames().contains(PackageScanningActivator.PACKAGE)) {
+                    && referenceCollector.packageNames().contains(PackageScanningActivator.PACKAGE)) {
                 return;
             }
         }
@@ -60,9 +59,7 @@ class ActivatorScanningTests {
     @Test
     @TestComponents(ComponentInterface.class)
     void servicesFromActivatorPrefixArePresent(
-        @Inject ComponentInterface service,
-        @Inject ProxyOrchestrator proxyOrchestrator
-    ) {
+            @Inject ComponentInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
         assertThat(service).isNotNull();
         assertThat(proxyOrchestrator.isProxy(service)).isTrue();
     }

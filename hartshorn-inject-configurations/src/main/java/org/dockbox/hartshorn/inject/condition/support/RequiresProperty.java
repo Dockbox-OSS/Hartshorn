@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
-import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * A condition that requires a property to be present in the application's {@link PropertyRegistry}.
@@ -32,9 +31,9 @@ import java.lang.annotation.Target;
  * property is required to be present and have any value.
  *
  * @see PropertyCondition
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

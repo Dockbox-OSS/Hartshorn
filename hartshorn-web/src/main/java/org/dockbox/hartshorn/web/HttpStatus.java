@@ -40,7 +40,8 @@ public enum HttpStatus implements HttpStatusCode {
     OK(HttpServletResponse.SC_OK, "OK"),
     CREATED(HttpServletResponse.SC_CREATED, "Created"),
     ACCEPTED(HttpServletResponse.SC_ACCEPTED, "Accepted"),
-    NON_AUTHORITATIVE_INFORMATION(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION, "Non-Authoritative Information"),
+    NON_AUTHORITATIVE_INFORMATION(
+            HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION, "Non-Authoritative Information"),
     NO_CONTENT(HttpServletResponse.SC_NO_CONTENT, "No Content"),
     RESET_CONTENT(HttpServletResponse.SC_RESET_CONTENT, "Reset Content"),
     PARTIAL_CONTENT(HttpServletResponse.SC_PARTIAL_CONTENT, "Partial Content"),
@@ -66,7 +67,8 @@ public enum HttpStatus implements HttpStatusCode {
     NOT_FOUND(HttpServletResponse.SC_NOT_FOUND, "Not Found"),
     METHOD_NOT_ALLOWED(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method Not Allowed"),
     NOT_ACCEPTABLE(HttpServletResponse.SC_NOT_ACCEPTABLE, "Not Acceptable"),
-    PROXY_AUTHENTICATION_REQUIRED(HttpServletResponse.SC_PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required"),
+    PROXY_AUTHENTICATION_REQUIRED(
+            HttpServletResponse.SC_PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required"),
     REQUEST_TIMEOUT(HttpServletResponse.SC_REQUEST_TIMEOUT, "Request Timeout"),
     CONFLICT(HttpServletResponse.SC_CONFLICT, "Conflict"),
     GONE(HttpServletResponse.SC_GONE, "Gone"),
@@ -101,7 +103,6 @@ public enum HttpStatus implements HttpStatusCode {
     LOOP_DETECTED(508, "Loop Detected"),
     NOT_EXTENDED(510, "Not Extended"),
     NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required"),
-
     ;
     // checkstyle:on LineLength
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject.provider.strategy;
 
 import java.util.List;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -40,9 +39,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @param <T> the type of the component to resolve
  *
  * @see ComponentProviderStrategy
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class SimpleComponentProviderStrategyChain<T> implements ComponentProviderStrategyChain<T> {
@@ -53,19 +52,17 @@ public class SimpleComponentProviderStrategyChain<T> implements ComponentProvide
     private final int index;
 
     public SimpleComponentProviderStrategyChain(
-        ComponentProvider componentProvider,
-        InjectionCapableApplication application,
-        List<ComponentProviderStrategy> strategies
-    ) {
+            ComponentProvider componentProvider,
+            InjectionCapableApplication application,
+            List<ComponentProviderStrategy> strategies) {
         this(componentProvider, application, strategies, 0);
     }
 
     public SimpleComponentProviderStrategyChain(
-        ComponentProvider componentProvider,
-        InjectionCapableApplication application,
-        List<ComponentProviderStrategy> strategies,
-        int index
-    ) {
+            ComponentProvider componentProvider,
+            InjectionCapableApplication application,
+            List<ComponentProviderStrategy> strategies,
+            int index) {
         this.componentProvider = componentProvider;
         this.application = application;
         this.strategies = strategies;
@@ -83,19 +80,12 @@ public class SimpleComponentProviderStrategyChain<T> implements ComponentProvide
     }
 
     @Override
-    public ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext
-    )
-        throws ComponentInitializationException, ApplicationException {
+    public ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
+            throws ComponentInitializationException, ApplicationException {
         if (this.index < this.strategies.size()) {
             ComponentProviderStrategy strategy = this.strategies.get(this.index);
             ComponentProviderStrategyChain<T> chain = new SimpleComponentProviderStrategyChain<>(
-                this.componentProvider,
-                this.application,
-                this.strategies,
-                this.index + 1
-            );
+                    this.componentProvider, this.application, this.strategies, this.index + 1);
             return strategy.get(componentKey, requestContext, chain);
         }
         return ComponentObjectContainer.empty();

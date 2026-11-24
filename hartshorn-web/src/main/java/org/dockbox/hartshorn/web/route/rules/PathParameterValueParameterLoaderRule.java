@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.web.route.rules;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.web.message.RequestAttributes;
 import org.dockbox.hartshorn.web.PathParameter;
-
-import java.util.Map;
+import org.dockbox.hartshorn.web.message.RequestAttributes;
 
 /**
  * A {@link ParameterLoaderRule} that loads parameter values from path parameters using the
@@ -39,10 +38,7 @@ import java.util.Map;
 public class PathParameterValueParameterLoaderRule<C extends ParameterLoaderContext>
         extends AbstractWebRequestParameterLoaderRule<PathParameter, C> {
 
-    public PathParameterValueParameterLoaderRule(
-            HttpServletRequest request,
-            ConversionService conversionService
-    ) {
+    public PathParameterValueParameterLoaderRule(HttpServletRequest request, ConversionService conversionService) {
         super(PathParameter.class, request, conversionService);
     }
 

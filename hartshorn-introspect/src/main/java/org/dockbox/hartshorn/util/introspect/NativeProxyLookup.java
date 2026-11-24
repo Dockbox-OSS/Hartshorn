@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxy;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationProxyIntrospector;
@@ -23,10 +26,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.MapBackedAnnotationInvocationHandler;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.NonNull;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 
 /**
  * A proxy lookup implementation that is capable of looking up native proxies. Native proxies are
@@ -47,8 +46,7 @@ public class NativeProxyLookup implements ProxyLookup {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
             if (invocationHandler instanceof MapBackedAnnotationInvocationHandler handler) {
                 unproxied = TypeUtils.unchecked(handler.type(), Class.class);
-            }
-            else if (invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+            } else if (invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
                 unproxied = TypeUtils.unchecked(adapterProxy.targetAnnotationClass(), Class.class);
             }
         }
@@ -74,9 +72,8 @@ public class NativeProxyLookup implements ProxyLookup {
         if (Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
             if (instance instanceof Annotation annotation
-                && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
-                introspector = new AnnotationAdapterProxyIntrospector<>(
-                    annotation, adapterProxy);
+                    && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+                introspector = new AnnotationAdapterProxyIntrospector<>(annotation, adapterProxy);
             }
         }
 

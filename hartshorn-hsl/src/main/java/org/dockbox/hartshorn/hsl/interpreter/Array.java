@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Simple wrapper around an array of objects, without a specific type requirement. This is used by
@@ -93,9 +92,9 @@ public class Array implements Iterable<Object>, PropertyContainer {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("length", this.length())
-            .field("values", this.values)
-            .describe();
+                .field("length", this.length())
+                .field("values", this.values)
+                .describe();
     }
 
     @Override
@@ -104,33 +103,22 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(
-        final Interpreter interpreter,
-        final Token name,
-        final Object value,
-        VariableScope fromScope
-    ) {
+    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-            .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
-            .at(name)
-            .build();
+                .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X, "write", name.lexeme())
+                .at(name)
+                .build();
     }
 
     @Override
     public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
         if ("length".equals(name.lexeme())) {
             return this.values.length;
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(
-                    DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y,
-                    "read",
-                    name.lexeme(),
-                    "length"
-                )
-                .at(name)
-                .build();
+                    .message(DiagnosticMessage.ILLEGAL_ARRAY_PROPERTY_X_EXCEPT_Y, "read", name.lexeme(), "length")
+                    .at(name)
+                    .build();
         }
     }
 }

@@ -29,17 +29,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * {@code add(a, b)}.
  *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class InfixExpressionParser extends AbstractFunctionOperatorExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         Expression expression = chain.next(parser, validator);
 
         TokenType identifier = parser.tokenRegistry().literals().identifier();
@@ -52,7 +48,7 @@ public class InfixExpressionParser extends AbstractFunctionOperatorExpressionPar
     }
 
     private boolean hasInfixFunction(TokenParser parser, Token name) {
-        return this.containedInFunctionContext(parser,
-            context -> context.infixFunctions().contains(name.lexeme()));
+        return this.containedInFunctionContext(
+                parser, context -> context.infixFunctions().contains(name.lexeme()));
     }
 }

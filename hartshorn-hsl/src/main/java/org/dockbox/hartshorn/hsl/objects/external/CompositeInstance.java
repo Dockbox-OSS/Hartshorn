@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -37,8 +38,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * A {@link VirtualInstance} that combines the capabilities of a virtual instance and an external
@@ -65,17 +64,16 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
         if (superClass == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
-                .at(virtualClass.constructor().declaration())
-                .build();
+                    .message(DiagnosticMessage.COMPOSITE_WITHOUT_EXTERNAL_SUPER, virtualClass.name())
+                    .at(virtualClass.constructor().declaration())
+                    .build();
         }
-        this.firstExternalClass =
-            TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
+        this.firstExternalClass = TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
-                .at(virtualClass.constructor().declaration())
-                .build();
+                    .message(DiagnosticMessage.MISSING_DEFAULT_CONSTRUCTOR, firstExternalClass.name())
+                    .at(virtualClass.constructor().declaration())
+                    .build();
         }
     }
 
@@ -91,32 +89,27 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
      * constructor execution
      */
     public void makeInstance(
-        Token at,
-        Interpreter interpreter,
-        List<Object> arguments,
-        VirtualFunction virtualConstructor
-    ) throws ApplicationException {
+            Token at, Interpreter interpreter, List<Object> arguments, VirtualFunction virtualConstructor)
+            throws ApplicationException {
         if (this.instance != null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.BACKING_INSTANCE_ALREADY_CREATED)
-                .at(at)
-                .build();
+                    .message(DiagnosticMessage.BACKING_INSTANCE_ALREADY_CREATED)
+                    .at(at)
+                    .build();
         }
         // External class constructor
         ConstructorView<T> constructor =
-            this.firstExternalClass.constructors().defaultConstructor().get();
+                this.firstExternalClass.constructors().defaultConstructor().get();
         try {
             this.instance = constructor.create();
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw e;
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
-                .at(at)
-                .cause(throwable)
-                .build();
+                    .message(DiagnosticMessage.UNEXPECTED_ERROR, throwable.getMessage())
+                    .at(at)
+                    .cause(throwable)
+                    .build();
         }
 
         // Virtual class constructor
@@ -127,83 +120,65 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
 
     @Override
     public void set(
-        final Interpreter interpreter,
-        final Token name,
-        final Object value,
-        final VariableScope fromScope
-    ) {
+            final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
         this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
             super.set(interpreter, name, value, fromScope);
-        }
-        else {
+        } else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 try {
                     field.get().set(this.instance, value);
-                }
-                catch (Throwable throwable) {
+                } catch (Throwable throwable) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
-                            StandardPropertyAccessVerifier.WRITE_ACTION,
-                            name.lexeme(),
-                            this.typeName(),
-                            throwable.getMessage()
-                        )
-                        .cause(throwable)
-                        .build();
+                            .at(name)
+                            .message(
+                                    DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                                    StandardPropertyAccessVerifier.WRITE_ACTION,
+                                    name.lexeme(),
+                                    this.typeName(),
+                                    throwable.getMessage())
+                            .cause(throwable)
+                            .build();
                 }
-            }
-            else {
+            } else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(name)
-                    .message(DiagnosticMessage.UNDEFINED_PROPERTY,
-                        name.lexeme(),
-                        this.typeName())
-                    .build();
+                        .at(name)
+                        .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.typeName())
+                        .build();
             }
         }
     }
 
     @Override
-    public Object get(
-        final Interpreter interpreter,
-        final Token name,
-        final VariableScope fromScope
-    ) {
+    public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
         this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
             return super.get(interpreter, name, fromScope);
-        }
-        else {
+        } else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 try {
                     return field.get().get(this.instance);
-                }
-                catch (Throwable throwable) {
+                } catch (Throwable throwable) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
-                            StandardPropertyAccessVerifier.READ_ACTION,
-                            name.lexeme(),
-                            this.typeName(),
-                            throwable.getMessage()
-                        )
-                        .cause(throwable)
-                        .build();
+                            .at(name)
+                            .message(
+                                    DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                                    StandardPropertyAccessVerifier.READ_ACTION,
+                                    name.lexeme(),
+                                    this.typeName(),
+                                    throwable.getMessage())
+                            .cause(throwable)
+                            .build();
                 }
-            }
-            else {
+            } else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(name)
-                    .message(DiagnosticMessage.UNDEFINED_PROPERTY,
-                        name.lexeme(),
-                        this.typeName())
-                    .build();
+                        .at(name)
+                        .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.typeName())
+                        .build();
             }
         }
     }
@@ -216,10 +191,9 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     private void checkInstance(Token position) {
         if (this.instance == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(position)
-                .message(DiagnosticMessage.DEFERRED_INSTANCE_EAGER_ACCESS,
-                    this.typeName())
-                .build();
+                    .at(position)
+                    .message(DiagnosticMessage.DEFERRED_INSTANCE_EAGER_ACCESS, this.typeName())
+                    .build();
         }
     }
 

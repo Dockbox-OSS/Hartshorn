@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapperList;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
 
 /**
  * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to
@@ -48,14 +47,10 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
     }
 
     @Override
-    public <U> U safeWrapIntercept(
-        ProxyCallbackContext<T> context,
-        ProxyInterceptFunction<U> interceptFunction
-    ) throws Throwable {
+    public <U> U safeWrapIntercept(ProxyCallbackContext<T> context, ProxyInterceptFunction<U> interceptFunction)
+            throws Throwable {
         Method method = context.method().method().orElseThrow(() -> null);
-        Collection<MethodWrapper<T>> wrappers = this.resolver()
-            .method(method)
-            .wrappers();
+        Collection<MethodWrapper<T>> wrappers = this.resolver().method(method).wrappers();
         MethodWrapper<T> methodWrapper = new MethodWrapperList<>(wrappers);
 
         methodWrapper.acceptBefore(context);
@@ -63,8 +58,7 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
             U result = interceptFunction.handleInterception();
             methodWrapper.acceptAfter(context);
             return result;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             ProxyCallbackContext<T> errorContext = context.acceptError(e);
             methodWrapper.acceptError(errorContext);
             throw e;

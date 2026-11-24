@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.introspect;
 
+import java.util.List;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
@@ -30,8 +31,6 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-
 /**
  * A parameter loader context that is aware of the application it is bound to, and in which scope it
  * operates.
@@ -41,39 +40,33 @@ import java.util.List;
  * @author Guus Lieben
  */
 public class ApplicationBoundParameterLoaderContext extends ParameterLoaderContext
-    implements FallbackCompatibleContext {
+        implements FallbackCompatibleContext {
 
     private final InjectionCapableApplication application;
     private final ComponentProvider provider;
     private final Scope scope;
 
-    private final Context context = new DefaultFallbackCompatibleContext() {
-    };
+    private final Context context = new DefaultFallbackCompatibleContext() {};
 
     public ApplicationBoundParameterLoaderContext(
-        ExecutableElementView<?> executable,
-        Object instance,
-        InjectionCapableApplication application
-    ) {
+            ExecutableElementView<?> executable, Object instance, InjectionCapableApplication application) {
         this(executable, instance, application, application.defaultProvider().scope());
     }
 
     public ApplicationBoundParameterLoaderContext(
-        ExecutableElementView<?> executable,
-        Object instance,
-        InjectionCapableApplication application,
-        Scope scope
-    ) {
+            ExecutableElementView<?> executable,
+            Object instance,
+            InjectionCapableApplication application,
+            Scope scope) {
         this(executable, instance, application, application.defaultProvider(), scope);
     }
 
     public ApplicationBoundParameterLoaderContext(
-        ExecutableElementView<?> executable,
-        Object instance,
-        InjectionCapableApplication application,
-        ComponentProvider provider,
-        Scope scope
-    ) {
+            ExecutableElementView<?> executable,
+            Object instance,
+            InjectionCapableApplication application,
+            ComponentProvider provider,
+            Scope scope) {
         super(executable, instance);
         this.application = application;
         this.provider = provider;
@@ -112,12 +105,10 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         return new ComponentProvider() {
             @Override
             public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
-                ApplicationBoundParameterLoaderContext self =
-                    ApplicationBoundParameterLoaderContext.this;
+                ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
                 if (key.scope().contains(self.application.defaultProvider().scope())) {
-                    return self.provider.get(key.mutable().scope(self.scope).build(),
-                        requestContext);
+                    return self.provider.get(key.mutable().scope(self.scope).build(), requestContext);
                 }
                 return self.provider.get(key, requestContext);
             }

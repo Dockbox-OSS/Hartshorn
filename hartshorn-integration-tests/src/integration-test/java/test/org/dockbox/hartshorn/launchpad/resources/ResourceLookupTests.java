@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,7 @@
 
 package test.org.dockbox.hartshorn.launchpad.resources;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
-import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
-import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +24,12 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
+import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ResourceLookupTests {
@@ -60,16 +59,12 @@ class ResourceLookupTests {
 
     private void testResourceLookup(String path) {
         Set<URI> lookup = this.resourceLookup.lookup(path);
-        assertThat(lookup)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(lookup).isNotEmpty().hasSize(1);
 
         URI uri = CollectionUtilities.first(lookup);
         File file = new File(uri);
 
-        assertThat(file)
-                .hasName("sample.txt")
-                .exists();
+        assertThat(file).hasName("sample.txt").exists();
     }
 
     private void createLocalFile() throws IOException {

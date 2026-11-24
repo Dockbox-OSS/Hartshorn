@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,18 +29,14 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
  */
 public class NoopComponentResolutionFailureStrategy implements ComponentResolutionFailureStrategy {
 
-    public static final NoopComponentResolutionFailureStrategy INSTANCE =
-        new NoopComponentResolutionFailureStrategy();
+    public static final NoopComponentResolutionFailureStrategy INSTANCE = new NoopComponentResolutionFailureStrategy();
 
     private NoopComponentResolutionFailureStrategy() {
         // Private constructor to enforce singleton pattern
     }
 
     @Override
-    public <T> void onResolutionFailure(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext
-    ) {
+    public <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext) {
         // No operation performed on resolution failure
     }
 }

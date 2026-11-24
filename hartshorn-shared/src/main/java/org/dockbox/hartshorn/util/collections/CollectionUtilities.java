@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import org.jspecify.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +36,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -49,8 +48,7 @@ import java.util.stream.StreamSupport;
  */
 public final class CollectionUtilities {
 
-    private CollectionUtilities() {
-    }
+    private CollectionUtilities() {}
 
     /**
      * Constructs a new unique set from the given collections. If no collections are provided an
@@ -121,9 +119,8 @@ public final class CollectionUtilities {
      * @return The difference between the two collections
      */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
-        BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
-            .filter(Predicate.not(c2::contains))
-            .toList();
+        BiFunction<Collection<T>, Collection<T>, List<T>> filter =
+                (c1, c2) -> c1.stream().filter(Predicate.not(c2::contains)).toList();
 
         List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
         List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
@@ -179,18 +176,12 @@ public final class CollectionUtilities {
     public static <T> T last(Collection<T> collection) {
         if (collection == null || collection.isEmpty()) {
             return null;
-        }
-        else if (collection instanceof SortedSet<T> sortedSet) {
+        } else if (collection instanceof SortedSet<T> sortedSet) {
             return sortedSet.last();
-        }
-        else if (collection instanceof SequencedCollection<T> sequencedCollection) {
+        } else if (collection instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getLast();
-        }
-        else {
-            return collection.stream()
-                .skip(collection.size() - 1L)
-                .findFirst()
-                .orElse(null);
+        } else {
+            return collection.stream().skip(collection.size() - 1L).findFirst().orElse(null);
         }
     }
 
@@ -207,18 +198,13 @@ public final class CollectionUtilities {
      */
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
-        if (iterable == null || (
-            iterable instanceof Collection<T> collection && collection.isEmpty()
-        )) {
+        if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
             return null;
-        }
-        else if (iterable instanceof SortedSet<T> sortedSet) {
+        } else if (iterable instanceof SortedSet<T> sortedSet) {
             return sortedSet.first();
-        }
-        else if (iterable instanceof SequencedCollection<T> sequencedCollection) {
+        } else if (iterable instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getFirst();
-        }
-        else {
+        } else {
             Iterator<T> iterator = iterable.iterator();
             // Empty Collections are covered above, but for all other iterables we need to check
             // if there is a first element, to avoid NoSuchElementExceptions
@@ -242,10 +228,7 @@ public final class CollectionUtilities {
      * @return The aggregated string representation of the collection
      */
     public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
-        return collection.stream()
-            .map(valueMapper)
-            .map(Object::toString)
-            .reduce("", (a, b) -> a + ", " + b);
+        return collection.stream().map(valueMapper).map(Object::toString).reduce("", (a, b) -> a + ", " + b);
     }
 
     /**
@@ -262,8 +245,7 @@ public final class CollectionUtilities {
     public static <T> Set<T> copyOf(Set<T> set) {
         if (set instanceof SequencedSet<T> sequencedSet) {
             return Collections.unmodifiableSequencedSet(sequencedSet);
-        }
-        else {
+        } else {
             return Set.copyOf(set);
         }
     }

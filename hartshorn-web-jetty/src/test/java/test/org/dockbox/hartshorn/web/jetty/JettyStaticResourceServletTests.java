@@ -18,5 +18,4 @@ package test.org.dockbox.hartshorn.web.jetty;
 
 import test.org.dockbox.hartshorn.web.StaticResourceServletTests;
 
-public class JettyStaticResourceServletTests extends StaticResourceServletTests {
-}
+public class JettyStaticResourceServletTests extends StaticResourceServletTests {}

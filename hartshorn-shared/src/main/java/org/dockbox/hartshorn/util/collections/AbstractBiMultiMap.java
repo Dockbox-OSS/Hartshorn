@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import org.dockbox.hartshorn.util.stream.EntryStream;
-
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * A base implementation of a {@link BiMultiMap}. This implementation handles the inverse map
@@ -33,12 +32,9 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBiMultiMap<K, V>
-    extends StandardMultiMap<K, V>
-    implements BiMultiMap<K, V> {
+public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> implements BiMultiMap<K, V> {
 
-    protected AbstractBiMultiMap() {
-    }
+    protected AbstractBiMultiMap() {}
 
     protected AbstractBiMultiMap(MultiMap<K, V> map) {
         super(map);

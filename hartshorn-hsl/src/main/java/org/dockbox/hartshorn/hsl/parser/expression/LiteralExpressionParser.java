@@ -38,11 +38,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  */
 public class LiteralExpressionParser implements ExpressionParser {
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         if (parser.match(LiteralTokenType.FALSE)) {
             return new LiteralExpression(parser.peek(), false);
         }

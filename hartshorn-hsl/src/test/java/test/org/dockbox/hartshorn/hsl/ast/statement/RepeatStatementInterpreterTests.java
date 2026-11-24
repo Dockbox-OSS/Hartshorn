@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.parser.expression.AssignExpressionParser;
@@ -33,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class RepeatStatementInterpreterTests {
 
@@ -46,14 +46,14 @@ class RepeatStatementInterpreterTests {
                     counter = counter + 1
                 }
                 """)
-            .statementParser(new RepeatStatementParser())
-            .statementParser(new BlockStatementParser())
-            .expressionParser(new AssignExpressionParser())
-            .expressionParser(new BinaryAdditionExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("counter", 0)
-            .build();
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new BinaryAdditionExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("counter", 0)
+                .build();
 
         helper.interpret();
 
@@ -64,31 +64,31 @@ class RepeatStatementInterpreterTests {
     @Test
     void repeatWithNegativeValueFails(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "repeat (-1) { }")
-            .statementParser(new RepeatStatementParser())
-            .statementParser(new BlockStatementParser())
-            .expressionParser(new UnaryExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new UnaryExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(
-            error,
-            FormattedDiagnostic.of(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, -1d)
-        );
+                error, FormattedDiagnostic.of(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, -1d));
     }
 
     @Test
     void repeatWithNonNumberValueFails(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "repeat (null) { }")
-            .statementParser(new RepeatStatementParser())
-            .statementParser(new BlockStatementParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(
-            error,
-            FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, (Object) null)
-        );
+                error, FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, (Object) null));
     }
 }

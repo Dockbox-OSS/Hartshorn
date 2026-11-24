@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter
  * @param interpreter The owning {@link Interpreter} instance.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public record DelegatingInterpreterVisitor(Interpreter interpreter) implements InterpreterVisitor {
@@ -121,11 +121,11 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     @Override
     public Object visit(BinaryExpression expression) {
         return new BinaryExpressionInterpreter(
-            new CharacterBitwiseAdditionStrategy(),
-            new NumberBitwiseAdditionStrategy(),
-            new NumberCharBitwiseAdditionStrategy(),
-            new StringBitwiseAdditionStrategy()
-        ).interpret(expression, this.interpreter);
+                        new CharacterBitwiseAdditionStrategy(),
+                        new NumberBitwiseAdditionStrategy(),
+                        new NumberCharBitwiseAdditionStrategy(),
+                        new StringBitwiseAdditionStrategy())
+                .interpret(expression, this.interpreter);
     }
 
     @Override
@@ -200,8 +200,7 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Object visit(ArrayComprehensionExpression expression) {
-        return new ArrayComprehensionExpressionInterpreter().interpret(expression,
-            this.interpreter);
+        return new ArrayComprehensionExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
@@ -252,8 +251,7 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Void visit(BlockStatement statement) {
-        this.interpreter.execute(statement.statements(),
-            new VariableScope(this.interpreter.visitingScope()));
+        this.interpreter.execute(statement.statements(), new VariableScope(this.interpreter.visitingScope()));
         return null;
     }
 
@@ -311,8 +309,7 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     public Void visit(TestStatement statement) {
         if (!this.interpreter.executionOptions().enableAssertions()) {
             return null;
-        }
-        else {
+        } else {
             return new TestStatementInterpreter().interpret(statement, this.interpreter);
         }
     }

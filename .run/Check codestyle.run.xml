@@ -15,7 +15,7 @@
               <option value="verify" />
               <option value="-DskipTests" />
               <option value="-Dci" />
-              <option value="-Dspotless.skip=false" />
+              <option value="-Dspotless.check.skip=false" />
               <option value="-Derrorprone.skip=false" />
             </list>
           </option>

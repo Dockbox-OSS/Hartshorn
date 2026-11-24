@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.advice.intercept.CustomInvocation;
 import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
@@ -33,10 +32,10 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStubContext;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Standard implementation of {@link ProxyMethodInvoker} that uses reflection to invoke methods on
@@ -46,13 +45,12 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  * @param <T> the type of the target instance
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
-    private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE =
-        new ConcurrentHashMap<>();
+    private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
 
     private final Introspector introspector;
     private final ProxyManager<T> manager;
@@ -66,33 +64,31 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
     @Override
     public <R> R invokeInterceptor(
-        T self,
-        MethodView<T, R> source,
-        Object[] args,
-        MethodInterceptor<T, R> interceptor,
-        CustomInvocation<R> customInvocation
-    ) throws Throwable {
-        MethodInterceptorContext<T, R> context =
-            MethodInterceptorContext.of(source, args, self, customInvocation);
+            T self,
+            MethodView<T, R> source,
+            Object[] args,
+            MethodInterceptor<T, R> interceptor,
+            CustomInvocation<R> customInvocation)
+            throws Throwable {
+        MethodInterceptorContext<T, R> context = MethodInterceptorContext.of(source, args, self, customInvocation);
         return interceptor.intercept(context);
     }
 
     @Override
     public Object invokeDelegate(T self, Invokable target, Object[] args) throws Throwable {
-        return this.invokeAccessible(self,
-            target,
-            args,
-            (method, instance, interceptorArgs) -> method.invoke(this.manager.delegate().get(),
-                interceptorArgs));
+        return this.invokeAccessible(
+                self,
+                target,
+                args,
+                (method, instance, interceptorArgs) ->
+                        method.invoke(this.manager.delegate().get(), interceptorArgs));
     }
 
     @Override
-    public Object invokeReal(T self, Invokable source, Invokable target, Object[] args)
-        throws Throwable {
+    public Object invokeReal(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
         if (target != null) {
             return this.invokeTarget(self, source, target, args);
-        }
-        else {
+        } else {
             return this.invokeStub(self, source, target, args);
         }
     }
@@ -108,10 +104,8 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @return the result of the method invocation
      */
     protected Object invokeSelf(T self, Invokable target, Object[] args) throws Throwable {
-        return this.invokeAccessible(self,
-            target,
-            args,
-            (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
+        return this.invokeAccessible(
+                self, target, args, (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
     }
 
     /**
@@ -128,19 +122,18 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      *
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeDefault(T self, Invokable source, Object[] args, Class<T> declaringType)
-        throws Throwable {
+    protected Object invokeDefault(T self, Invokable source, Object[] args, Class<T> declaringType) throws Throwable {
         MethodHandle handle;
         if (METHOD_HANDLE_CACHE.containsKey(source)) {
             handle = METHOD_HANDLE_CACHE.get(source);
-        }
-        else {
-            handle = MethodHandles.lookup().findSpecial(
-                declaringType,
-                source.name(),
-                MethodType.methodType(source.returnType(), source.parameterTypes()),
-                declaringType
-            ).bindTo(self);
+        } else {
+            handle = MethodHandles.lookup()
+                    .findSpecial(
+                            declaringType,
+                            source.name(),
+                            MethodType.methodType(source.returnType(), source.parameterTypes()),
+                            declaringType)
+                    .bindTo(self);
             METHOD_HANDLE_CACHE.put(source, handle);
         }
         return handle.invokeWithArguments(args);
@@ -162,8 +155,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      *
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeTarget(T self, Invokable source, Invokable target, Object[] args)
-        throws Throwable {
+    protected Object invokeTarget(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
         Class<T> targetClass = this.manager.targetClass();
 
         try {
@@ -189,8 +181,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
             else {
                 return this.invokeStub(self, source, target, args);
             }
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }
@@ -208,11 +199,9 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      *
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeStub(T self, Invokable source, Invokable target, Object[] args)
-        throws Throwable {
+    protected Object invokeStub(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
         MethodStub<T> stub = this.manager.advisor().resolver().defaultStub().get();
-        MethodStubContext<T> stubContext =
-            new MethodStubContext<>(self, source, target, this.interceptor, args);
+        MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this.interceptor, args);
         return stub.invoke(stubContext);
     }
 
@@ -230,25 +219,20 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      *
      * @return the result of the method invocation
      */
-    protected Object invokeAccessible(
-        T self,
-        Invokable target,
-        Object[] args,
-        MethodInvoker<Object, T> function
-    ) throws Throwable {
+    protected Object invokeAccessible(T self, Invokable target, Object[] args, MethodInvoker<Object, T> function)
+            throws Throwable {
         target.setAccessible(true);
 
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
-            result = function.invoke(TypeUtils.unchecked(methodInvokable.toIntrospector(),
-                    MethodView.class), self, args)
-                .orElseGet(() -> this.introspector.introspect(target.returnType()).defaultOrNull());
-        }
-        else {
+            result = function.invoke(
+                            TypeUtils.unchecked(methodInvokable.toIntrospector(), MethodView.class), self, args)
+                    .orElseGet(() ->
+                            this.introspector.introspect(target.returnType()).defaultOrNull());
+        } else {
             try {
                 result = target.invoke(self, args);
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 result = this.introspector.introspect(target.returnType()).defaultOrNull();
             }
         }

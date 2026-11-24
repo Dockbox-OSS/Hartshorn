@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
-import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 
 /**
  * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},

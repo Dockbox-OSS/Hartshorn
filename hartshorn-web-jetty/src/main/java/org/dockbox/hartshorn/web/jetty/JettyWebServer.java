@@ -18,6 +18,9 @@ package org.dockbox.hartshorn.web.jetty;
 
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -32,10 +35,6 @@ import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * An implementation of {@link WebServer} using Jetty as the underlying server.
@@ -55,8 +54,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         }
         try {
             this.jettyServer.start();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ServerException("Failed to start Jetty server", e);
         }
     }
@@ -68,8 +66,7 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
         }
         try {
             this.jettyServer.stop();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ServerException("Failed to stop Jetty server", e);
         }
     }
@@ -82,11 +79,9 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
     @Override
     public int port() {
         return this.getNetworkConnectors().stream()
-            .collect(Option.collector())
-            .map(NetworkConnector::getLocalPort)
-            .orElseThrow(() -> new IllegalStateException(
-                "No network connector available to determine port"
-            ));
+                .collect(Option.collector())
+                .map(NetworkConnector::getLocalPort)
+                .orElseThrow(() -> new IllegalStateException("No network connector available to determine port"));
     }
 
     private List<NetworkConnector> getNetworkConnectors() {
@@ -97,42 +92,40 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("connectors").writeDelegates(this.getNetworkConnectors().stream()
-                .map(NetworkConnectorReporter::new)
-                .toArray(Reportable[]::new));
+        collector
+                .property("connectors")
+                .writeDelegates(this.getNetworkConnectors().stream()
+                        .map(NetworkConnectorReporter::new)
+                        .toArray(Reportable[]::new));
 
         Handler handler = this.jettyServer.getHandler();
         if (handler instanceof Reportable reportable) {
             collector.property("handler").writeDelegate(reportable);
-        }
-        else if (handler instanceof ServletContextHandler servletContextHandler) {
+        } else if (handler instanceof ServletContextHandler servletContextHandler) {
             // Don't include non-reportable servlets, to reduce noise.
             List<Reportable> servlets = getReportableServlets(servletContextHandler);
-            collector.property("servlets").writeDelegates(servlets.stream()
-                    .map(servlet -> (Reportable) servletCollector -> {
-                        servletCollector
-                            .property(servlet.getClass().getName())
-                            .writeDelegate(servlet);
-                    })
-                    .toArray(Reportable[]::new)
-            );
+            collector
+                    .property("servlets")
+                    .writeDelegates(servlets.stream()
+                            .map(servlet -> (Reportable) servletCollector -> {
+                                servletCollector
+                                        .property(servlet.getClass().getName())
+                                        .writeDelegate(servlet);
+                            })
+                            .toArray(Reportable[]::new));
         }
     }
 
-    private static List<Reportable> getReportableServlets(
-            ServletContextHandler servletContextHandler
-    ) {
+    private static List<Reportable> getReportableServlets(ServletContextHandler servletContextHandler) {
         List<Reportable> servlets = new ArrayList<>();
-        for (ServletHolder servletHolder
-            : servletContextHandler.getServletHandler().getServlets()) {
+        for (ServletHolder servletHolder :
+                servletContextHandler.getServletHandler().getServlets()) {
             try {
                 Servlet servlet = servletHolder.getServlet();
-                if (!(servlet instanceof RequestRoutingServlet)
-                        && servlet instanceof Reportable reportable) {
+                if (!(servlet instanceof RequestRoutingServlet) && servlet instanceof Reportable reportable) {
                     servlets.add(reportable);
                 }
-            }
-            catch (ServletException e) {
+            } catch (ServletException e) {
                 throw new RuntimeException("Failed to retrieve servlet from holder", e);
             }
         }
@@ -141,8 +134,6 @@ public record JettyWebServer(Server jettyServer) implements WebServer, Reportabl
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-                .field("jettyServer", this.jettyServer)
-                .describe();
+        return ObjectDescriber.of(this).field("jettyServer", this.jettyServer).describe();
     }
 }

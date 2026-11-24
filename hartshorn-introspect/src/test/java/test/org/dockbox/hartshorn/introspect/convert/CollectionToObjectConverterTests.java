@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
-import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToObjectConverter;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToObjectConverter;
+import org.junit.jupiter.api.Test;
 
 class CollectionToObjectConverterTests {
 
@@ -34,9 +33,7 @@ class CollectionToObjectConverterTests {
         assertThat(converter.canConvert(collection, String.class)).isTrue();
 
         Object converted = converter.convert(collection, Set.class, String.class);
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo("test");
+        assertThat(converted).isNotNull().isEqualTo("test");
     }
 
     @Test

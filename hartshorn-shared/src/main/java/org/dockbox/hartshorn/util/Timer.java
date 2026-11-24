@@ -62,9 +62,10 @@ public class Timer {
      */
     public static Duration execute(Runnable runnable) {
         return execute(() -> {
-            runnable.run();
-            return null;
-        }).duration();
+                    runnable.run();
+                    return null;
+                })
+                .duration();
     }
 
     /**

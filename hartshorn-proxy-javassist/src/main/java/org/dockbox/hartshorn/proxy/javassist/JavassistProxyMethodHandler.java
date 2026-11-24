@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
+import java.lang.reflect.Method;
+import javassist.util.proxy.MethodHandler;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-
-import java.lang.reflect.Method;
-
-import javassist.util.proxy.MethodHandler;
 
 /**
  * A Javassist {@link MethodHandler} that delegates to a {@link ProxyMethodInterceptor}.
@@ -35,15 +33,15 @@ import javassist.util.proxy.MethodHandler;
  *
  * @author Guus Lieben
  */
-public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor,
-                                             Introspector introspector) implements MethodHandler {
+public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector)
+        implements MethodHandler {
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args)
-        throws Throwable {
-        return this.interceptor.intercept(self,
-            new MethodInvokable(thisMethod, this.introspector()),
-            new MethodInvokable(proceed, this.introspector()),
-            args);
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+        return this.interceptor.intercept(
+                self,
+                new MethodInvokable(thisMethod, this.introspector()),
+                new MethodInvokable(proceed, this.introspector()),
+                args);
     }
 }

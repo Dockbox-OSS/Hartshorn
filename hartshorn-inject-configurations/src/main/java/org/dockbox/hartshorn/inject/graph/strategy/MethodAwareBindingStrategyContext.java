@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,13 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @author Guus Lieben
  */
-public class MethodAwareBindingStrategyContext<T> extends DefaultContext
-    implements BindingStrategyContext<T> {
+public class MethodAwareBindingStrategyContext<T> extends DefaultContext implements BindingStrategyContext<T> {
 
     private final DependencyDeclarationContext<T> componentContainer;
     private final MethodView<T, ?> method;
 
     public MethodAwareBindingStrategyContext(
-        DependencyDeclarationContext<T> componentContainer,
-        MethodView<T, ?> method
-    ) {
+            DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
         this.componentContainer = componentContainer;
         this.method = method;
     }

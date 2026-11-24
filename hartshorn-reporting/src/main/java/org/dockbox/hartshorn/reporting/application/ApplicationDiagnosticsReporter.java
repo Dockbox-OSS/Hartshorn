@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -28,12 +33,6 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.jspecify.annotations.NonNull;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 /**
  * A diagnostics reporter that reports information about the application. This includes the
@@ -55,16 +54,14 @@ import java.util.stream.Collectors;
  * @author Guus Lieben
  */
 public class ApplicationDiagnosticsReporter
-    implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>,
-    CategorizedDiagnosticsReporter {
+        implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     /**
      * The category of this reporter.
      */
     public static final String APPLICATION_CATEGORY = "application";
 
-    private final ApplicationReportingConfiguration configuration =
-        new ApplicationReportingConfiguration();
+    private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ApplicationDiagnosticsReporter(ApplicationContext applicationContext) {
@@ -74,10 +71,10 @@ public class ApplicationDiagnosticsReporter
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
-            String implementationVersion =
-                ApplicationContext.class.getPackage().getImplementationVersion();
-            collector.property("version")
-                .writeString(implementationVersion != null ? implementationVersion : "unknown");
+            String implementationVersion = ApplicationContext.class.getPackage().getImplementationVersion();
+            collector
+                    .property("version")
+                    .writeString(implementationVersion != null ? implementationVersion : "unknown");
         }
         if (this.configuration.includeJarLocation()) {
             reportJarLocation(collector);
@@ -104,13 +101,13 @@ public class ApplicationDiagnosticsReporter
     protected static void reportJarLocation(DiagnosticsPropertyCollector collector) {
         String codeSource;
         try {
-            codeSource = ApplicationContext.class.getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI()
-                .toString();
-        }
-        catch (Exception e) {
+            codeSource = ApplicationContext.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .toString();
+        } catch (Exception e) {
             codeSource = "Unknown";
         }
         collector.property("source").writeString(codeSource);
@@ -136,8 +133,8 @@ public class ApplicationDiagnosticsReporter
      */
     protected void reportModuleActivators(DiagnosticsPropertyCollector collector) {
         String[] activators = this.applicationContext.activators().activators().stream()
-            .map(activator -> activator.annotationType().getCanonicalName())
-            .toArray(String[]::new);
+                .map(activator -> activator.annotationType().getCanonicalName())
+                .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);
     }
 
@@ -153,17 +150,16 @@ public class ApplicationDiagnosticsReporter
         ApplicationEnvironment environment = this.applicationContext.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             Map<Class<? extends Observer>, List<Observer>> observers =
-                observable.observers(Observer.class).stream()
-                    .collect(Collectors.groupingBy(Observer::getClass));
+                    observable.observers(Observer.class).stream().collect(Collectors.groupingBy(Observer::getClass));
 
             collector.property("observers").writeDelegate(observerCollector -> {
                 observers.forEach((type, instances) -> {
-                    observerCollector.property(type.getName()).writeDelegates(instances.stream()
-                            .map(observer -> new ObserverDiagnosticsReporter(
-                                    environment.introspector(), observer
-                            ))
-                            .toArray(Reportable[]::new)
-                    );
+                    observerCollector
+                            .property(type.getName())
+                            .writeDelegates(instances.stream()
+                                    .map(observer ->
+                                            new ObserverDiagnosticsReporter(environment.introspector(), observer))
+                                    .toArray(Reportable[]::new));
                 });
             });
         }
@@ -179,23 +175,21 @@ public class ApplicationDiagnosticsReporter
      */
     protected void reportContexts(DiagnosticsPropertyCollector collector) {
         AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference =
-            new AtomicReference<>();
+                new AtomicReference<>();
 
-        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter =
-            (contextsCollector, context) -> {
-                contextsCollector.property("type")
-                    .writeString(context.getClass().getCanonicalName());
-                if (context instanceof Reportable reportable) {
-                    contextsCollector.property("data").writeDelegate(reportable);
-                }
-                if (context instanceof NamedContext namedContext) {
-                    contextsCollector.property("name").writeString(namedContext.name());
-                }
-                if (!context.contexts().isEmpty()) {
-                    Reportable[] childReporters = childReporters(reporterReference, context);
-                    contextsCollector.property("children").writeDelegates(childReporters);
-                }
-            };
+        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter = (contextsCollector, context) -> {
+            contextsCollector.property("type").writeString(context.getClass().getCanonicalName());
+            if (context instanceof Reportable reportable) {
+                contextsCollector.property("data").writeDelegate(reportable);
+            }
+            if (context instanceof NamedContext namedContext) {
+                contextsCollector.property("name").writeString(namedContext.name());
+            }
+            if (!context.contexts().isEmpty()) {
+                Reportable[] childReporters = childReporters(reporterReference, context);
+                contextsCollector.property("children").writeDelegates(childReporters);
+            }
+        };
         reporterReference.set(reporter);
 
         Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
@@ -204,13 +198,12 @@ public class ApplicationDiagnosticsReporter
 
     @NonNull
     private static Reportable[] childReporters(
-        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference,
-        ContextView context
-    ) {
+            AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference,
+            ContextView context) {
         return context.contexts().stream()
-            .map(childContext -> (Reportable) contextsController -> reporterReference.get()
-                .accept(contextsController, childContext))
-            .toArray(Reportable[]::new);
+                .map(childContext -> (Reportable)
+                        contextsController -> reporterReference.get().accept(contextsController, childContext))
+                .toArray(Reportable[]::new);
     }
 
     @Override

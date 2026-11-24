@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,30 @@
 package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 
 /**
  * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver}
  * to introspect the method and resolve the dependencies.
  *
  * @see IntrospectionDependencyResolver
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
-public class IntrospectionBindingDependencyResolver
-    implements BindingDeclarationDependencyResolver {
+public class IntrospectionBindingDependencyResolver implements BindingDeclarationDependencyResolver {
 
     private final IntrospectionDependencyResolver introspectionDependencyResolver;
 
     public IntrospectionBindingDependencyResolver(
-        ComponentInjectionPointsResolver injectionPointsResolver,
-        ComponentKeyResolver componentKeyResolver
-    ) {
+            ComponentInjectionPointsResolver injectionPointsResolver, ComponentKeyResolver componentKeyResolver) {
         this.introspectionDependencyResolver =
-            new IntrospectionDependencyResolver(injectionPointsResolver, componentKeyResolver);
+                new IntrospectionDependencyResolver(injectionPointsResolver, componentKeyResolver);
     }
 
     @Override
@@ -54,8 +50,7 @@ public class IntrospectionBindingDependencyResolver
 
     @Override
     public Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context) {
-        MethodAwareBindingStrategyContext<?> strategyContext =
-            (MethodAwareBindingStrategyContext<?>) context;
+        MethodAwareBindingStrategyContext<?> strategyContext = (MethodAwareBindingStrategyContext<?>) context;
         return this.introspectionDependencyResolver.resolveDependencies(strategyContext.method());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ import java.util.HashSet;
  */
 public class SynchronizedHashSetMultiMap<K, V> extends SynchronizedMultiMap<K, V> {
 
-    public SynchronizedHashSetMultiMap() {
-    }
+    public SynchronizedHashSetMultiMap() {}
 
     public SynchronizedHashSetMultiMap(MultiMap<K, V> map) {
         super(map);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import java.util.List;
+import java.util.SequencedCollection;
 import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
-
-import java.util.List;
-import java.util.SequencedCollection;
 
 /**
  * Represents a single injection point for a component. This represents an element that can be
@@ -31,9 +30,9 @@ import java.util.SequencedCollection;
  * @param <T> the type of the component that this injection point is for
  *
  * @see InjectionPoint
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public interface ComponentInjectionPoint<T> {
@@ -46,8 +45,7 @@ public interface ComponentInjectionPoint<T> {
      * @param context the context that provides the component instance
      * @param objectsToInject the objects to inject into the component instance
      */
-    void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject)
-        throws ApplicationException;
+    void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) throws ApplicationException;
 
     /**
      * Returns an {@link ElementAnnotationsIntrospector} that can be used to introspect the

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
@@ -75,17 +76,15 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-import java.util.Map;
-
 /**
  * Support for {@link Resolver semantic analysis} of the AST. This visitor is used to resolve all
  * references originating in the AST. The visitor itself doesn't track the resolved references, but
  * instead delegates to the {@link Resolver} to do so.
  *
  * @see Resolver
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisitor<Void> {
@@ -199,10 +198,11 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(ThisExpression expression) {
         if (this.resolver.currentClassType() == ClassType.NONE) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS,
-                    expression.keyword().lexeme())
-                .at(expression.keyword())
-                .build();
+                    .message(
+                            DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS,
+                            expression.keyword().lexeme())
+                    .at(expression.keyword())
+                    .build();
         }
         this.resolver.resolveLocal(expression, expression.keyword());
         return null;
@@ -211,12 +211,15 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(VariableExpression expression) {
         if (this.resolver.hasDefinedScopes()) {
-            Boolean initialized = this.resolver.peekScope().get(expression.name().lexeme());
+            Boolean initialized =
+                    this.resolver.peekScope().get(expression.name().lexeme());
             if (initialized != null && !initialized) {
                 throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                    .message(DiagnosticMessage.UNDEFINED_VARIABLE, expression.name().lexeme())
-                    .at(expression.name())
-                    .build();
+                        .message(
+                                DiagnosticMessage.UNDEFINED_VARIABLE,
+                                expression.name().lexeme())
+                        .at(expression.name())
+                        .build();
             }
         }
         this.resolver.resolveLocal(expression, expression.name());
@@ -311,12 +314,13 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP
-            && this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.SWITCH) {
+                && this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.SWITCH) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES,
-                    statement.keyword().lexeme())
-                .at(statement.keyword())
-                .build();
+                    .message(
+                            DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES,
+                            statement.keyword().lexeme())
+                    .at(statement.keyword())
+                    .build();
         }
         return null;
     }
@@ -326,10 +330,11 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         // add this case inside semantic to make sure it inside loop
         if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES,
-                    statement.keyword().lexeme())
-                .at(statement.keyword())
-                .build();
+                    .message(
+                            DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES,
+                            statement.keyword().lexeme())
+                    .at(statement.keyword())
+                    .build();
         }
         return null;
     }
@@ -379,9 +384,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(ConstructorStatement statement) {
         if (this.resolver.currentClassType() == ClassType.NONE) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.CONSTRUCTOR_OUTSIDE_CLASS)
-                .at(statement.keyword())
-                .build();
+                    .message(DiagnosticMessage.CONSTRUCTOR_OUTSIDE_CLASS)
+                    .at(statement.keyword())
+                    .build();
         }
         this.resolver.define(statement.initializerIdentifier());
         this.resolver.resolveFunction(statement, FunctionType.INITIALIZER);
@@ -403,45 +408,45 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(ReturnStatement statement) {
         switch (this.resolver.currentFunction()) {
-            case NONE -> throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.TOP_LEVEL_RETURN)
-                .at(statement.keyword())
-                .build();
+            case NONE ->
+                throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                        .message(DiagnosticMessage.TOP_LEVEL_RETURN)
+                        .at(statement.keyword())
+                        .build();
             case INLINE_FUNCTION, CLASS_FUNCTION -> {
                 if (statement.returnType() != ReturnStatement.ReturnType.RETURN) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                        .message(DiagnosticMessage.FUNCTION_YIELD)
-                        .at(statement.keyword())
-                        .build();
+                            .message(DiagnosticMessage.FUNCTION_YIELD)
+                            .at(statement.keyword())
+                            .build();
                 }
             }
             case INITIALIZER -> {
                 if (statement.expression() != null) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                        .message(DiagnosticMessage.INITIALIZER_RETURN)
-                        .at(statement.keyword())
-                        .build();
+                            .message(DiagnosticMessage.INITIALIZER_RETURN)
+                            .at(statement.keyword())
+                            .build();
                 }
             }
             case TEST -> {
                 if (statement.returnType() != ReturnStatement.ReturnType.YIELD) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                        .message(DiagnosticMessage.TEST_BLOCK_RETURN)
-                        .at(statement.keyword())
-                        .build();
+                            .message(DiagnosticMessage.TEST_BLOCK_RETURN)
+                            .at(statement.keyword())
+                            .build();
                 }
             }
             case FIELD_MEMBER -> {
                 if (statement.returnType() != ReturnStatement.ReturnType.RETURN) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                        .message(DiagnosticMessage.FIELD_MEMBER_YIELD)
-                        .at(statement.keyword())
-                        .build();
+                            .message(DiagnosticMessage.FIELD_MEMBER_YIELD)
+                            .at(statement.keyword())
+                            .build();
                 }
             }
             default -> {
-                throw new IllegalStateException("Unrecognized function type: "
-                    + this.resolver.currentFunction());
+                throw new IllegalStateException("Unrecognized function type: " + this.resolver.currentFunction());
             }
         }
 
@@ -460,12 +465,15 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         this.resolver.makeFinal(statement, "class");
 
         // Class must not extend itself
-        if (statement.superClass() != null &&
-            statement.name().lexeme().equals(statement.superClass().name().lexeme())) {
+        if (statement.superClass() != null
+                && statement
+                        .name()
+                        .lexeme()
+                        .equals(statement.superClass().name().lexeme())) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.CLASS_CANNOT_EXTEND_SELF)
-                .at(statement.superClass().name())
-                .build();
+                    .message(DiagnosticMessage.CLASS_CANNOT_EXTEND_SELF)
+                    .at(statement.superClass().name())
+                    .build();
         }
 
         // For inheritance
@@ -478,8 +486,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         if (statement.superClass() != null) {
             this.resolver.beginScope();
             this.resolver.peekScope().put(ObjectTokenType.SUPER.representation(), true);
-            this.resolver.peekFinal()
-                .put(ObjectTokenType.SUPER.representation(), "instance variable");
+            this.resolver.peekFinal().put(ObjectTokenType.SUPER.representation(), "instance variable");
         }
 
         this.resolver.beginScope();
@@ -488,8 +495,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         for (ClassMemberStatement member : statement.members()) {
             switch (member) {
                 case FieldStatement field -> this.resolve(field);
-                case FunctionStatement method ->
-                    this.resolver.resolveFunction(method, FunctionType.CLASS_FUNCTION);
+                case FunctionStatement method -> this.resolver.resolveFunction(method, FunctionType.CLASS_FUNCTION);
                 case ConstructorStatement constructor ->
                     this.resolver.resolveFunction(constructor, FunctionType.INITIALIZER);
                 case Statement s -> this.resolve(s);
@@ -530,9 +536,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.MISSING_MODULE, module)
-                .at(statement.name())
-                .build();
+                    .message(DiagnosticMessage.MISSING_MODULE, module)
+                    .at(statement.name())
+                    .build();
         }
         return null;
     }
@@ -617,17 +623,18 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(SuperExpression expression) {
         if (this.resolver.currentClassType() == ClassType.NONE) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS,
-                    expression.keyword().lexeme())
-                .at(expression.keyword())
-                .build();
-        }
-        else if (this.resolver.currentClassType() != ClassType.SUBCLASS) {
+                    .message(
+                            DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS,
+                            expression.keyword().lexeme())
+                    .at(expression.keyword())
+                    .build();
+        } else if (this.resolver.currentClassType() != ClassType.SUBCLASS) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .message(DiagnosticMessage.CANNOT_USE_X_WITHOUT_SUPER_CLASS,
-                    expression.keyword().lexeme())
-                .at(expression.keyword())
-                .build();
+                    .message(
+                            DiagnosticMessage.CANNOT_USE_X_WITHOUT_SUPER_CLASS,
+                            expression.keyword().lexeme())
+                    .at(expression.keyword())
+                    .build();
         }
         this.resolver.resolveLocal(expression, expression.keyword());
         return null;

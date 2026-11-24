@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
@@ -29,11 +33,6 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This
@@ -50,13 +49,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @see CollectionBindingHierarchy
  * @see CollectionBindingHierarchy#get(int)
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class CollectionInstantiationStrategy<T>
-    implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
+public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
     private final Set<InstantiationStrategy<T>> strategies = ConcurrentHashMap.newKeySet();
 
@@ -117,25 +115,19 @@ public class CollectionInstantiationStrategy<T>
 
     @Override
     public Option<ObjectContainer<ComponentCollection<T>>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException {
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
         for (InstantiationStrategy<T> strategy : this.strategies) {
-            Option<ObjectContainer<T>> container =
-                strategy.provide(application, requestContext, scope);
+            Option<ObjectContainer<T>> container = strategy.provide(application, requestContext, scope);
             if (container.present()) {
                 containers.add(container.get());
             }
         }
 
-        ContainerAwareComponentCollection<T> collection =
-            new ContainerAwareComponentCollection<>(containers);
-        ObjectContainer<ComponentCollection<T>> container = TypeUtils.unchecked(
-            new CollectionObjectContainer<>(collection),
-            ObjectContainer.class
-        );
+        ContainerAwareComponentCollection<T> collection = new ContainerAwareComponentCollection<>(containers);
+        ObjectContainer<ComponentCollection<T>> container =
+                TypeUtils.unchecked(new CollectionObjectContainer<>(collection), ObjectContainer.class);
         return Option.of(container);
     }
 
@@ -151,8 +143,6 @@ public class CollectionInstantiationStrategy<T>
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("providers", this.strategies)
-            .describe();
+        return ObjectDescriber.of(this).field("providers", this.strategies).describe();
     }
 }

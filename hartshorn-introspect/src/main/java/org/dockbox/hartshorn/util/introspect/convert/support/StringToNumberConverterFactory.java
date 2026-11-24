@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Locale;
+import java.util.function.Function;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.function.Function;
 
 /**
  * Converts a {@link String} to a {@link Number}. Supports all primitive type wrappers, but not
@@ -41,7 +40,7 @@ import java.util.function.Function;
  * @see #isHexNumber(String)
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
@@ -51,29 +50,19 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
         Converter<String, ? extends Number> converter;
         if (targetType == Integer.class) {
             converter = new StringToNumberConverter<>(Integer::parseInt, Integer::decode);
-        }
-        else if (targetType == Long.class) {
+        } else if (targetType == Long.class) {
             converter = new StringToNumberConverter<>(Long::parseLong, Long::decode);
-        }
-        else if (targetType == Float.class) {
+        } else if (targetType == Float.class) {
             converter = new StringToNumberConverter<>(
-                Float::parseFloat,
-                input -> Long.decode(input).floatValue()
-            );
-        }
-        else if (targetType == Double.class) {
+                    Float::parseFloat, input -> Long.decode(input).floatValue());
+        } else if (targetType == Double.class) {
             converter = new StringToNumberConverter<>(
-                Double::parseDouble,
-                input -> Long.decode(input).doubleValue()
-            );
-        }
-        else if (targetType == Short.class) {
+                    Double::parseDouble, input -> Long.decode(input).doubleValue());
+        } else if (targetType == Short.class) {
             converter = new StringToNumberConverter<>(Short::parseShort, Short::decode);
-        }
-        else if (targetType == Byte.class) {
+        } else if (targetType == Byte.class) {
             converter = new StringToNumberConverter<>(Byte::parseByte, Byte::decode);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unsupported Number type: " + targetType);
         }
         //noinspection unchecked
@@ -94,9 +83,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      * @author Guus Lieben
      */
     private record StringToNumberConverter<T extends Number>(
-        Function<String, T> parseFunction,
-        Function<String, T> decodeFunction
-    ) implements Converter<String, T> {
+            Function<String, T> parseFunction, Function<String, T> decodeFunction) implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String input, Context... contexts) {
@@ -104,12 +91,10 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             try {
                 if (isHexNumber(input)) {
                     return this.decodeFunction.apply(input);
-                }
-                else {
+                } else {
                     return this.parseFunction.apply(input);
                 }
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // If primitive, the conversion service will default to zero
                 return null;
             }
@@ -126,7 +111,6 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      */
     public static boolean isHexNumber(String value) {
         int index = value.startsWith("-") ? 1 : 0;
-        return value.toLowerCase(Locale.ROOT).startsWith("0x", index)
-            || value.startsWith("#", index);
+        return value.toLowerCase(Locale.ROOT).startsWith("0x", index) || value.startsWith("#", index);
     }
 }

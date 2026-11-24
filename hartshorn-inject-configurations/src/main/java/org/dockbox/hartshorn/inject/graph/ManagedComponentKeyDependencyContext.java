@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,20 +29,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @param <T> the type of the component
  *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
-public final class ManagedComponentKeyDependencyContext<T>
-    extends ManagedComponentDependencyContext<T> {
+public final class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDependencyContext<T> {
 
     private final TypeView<T> type;
     private final boolean processAfterInitialization;
     private final LifecycleType lifecycleType;
     private final boolean lazy;
 
-    private ManagedComponentKeyDependencyContext(
-        ManagedComponentKeyDependencyContextBuilder<T> builder
-    ) {
+    private ManagedComponentKeyDependencyContext(ManagedComponentKeyDependencyContextBuilder<T> builder) {
         super(builder.componentKey, builder.dependencies, builder.constructorView);
         this.type = builder.type;
         this.processAfterInitialization = builder.processAfterInitialization;
@@ -60,9 +57,7 @@ public final class ManagedComponentKeyDependencyContext<T>
      * @return the builder
      */
     public static <T> ManagedComponentKeyDependencyContextBuilder<T> builder(
-        ComponentKey<T> componentKey,
-        TypeView<T> type
-    ) {
+            ComponentKey<T> componentKey, TypeView<T> type) {
         return new ManagedComponentKeyDependencyContextBuilder<>(componentKey, type);
     }
 
@@ -111,10 +106,7 @@ public final class ManagedComponentKeyDependencyContext<T>
         private DependencyMap dependencies;
         private ConstructorView<? extends T> constructorView;
 
-        private ManagedComponentKeyDependencyContextBuilder(
-            ComponentKey<T> componentKey,
-            TypeView<T> type
-        ) {
+        private ManagedComponentKeyDependencyContextBuilder(ComponentKey<T> componentKey, TypeView<T> type) {
             this.componentKey = componentKey;
             this.type = type;
         }
@@ -127,8 +119,7 @@ public final class ManagedComponentKeyDependencyContext<T>
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> processAfterInitialization(
-            boolean processAfterInitialization
-        ) {
+                boolean processAfterInitialization) {
             this.processAfterInitialization = processAfterInitialization;
             return this;
         }
@@ -140,9 +131,7 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(
-            LifecycleType lifecycleType
-        ) {
+        public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(LifecycleType lifecycleType) {
             this.lifecycleType = lifecycleType;
             return this;
         }
@@ -167,9 +156,7 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> dependencies(
-            DependencyMap dependencies
-        ) {
+        public ManagedComponentKeyDependencyContextBuilder<T> dependencies(DependencyMap dependencies) {
             this.dependencies = dependencies;
             return this;
         }
@@ -183,8 +170,7 @@ public final class ManagedComponentKeyDependencyContext<T>
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> constructorView(
-            ConstructorView<? extends T> constructorView
-        ) {
+                ConstructorView<? extends T> constructorView) {
             this.constructorView = constructorView;
             return this;
         }

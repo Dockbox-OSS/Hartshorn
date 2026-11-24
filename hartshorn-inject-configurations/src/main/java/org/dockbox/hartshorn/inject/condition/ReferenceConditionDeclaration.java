@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.inject.ObjectFactory;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.types.ClassFileUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.lang.classfile.Annotation;
 import java.lang.classfile.AnnotationValue;
 import java.lang.classfile.ClassModel;
 import java.util.Objects;
+import org.dockbox.hartshorn.inject.ObjectFactory;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.ClassFileUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Represents a condition declaration that is based on an annotation reference. The type on which
@@ -54,30 +53,22 @@ public class ReferenceConditionDeclaration implements ConditionDeclaration {
      * @param metaAnnotation the meta-annotation to create the declaration from
      * @return the created reference condition declaration
      */
-    public static ReferenceConditionDeclaration createFromMetaAnnotation(
-        Annotation metaAnnotation
-    ) {
+    public static ReferenceConditionDeclaration createFromMetaAnnotation(Annotation metaAnnotation) {
         ClassModel model = ClassFileUtilities.getClassModel(metaAnnotation.classSymbol());
-        Option<Annotation> declaration = ClassFileUtilities.getAnnotation(
-            model,
-            RequiresReferenceCondition.class
-        );
+        Option<Annotation> declaration = ClassFileUtilities.getAnnotation(model, RequiresReferenceCondition.class);
         return new ReferenceConditionDeclaration(declaration.orElseThrow(() -> {
             return new IllegalStateException(
-                "Could not create ReferenceConditionDeclaration from "
-                    + "non-ReferenceCondition annotation"
-            );
+                    "Could not create ReferenceConditionDeclaration from " + "non-ReferenceCondition annotation");
         }));
     }
 
     @Override
     public Condition condition(ObjectFactory objectFactory) {
         return this.getConditionType()
-            .map(objectFactory::create)
-            .ofType(Condition.class)
-            .orElseThrow(() -> new IllegalStateException(
-                "Could not instantiate condition for reference condition declaration"
-            ));
+                .map(objectFactory::create)
+                .ofType(Condition.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Could not instantiate condition for reference condition declaration"));
     }
 
     @Override
@@ -93,10 +84,7 @@ public class ReferenceConditionDeclaration implements ConditionDeclaration {
     private Option<Class<?>> getConditionType() {
         if (this.conditionType == null) {
             this.conditionType = ClassFileUtilities.getAnnotationValue(
-                            this.annotation,
-                            "condition",
-                            AnnotationValue.OfClass.class
-                    )
+                            this.annotation, "condition", AnnotationValue.OfClass.class)
                     .map(AnnotationValue.OfClass::className)
                     .map(ClassFileUtilities::constantPoolNameToQualifiedName)
                     .flatMap(TypeUtils::forName);
@@ -108,11 +96,8 @@ public class ReferenceConditionDeclaration implements ConditionDeclaration {
     public boolean failOnNoMatch() {
         // Default to false if the value is not explicitly set (matching default
         // value of annotation).
-        return ClassFileUtilities.getAnnotationValue(
-            this.annotation,
-            "failOnNoMatch",
-            AnnotationValue.OfBoolean.class
-        ).test(AnnotationValue.OfBoolean::booleanValue, false);
+        return ClassFileUtilities.getAnnotationValue(this.annotation, "failOnNoMatch", AnnotationValue.OfBoolean.class)
+                .test(AnnotationValue.OfBoolean::booleanValue, false);
     }
 
     @Override

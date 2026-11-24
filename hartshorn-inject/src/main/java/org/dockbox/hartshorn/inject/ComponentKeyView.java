@@ -31,15 +31,12 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  * @param <T> the type of the component
  *
  * @see ComponentKey#view()
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
-public record ComponentKeyView<T>(
-    ParameterizableType type,
-    CompositeQualifier qualifier
-) {
+public record ComponentKeyView<T>(ParameterizableType type, CompositeQualifier qualifier) {
 
     public ComponentKeyView(ComponentKey<T> key) {
         this(key.parameterizedType(), key.qualifier());

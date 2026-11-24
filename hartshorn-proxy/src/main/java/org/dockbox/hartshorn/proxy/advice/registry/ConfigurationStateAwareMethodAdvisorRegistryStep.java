@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.proxy.advice.registry;
 
-import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
-import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapperFactory;
-import org.dockbox.hartshorn.proxy.advice.wrap.StandardMethodWrapperFactory;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
+import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapperFactory;
+import org.dockbox.hartshorn.proxy.advice.wrap.StandardMethodWrapperFactory;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Basic implementation of {@link StateAwareMethodAdvisorRegistryStep}. This implementation is used
@@ -42,7 +41,7 @@ import java.util.function.Consumer;
  * @author Guus Lieben
  */
 public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
-    implements StateAwareMethodAdvisorRegistryStep<T, R> {
+        implements StateAwareMethodAdvisorRegistryStep<T, R> {
 
     private final Collection<MethodWrapper<T>> wrappers = ConcurrentHashMap.newKeySet();
     private final StateAwareAdvisorRegistry<T> registry;
@@ -51,10 +50,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
     private MethodInterceptor<T, R> interceptor;
     private T delegate;
 
-    public ConfigurationStateAwareMethodAdvisorRegistryStep(
-        StateAwareAdvisorRegistry<T> registry,
-        Method method
-    ) {
+    public ConfigurationStateAwareMethodAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Method method) {
         this.registry = registry;
         this.method = method;
         this.verifyConstraints();
@@ -62,8 +58,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
 
     private void verifyConstraints() {
         if (Modifier.isFinal(this.method.getModifiers())) {
-            throw new IllegalArgumentException("Cannot create advisor for method "
-                + this.method.getName());
+            throw new IllegalArgumentException("Cannot create advisor for method " + this.method.getName());
         }
     }
 
@@ -80,8 +75,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
     public AdvisorRegistry<T> intercept(MethodInterceptor<T, R> interceptor) {
         if (this.interceptor != null) {
             this.interceptor = this.interceptor.andThen(interceptor);
-        }
-        else {
+        } else {
             this.interceptor = interceptor;
         }
         return this.exit();

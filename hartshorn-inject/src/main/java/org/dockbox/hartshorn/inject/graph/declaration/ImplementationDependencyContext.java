@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.inject.graph.declaration;
 
-import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
-import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
@@ -49,9 +49,7 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
     private final DependencyContext<T> declarationContext;
 
     public ImplementationDependencyContext(
-        DependencyContext<I> implementationContext,
-        DependencyContext<T> declarationContext
-    ) {
+            DependencyContext<I> implementationContext, DependencyContext<T> declarationContext) {
         super(implementationContext);
         this.implementationContext = implementationContext;
         this.declarationContext = declarationContext;
@@ -91,8 +89,8 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
     @Override
     public String describe() {
         return this.implementationContext().describe()
-            + " (implementation of "
-            + this.declarationContext().describe()
-            + ")";
+                + " (implementation of "
+                + this.declarationContext().describe()
+                + ")";
     }
 }

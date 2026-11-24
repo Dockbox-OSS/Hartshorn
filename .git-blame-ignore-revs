@@ -1,3 +1,4 @@
-# HH-995 Bulk codestyle changes
 ## Remove redundant `final` usages
 ee6db853810d8148dbd6aa87cfad907ba532270f
+## Palantir codestyle migration
+4b6b4fb0b50375cd44f65a0b99f92f10659d15cd

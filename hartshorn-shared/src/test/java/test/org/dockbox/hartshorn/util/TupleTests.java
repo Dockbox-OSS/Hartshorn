@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.Tuple;
-import org.junit.jupiter.api.Test;
-
-import java.util.Map.Entry;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Map.Entry;
+import org.dockbox.hartshorn.util.Tuple;
+import org.junit.jupiter.api.Test;
 
 class TupleTests {
 
@@ -44,9 +43,7 @@ class TupleTests {
     void equalsUsesValues() {
         Entry<?, ?> tuple = Tuple.of(1, "two");
         Entry<?, ?> second = Tuple.of(1, "two");
-        assertThat(second)
-                .isNotSameAs(tuple)
-                .isEqualTo(tuple);
+        assertThat(second).isNotSameAs(tuple).isEqualTo(tuple);
     }
 
     @Test

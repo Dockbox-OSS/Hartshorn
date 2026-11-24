@@ -56,11 +56,7 @@ public interface HttpMessageConverter<T> {
      * @return {@code true} if this converter can write content of the given type to the given
      * response, {@code false} otherwise
      */
-    boolean supportsResponse(
-            Class<?> type,
-            HttpServletRequest request,
-            HttpServletResponse response
-    );
+    boolean supportsResponse(Class<?> type, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Attempts to read the content of the request to an instance of the given target type. If the

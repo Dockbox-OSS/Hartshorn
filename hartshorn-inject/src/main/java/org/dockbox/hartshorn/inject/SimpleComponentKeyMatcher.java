@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-
 import java.util.List;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * A simple implementation of {@link ComponentKeyMatcher} which delegates to either
@@ -182,10 +181,7 @@ public class SimpleComponentKeyMatcher implements ComponentKeyMatcher {
             return true;
         }
 
-        private boolean isCompatible(
-                ParameterizableType requestedType,
-                ParameterizableType actualType
-        ) {
+        private boolean isCompatible(ParameterizableType requestedType, ParameterizableType actualType) {
             if (!requestedType.type().isAssignableFrom(actualType.type())) {
                 return false;
             }

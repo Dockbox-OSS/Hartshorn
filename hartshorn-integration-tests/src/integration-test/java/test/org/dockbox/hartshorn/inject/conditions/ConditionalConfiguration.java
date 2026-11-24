@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.conditions;
 
+import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
-import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
-import org.dockbox.hartshorn.inject.annotations.Named;
 
 @Configuration
 public class ConditionalConfiguration {

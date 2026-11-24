@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
@@ -24,9 +26,6 @@ import org.dockbox.hartshorn.util.graph.ContentAwareGraph;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Simple implementation of {@link ConfigurationDependencyVisitor} that provides a default
@@ -40,42 +39,34 @@ import java.util.Set;
  * @author Guus Lieben
  */
 public abstract class AbstractConfigurationDependencyVisitor
-    implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
+        implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
 
     @Override
-    public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph)
-        throws GraphException {
-        Set<GraphNode<DependencyContext<?>>> iterated =
-            BreadthFirstGraphVisitor.super.iterate(graph);
+    public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph) throws GraphException {
+        Set<GraphNode<DependencyContext<?>>> iterated = BreadthFirstGraphVisitor.super.iterate(graph);
         if (graph instanceof ContentAwareGraph<DependencyContext<?>> contentAwareGraph) {
             Set<GraphNode<DependencyContext<?>>> nodes = contentAwareGraph.nodes();
-            Set<GraphNode<DependencyContext<?>>> danglingNodes =
-                CollectionUtilities.difference(nodes, iterated);
-            Set<GraphNode<DependencyContext<?>>> iteratedDanglingNodes =
-                this.tryIterateDanglingNodes(danglingNodes);
+            Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(nodes, iterated);
+            Set<GraphNode<DependencyContext<?>>> iteratedDanglingNodes = this.tryIterateDanglingNodes(danglingNodes);
             iterated.addAll(iteratedDanglingNodes);
         }
         return iterated;
     }
 
     private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(
-        Set<GraphNode<DependencyContext<?>>> danglingNodes
-    ) throws GraphException {
+            Set<GraphNode<DependencyContext<?>>> danglingNodes) throws GraphException {
         Set<GraphNode<DependencyContext<?>>> iterated = new HashSet<>();
         for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
             DependencyContext<?> context = danglingNode.value();
             if (context.lifecycleType() == LifecycleType.SINGLETON) {
                 if (this.visit(danglingNode)) {
                     iterated.add(danglingNode);
+                } else {
+                    throw new GraphException("Failed to register singleton dependency: " + context.componentKey());
                 }
-                else {
-                    throw new GraphException("Failed to register singleton dependency: "
-                        + context.componentKey());
-                }
-            }
-            else {
-                throw new GraphException("Dangling prototype node found: "
-                    + context.componentKey() + ". Defined by " + context.origin().qualifiedName());
+            } else {
+                throw new GraphException("Dangling prototype node found: " + context.componentKey() + ". Defined by "
+                        + context.origin().qualifiedName());
             }
         }
         return iterated;
@@ -88,8 +79,7 @@ public abstract class AbstractConfigurationDependencyVisitor
             this.registerProvider(dependencyContext);
             this.doAfterRegister(dependencyContext);
             return true;
-        }
-        catch (ComponentConfigurationException e) {
+        } catch (ComponentConfigurationException e) {
             throw new GraphException(e);
         }
     }

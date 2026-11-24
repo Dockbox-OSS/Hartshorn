@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterState;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Customizer that inlines the standard library modules into the script context, without the need to
@@ -53,9 +52,7 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
         Map<String, NativeModule> modules = context.interpreter().state().externalModules();
         TokenType identifier = context.tokenRegistry().literals().identifier();
         for (String module : modules.keySet()) {
-            Token moduleToken = Token.of(identifier, module)
-                .virtual()
-                .build();
+            Token moduleToken = Token.of(identifier, module).virtual().build();
             ModuleStatement moduleStatement = new ModuleStatement(moduleToken);
             statements.addFirst(moduleStatement);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.reporting.system;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -39,12 +38,11 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
  * </ul>
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class SystemDiagnosticsReporter
-    implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>,
-    CategorizedDiagnosticsReporter {
+        implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     /**
      * Default category for {@link SystemDiagnosticsReporter} instances.
@@ -63,8 +61,7 @@ public class SystemDiagnosticsReporter
             collector.property("java").writeDelegate(new JavaDiagnosticsReporter());
         }
         if (this.configuration.includeJvmDiagnostics()) {
-            collector.property("jvm")
-                .writeDelegate(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
+            collector.property("jvm").writeDelegate(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
         }
         if (this.configuration.includeOsDiagnostics()) {
             collector.property("os").writeDelegate(new OSDiagnosticsReporter());

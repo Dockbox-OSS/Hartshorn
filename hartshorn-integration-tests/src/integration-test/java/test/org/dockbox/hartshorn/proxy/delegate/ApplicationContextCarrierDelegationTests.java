@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.proxy.delegate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
+
+import java.lang.reflect.Method;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -25,11 +29,6 @@ import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Method;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dockbox.hartshorn.test.HartshornAssertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ApplicationContextCarrierDelegationTests {
@@ -55,16 +54,16 @@ class ApplicationContextCarrierDelegationTests {
     @Test
     @TestComponents(ContextCarrierComponentInterface.class)
     void carrierDelegation(
-        @Inject ContextCarrierComponentInterface component,
-        @Inject ApplicationContext applicationContext
-    ) throws Exception {
+            @Inject ContextCarrierComponentInterface component, @Inject ApplicationContext applicationContext)
+            throws Exception {
         assertThat(component).isInstanceOf(Proxy.class);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
-        Option<?> methodDelegate = ((Proxy<?>) component).manager()
-            .advisor()
-            .resolver()
-            .method(method)
-            .delegate();
+        Option<?> methodDelegate = ((Proxy<?>) component)
+                .manager()
+                .advisor()
+                .resolver()
+                .method(method)
+                .delegate();
         assertThat(methodDelegate).present();
         assertThat(component.applicationContext()).isNotNull();
         assertThat(applicationContext).isSameAs(component.applicationContext());
@@ -87,10 +86,6 @@ class ApplicationContextCarrierDelegationTests {
                 .actual();
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
 
-        return proxy.manager()
-            .advisor()
-            .resolver()
-            .method(method)
-            .delegate();
+        return proxy.manager().advisor().resolver().method(method).delegate();
     }
 }

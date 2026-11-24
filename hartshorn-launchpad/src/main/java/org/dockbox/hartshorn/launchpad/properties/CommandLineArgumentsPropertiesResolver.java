@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
+import java.util.List;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBuildContext;
-
-import java.util.List;
 
 /**
  * Resolves command line arguments from the {@link ApplicationBuildContext} as properties for the
@@ -34,10 +33,10 @@ public class CommandLineArgumentsPropertiesResolver extends AbstractCustomProper
 
     @Override
     protected List<String> resolveStringProperties(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext
-    ) {
-        return initializerContext.firstContext(ApplicationBuildContext.class)
-            .map(ApplicationBuildContext::arguments)
-            .orElseGet(List::of);
+            SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+        return initializerContext
+                .firstContext(ApplicationBuildContext.class)
+                .map(ApplicationBuildContext::arguments)
+                .orElseGet(List::of);
     }
 }

@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.stream.StreamGatherers;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.classfile.Annotation;
@@ -38,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.StreamGatherers;
 
 /**
  * Utility class for working with Java's {@link ClassFile} API, primarily focused on extracting
@@ -49,8 +48,7 @@ import java.util.stream.Collectors;
  */
 public final class ClassFileUtilities {
 
-    private ClassFileUtilities() {
-    }
+    private ClassFileUtilities() {}
 
     /**
      * Get the {@link ClassModel} for the given class type.
@@ -76,9 +74,7 @@ public final class ClassFileUtilities {
         if (TypeUtils.isClassName(resourceOrClassName)) {
             resourceOrClassName = TypeUtils.classNameToResourceName(resourceOrClassName);
         }
-        InputStream in = Thread.currentThread()
-                .getContextClassLoader()
-                .getResourceAsStream(resourceOrClassName);
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceOrClassName);
         if (in == null) {
             return Option.empty();
         }
@@ -103,11 +99,7 @@ public final class ClassFileUtilities {
      * @return an {@link Option} containing the {@link MethodModel} if found, otherwise an empty
      * {@link Option}
      */
-    public static Option<MethodModel> getMethod(
-            ClassModel model,
-            String name,
-            Class<?>... parameterTypes
-    ) {
+    public static Option<MethodModel> getMethod(ClassModel model, String name, Class<?>... parameterTypes) {
         methods:
         for (MethodModel method : model.methods()) {
             if (!method.methodName().equalsString(name)) {
@@ -120,10 +112,7 @@ public final class ClassFileUtilities {
             ClassDesc[] parameters = descriptor.parameterArray();
             for (int i = 0; i < parameters.length; i++) {
                 ClassDesc parameter = parameters[i];
-                if (!matchesConstantPoolName(
-                        parameter.descriptorString(),
-                        parameterTypes[i].getName()
-                )) {
+                if (!matchesConstantPoolName(parameter.descriptorString(), parameterTypes[i].getName())) {
                     continue methods;
                 }
             }
@@ -161,12 +150,9 @@ public final class ClassFileUtilities {
      * @return a list of {@link Annotation}s present on the class model
      */
     public static List<Annotation> getAnnotations(AttributedElement element) {
-        List<RuntimeVisibleAnnotationsAttribute> attributes = element.findAttributes(
-                Attributes.runtimeVisibleAnnotations()
-        );
-        return attributes.stream()
-                .flatMap(attr -> attr.annotations().stream())
-                .toList();
+        List<RuntimeVisibleAnnotationsAttribute> attributes =
+                element.findAttributes(Attributes.runtimeVisibleAnnotations());
+        return attributes.stream().flatMap(attr -> attr.annotations().stream()).toList();
     }
 
     /**
@@ -178,9 +164,7 @@ public final class ClassFileUtilities {
      * @return a list of {@link Annotation}s that are meta-annotated with the specified type
      */
     public static List<Annotation> getMetaAnnotations(
-        AttributedElement element,
-        Class<? extends java.lang.annotation.Annotation> annotationType
-    ) {
+            AttributedElement element, Class<? extends java.lang.annotation.Annotation> annotationType) {
         List<Annotation> annotations = getAnnotations(element);
         return annotations.stream()
                 .filter(annotation -> {
@@ -200,9 +184,7 @@ public final class ClassFileUtilities {
      * {@link Option}
      */
     public static Option<Annotation> getAnnotation(
-            AttributedElement element,
-            Class<? extends java.lang.annotation.Annotation> annotationType
-    ) {
+            AttributedElement element, Class<? extends java.lang.annotation.Annotation> annotationType) {
         return getAnnotation(element, annotationType.getName());
     }
 
@@ -215,15 +197,9 @@ public final class ClassFileUtilities {
      * @return an {@link Option} containing the {@link Annotation} if found, otherwise an empty
      * {@link Option}
      */
-    public static Option<Annotation> getAnnotation(
-            AttributedElement element,
-            String annotationQualifiedName
-    ) {
+    public static Option<Annotation> getAnnotation(AttributedElement element, String annotationQualifiedName) {
         return Option.of(getAnnotations(element).stream()
-                .filter(annotation -> matchesConstantPoolName(
-                        annotation.className(),
-                        annotationQualifiedName
-                ))
+                .filter(annotation -> matchesConstantPoolName(annotation.className(), annotationQualifiedName))
                 .findFirst());
     }
 
@@ -246,10 +222,7 @@ public final class ClassFileUtilities {
      * JVM Specification 4.3.2 - Field Descriptors. Table 4.3-A Interpretation of field descriptors
      * </a>
      */
-    public static boolean matchesConstantPoolName(
-            Utf8Entry entry,
-            String expectedValue
-    ) {
+    public static boolean matchesConstantPoolName(Utf8Entry entry, String expectedValue) {
         String entryValue = entry.stringValue();
         return matchesConstantPoolName(entryValue, expectedValue);
     }
@@ -273,10 +246,7 @@ public final class ClassFileUtilities {
      * JVM Specification 4.3.2 - Field Descriptors. Table 4.3-A Interpretation of field descriptors
      * </a>
      */
-    public static boolean matchesConstantPoolName(
-        String resourceName,
-        String expectedValue
-    ) {
+    public static boolean matchesConstantPoolName(String resourceName, String expectedValue) {
         if (resourceName.startsWith("L") && resourceName.endsWith(";")) {
             resourceName = resourceName.substring(1, resourceName.length() - 1);
         }
@@ -314,12 +284,8 @@ public final class ClassFileUtilities {
      * @return a map of element names to their corresponding {@link AnnotationValue}s
      */
     public static Map<String, AnnotationValue> annotationValuesAsMap(Annotation annotation) {
-        return annotation.elements()
-                .stream()
-                .collect(Collectors.toMap(
-                        element -> element.name().stringValue(),
-                        AnnotationElement::value
-                ));
+        return annotation.elements().stream()
+                .collect(Collectors.toMap(element -> element.name().stringValue(), AnnotationElement::value));
     }
 
     /**
@@ -351,10 +317,7 @@ public final class ClassFileUtilities {
      * found, otherwise an empty {@link Option}
      */
     public static <T extends AnnotationValue> Option<T> getAnnotationValue(
-        Annotation annotation,
-        String name,
-        Class<T> type
-    ) {
+            Annotation annotation, String name, Class<T> type) {
         return getAnnotationValue(annotation, name).ofType(type);
     }
 
@@ -387,10 +350,7 @@ public final class ClassFileUtilities {
      * element, or an empty list if the element is not found or is not an array
      */
     public static <T extends AnnotationValue> List<T> getAnnotationValues(
-        Annotation annotation,
-        String name,
-        Class<T> type
-    ) {
+            Annotation annotation, String name, Class<T> type) {
         return getAnnotationValues(annotation, name).stream()
                 .gather(StreamGatherers.filterByType(type))
                 .toList();
@@ -405,12 +365,10 @@ public final class ClassFileUtilities {
      * @throws IllegalStateException if the {@link ClassModel} could not be loaded
      */
     public static ClassModel getClassModel(ClassDesc descriptor) {
-        Option<ClassModel> classModelOption = ClassFileUtilities.getClassModel(
-            constantPoolNameToQualifiedName(descriptor.descriptorString())
-        );
-        return classModelOption.orElseThrow(() -> new IllegalStateException(
-            "Could not load class model for descriptor: " + descriptor
-        ));
+        Option<ClassModel> classModelOption =
+                ClassFileUtilities.getClassModel(constantPoolNameToQualifiedName(descriptor.descriptorString()));
+        return classModelOption.orElseThrow(
+                () -> new IllegalStateException("Could not load class model for descriptor: " + descriptor));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
-
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 
 /**
  * A proxy factory that uses Javassist to create proxies. This implementation is based on the
@@ -34,9 +33,9 @@ import javassist.util.proxy.ProxyFactory;
  *
  * @see ProxyFactory
  * @see MethodHandler
- * 
+ *
  * @since 0.4.10
- * 
+ *
  * @author Guus Lieben
  */
 public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
@@ -50,15 +49,13 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
     }
 
     @Override
-    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(
-        ProxyMethodInterceptor<T> interceptor
-    ) {
+    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor) {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        MethodHandler methodHandler =
-            new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
+        MethodHandler methodHandler = new JavassistProxyMethodHandler<>(
+                interceptor, this.orchestrator().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
 }

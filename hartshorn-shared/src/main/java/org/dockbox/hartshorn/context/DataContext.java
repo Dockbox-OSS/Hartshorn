@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,12 +178,7 @@ public abstract class DataContext extends DefaultContext {
      *
      * @return the computed value associated with the type
      */
-    public <R> R computeIfAbsent(
-        Class<R> type,
-        Function<? super Class<R>, R> mappingFunction
-    ) {
-        return type.cast(
-            this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type))
-        );
+    public <R> R computeIfAbsent(Class<R> type, Function<? super Class<R>, R> mappingFunction) {
+        return type.cast(this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type)));
     }
 }

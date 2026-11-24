@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.launchpad.test;
 
-import org.dockbox.hartshorn.inject.condition.RequiresCondition;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * A condition that requires the application to be a test application. This condition is met if the
@@ -41,5 +40,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = TestApplicationCondition.class)
-public @interface RequiresTestApplication {
-}
+public @interface RequiresTestApplication {}

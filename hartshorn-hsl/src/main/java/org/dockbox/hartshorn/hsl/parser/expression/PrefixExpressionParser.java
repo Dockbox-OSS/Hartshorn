@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,19 +33,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public class PrefixExpressionParser extends AbstractFunctionOperatorExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
-        if (parser.check(parser.tokenRegistry().literals().identifier()) && this.hasPrefixFunction(
-            parser,
-            parser.peek())) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
+        if (parser.check(parser.tokenRegistry().literals().identifier())
+                && this.hasPrefixFunction(parser, parser.peek())) {
             Token prefixFunctionName = parser.advance();
             Expression right = chain.next(parser, validator);
             return new PrefixExpression(prefixFunctionName, right);
-        }
-        else {
+        } else {
             return chain.next(parser, validator);
         }
     }
@@ -60,7 +54,7 @@ public class PrefixExpressionParser extends AbstractFunctionOperatorExpressionPa
      * @return true if the name is a registered prefix function, false otherwise
      */
     protected boolean hasPrefixFunction(TokenParser parser, Token name) {
-        return this.containedInFunctionContext(parser,
-            context -> context.prefixFunctions().contains(name.lexeme()));
+        return this.containedInFunctionContext(
+                parser, context -> context.prefixFunctions().contains(name.lexeme()));
     }
 }

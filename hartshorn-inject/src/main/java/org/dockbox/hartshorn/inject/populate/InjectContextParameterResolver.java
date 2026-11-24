@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * A {@link InjectParameterResolver} implementation that resolves {@link ContextView} instances.
@@ -33,9 +33,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * contexts are available, the first one is returned.
  *
  * @see ContextView
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class InjectContextParameterResolver implements InjectParameterResolver {
@@ -75,18 +75,17 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
         return this.globalContext.firstContext(key).orNull();
     }
 
-    private static ContextIdentity<? extends ContextView> getContextKey(
-        InjectionPoint injectionPoint
-    ) {
-        String name = injectionPoint.injectionPoint().annotations()
-            // Unlike components, contexts only support named qualifiers, so we don't
-            // need to include Qualifier annotated annotations here.
-            .get(Named.class)
-            .map(Named::value)
-            .orNull();
+    private static ContextIdentity<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {
+        String name = injectionPoint
+                .injectionPoint()
+                .annotations()
+                // Unlike components, contexts only support named qualifiers, so we don't
+                // need to include Qualifier annotated annotations here.
+                .get(Named.class)
+                .map(Named::value)
+                .orNull();
 
-        TypeView<? extends ContextView> type =
-            TypeUtils.unchecked(injectionPoint.type(), TypeView.class);
+        TypeView<? extends ContextView> type = TypeUtils.unchecked(injectionPoint.type(), TypeView.class);
         ContextKey<? extends ContextView> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();

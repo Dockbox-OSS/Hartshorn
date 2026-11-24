@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.Set;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
@@ -31,20 +35,15 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class ModuleStatementInterpreterTests {
 
     @Test
     void moduleStatementImportsKnownModuleFunctions(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "import math")
-            .statementParser(new ModuleStatementParser())
-            .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
-            .build();
+                .statementParser(new ModuleStatementParser())
+                .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
+                .build();
         helper.interpret();
 
         // Non-ambiguous function
@@ -75,10 +74,12 @@ class ModuleStatementInterpreterTests {
     @Test
     void moduleStatementFailsOnUnknownModule(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "import math")
-            .statementParser(new ModuleStatementParser())
-            .build();
+                .statementParser(new ModuleStatementParser())
+                .build();
 
-        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(helper::interpret).actual();
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(helper::interpret)
+                .actual();
         ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.MISSING_MODULE);
     }
 }

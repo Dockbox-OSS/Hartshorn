@@ -19,5 +19,4 @@ package test.org.dockbox.hartshorn.testsuite.excluding.scan.exclude;
 import org.dockbox.hartshorn.inject.annotations.Component;
 
 @Component
-public class ExcludedComponent {
-}
+public class ExcludedComponent {}

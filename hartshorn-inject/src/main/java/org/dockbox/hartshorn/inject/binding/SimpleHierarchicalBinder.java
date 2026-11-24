@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,7 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  *
  * @author Guus Lieben
  */
-public class SimpleHierarchicalBinder
-    implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
+public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
 
     private final InjectionCapableApplication application;
     private final BindingAliasNormalizer bindingAliasNormalizer;
@@ -47,10 +46,9 @@ public class SimpleHierarchicalBinder
     private HierarchyCache hierarchyCache;
 
     public SimpleHierarchicalBinder(
-        InjectionCapableApplication application,
-        BindingAliasNormalizer bindingAliasNormalizer,
-        SingletonCache singletonCache
-    ) {
+            InjectionCapableApplication application,
+            BindingAliasNormalizer bindingAliasNormalizer,
+            SingletonCache singletonCache) {
         this.application = application;
         this.bindingAliasNormalizer = bindingAliasNormalizer;
         this.singletonCache = singletonCache;
@@ -73,10 +71,7 @@ public class SimpleHierarchicalBinder
     public HierarchyCache hierarchyCache() {
         if (this.hierarchyCache == null) {
             this.hierarchyCache = new HierarchyCache(
-                this.application.environment().configuration(),
-                this.application.defaultBinder(),
-                this
-            );
+                    this.application.environment().configuration(), this.application.defaultBinder(), this);
         }
         return this.hierarchyCache;
     }
@@ -102,17 +97,18 @@ public class SimpleHierarchicalBinder
      */
     protected <C> AliasBindingFunction<C> bind(Scope scope, ComponentKey<C> key) {
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
-        AliasableBindingHierarchy<C> aliasableHierarchy =
-            hierarchy instanceof AliasableBindingHierarchy<C> aliasable
+        AliasableBindingHierarchy<C> aliasableHierarchy = hierarchy instanceof AliasableBindingHierarchy<C> aliasable
                 ? aliasable
                 : new AliasableBindingHierarchyAdapter<>(hierarchy);
 
         Option<ScopeModuleContext> scopeModuleContext = resolveScopeModuleContext();
         return new HierarchyBindingFunction<>(
-            aliasableHierarchy, this, this.singletonCache,
-            scope, scopeModuleContext.orNull(),
-            this.bindingAliasNormalizer
-        );
+                aliasableHierarchy,
+                this,
+                this.singletonCache,
+                scope,
+                scopeModuleContext.orNull(),
+                this.bindingAliasNormalizer);
     }
 
     /**
@@ -122,9 +118,8 @@ public class SimpleHierarchicalBinder
      * @return The resolved or newly created scope module context.
      */
     protected Option<ScopeModuleContext> resolveScopeModuleContext() {
-        ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(
-            () -> this.applicationScope().installableScopeType()
-        );
+        ContextIdentity<ScopeModuleContext> scopeModuleContextKey =
+                ScopeModuleContext.createKey(() -> this.applicationScope().installableScopeType());
         return this.application.firstContext(scopeModuleContextKey);
     }
 
@@ -143,16 +138,13 @@ public class SimpleHierarchicalBinder
     public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         HierarchyCache cache = this.hierarchyCache();
         BindingHierarchy<?> hierarchy = cache.getOrComputeHierarchy(key, useGlobalIfAbsent);
-        BindingHierarchy<T> adjustedHierarchy =
-            TypeUtils.unchecked(hierarchy, BindingHierarchy.class);
+        BindingHierarchy<T> adjustedHierarchy = TypeUtils.unchecked(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof SubscribableBindingHierarchy
-            || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
+                || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
             return adjustedHierarchy;
-        }
-        else {
-            return new SubscribableBindingHierarchy<>(adjustedHierarchy,
-                updated -> cache.put(key.view(), updated));
+        } else {
+            return new SubscribableBindingHierarchy<>(adjustedHierarchy, updated -> cache.put(key.view(), updated));
         }
     }
 

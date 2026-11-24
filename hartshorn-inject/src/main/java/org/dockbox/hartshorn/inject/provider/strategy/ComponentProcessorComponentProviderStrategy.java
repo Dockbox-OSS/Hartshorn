@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A {@link ComponentProviderStrategy} which attempts to provide a {@link ComponentProcessor}
@@ -44,18 +44,17 @@ public class ComponentProcessorComponentProviderStrategy implements ComponentPro
 
     @Override
     public <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException, ApplicationException {
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ComponentResolutionException, ApplicationException {
         if (ComponentProcessor.class.isAssignableFrom(componentKey.type())
-            && chain.application().defaultProvider() instanceof PostProcessingComponentProvider
-            postProcessingComponentProvider) {
+                && chain.application().defaultProvider()
+                        instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
 
-            Class<? extends ComponentProcessor> processorType =
-                TypeUtils.unchecked(componentKey.type(), Class.class);
+            Class<? extends ComponentProcessor> processorType = TypeUtils.unchecked(componentKey.type(), Class.class);
             Option<? extends ComponentProcessor> processor =
-                postProcessingComponentProvider.processorRegistry().lookup(processorType);
+                    postProcessingComponentProvider.processorRegistry().lookup(processorType);
             // If absent, the processor may not yet have been initialized, so we'll try to process
             // it instead of exiting early
             if (processor.present()) {

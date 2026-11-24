@@ -21,14 +21,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Duration;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.Timer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.time.Duration;
 
 /**
  * A request filter that logs incoming requests and outgoing responses.
@@ -52,8 +51,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
             boolean includeContentType,
             boolean includeResponse,
             boolean includeDuration,
-            Logger logger
-    ) {
+            Logger logger) {
         this.includeClientInfo = includeClientInfo;
         this.includeQueryString = includeQueryString;
         this.includeContentType = includeContentType;
@@ -63,11 +61,8 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
     }
 
     @Override
-    protected void doFilter(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain
-    ) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         this.logInboundRequest(request);
         Timer timer = Timer.start();
         chain.doFilter(request, response);
@@ -88,24 +83,25 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
         }
 
         if (this.includeContentType) {
-            Option.of(request.getHeader("Content-Type")).peek(contentType ->
-                logMessage.append(" [Content-Type: ").append(contentType).append("]")
-            );
+            Option.of(request.getHeader("Content-Type"))
+                    .peek(contentType -> logMessage
+                            .append(" [Content-Type: ")
+                            .append(contentType)
+                            .append("]"));
         }
 
         if (this.includeClientInfo) {
-            logMessage.append(" from ").append(request.getRemoteAddr())
-                      .append(":").append(request.getRemotePort());
+            logMessage
+                    .append(" from ")
+                    .append(request.getRemoteAddr())
+                    .append(":")
+                    .append(request.getRemotePort());
         }
 
         this.logger.info(logMessage.toString());
     }
 
-    private void logOutboundRequest(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Duration duration
-    ) {
+    private void logOutboundRequest(HttpServletRequest request, HttpServletResponse response, Duration duration) {
         StringBuilder logMessage = new StringBuilder("Outgoing response: ")
                 .append(request.getMethod())
                 .append(" ")
@@ -114,9 +110,11 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
                 .append(response.getStatus());
 
         if (this.includeContentType) {
-            Option.of(response.getHeader("Content-Type")).peek(contentType ->
-                    logMessage.append(" [Content-Type: ").append(contentType).append("]")
-            );
+            Option.of(response.getHeader("Content-Type"))
+                    .peek(contentType -> logMessage
+                            .append(" [Content-Type: ")
+                            .append(contentType)
+                            .append("]"));
         }
 
         if (this.includeDuration) {
@@ -228,8 +226,7 @@ public class RequestLoggingFilter extends HttpFilter implements Reportable {
                     this.includeContentType,
                     this.includeResponse,
                     this.includeDuration,
-                    logger
-            );
+                    logger);
         }
     }
 }

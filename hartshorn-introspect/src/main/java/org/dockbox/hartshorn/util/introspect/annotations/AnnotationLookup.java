@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,8 @@ public interface AnnotationLookup {
      * @throws DuplicateAnnotationCompositeException If there are multiple composite annotations
      * matching the given type
      */
-    <A extends Annotation> A find(
-        AnnotatedElement element,
-        Class<A> annotationType
-    ) throws DuplicateAnnotationCompositeException;
+    <A extends Annotation> A find(AnnotatedElement element, Class<A> annotationType)
+            throws DuplicateAnnotationCompositeException;
 
     /**
      * Returns all (composite) annotations of the given type on the given element, or an empty list

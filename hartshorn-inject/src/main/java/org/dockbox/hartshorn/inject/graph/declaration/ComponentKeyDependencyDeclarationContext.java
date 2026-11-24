@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Basic implementation of a {@link DependencyDeclarationContext} that is used to declare
@@ -30,25 +30,20 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @param <T> the type of the dependency being declared
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class ComponentKeyDependencyDeclarationContext<T>
-    implements DependencyDeclarationContext<T> {
+public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
 
     private final ComponentKey<T> key;
     private final InstantiationStrategy<T> strategy;
     private final TypeView<T> type;
 
     public ComponentKeyDependencyDeclarationContext(
-        Introspector introspector,
-        ComponentKey<T> key,
-        InstantiationStrategy<T> strategy
-    ) {
+            Introspector introspector, ComponentKey<T> key, InstantiationStrategy<T> strategy) {
         this.key = key;
         this.strategy = strategy;
-        this.type =
-            TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
+        this.type = TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
     /**

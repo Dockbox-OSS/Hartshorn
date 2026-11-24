@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -24,8 +25,6 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.function.CheckedConsumer;
 import org.jspecify.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The
@@ -75,9 +74,9 @@ import java.util.function.Supplier;
  * used in place of a {@link ComponentPostProcessor} without any unexpected side effects.
  *
  * @see ComponentPostProcessor
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CompositeComponentPostProcessor extends ComponentPostProcessor {
@@ -85,8 +84,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
     private final Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors;
 
     public CompositeComponentPostProcessor(
-        Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors
-    ) {
+            Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors) {
         this.postProcessors = postProcessors;
     }
 
@@ -100,8 +98,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         }
         // Doesn't need to be thread-safe, this will only be retained during the processing of a
         // single component.
-        NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors =
-            new ConcurrentSetTreeMultiMap<>();
+        NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors = new ConcurrentSetTreeMultiMap<>();
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 if (postProcessor.isCompatible(processingContext)) {
@@ -119,10 +116,10 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void preConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         this.withProcessors(this.resolveCompatibleProcessors(processingContext), processor -> {
             processor.preConfigureComponent(application, instance, processingContext);
         });
@@ -130,16 +127,14 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T initializeComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
-        MultiMap<Integer, ComponentPostProcessor> processors =
-            this.resolveCompatibleProcessors(processingContext);
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
+        MultiMap<Integer, ComponentPostProcessor> processors = this.resolveCompatibleProcessors(processingContext);
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
-                instance =
-                    postProcessor.initializeComponent(application, instance, processingContext);
+                instance = postProcessor.initializeComponent(application, instance, processingContext);
             }
         }
         return instance;
@@ -147,19 +142,19 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void postConfigureComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) throws ApplicationException {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         this.withProcessors(this.resolveCompatibleProcessors(processingContext), processor -> {
             processor.postConfigureComponent(application, instance, processingContext);
         });
     }
 
     private void withProcessors(
-        NavigableMultiMap<Integer, ComponentPostProcessor> processors,
-        CheckedConsumer<ComponentPostProcessor> processor
-    ) throws ApplicationException {
+            NavigableMultiMap<Integer, ComponentPostProcessor> processors,
+            CheckedConsumer<ComponentPostProcessor> processor)
+            throws ApplicationException {
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 processor.accept(postProcessor);
@@ -167,13 +162,13 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         }
     }
 
-    private NavigableMultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(
-        ContextView context
-    ) {
-        return context.firstContext(CompatibleProcessorsContext.class).orElseThrow(() -> {
-            return new IllegalStateException("No compatible processors context found for context: "
-                + context
-                + ". Was the isCompatible method called?");
-        }).processors();
+    private NavigableMultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(ContextView context) {
+        return context.firstContext(CompatibleProcessorsContext.class)
+                .orElseThrow(() -> {
+                    return new IllegalStateException("No compatible processors context found for context: "
+                            + context
+                            + ". Was the isCompatible method called?");
+                })
+                .processors();
     }
 }

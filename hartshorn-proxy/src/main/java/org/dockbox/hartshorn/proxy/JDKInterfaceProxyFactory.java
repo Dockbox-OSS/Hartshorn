@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyAdvisorMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
@@ -25,9 +27,6 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
 
 /**
  * A {@link ProxyFactory} implementation which uses the JDK {@link java.lang.reflect.Proxy} class to
@@ -51,24 +50,19 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     @Override
     public Option<T> createNewProxy() throws ApplicationException {
         return this.createProxy(interceptor -> this.type().isInterface()
-            ? this.interfaceProxy(interceptor)
-            : this.concreteOrAbstractProxy(interceptor));
+                ? this.interfaceProxy(interceptor)
+                : this.concreteOrAbstractProxy(interceptor));
     }
 
     @Override
-    public Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args)
-        throws ApplicationException {
+    public Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
-            throw new ApplicationException("Invalid number of arguments for constructor "
-                + constructor);
+            throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
         if (this.type().isInterface()) {
             return this.proxy(); // Cannot invoke constructor on interface
-        }
-        else {
-            return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor,
-                constructor,
-                args));
+        } else {
+            return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
         }
     }
 
@@ -82,18 +76,14 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      *
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Option<T> createProxy(
-        CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate
-    ) throws ApplicationException {
+    protected Option<T> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate)
+            throws ApplicationException {
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::addContext);
-        this.contextContainer()
-            .namedContexts()
-            .forEach((name, context) -> manager.addContext(name, context));
+        this.contextContainer().namedContexts().forEach((name, context) -> manager.addContext(name, context));
 
-        ProxyMethodInterceptor<T> interceptor =
-            new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
+        ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 
         Option<T> proxy = instantiate.apply(interceptor);
 
@@ -110,10 +100,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The invocation handler
      */
     protected InvocationHandler invocationHandler(ProxyMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self,
-            new MethodInvokable(method, this.orchestrator().introspector()),
-            null,
-            args);
+        return (self, method, args) -> interceptor.intercept(
+                self, new MethodInvokable(method, this.orchestrator().introspector()), null, args);
     }
 
     /**
@@ -124,9 +112,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      *
      * @return The constructor function
      */
-    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(
-        ProxyMethodInterceptor<T> interceptor
-    );
+    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor);
 
     /**
      * Creates a proxy if the type is a concrete or abstract class. This will attempt to use the
@@ -139,8 +125,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      *
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Option<T> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor)
-        throws ApplicationException {
+    protected Option<T> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
@@ -158,10 +143,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @throws ApplicationException When the proxy cannot be created
      */
     protected Option<T> concreteOrAbstractProxy(
-        ProxyMethodInterceptor<T> interceptor,
-        Constructor<? extends T> constructor,
-        Object[] args
-    ) throws ApplicationException {
+            ProxyMethodInterceptor<T> interceptor, Constructor<? extends T> constructor, Object[] args)
+            throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
@@ -178,9 +161,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @throws ApplicationException When the proxy cannot be created
      */
     protected Option<T> createClassProxy(
-        ProxyMethodInterceptor<T> interceptor,
-        CheckedFunction<ProxyConstructorFunction<T>, T> instantiate
-    ) throws ApplicationException {
+            ProxyMethodInterceptor<T> interceptor, CheckedFunction<ProxyConstructorFunction<T>, T> instantiate)
+            throws ApplicationException {
         ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
             T proxy = instantiate.apply(enhancer);
@@ -189,8 +171,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
                 this.restoreFields(delegate.get(), proxy);
             }
             return Option.of(proxy);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new ApplicationException(e);
         }
     }
@@ -206,11 +187,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The interfaces to implement
      */
     protected Class<?>[] proxyInterfaces(boolean includeType) {
-        Class<?>[] standardInterfaces = includeType
-            ? new Class<?>[] {Proxy.class, this.type()}
-            : new Class<?>[] {Proxy.class};
-        return CollectionUtilities.merge(standardInterfaces,
-            this.interfaces().toArray(new Class[0]));
+        Class<?>[] standardInterfaces =
+                includeType ? new Class<?>[] {Proxy.class, this.type()} : new Class<?>[] {Proxy.class};
+        return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
     }
 
     /**
@@ -223,9 +202,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      */
     protected Option<T> interfaceProxy(ProxyMethodInterceptor<T> interceptor) {
         Object proxy = java.lang.reflect.Proxy.newProxyInstance(
-            this.defaultClassLoader(),
-            this.proxyInterfaces(true),
-            this.invocationHandler(interceptor));
+                this.defaultClassLoader(), this.proxyInterfaces(true), this.invocationHandler(interceptor));
         return Option.of(this.type().cast(proxy));
     }
 
@@ -237,9 +214,11 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param proxy The proxy
      */
     protected void restoreFields(T existing, T proxy) throws Throwable {
-        TypeView<T> typeView = this.advisors().type().delegate()
-            .map(this.orchestrator().introspector()::introspect)
-            .orElseGet(() -> this.orchestrator().introspector().introspect(this.type()));
+        TypeView<T> typeView = this.advisors()
+                .type()
+                .delegate()
+                .map(this.orchestrator().introspector()::introspect)
+                .orElseGet(() -> this.orchestrator().introspector().introspect(this.type()));
 
         for (FieldView<T, ?> field : typeView.fields().all()) {
             if (field.modifiers().isStatic()) {
@@ -263,9 +242,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      */
     protected ClassLoader defaultClassLoader() {
         return Option.of(Thread.currentThread()::getContextClassLoader)
-            .orCompute(JDKInterfaceProxyFactory.class::getClassLoader)
-            .orCompute(ClassLoader::getSystemClassLoader)
-            .orCompute(this.type()::getClassLoader)
-            .orNull();
+                .orCompute(JDKInterfaceProxyFactory.class::getClassLoader)
+                .orCompute(ClassLoader::getSystemClassLoader)
+                .orCompute(this.type()::getClassLoader)
+                .orNull();
     }
 }

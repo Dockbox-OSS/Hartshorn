@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,7 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         }
     }
 
-    private Set<GraphNode<T>> visitRow(
-        Set<GraphNode<T>> visited,
-        Set<GraphNode<T>> currentRow
-    ) throws GraphException {
+    private Set<GraphNode<T>> visitRow(Set<GraphNode<T>> visited, Set<GraphNode<T>> currentRow) throws GraphException {
         Set<GraphNode<T>> nextRow = new HashSet<>();
         for (GraphNode<T> node : currentRow) {
             if (visited.add(node) && this.visit(node)) {
@@ -78,10 +75,8 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return nextRow;
     }
 
-    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(
-        Set<GraphNode<T>> visited,
-        Set<GraphNode<T>> nodes
-    ) throws GraphException {
+    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes)
+            throws GraphException {
         Set<GraphNode<T>> currentRow = new HashSet<>(nodes);
         // Filter out nodes that have parents that haven't been visited yet, as they can't be
         // visited yet until their parents have been visited first.
@@ -104,11 +99,8 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
      *
      * @return {@code true} if all parent nodes have been visited, {@code false} otherwise
      */
-    default boolean hasVisitedParents(
-        Set<GraphNode<T>> visited,
-        Set<GraphNode<T>> allNodes,
-        GraphNode<T> node
-    ) throws GraphException {
+    default boolean hasVisitedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> allNodes, GraphNode<T> node)
+            throws GraphException {
         if (node instanceof ContainableGraphNode<T> containable) {
             return visited.containsAll(containable.parents());
         }

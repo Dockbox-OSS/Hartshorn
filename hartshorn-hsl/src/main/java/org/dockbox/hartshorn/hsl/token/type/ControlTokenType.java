@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
+import java.util.function.Consumer;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
-
-import java.util.function.Consumer;
 
 /**
  * Represents a control token type, which is a keyword that controls the flow of a script. These
@@ -27,9 +26,9 @@ import java.util.function.Consumer;
  * operations.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum ControlTokenType implements EnumTokenType {
@@ -95,16 +94,13 @@ public enum ControlTokenType implements EnumTokenType {
      * or 'default' statement.
      */
     ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER)
-        .build()),
+            .build()),
     ;
 
     private final TokenMetaData metaData;
 
     ControlTokenType(boolean standalone) {
-        this(builder -> builder
-            .standaloneStatement(standalone)
-            .keyword(true)
-        );
+        this(builder -> builder.standaloneStatement(standalone).keyword(true));
     }
 
     ControlTokenType(Consumer<TokenMetaDataBuilder> metaData) {

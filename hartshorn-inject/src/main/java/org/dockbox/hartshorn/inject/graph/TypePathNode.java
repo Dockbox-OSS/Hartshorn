@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  * @param <T> the type of the introspectable type view
  *
  * @see ComponentDiscoveryList
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, View origin) {

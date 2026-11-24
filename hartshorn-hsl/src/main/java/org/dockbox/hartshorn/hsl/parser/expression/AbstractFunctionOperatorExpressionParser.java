@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
+import java.util.function.Function;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Function;
 
 /**
  * Abstract base class for expression parsers that deal with function operators.
@@ -39,10 +38,7 @@ public abstract class AbstractFunctionOperatorExpressionParser implements Expres
      *
      * @return true if the rule applies, false otherwise
      */
-    protected boolean containedInFunctionContext(
-        TokenParser parser,
-        Function<FunctionParserContext, Boolean> rule
-    ) {
+    protected boolean containedInFunctionContext(TokenParser parser, Function<FunctionParserContext, Boolean> rule) {
         Option<FunctionParserContext> context = parser.firstContext(FunctionParserContext.class);
         if (context.absent()) {
             return false;

@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Array;
-import java.util.Collection;
 
 /**
  * Converts an object to a {@link Collection}. If the object is {@code null}, an empty collection is
@@ -36,7 +35,7 @@ import java.util.Collection;
  * @see ArrayToCollectionConverterFactory
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ObjectToCollectionConverterFactory implements ConverterFactory<Object, Collection<?>> {
@@ -47,16 +46,14 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
         this(new ArrayToCollectionConverterFactory(introspector));
     }
 
-    public ObjectToCollectionConverterFactory(
-        ConverterFactory<Object[], Collection<?>> helperConverterFactory
-    ) {
+    public ObjectToCollectionConverterFactory(ConverterFactory<Object[], Collection<?>> helperConverterFactory) {
         this.helperConverterFactory = helperConverterFactory;
     }
 
     @Override
     public <O extends Collection<?>> Converter<Object, O> create(Class<O> targetType) {
-        Converter<Object[], O> converter = ObjectToCollectionConverterFactory.this
-            .helperConverterFactory.create(targetType);
+        Converter<Object[], O> converter =
+                ObjectToCollectionConverterFactory.this.helperConverterFactory.create(targetType);
         return new ObjectToCollectionConverter<>(converter);
     }
 
@@ -71,9 +68,8 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
      *
      * @author Guus Lieben
      */
-    private record ObjectToCollectionConverter<O extends Collection<?>>(
-        Converter<Object[], O> helperConverter
-    ) implements Converter<Object, O> {
+    private record ObjectToCollectionConverter<O extends Collection<?>>(Converter<Object[], O> helperConverter)
+            implements Converter<Object, O> {
 
         @Override
         public O convert(@Nullable Object source, Context... contexts) {
@@ -81,8 +77,7 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
             if (source != null) {
                 array = (Object[]) Array.newInstance(source.getClass(), 1);
                 array[0] = source;
-            }
-            else {
+            } else {
                 array = new Object[0];
             }
             return this.helperConverter.convert(array);

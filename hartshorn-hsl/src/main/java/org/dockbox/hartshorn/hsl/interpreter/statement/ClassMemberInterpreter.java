@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
-
-import java.util.Set;
 
 /**
  * An interpreter for a specific type of {@link ClassMemberStatement}, responsible for contributing

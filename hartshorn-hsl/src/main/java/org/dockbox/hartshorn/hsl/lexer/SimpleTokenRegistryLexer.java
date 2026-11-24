@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.hsl.lexer;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -37,17 +47,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Default lexer implementation. This lexer is designed to be customizable through
@@ -192,9 +191,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
             }
 
             Token token = Token.of(this.tokenRegistry.literals().eof())
-                .line(this.line)
-                .column(this.start)
-                .build();
+                    .line(this.line)
+                    .column(this.start)
+                    .build();
             this.tokens.add(token);
             return this.tokens;
         }
@@ -224,9 +223,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void refreshKeywords() {
         this.keywords.clear();
 
-        Map<String, TokenType> tokensByName = this.tokenRegistry.tokenTypes(TokenType::keyword)
-            .stream()
-            .collect(Collectors.toMap(TokenType::tokenName, Function.identity()));
+        Map<String, TokenType> tokensByName = this.tokenRegistry.tokenTypes(TokenType::keyword).stream()
+                .collect(Collectors.toMap(TokenType::tokenName, Function.identity()));
         this.keywords.putAll(tokensByName);
     }
 
@@ -241,30 +239,29 @@ public class SimpleTokenRegistryLexer implements Lexer {
         TokenCharacter nullCharacter = this.tokenRegistry().characterList().nullCharacter();
         if (tokenCharacter == nullCharacter) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_NULL)
-                .position(this.line(), this.column())
-                .build();
-        }
-        else if (this.tokenRegistry().isLineSeparator(tokenCharacter)) {
-            this.nextLine();
-        }
-        else if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
-            switch (sharedTokenCharacter) {
-                case SPACE, CARRIAGE_RETURN, TAB -> { /* Ignore whitespace. */ }
-                case NEWLINE -> this.nextLine();
-                case NULL -> throw ScriptEvaluationError.builder(Phase.TOKENIZING)
                     .message(DiagnosticMessage.UNEXPECTED_NULL)
                     .position(this.line(), this.column())
                     .build();
+        } else if (this.tokenRegistry().isLineSeparator(tokenCharacter)) {
+            this.nextLine();
+        } else if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
+            switch (sharedTokenCharacter) {
+                case SPACE, CARRIAGE_RETURN, TAB -> {
+                    /* Ignore whitespace. */
+                }
+                case NEWLINE -> this.nextLine();
+                case NULL ->
+                    throw ScriptEvaluationError.builder(Phase.TOKENIZING)
+                            .message(DiagnosticMessage.UNEXPECTED_NULL)
+                            .position(this.line(), this.column())
+                            .build();
             }
-        }
-        else {
+        } else {
             TokenCharacterList characterList = this.tokenRegistry().characterList();
             if (!this.scanCharacterList(tokenCharacter, characterList)) {
                 if (tokenCharacter.isStandaloneCharacter()) {
                     this.scanRegistryToken(tokenCharacter);
-                }
-                else {
+                } else {
                     this.scanOtherToken(tokenCharacter);
                 }
             }
@@ -287,32 +284,27 @@ public class SimpleTokenRegistryLexer implements Lexer {
      *
      * @throws ScriptEvaluationError If the character is invalid.
      */
-    protected boolean scanCharacterList(
-        TokenCharacter tokenCharacter,
-        TokenCharacterList characterList
-    ) throws ScriptEvaluationError {
+    protected boolean scanCharacterList(TokenCharacter tokenCharacter, TokenCharacterList characterList)
+            throws ScriptEvaluationError {
         if (tokenCharacter == characterList.nullCharacter()) {
             // Null character is not allowed. This is injected into the analysis when the source
             // length is exceeded.
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_NULL)
-                .position(this.line(), this.column())
-                .build();
-        }
-        else if (tokenCharacter == characterList.quoteCharacter()) {
+                    .message(DiagnosticMessage.UNEXPECTED_NULL)
+                    .position(this.line(), this.column())
+                    .build();
+        } else if (tokenCharacter == characterList.quoteCharacter()) {
             this.scanString();
             return true;
-        }
-        else if (tokenCharacter == characterList.charCharacter()) {
+        } else if (tokenCharacter == characterList.charCharacter()) {
             this.scanChar();
             return true;
-        }
-        else if (tokenCharacter == characterList.numberSeparator()) {
+        } else if (tokenCharacter == characterList.numberSeparator()) {
             // Should only occur in #scanNumber(), so any other occurrence is an error.
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_DANGLING_NUMBER_SEPARATOR)
-                .position(this.line(), this.column())
-                .build();
+                    .message(DiagnosticMessage.UNEXPECTED_DANGLING_NUMBER_SEPARATOR)
+                    .position(this.line(), this.column())
+                    .build();
         }
         return false;
     }
@@ -342,23 +334,22 @@ public class SimpleTokenRegistryLexer implements Lexer {
             if (!match) {
                 if (next.value().tokenType() != null) {
                     this.addMatchedToken(next.value());
-                }
-                else {
+                } else {
                     Option<GraphNode<TokenNode>> parent = this.tryFindValidParent(next, depth);
                     if (parent.present()) {
                         this.addMatchedToken(parent.get().value());
-                    }
-                    else {
-                        String expectedTokens =
-                            CollectionUtilities.toString(next.children(), node -> {
-                                TokenNode tokenNode = node.value();
-                                return "'%s' (%s)".formatted(tokenNode.tokenType().representation(),
-                                    tokenNode.tokenType().tokenName());
-                            });
+                    } else {
+                        String expectedTokens = CollectionUtilities.toString(next.children(), node -> {
+                            TokenNode tokenNode = node.value();
+                            return "'%s' (%s)"
+                                    .formatted(
+                                            tokenNode.tokenType().representation(),
+                                            tokenNode.tokenType().tokenName());
+                        });
                         throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                            .message(DiagnosticMessage.UNEXPECTED_EOT, expectedTokens)
-                            .position(this.line(), this.column())
-                            .build();
+                                .message(DiagnosticMessage.UNEXPECTED_EOT, expectedTokens)
+                                .position(this.line(), this.column())
+                                .build();
                     }
                 }
                 return;
@@ -367,9 +358,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
             depth++;
         }
         throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-            .message(DiagnosticMessage.UNEXPECTED_CHAR, this.currentChar().character())
-            .position(this.line(), this.column())
-            .build();
+                .message(DiagnosticMessage.UNEXPECTED_CHAR, this.currentChar().character())
+                .position(this.line(), this.column())
+                .build();
     }
 
     /**
@@ -393,10 +384,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      *
      * @return The first valid parent, if any.
      */
-    protected Option<GraphNode<TokenNode>> tryFindValidParent(
-        ContainableGraphNode<TokenNode> node,
-        int depth
-    ) {
+    protected Option<GraphNode<TokenNode>> tryFindValidParent(ContainableGraphNode<TokenNode> node, int depth) {
         Queue<GraphNode<TokenNode>> parents = new ArrayDeque<>(node.parents());
         while (!parents.isEmpty()) {
             GraphNode<TokenNode> parent = parents.poll();
@@ -428,25 +416,26 @@ public class SimpleTokenRegistryLexer implements Lexer {
         CommentTokenList commentTokenList = this.tokenRegistry().comments();
         Option<CommentType> commentType = commentTokenList.resolveFromOpenToken(tokenType);
         if (commentType.present()) {
-            Option<TokenTypePair> tokenTypePair =
-                commentTokenList.resolveTokenPairFromOpen(tokenType);
+            Option<TokenTypePair> tokenTypePair = commentTokenList.resolveTokenPairFromOpen(tokenType);
             if (tokenTypePair.absent()) {
                 throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.INVALID_COMMENT_TOKEN_PAIR, commentType.get().name())
-                    .position(this.line(), this.column())
-                    .build();
+                        .message(
+                                DiagnosticMessage.INVALID_COMMENT_TOKEN_PAIR,
+                                commentType.get().name())
+                        .position(this.line(), this.column())
+                        .build();
             }
             TokenType closeToken = tokenTypePair.get().close();
             switch (commentType.get()) {
                 case LINE -> this.scanComment();
                 case BLOCK -> this.scanMultilineComment(closeToken);
-                default -> throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                    .message(DiagnosticMessage.UNSUPPORTED_COMMENT_TYPE)
-                    .position(this.line(), this.column())
-                    .build();
+                default ->
+                    throw ScriptEvaluationError.builder(Phase.TOKENIZING)
+                            .message(DiagnosticMessage.UNSUPPORTED_COMMENT_TYPE)
+                            .position(this.line(), this.column())
+                            .build();
             }
-        }
-        else {
+        } else {
             this.addToken(tokenType);
         }
     }
@@ -464,13 +453,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
      */
     protected ContainableGraphNode<TokenNode> findNext(TokenCharacter tokenCharacter) {
         Optional<ContainableGraphNode<TokenNode>> first = this.tokenGraph().roots().stream()
-            .filter(node -> node.value().character() == tokenCharacter)
-            .map(node -> (ContainableGraphNode<TokenNode>) node)
-            .findFirst();
+                .filter(node -> node.value().character() == tokenCharacter)
+                .map(node -> (ContainableGraphNode<TokenNode>) node)
+                .findFirst();
         return first.orElseThrow(() -> ScriptEvaluationError.builder(Phase.TOKENIZING)
-            .message(DiagnosticMessage.UNEXPECTED_CHAR, tokenCharacter.character())
-            .position(this.line(), this.column())
-            .build());
+                .message(DiagnosticMessage.UNEXPECTED_CHAR, tokenCharacter.character())
+                .position(this.line(), this.column())
+                .build());
     }
 
     /**
@@ -486,15 +475,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void scanOtherToken(TokenCharacter character) {
         if (character.isDigit()) {
             this.scanNumber();
-        }
-        else if (character.isAlpha()) {
+        } else if (character.isAlpha()) {
             this.scanIdentifier();
-        }
-        else {
+        } else {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNEXPECTED_CHAR, character.character())
-                .position(this.line(), this.column())
-                .build();
+                    .message(DiagnosticMessage.UNEXPECTED_CHAR, character.character())
+                    .position(this.line(), this.column())
+                    .build();
         }
     }
 
@@ -513,9 +500,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         int line = this.line();
 
         TokenCharacter[] characters = closeToken != null
-            ? closeToken.characters()
-            // If no explicit close token is provided, the comment is closed by a newline
-            : new TokenCharacter[] {};
+                ? closeToken.characters()
+                // If no explicit close token is provided, the comment is closed by a newline
+                : new TokenCharacter[] {};
 
         while (!this.isAtEnd()) {
             // Ensure we don't match if there is no explicit close token
@@ -548,8 +535,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * the list of tokens as a string literal.
      */
     protected void scanString() {
-        while (this.currentChar() != this.tokenRegistry().characterList().quoteCharacter()
-            && !this.isAtEnd()) {
+        while (this.currentChar() != this.tokenRegistry().characterList().quoteCharacter() && !this.isAtEnd()) {
             if (this.tokenRegistry().isLineSeparator(this.currentChar())) {
                 this.nextLine();
             }
@@ -559,9 +545,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         // Unterminated string
         if (this.isAtEnd()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNTERMINATED_STRING)
-                .position(this.line(), this.column())
-                .build();
+                    .message(DiagnosticMessage.UNTERMINATED_STRING)
+                    .position(this.line(), this.column())
+                    .build();
         }
 
         // The closing quote
@@ -581,9 +567,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         this.pointToNextChar();
         if (this.currentChar() != this.tokenRegistry().characterList().charCharacter()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.UNTERMINATED_CHAR)
-                .position(this.line(), this.column())
-                .build();
+                    .message(DiagnosticMessage.UNTERMINATED_CHAR)
+                    .position(this.line(), this.column())
+                    .build();
         }
         this.pointToNextChar();
         this.addToken(this.tokenRegistry().literals().character(), value.charAt(0));
@@ -618,13 +604,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
      */
     protected void scanNumber() {
         while (this.currentChar().isDigit()
-            || this.tokenRegistry.characterList().numberSeparator() == this.currentChar()) {
+                || this.tokenRegistry.characterList().numberSeparator() == this.currentChar()) {
             this.pointToNextChar();
         }
 
         // Look for a fractional part.
         if (this.tokenRegistry.characterList().numberDelimiter() == this.currentChar()
-            && this.nextChar().isDigit()) {
+                && this.nextChar().isDigit()) {
             // Consume the delimiter
             do {
                 this.pointToNextChar();
@@ -646,12 +632,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
         TokenCharacter previousCharacter = this.peekChar(-1);
         // Ensure that the identifier is valid. The previous char should be consumed by the caller,
         // so we need to ensure that that's the case.
-        if (!previousCharacter.isAlpha() && previousCharacter != this.tokenRegistry.characterList()
-            .nullCharacter()) {
+        if (!previousCharacter.isAlpha()
+                && previousCharacter != this.tokenRegistry.characterList().nullCharacter()) {
             throw ScriptEvaluationError.builder(Phase.TOKENIZING)
-                .message(DiagnosticMessage.IDENTIFIER_STARTED_WITH_DIGIT)
-                .position(this.line(), this.column())
-                .build();
+                    .message(DiagnosticMessage.IDENTIFIER_STARTED_WITH_DIGIT)
+                    .position(this.line(), this.column())
+                    .build();
         }
 
         while (this.currentChar().isAlphaNumeric()) {
@@ -710,13 +696,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void addToken(TokenType type) {
         if (type.reserved()) {
             LOG.warn(
-                "Reserved token type used: {} at line {}, column {}. "
-                    + "Reserved tokens are not supported and may not be implemented yet. "
-                    + "This may cause unexpected behavior.",
-                type,
-                this.line,
-                this.column
-            );
+                    "Reserved token type used: {} at line {}, column {}. "
+                            + "Reserved tokens are not supported and may not be implemented yet. "
+                            + "This may cause unexpected behavior.",
+                    type,
+                    this.line,
+                    this.column);
         }
         this.addToken(type, null);
     }
@@ -731,10 +716,10 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void addToken(TokenType type, Object literal) {
         String text = this.source.substring(this.start, this.current);
         Token token = Token.of(type, text)
-            .literal(literal)
-            .line(this.line)
-            .column(this.column - text.length() + 1)
-            .build();
+                .literal(literal)
+                .line(this.line)
+                .column(this.column - text.length() + 1)
+                .build();
         this.tokens.add(token);
     }
 

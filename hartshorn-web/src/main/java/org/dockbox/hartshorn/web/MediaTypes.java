@@ -106,12 +106,10 @@ public class MediaTypes {
      * String representation of a wildcard mediatype.
      */
     public static final String WILDCARD_VALUE = "*/*";
+
     public static final MediaType WILDCARD = new MediaType("*", "*");
 
-    private static final LFUCache<String, MediaType> cachedMediaTypes = new LFUCache<>(
-            64,
-            MediaTypes::parseInternal
-    );
+    private static final LFUCache<String, MediaType> cachedMediaTypes = new LFUCache<>(64, MediaTypes::parseInternal);
 
     static {
         cachedMediaTypes.put(APPLICATION_JSON_VALUE, APPLICATION_JSON);

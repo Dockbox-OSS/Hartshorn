@@ -16,20 +16,20 @@
 
 package test.org.dockbox.hartshorn.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.describe.ObjectDescriptionStyle;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ObjectDescriberTest {
 
     @Test
     void style() {
         String description = ObjectDescriber.of(new Object(), new TestObjectDescriptionStyle())
-            .field("field1", "value1")
-            .field("field2", 2)
-            .describe();
+                .field("field1", "value1")
+                .field("field2", 2)
+                .describe();
 
         String[] descriptionElements = description.split("\\+");
         assertThat(descriptionElements.length).isEqualTo(5);
@@ -48,11 +48,7 @@ class ObjectDescriberTest {
         private static final String FIELD_SEPARATOR = "SEP";
 
         @Override
-        public void describeObjectStart(
-            StringBuilder builder,
-            Object object,
-            boolean includeTypeName
-        ) {
+        public void describeObjectStart(StringBuilder builder, Object object, boolean includeTypeName) {
             builder.append(START).append("+");
         }
 
@@ -62,12 +58,7 @@ class ObjectDescriberTest {
         }
 
         @Override
-        public void describeField(
-            StringBuilder builder,
-            Object object,
-            String fieldName,
-            Object fieldValue
-        ) {
+        public void describeField(StringBuilder builder, Object object, String fieldName, Object fieldValue) {
             builder.append(FIELD.formatted(fieldName, fieldValue)).append("+");
         }
 
@@ -78,11 +69,7 @@ class ObjectDescriberTest {
 
         @Override
         public void describeArrayStart(
-            StringBuilder builder,
-            Object collectionObject,
-            int length,
-            boolean includeTypeName
-        ) {
+                StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
             builder.append("ARRAY_START").append("+");
         }
 
@@ -92,21 +79,12 @@ class ObjectDescriberTest {
         }
 
         @Override
-        public void describeArrayElement(
-            StringBuilder builder,
-            Object collectionObject,
-            int index,
-            Object element
-        ) {
+        public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
             builder.append("ELEMENT:").append(index).append(":").append(element).append("+");
         }
 
         @Override
-        public void describeArrayElementSeparator(
-            StringBuilder builder,
-            Object collectionObject,
-            int index
-        ) {
+        public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
             builder.append("ELEMENT_SEP").append("+");
         }
     }

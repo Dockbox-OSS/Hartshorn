@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,19 +114,14 @@ public class MultiMapBuilder<K, V> {
      */
     public MultiMap<K, V> build() {
         if (this.mapSupplier == null) {
-            throw new IllegalArgumentException(
-                "Cannot build new MultiMap without configuring Map<K, V> supplier."
-            );
+            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
         }
         if (this.collectionSupplier == null) {
-            throw new IllegalArgumentException(
-                "Cannot build new MultiMap without configuring Collection<V> supplier."
-            );
+            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
         }
         if (this.makeSynchronized && this.makeConcurrent) {
             throw new IllegalArgumentException(
-                "Cannot build new MultiMap with both synchronized and concurrent capabilities."
-            );
+                    "Cannot build new MultiMap with both synchronized and concurrent capabilities.");
         }
 
         Map<K, Collection<V>> baseMap = this.mapSupplier.get();
@@ -142,13 +137,10 @@ public class MultiMapBuilder<K, V> {
                     return baseMap;
                 }
             };
-        }
-        else if (this.makeConcurrent) {
+        } else if (this.makeConcurrent) {
             if (!(baseMap instanceof ConcurrentMap)) {
                 throw new IllegalArgumentException(
-                    "Cannot build new ConcurrentMultiMap with base map " +
-                        "that is not a ConcurrentMap."
-                );
+                        "Cannot build new ConcurrentMultiMap with base map " + "that is not a ConcurrentMap.");
             }
             return new StandardMultiMap<>() {
                 @Override
@@ -161,8 +153,7 @@ public class MultiMapBuilder<K, V> {
                     return baseMap;
                 }
             };
-        }
-        else {
+        } else {
             return new StandardMultiMap<>() {
                 @Override
                 protected Collection<V> createEmptyCollection() {

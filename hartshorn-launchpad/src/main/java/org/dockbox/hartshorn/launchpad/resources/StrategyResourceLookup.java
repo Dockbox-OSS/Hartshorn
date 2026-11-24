@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.resources;
 
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.configure.ContextualInitializer;
-import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +24,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 
 /**
  * A {@link ResourceLookup} implementation that allows for multiple {@link ResourceLookupStrategy}
@@ -50,25 +49,21 @@ import java.util.regex.Pattern;
  *
  * @see ResourceLookup
  * @see ResourceLookupStrategy
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class StrategyResourceLookup implements ResourceLookup {
 
     public static final String STRATEGY_SEPARATOR = ":";
-    private static final Pattern STRATEGY_PATTERN =
-        Pattern.compile("(.+)" + STRATEGY_SEPARATOR + "(.+)");
+    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+)" + STRATEGY_SEPARATOR + "(.+)");
 
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
     private final ApplicationEnvironment environment;
     private final ResourceLookupStrategy fallbackStrategy;
 
-    public StrategyResourceLookup(
-        ApplicationEnvironment environment,
-        ResourceLookupStrategy fallbackStrategy
-    ) {
+    public StrategyResourceLookup(ApplicationEnvironment environment, ResourceLookupStrategy fallbackStrategy) {
         this.environment = environment;
         this.fallbackStrategy = fallbackStrategy;
     }
@@ -97,9 +92,7 @@ public class StrategyResourceLookup implements ResourceLookup {
      */
     public void addLookupStrategy(ResourceLookupStrategy strategy) {
         if (this.strategies.containsKey(strategy.name())) {
-            throw new IllegalArgumentException("A strategy for source "
-                + strategy.name()
-                + " already exists");
+            throw new IllegalArgumentException("A strategy for source " + strategy.name() + " already exists");
         }
         this.strategies.put(strategy.name(), strategy);
     }
@@ -132,16 +125,13 @@ public class StrategyResourceLookup implements ResourceLookup {
      * @return the contextual initializer for the {@link ResourceLookup}
      */
     public static ContextualInitializer<ApplicationEnvironment, ResourceLookup> create(
-        Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return environment -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            ResourceLookupStrategy fallbackStrategy =
-                configurer.fallbackStrategy.initialize(environment);
-            StrategyResourceLookup resourceLookup =
-                new StrategyResourceLookup(environment.input(), fallbackStrategy);
+            ResourceLookupStrategy fallbackStrategy = configurer.fallbackStrategy.initialize(environment);
+            StrategyResourceLookup resourceLookup = new StrategyResourceLookup(environment.input(), fallbackStrategy);
 
             List<ResourceLookupStrategy> strategies = configurer.strategies.initialize(environment);
             strategies.forEach(resourceLookup::addLookupStrategy);
@@ -159,14 +149,11 @@ public class StrategyResourceLookup implements ResourceLookup {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>
-            strategies = LazyStreamableConfigurer.of(
-            new FileSystemLookupStrategy(),
-            new ClassPathResourceLookupStrategy()
-        );
+        private final LazyStreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy> strategies =
+                LazyStreamableConfigurer.of(new FileSystemLookupStrategy(), new ClassPathResourceLookupStrategy());
 
-        private ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy>
-            fallbackStrategy = ContextualInitializer.of(FileSystemLookupStrategy::new);
+        private ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy =
+                ContextualInitializer.of(FileSystemLookupStrategy::new);
 
         /**
          * Sets the fallback strategy to use when no strategy prefix is found in the source string.
@@ -187,8 +174,7 @@ public class StrategyResourceLookup implements ResourceLookup {
          * @return this configurer
          */
         public Configurer fallbackStrategy(
-            ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy
-        ) {
+                ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy) {
             this.fallbackStrategy = fallbackStrategy;
             return this;
         }
@@ -212,9 +198,7 @@ public class StrategyResourceLookup implements ResourceLookup {
          * @return this configurer
          */
         public Configurer strategies(
-            Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>>
-                customizer
-        ) {
+                Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
         }

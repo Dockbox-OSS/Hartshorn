@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -35,12 +40,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class AssignExpressionInterpreterTests {
 
@@ -49,32 +48,29 @@ public class AssignExpressionInterpreterTests {
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
-            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
-            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
-        );
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global));
     }
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void assignmentToDefinedVariable(
-        Function<Interpreter, VariableScope> variableScopeFunction
-    ) {
+    void assignmentToDefinedVariable(Function<Interpreter, VariableScope> variableScopeFunction) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 variable = "newValue"
                 """)
-            .expressionParser(new AssignExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .define("variable", "originalValue", variableScopeFunction)
-            .build();
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .define("variable", "originalValue", variableScopeFunction)
+                .build();
 
-        Object interpreted = helper
-            .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
-            .interpretValue();
+        Object interpreted = helper.evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+                .interpretValue();
         assertThat(interpreted).isEqualTo("newValue");
 
         VariableScope scope = variableScopeFunction.apply(helper.interpreter());
-        Object variableValue = scope.get(Token.of(LiteralTokenType.IDENTIFIER, "variable").build());
+        Object variableValue =
+                scope.get(Token.of(LiteralTokenType.IDENTIFIER, "variable").build());
         assertThat(variableValue).isEqualTo("newValue");
     }
 
@@ -83,13 +79,13 @@ public class AssignExpressionInterpreterTests {
         HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                 variable = "newValue"
                 """)
-            .expressionParser(new AssignExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
-        assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(() -> helper
-            .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
-            .interpretValue());
+        assertThatExceptionOfType(ScriptEvaluationError.class)
+                .isThrownBy(() -> helper.evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+                        .interpretValue());
     }
 }

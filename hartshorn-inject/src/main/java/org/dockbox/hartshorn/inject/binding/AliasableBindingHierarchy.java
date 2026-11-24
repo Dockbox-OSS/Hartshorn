@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-
-import java.util.Set;
 
 /**
  * A binding hierarchy that supports aliases. Aliases are additional keys that can be used to

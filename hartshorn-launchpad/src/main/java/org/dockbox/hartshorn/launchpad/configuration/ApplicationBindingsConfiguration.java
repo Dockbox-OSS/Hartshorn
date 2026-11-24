@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.launchpad.configuration;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.inject.binding.Binder;
 
 /**
  * A functional interface used to configure the default bindings of the
@@ -37,9 +37,9 @@ import org.dockbox.hartshorn.inject.binding.Binder;
  *
  * @see Binder
  * @see ApplicationEnvironment
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 @FunctionalInterface
@@ -52,9 +52,5 @@ public interface ApplicationBindingsConfiguration {
      * @param configurer The configurer to use for additional bindings.
      * @param binder The binder to use for additional bindings.
      */
-    void configureBindings(
-        InjectionCapableApplication application,
-        DefaultBindingConfigurer configurer,
-        Binder binder
-    );
+    void configureBindings(InjectionCapableApplication application, DefaultBindingConfigurer configurer, Binder binder);
 }

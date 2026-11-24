@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import java.util.Collection;
-import java.util.stream.Stream;
-
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collection;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
@@ -39,14 +37,13 @@ public class MultimapTests {
 
     public static Stream<Arguments> multiMapImplementations() {
         return Stream.of(
-            Arguments.of(new ArrayListMultiMap<>()),
-            Arguments.of(new HashSetMultiMap<>()),
-            Arguments.of(new CopyOnWriteArrayListMultiMap<>()),
-            Arguments.of(new ConcurrentSetMultiMap<>()),
-            Arguments.of(new ConcurrentSetTreeMultiMap<>()),
-            Arguments.of(new SynchronizedArrayListMultiMap<>()),
-            Arguments.of(new SynchronizedHashSetMultiMap<>())
-        );
+                Arguments.of(new ArrayListMultiMap<>()),
+                Arguments.of(new HashSetMultiMap<>()),
+                Arguments.of(new CopyOnWriteArrayListMultiMap<>()),
+                Arguments.of(new ConcurrentSetMultiMap<>()),
+                Arguments.of(new ConcurrentSetTreeMultiMap<>()),
+                Arguments.of(new SynchronizedArrayListMultiMap<>()),
+                Arguments.of(new SynchronizedHashSetMultiMap<>()));
     }
 
     @ParameterizedTest
@@ -70,9 +67,7 @@ public class MultimapTests {
         map.put("test", "test");
 
         Collection<String> collection = map.get("test");
-        assertThat(collection)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(collection).isNotEmpty().hasSize(1);
 
         String value = CollectionUtilities.first(collection);
         assertThat(value).isEqualTo("test");
@@ -85,11 +80,7 @@ public class MultimapTests {
         map.put("test", "test2");
 
         Collection<String> collection = map.get("test");
-        assertThat(collection)
-                .isNotEmpty()
-                .hasSize(2)
-                .contains("test")
-                .contains("test2");
+        assertThat(collection).isNotEmpty().hasSize(2).contains("test").contains("test2");
     }
 
     @ParameterizedTest
@@ -99,9 +90,7 @@ public class MultimapTests {
         map.putIfAbsent("test", "test");
 
         Collection<String> collection = map.get("test");
-        assertThat(collection)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(collection).isNotEmpty().hasSize(1);
 
         String value = CollectionUtilities.first(collection);
         assertThat(value).isEqualTo("test");
@@ -117,11 +106,7 @@ public class MultimapTests {
         assertThat(map.allValues()).hasSize(2);
 
         Collection<String> collection = map.get("test");
-        assertThat(collection)
-                .isNotEmpty()
-                .hasSize(2)
-                .contains("test")
-                .contains("test2");
+        assertThat(collection).isNotEmpty().hasSize(2).contains("test").contains("test2");
     }
 
     @ParameterizedTest

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.graph.support;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Thrown when an alias is ambiguous, meaning that the same alias is defined in multiple locations.
@@ -37,16 +36,11 @@ public class AmbiguousAliasException extends ApplicationException {
     private final ComponentKey<?> componentKey;
     private final Collection<DependencyContext<?>> contexts;
 
-    public AmbiguousAliasException(
-        ComponentKey<?> componentKey,
-        Collection<DependencyContext<?>> contexts
-    ) {
+    public AmbiguousAliasException(ComponentKey<?> componentKey, Collection<DependencyContext<?>> contexts) {
         super("Ambiguous alias "
-            + componentKey
-            + " found. The alias was defined in the following locations: "
-            + contexts.stream()
-            .map(DependencyContext::describe)
-            .collect(Collectors.joining(", ")));
+                + componentKey
+                + " found. The alias was defined in the following locations: "
+                + contexts.stream().map(DependencyContext::describe).collect(Collectors.joining(", ")));
         this.componentKey = componentKey;
         this.contexts = contexts;
     }

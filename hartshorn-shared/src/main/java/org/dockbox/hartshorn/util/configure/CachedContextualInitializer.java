@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import org.dockbox.hartshorn.context.SingleElementContext;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.context.SingleElementContext;
 
 /**
  * A {@link ContextualInitializer} that caches the result of the initialization process. This is
@@ -49,9 +48,6 @@ public class CachedContextualInitializer<I, T> implements ContextualInitializer<
 
     @Override
     public T initialize(SingleElementContext<? extends I> context) {
-        return this.values.computeIfAbsent(
-            context.input(),
-            input -> this.initializer.initialize(context)
-        );
+        return this.values.computeIfAbsent(context.input(), input -> this.initializer.initialize(context));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -33,8 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class GetExpressionTests {
 
@@ -42,41 +42,35 @@ class GetExpressionTests {
     void getExpressionReturnsPropertyContainerValue(@Inject ApplicationContext applicationContext) {
         PropertyContainer container = Mockito.mock(PropertyContainer.class);
         Mockito.when(container.get(
-            Mockito.any(Interpreter.class),
-            Mockito.any(Token.class),
-            Mockito.any(VariableScope.class)
-        )).thenReturn("Hello, World!");
+                        Mockito.any(Interpreter.class), Mockito.any(Token.class), Mockito.any(VariableScope.class)))
+                .thenReturn("Hello, World!");
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("object", container)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("object", container)
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value).isEqualTo("Hello, World!");
     }
 
     @Test
-    void getExpressionWithExternalObjectReferenceReturnsExternalObject(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void getExpressionWithExternalObjectReferenceReturnsExternalObject(@Inject ApplicationContext applicationContext) {
         PropertyContainer container = Mockito.mock(PropertyContainer.class);
         Mockito.when(container.get(
-            Mockito.any(Interpreter.class),
-            Mockito.any(Token.class),
-            Mockito.any(VariableScope.class)
-        )).thenAnswer(invocation -> {
-            ExternalObjectReference objectReference = Mockito.mock(ExternalObjectReference.class);
-            Mockito.when(objectReference.externalObject()).thenReturn("Hello, World!");
-            return objectReference;
-        });
+                        Mockito.any(Interpreter.class), Mockito.any(Token.class), Mockito.any(VariableScope.class)))
+                .thenAnswer(invocation -> {
+                    ExternalObjectReference objectReference = Mockito.mock(ExternalObjectReference.class);
+                    Mockito.when(objectReference.externalObject()).thenReturn("Hello, World!");
+                    return objectReference;
+                });
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("object", container)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("object", container)
+                .build();
 
         Object value = helper.interpretValue();
         assertThat(value)
@@ -87,30 +81,26 @@ class GetExpressionTests {
 
     @Test
     void getExpressionWithInstanceReferenceAndExternalFunctionShouldReturnBoundFunction(
-        @Inject ApplicationContext applicationContext
-    ) {
+            @Inject ApplicationContext applicationContext) {
         InstanceReference instanceReference = Mockito.mock(InstanceReference.class);
         Mockito.when(instanceReference.get(
-            Mockito.any(Interpreter.class),
-            Mockito.any(Token.class),
-            Mockito.any(VariableScope.class)
-        )).thenAnswer(invocation -> {
-            ExternalFunction function = Mockito.mock(ExternalFunction.class);
-            Mockito.when(function.bind(Mockito.any(InstanceReference.class)))
-                .thenAnswer(functionInvocation -> {
-                    InstanceReference argument = functionInvocation
-                        .getArgument(0, InstanceReference.class);
-                    Mockito.when(function.bound()).thenReturn(argument);
+                        Mockito.any(Interpreter.class), Mockito.any(Token.class), Mockito.any(VariableScope.class)))
+                .thenAnswer(invocation -> {
+                    ExternalFunction function = Mockito.mock(ExternalFunction.class);
+                    Mockito.when(function.bind(Mockito.any(InstanceReference.class)))
+                            .thenAnswer(functionInvocation -> {
+                                InstanceReference argument = functionInvocation.getArgument(0, InstanceReference.class);
+                                Mockito.when(function.bound()).thenReturn(argument);
+                                return function;
+                            });
                     return function;
                 });
-            return function;
-        });
 
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.value")
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .defineLocal("object", instanceReference)
-            .build();
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("object", instanceReference)
+                .build();
 
         Object value = helper.interpretValue();
         ExternalFunction externalFunction = assertThat(value)

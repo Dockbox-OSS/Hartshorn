@@ -31,9 +31,7 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  *
  * @author Guus Lieben
  */
-public record ExactPriorityProviderSelectionStrategy(
-        int priority
-) implements ProviderSelectionStrategy {
+public record ExactPriorityProviderSelectionStrategy(int priority) implements ProviderSelectionStrategy {
 
     @Override
     public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {

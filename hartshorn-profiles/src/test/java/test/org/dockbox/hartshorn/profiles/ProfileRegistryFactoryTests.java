@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package test.org.dockbox.hartshorn.profiles;
 
-import java.util.List;
-import java.util.Set;
-import org.dockbox.hartshorn.profiles.EnvironmentProfile;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import java.util.List;
+import java.util.Set;
+import org.dockbox.hartshorn.profiles.EnvironmentProfile;
 import org.dockbox.hartshorn.profiles.ProfileRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistryFactory;
 import org.dockbox.hartshorn.profiles.support.ConfigurationProfileRegistryFactory;
@@ -35,14 +34,13 @@ class ProfileRegistryFactoryTests {
     @Test
     void profilesAreRegisteredWithCorrectPriority() {
         ProfileRegistryFactory factory = new ConfigurationProfileRegistryFactory(
-            (registry, path) -> {
-                // Do nothing, resource resolver has no URIs to index, so this will never be called
-                fail("Should never be called");
-            },
-            profileName -> Set.of(),
-            MapPropertyRegistry::new,
-            rootRegistry -> CollectionUtilities.sequencedSet("profile1", "profile2")
-        );
+                (registry, path) -> {
+                    // Do nothing, resource resolver has no URIs to index, so this will never be called
+                    fail("Should never be called");
+                },
+                profileName -> Set.of(),
+                MapPropertyRegistry::new,
+                rootRegistry -> CollectionUtilities.sequencedSet("profile1", "profile2"));
         ProfileRegistry profileRegistry = factory.create(new MapPropertyRegistry());
         assertThat(profileRegistry).isNotNull();
 
@@ -51,7 +49,8 @@ class ProfileRegistryFactoryTests {
 
         // Default profile is always priority 0 (highest)
         assertThat(profiles.get(0).name()).isEqualTo(ConfigurationProfileRegistryFactory.DEFAULT_PROFILE_NAME);
-        // profile1 was provided first in resolver passed to constructor, thus should have priority 1 (higher than profile2, but lower than default)
+        // profile1 was provided first in resolver passed to constructor, thus should have priority 1 (higher than
+        // profile2, but lower than default)
         assertThat(profiles.get(1).name()).isEqualTo("profile1");
         // profile2 was provided last in resolver passed to constructor, thus should have priority 2 (lowest)
         assertThat(profiles.get(2).name()).isEqualTo("profile2");

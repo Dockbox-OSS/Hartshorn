@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassMemberStatement;
@@ -29,15 +31,12 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
  * abstract syntax tree (AST).
  *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public interface TokenParser extends Context {
@@ -230,8 +229,7 @@ public interface TokenParser extends Context {
      *
      * @return all class member parsers that are compatible with the given type
      */
-    <T extends Statement & ClassMemberStatement>
-    Set<ClassMemberParser<T>> compatibleMemberParsers(Class<T> type);
+    <T extends Statement & ClassMemberStatement> Set<ClassMemberParser<T>> compatibleMemberParsers(Class<T> type);
 
     /**
      * Looks up the first class member parser that is compatible with the given type.
@@ -242,6 +240,6 @@ public interface TokenParser extends Context {
      * @return the first class member parser that is compatible with the given type, or
      * {@link Option#empty()} if no compatible parser is found
      */
-    <T extends Statement & ClassMemberStatement>
-    Option<ClassMemberParser<T>> firstCompatibleMemberParser(Class<T> type);
+    <T extends Statement & ClassMemberStatement> Option<ClassMemberParser<T>> firstCompatibleMemberParser(
+            Class<T> type);
 }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
@@ -32,8 +33,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * A {@link ComponentPostProcessor} that populates components using a {@link ComponentPopulator}. If
@@ -55,10 +54,9 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T initializeComponent(
-        InjectionCapableApplication application,
-        @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         boolean permitsProxying = this.permitsProxying(application, instance, processingContext);
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
@@ -68,17 +66,14 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
                 boolean isStateAwareFactory = factory instanceof StateAwareProxyFactory<?>;
                 // If not state aware, always assume state has been modified
-                boolean stateModified =
-                    !isStateAwareFactory || ((StateAwareProxyFactory<T>) factory).modified();
+                boolean stateModified = !isStateAwareFactory || ((StateAwareProxyFactory<T>) factory).modified();
                 boolean noConcreteInstancePossible =
-                    instance == null && processingContext.type().modifiers().isAbstract();
+                        instance == null && processingContext.type().modifiers().isAbstract();
                 try {
                     if (stateModified || noConcreteInstancePossible) {
-                        finalizingInstance =
-                            this.createProxyInstance(application, factory, instance);
+                        finalizingInstance = this.createProxyInstance(application, factory, instance);
                     }
-                }
-                catch (ApplicationException e) {
+                } catch (ApplicationException e) {
                     throw new ApplicationRuntimeException(e);
                 }
             }
@@ -89,14 +84,15 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
                 return null;
             }
 
-            if (processingContext instanceof LockableComponentProcessingContext<T>
-                lockableComponentProcessingContext) {
+            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
                 lockableComponentProcessingContext.instance(finalizingInstance);
                 lockableComponentProcessingContext.requestInstanceLock();
             }
 
-            Scope scope =
-                processingContext.key().scope().orElse(application.defaultProvider().scope());
+            Scope scope = processingContext
+                    .key()
+                    .scope()
+                    .orElse(application.defaultProvider().scope());
             return this.componentPopulator.populate(finalizingInstance, scope);
         }
         return instance;
@@ -113,9 +109,9 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
      * @return true if proxying is permitted, false otherwise
      */
     protected <T> boolean permitsProxying(
-        InjectionCapableApplication application, @Nullable T instance,
-        ComponentProcessingContext<T> processingContext
-    ) {
+            InjectionCapableApplication application,
+            @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
         return processingContext.permitsProxying();
     }
 
@@ -136,24 +132,19 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
      * @throws ApplicationException if an error occurs during proxy creation
      */
     protected <T> T createProxyInstance(
-        InjectionCapableApplication application,
-        ProxyFactory<T> factory,
-        @Nullable T instance
-    ) throws ApplicationException {
-        TypeView<T> factoryType =
-            application.environment().introspector().introspect(factory.type());
+            InjectionCapableApplication application, ProxyFactory<T> factory, @Nullable T instance)
+            throws ApplicationException {
+        TypeView<T> factoryType = application.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
-        if (!factoryType.isInterface() && factoryType.constructors()
-            .defaultConstructor()
-            .absent()) {
-            ConstructorView<? extends T> constructor =
-                ComponentConstructorResolver.create(application).findConstructor(factoryType)
+        if (!factoryType.isInterface()
+                && factoryType.constructors().defaultConstructor().absent()) {
+            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(application)
+                    .findConstructor(factoryType)
                     .orElseThrow(() -> new ApplicationException(
-                        "No default or injectable constructor found for proxy factory "
-                            + factoryType.name()));
+                            "No default or injectable constructor found for proxy factory " + factoryType.name()));
 
             ComponentExecutableInvocationAdapter adapter =
-                application.defaultProvider().get(ComponentExecutableInvocationAdapter.class);
+                    application.defaultProvider().get(ComponentExecutableInvocationAdapter.class);
             Object[] arguments = adapter.loadParameters(constructor);
             return factory.proxy(constructor, arguments).orElse(instance);
         }
@@ -176,8 +167,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
      * @return the contextual initializer
      */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(
-        Customizer<Configurer> customizer
-    ) {
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -199,7 +189,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
     public static class Configurer {
 
         ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator =
-            StrategyComponentPopulator.create(Customizer.useDefaults());
+                StrategyComponentPopulator.create(Customizer.useDefaults());
 
         /**
          * Sets the component populator to use.
@@ -220,9 +210,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
          * @return this configurer
          */
         public Configurer componentPopulator(
-            ContextualInitializer<InjectionCapableApplication, ComponentPopulator>
-                componentPopulator
-        ) {
+                ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator) {
             this.componentPopulator = componentPopulator;
             return this;
         }

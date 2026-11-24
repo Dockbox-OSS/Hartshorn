@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * access to the current element of the collection via the provided selector token.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ArrayComprehensionExpression extends Expression {
@@ -66,14 +66,17 @@ public class ArrayComprehensionExpression extends Expression {
     private final Expression elseExpression;
 
     public ArrayComprehensionExpression(
-        Expression collection,
-        Expression expression,
-        Token selector,
-        Token forToken, Token inToken,
-        Token open, Token close,
-        Token ifToken, Expression condition,
-        Token elseToken, Expression elseExpression
-    ) {
+            Expression collection,
+            Expression expression,
+            Token selector,
+            Token forToken,
+            Token inToken,
+            Token open,
+            Token close,
+            Token ifToken,
+            Expression condition,
+            Token elseToken,
+            Expression elseExpression) {
         super(open);
         this.collection = collection;
         this.expression = expression;

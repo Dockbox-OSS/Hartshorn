@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -33,11 +37,6 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * Base implementation of {@link ScriptRuntime} that provides a default implementation for the
  * runtime phases. This class is designed to be extended by specific runtime implementations, such
@@ -54,27 +53,19 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public class SimpleScriptRuntime extends ExpressionConditionContext
-    implements MutableScriptRuntime {
+public class SimpleScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
     private final ScriptComponentFactory factory;
     private final ApplicationContext applicationContext;
 
     private ParserCustomizer parserCustomizer;
 
-    public SimpleScriptRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory
-    ) {
-        this(applicationContext, factory, parser -> {
-        });
+    public SimpleScriptRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
+        this(applicationContext, factory, parser -> {});
     }
 
     public SimpleScriptRuntime(
-        ApplicationContext applicationContext,
-        ScriptComponentFactory factory,
-        ParserCustomizer parserCustomizer
-    ) {
+            ApplicationContext applicationContext, ScriptComponentFactory factory, ParserCustomizer parserCustomizer) {
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
@@ -123,8 +114,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
             if (until.ordinal() >= Phase.INTERPRETING.ordinal()) {
                 this.interpret(context);
             }
-        }
-        catch (ScriptEvaluationError e) {
+        } catch (ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
         return context;
@@ -144,11 +134,9 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
                 case PARSING -> this.parse(context);
                 case SEMANTIC_ANALYSIS -> this.resolve(context);
                 case INTERPRETING -> this.interpret(context);
-                default ->
-                    throw new IllegalArgumentException("Unsupported standalone phase: " + only);
+                default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
-        }
-        catch (ScriptEvaluationError e) {
+        } catch (ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
         return context;
@@ -178,10 +166,8 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
      * @return the interpreter that was created
      */
     protected Interpreter createInterpreter(ScriptContext context) {
-        Interpreter interpreter = this.factory.interpreter(context,
-            this.standardLibraries(context),
-            context.tokenRegistry(),
-            this.applicationContext());
+        Interpreter interpreter = this.factory.interpreter(
+                context, this.standardLibraries(context), context.tokenRegistry(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
@@ -280,15 +266,13 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
         sb.append(errorMessage);
         if (StringUtilities.emptyIfNull(errorMessage).trim().endsWith(".")) {
             sb.append(" While ");
-        }
-        else {
+        } else {
             sb.append(" while ");
         }
         sb.append(phase.name().toLowerCase(Locale.ROOT));
         if (line <= -1 || column <= -1) {
             sb.append(" (outside source).");
-        }
-        else {
+        } else {
             sb.append(" at line ");
             sb.append(line);
             sb.append(", column ");
@@ -309,11 +293,11 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
         }
 
         ScriptEvaluationError evaluationError = ScriptEvaluationError.builder(phase)
-            .at(error.at())
-            .position(line, column)
-            .cause(error)
-            .message(message)
-            .build();
+                .at(error.at())
+                .position(line, column)
+                .cause(error)
+                .message(message)
+                .build();
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());
@@ -328,8 +312,7 @@ public class SimpleScriptRuntime extends ExpressionConditionContext
 
     @Override
     public void statementParser(StatementParser<? extends Statement> statementParser) {
-        this.parserCustomizer =
-            this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
+        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
     }
 
     @Override

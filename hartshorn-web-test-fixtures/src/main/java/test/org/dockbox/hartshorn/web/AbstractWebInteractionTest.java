@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.HartshornAssertions;
 import org.dockbox.hartshorn.test.HttpResponseAssert;
@@ -25,12 +30,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.UseWebServer;
 import org.dockbox.hartshorn.web.WebServer;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 @UseWebServer
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -56,9 +55,8 @@ public class AbstractWebInteractionTest {
     }
 
     protected <T> HttpResponseAssert<T> assertRequest(
-            Customizer<HttpRequest.Builder> customizer,
-            HttpResponse.BodyHandler<T> handler
-    ) throws IOException, InterruptedException {
+            Customizer<HttpRequest.Builder> customizer, HttpResponse.BodyHandler<T> handler)
+            throws IOException, InterruptedException {
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest.Builder builder = HttpRequest.newBuilder();
             customizer.configure(builder);
@@ -66,21 +64,17 @@ public class AbstractWebInteractionTest {
         }
     }
 
-    protected <T> HttpResponseAssert<T> assertRequest(
-            String path,
-            HttpResponse.BodyHandler<T> handler
-    ) throws IOException, InterruptedException {
+    protected <T> HttpResponseAssert<T> assertRequest(String path, HttpResponse.BodyHandler<T> handler)
+            throws IOException, InterruptedException {
         return this.assertRequest(builder -> builder.uri(this.getServerUri(path)), handler);
     }
 
     protected <T> HttpResponseAssert<T> assertRequest(
-            HttpMethod method,
-            String path,
-            HttpResponse.BodyHandler<T> handler
-    ) throws IOException, InterruptedException {
+            HttpMethod method, String path, HttpResponse.BodyHandler<T> handler)
+            throws IOException, InterruptedException {
         return this.assertRequest(
-                builder -> builder.uri(this.getServerUri(path)).method(method.name(),
-                        HttpRequest.BodyPublishers.noBody()
-                ), handler);
+                builder ->
+                        builder.uri(this.getServerUri(path)).method(method.name(), HttpRequest.BodyPublishers.noBody()),
+                handler);
     }
 }

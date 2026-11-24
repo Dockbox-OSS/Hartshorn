@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package test.org.dockbox.hartshorn.reporting;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -32,8 +34,6 @@ import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @UseReporting
 @HartshornIntegrationTest(includeBasePackages = false)
 class ApplicationReportingTests {
@@ -44,8 +44,7 @@ class ApplicationReportingTests {
     @Test
     void applicationDiagnosticsReportingPasses() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector =
-            this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
         assertThat(report).isNotNull();
@@ -54,8 +53,7 @@ class ApplicationReportingTests {
     @Test
     void applicationDiagnosticsIncludeRequiredDiagnostics() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector =
-            this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
         Node<?> root = report.root();
@@ -67,9 +65,11 @@ class ApplicationReportingTests {
 
         assertThat(group.value()).isNotEmpty();
 
-        assertThat(group.has(ApplicationDiagnosticsReporter.APPLICATION_CATEGORY)).isTrue();
+        assertThat(group.has(ApplicationDiagnosticsReporter.APPLICATION_CATEGORY))
+                .isTrue();
         assertThat(group.has(ComponentDiagnosticsReporter.COMPONENTS_CATEGORY)).isTrue();
-        assertThat(group.has(ComponentProcessorDiagnosticsReporter.COMPONENT_PROCESSORS_CATEGORY)).isTrue();
+        assertThat(group.has(ComponentProcessorDiagnosticsReporter.COMPONENT_PROCESSORS_CATEGORY))
+                .isTrue();
         assertThat(group.has(SystemDiagnosticsReporter.SYSTEM_CATEGORY)).isTrue();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,5 +19,4 @@ package test.org.dockbox.hartshorn.inject.populate;
 import org.dockbox.hartshorn.inject.annotations.Component;
 
 @Component
-public class EmptyComponent {
-}
+public class EmptyComponent {}

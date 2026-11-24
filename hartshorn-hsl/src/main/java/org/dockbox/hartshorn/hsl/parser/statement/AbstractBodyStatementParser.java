@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -25,8 +26,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 /**
  * A parser for a statement that contains a block of statements. Examples of this include functions,
@@ -41,8 +40,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBodyStatementParser<T extends Statement>
-    implements StatementParser<T> {
+public abstract class AbstractBodyStatementParser<T extends Statement> implements StatementParser<T> {
 
     /**
      * Parses a block statement from the given parser. The actual parsing of the block is delegated
@@ -57,18 +55,13 @@ public abstract class AbstractBodyStatementParser<T extends Statement>
      * @return the parsed block statement
      */
     protected BlockStatement blockStatement(
-        String afterStatement,
-        ASTNode at,
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
-        Set<StatementParser<BlockStatement>> parsers =
-            parser.compatibleParsers(BlockStatement.class);
+            String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
+        Set<StatementParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
         if (parsers.isEmpty()) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
-                .at(at)
-                .build();
+                    .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
+                    .at(at)
+                    .build();
         }
 
         for (StatementParser<BlockStatement> nodeParser : parsers) {
@@ -78,8 +71,8 @@ public abstract class AbstractBodyStatementParser<T extends Statement>
             }
         }
         throw ScriptEvaluationError.builder(Phase.PARSING)
-            .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
-            .at(at)
-            .build();
+                .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
+                .at(at)
+                .build();
     }
 }

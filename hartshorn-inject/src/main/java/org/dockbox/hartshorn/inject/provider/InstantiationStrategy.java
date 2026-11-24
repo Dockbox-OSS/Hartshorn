@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import java.util.function.Function;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -23,8 +24,6 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Function;
 
 /**
  * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
@@ -38,8 +37,7 @@ import java.util.function.Function;
  * @author Guus Lieben
  */
 public sealed interface InstantiationStrategy<T>
-    permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy,
-    CompositeInstantiationStrategy {
+        permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy, CompositeInstantiationStrategy {
 
     /**
      * Provides an instance of the {@link ComponentKey} binding. The given {@code requestContext}
@@ -53,10 +51,8 @@ public sealed interface InstantiationStrategy<T>
      * @return The instance, if it can be created.
      */
     Option<ObjectContainer<T>> provide(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        Scope scope
-    ) throws ApplicationException;
+            InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope)
+            throws ApplicationException;
 
     /**
      * Maps the result of this provider using the provided {@link Function}. The result of the
@@ -67,9 +63,7 @@ public sealed interface InstantiationStrategy<T>
      *
      * @return A provider that applies the provided function to the result of this provider.
      */
-    default InstantiationStrategy<T> map(
-        Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction
-    ) {
+    default InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         return new CompositeInstantiationStrategy<>(this, mappingFunction);
     }
 

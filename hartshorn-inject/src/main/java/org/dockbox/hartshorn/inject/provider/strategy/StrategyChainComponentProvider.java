@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.provider.strategy;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SequencedCollection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
@@ -23,10 +26,6 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SequencedCollection;
 
 /**
  * A {@link ComponentProvider} that uses a chain of {@link ComponentProviderStrategy strategies} to
@@ -71,18 +70,14 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
     @Override
     public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
         List<ComponentProviderStrategy> strategies = List.copyOf(this.strategies);
-        ComponentProviderStrategyChain<T> chain = new SimpleComponentProviderStrategyChain<>(
-            this,
-            this.application,
-            strategies);
+        ComponentProviderStrategyChain<T> chain =
+                new SimpleComponentProviderStrategyChain<>(this, this.application, strategies);
 
         final ObjectContainer<T> container;
         try {
             container = chain.get(key, requestContext);
-        }
-        catch (ApplicationException e) {
-            throw new ComponentResolutionException("Failed to initialize component with key " + key,
-                e);
+        } catch (ApplicationException e) {
+            throw new ComponentResolutionException("Failed to initialize component with key " + key, e);
         }
 
         // If the object is already processed at this point, it means that the object container was
@@ -90,14 +85,11 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
         // object being a singleton, which is handled by the singleton cache.
         if (container.processed()) {
             return container.instance();
-        }
-        else {
+        } else {
             try {
                 return this.process(key, requestContext, container);
-            }
-            catch (ApplicationException e) {
-                throw new ComponentResolutionException("Failed to process component with key "
-                    + key, e);
+            } catch (ApplicationException e) {
+                throw new ComponentResolutionException("Failed to process component with key " + key, e);
             }
         }
     }
@@ -118,8 +110,6 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
      * @throws ApplicationException if processing fails
      */
     protected abstract <T> T process(
-        ComponentKey<T> key,
-        ComponentRequestContext requestContext,
-        ObjectContainer<T> container
-    ) throws ApplicationException;
+            ComponentKey<T> key, ComponentRequestContext requestContext, ObjectContainer<T> container)
+            throws ApplicationException;
 }

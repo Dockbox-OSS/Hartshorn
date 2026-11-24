@@ -36,10 +36,7 @@ public interface ErrorHandlerRegistry {
      * @param handler the error handler to register
      * @param <E> the type of the exception
      */
-    <E extends Throwable> void register(
-            Class<E> exceptionType,
-            RequestErrorHandler<E> handler
-    );
+    <E extends Throwable> void register(Class<E> exceptionType, RequestErrorHandler<E> handler);
 
     /**
      * Retrieve the error handler for the given exception type. If there is no exact match, the
@@ -49,7 +46,5 @@ public interface ErrorHandlerRegistry {
      * @return an {@link Option} containing the error handler, or an empty {@link Option} if no
      * handler is found
      */
-    Option<RequestErrorHandler<? extends Throwable>> getHandler(
-            Class<? extends Throwable> exceptionType
-    );
+    Option<RequestErrorHandler<? extends Throwable>> getHandler(Class<? extends Throwable> exceptionType);
 }

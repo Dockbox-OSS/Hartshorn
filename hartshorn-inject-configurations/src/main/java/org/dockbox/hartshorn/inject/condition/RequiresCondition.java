@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 
 /**
  * A generic condition that requires a specific condition to be met. The condition is defined by the

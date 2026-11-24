@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -25,10 +28,6 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 /**
  * Abstract base class for interpreters that handle native library statements, which may contain
  * multiple functions with the same name. When such ambiguity arises, this class provides the logic
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
  * interpreter's settings.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public abstract class AbstractNativeLibraryStatementInterpreter {
@@ -53,32 +52,29 @@ public abstract class AbstractNativeLibraryStatementInterpreter {
      * @param module the native module containing the functions
      */
     protected void registerModuleFunction(
-        String moduleName,
-        String functionName,
-        Interpreter interpreter,
-        List<NativeFunctionStatement> supportedFunctions,
-        NativeModule module
-    ) {
+            String moduleName,
+            String functionName,
+            Interpreter interpreter,
+            List<NativeFunctionStatement> supportedFunctions,
+            NativeModule module) {
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE,
-                        moduleName,
-                        functionName)
-                    .at(supportedFunctions.getFirst().name())
-                    .build();
-            }
-            else {
+                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, functionName)
+                        .at(supportedFunctions.getFirst().name())
+                        .build();
+            } else {
                 Set<NativeLibrary> libraries = supportedFunctions.stream()
-                    .map(function -> new NativeLibrary(function, moduleName, module))
-                    .collect(Collectors.toSet());
-                interpreter.global()
-                    .define(supportedFunctions.getFirst().name().lexeme(),
-                        new AmbiguousNativeLibraryFunction(libraries));
+                        .map(function -> new NativeLibrary(function, moduleName, module))
+                        .collect(Collectors.toSet());
+                interpreter
+                        .global()
+                        .define(
+                                supportedFunctions.getFirst().name().lexeme(),
+                                new AmbiguousNativeLibraryFunction(libraries));
             }
-        }
-        else {
+        } else {
             NativeFunctionStatement supportedFunction = supportedFunctions.getFirst();
             NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
             interpreter.global().define(supportedFunction.name().lexeme(), library);

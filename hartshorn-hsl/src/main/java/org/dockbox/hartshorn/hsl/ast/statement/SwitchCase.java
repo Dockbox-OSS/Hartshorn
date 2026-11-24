@@ -36,12 +36,7 @@ public class SwitchCase extends Statement {
     private final LiteralExpression expression;
     private final boolean isDefault;
 
-    public SwitchCase(
-        Token caseToken,
-        Statement body,
-        LiteralExpression expression,
-        boolean isDefault
-    ) {
+    public SwitchCase(Token caseToken, Statement body, LiteralExpression expression, boolean isDefault) {
         super(caseToken);
         this.body = body;
         this.expression = expression;

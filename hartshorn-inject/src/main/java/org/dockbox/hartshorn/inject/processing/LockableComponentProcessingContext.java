@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,13 +40,12 @@ public class LockableComponentProcessingContext<T> extends ComponentProcessingCo
     private boolean requestInstanceLock = false;
 
     public LockableComponentProcessingContext(
-        InjectionCapableApplication application,
-        ComponentKey<T> key,
-        ComponentRequestContext requestContext,
-        ObjectContainer<T> container,
-        boolean permitsProxying,
-        ComponentStoreCallback componentStoreCallback
-    ) {
+            InjectionCapableApplication application,
+            ComponentKey<T> key,
+            ComponentRequestContext requestContext,
+            ObjectContainer<T> container,
+            boolean permitsProxying,
+            ComponentStoreCallback componentStoreCallback) {
         super(application, requestContext, key, container, permitsProxying);
         this.componentStoreCallback = componentStoreCallback;
     }
@@ -63,8 +62,7 @@ public class LockableComponentProcessingContext<T> extends ComponentProcessingCo
      */
     public LockableComponentProcessingContext<T> instance(T instance) {
         if (this.requestInstanceLock) {
-            throw new IllegalModificationException(
-                "Cannot modify instance after lock has been requested");
+            throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }
         super.container = super.container.copyForObject(instance);
         this.componentStoreCallback.store(this.key(), this.container());

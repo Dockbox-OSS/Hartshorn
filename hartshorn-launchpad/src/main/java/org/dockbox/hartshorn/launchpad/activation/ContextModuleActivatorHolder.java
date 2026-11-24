@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A lazy {@link ModuleActivatorHolder} that provides activators from a
@@ -34,9 +33,7 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
     private final Supplier<Option<ModuleActivatorContext>> contextProvider;
 
-    protected ContextModuleActivatorHolder(
-        Supplier<Option<ModuleActivatorContext>> contextProvider
-    ) {
+    protected ContextModuleActivatorHolder(Supplier<Option<ModuleActivatorContext>> contextProvider) {
         this.contextProvider = contextProvider;
     }
 
@@ -47,9 +44,7 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
      *
      * @return the created module activator holder
      */
-    public static ContextModuleActivatorHolder of(
-        Supplier<Option<ModuleActivatorContext>> contextProvider
-    ) {
+    public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
         return new ContextModuleActivatorHolder(contextProvider);
     }
 
@@ -66,15 +61,15 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
     @Override
     public Set<Annotation> activators() {
-        return this.contextProvider.get()
-            .map(ModuleActivatorContext::activators)
-            .orElseGet(Set::of);
+        return this.contextProvider
+                .get()
+                .map(ModuleActivatorContext::activators)
+                .orElseGet(Set::of);
     }
 
     @Override
     public <A> Option<A> activator(Class<A> activator) {
-        return this.contextProvider.get()
-            .map(context -> context.activator(activator));
+        return this.contextProvider.get().map(context -> context.activator(activator));
     }
 
     @Override

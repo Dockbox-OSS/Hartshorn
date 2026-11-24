@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.support;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -33,15 +34,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-
 public class CaptureModule implements StatementModule<CaptureModule.CaptureStatement> {
 
     public static final TokenType CAPTURE = SimpleTokenType.builder()
-        .keyword(true)
-        .standaloneStatement(true)
-        .tokenName("capture")
-        .build();
+            .keyword(true)
+            .standaloneStatement(true)
+            .tokenName("capture")
+            .build();
 
     private Object capturedValue;
 
@@ -49,13 +48,12 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
     public StatementParser<CaptureStatement> parser() {
         return new StatementParser<>() {
             @Override
-            public Option<? extends CaptureStatement> parse(
-                TokenParser parser,
-                TokenStepValidator validator
-            ) throws ScriptEvaluationError {
+            public Option<? extends CaptureStatement> parse(TokenParser parser, TokenStepValidator validator)
+                    throws ScriptEvaluationError {
                 if (parser.match(CAPTURE)) {
                     Token capture = parser.previous();
-                    TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
+                    TokenTypePair parameters =
+                            parser.tokenRegistry().tokenPairs().parameters();
                     validator.expectAfter(parameters.open(), "capture");
                     Expression expression = parser.expression();
                     validator.expectAfter(parameters.close(), "capture");
@@ -106,11 +104,7 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
 
         private final Expression expression;
 
-        public CaptureStatement(
-            ASTNode at,
-            StatementModule<CaptureStatement> module,
-            Expression expression
-        ) {
+        public CaptureStatement(ASTNode at, StatementModule<CaptureStatement> module, Expression expression) {
             super(at, module);
             this.expression = expression;
         }

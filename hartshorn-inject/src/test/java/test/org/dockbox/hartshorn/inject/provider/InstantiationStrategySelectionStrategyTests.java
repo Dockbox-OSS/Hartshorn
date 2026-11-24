@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.annotations.Priority;
@@ -37,10 +40,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class InstantiationStrategySelectionStrategyTests {
 
     private static final String PRIORITY_DEFAULT_VALUE = "default";
@@ -50,17 +49,15 @@ public class InstantiationStrategySelectionStrategyTests {
 
     public static Stream<Arguments> strategies() {
         return Stream.of(
-            Arguments.of(new MaximumPriorityProviderSelectionStrategy(0)),
-            Arguments.of(new ExactPriorityProviderSelectionStrategy(0)),
-            Arguments.of(new MinimumPriorityProviderSelectionStrategy(0)),
-            Arguments.of(new HighestPriorityProviderSelectionStrategy())
-        );
+                Arguments.of(new MaximumPriorityProviderSelectionStrategy(0)),
+                Arguments.of(new ExactPriorityProviderSelectionStrategy(0)),
+                Arguments.of(new MinimumPriorityProviderSelectionStrategy(0)),
+                Arguments.of(new HighestPriorityProviderSelectionStrategy()));
     }
 
     private BindingHierarchy<?> createHierarchy() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
-        hierarchy.add(Priority.DEFAULT_PRIORITY,
-            new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
+        hierarchy.add(Priority.DEFAULT_PRIORITY, new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
         hierarchy.add(0, new SingletonInstantiationStrategy<>(PRIORITY_ZERO_VALUE));
         hierarchy.add(1, new SingletonInstantiationStrategy<>(PRIORITY_ONE_VALUE));
         hierarchy.add(2, new SingletonInstantiationStrategy<>(PRIORITY_TWO_VALUE));
@@ -124,22 +121,19 @@ public class InstantiationStrategySelectionStrategyTests {
         this.assertValueWithStrategy(PRIORITY_TWO_VALUE, strategy);
     }
 
-    protected void assertValueWithStrategy(String expected, ProviderSelectionStrategy strategy) throws ApplicationException {
+    protected void assertValueWithStrategy(String expected, ProviderSelectionStrategy strategy)
+            throws ApplicationException {
         BindingHierarchy<?> hierarchy = this.createHierarchy();
 
         InstantiationStrategy<?> provider = strategy.selectProvider(hierarchy);
         if (expected == null) {
             assertThat(provider).isNull();
-        }
-        else {
+        } else {
             assertThat(provider).isNotNull();
 
             // Don't need to provide application, all bindings are contextless singletons
-            Option<? extends ObjectContainer<?>> value = provider.provide(
-                    null,
-                    ComponentRequestContext.createForComponent(),
-                    null
-            );
+            Option<? extends ObjectContainer<?>> value =
+                    provider.provide(null, ComponentRequestContext.createForComponent(), null);
             assertThat(value.present()).isTrue();
 
             ObjectContainer<?> container = value.get();

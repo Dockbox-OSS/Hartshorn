@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class ImmutableContainableGraphNode<T>
-    extends ImmutableGraphNode<T>
-    implements ContainableGraphNode<T> {
+public class ImmutableContainableGraphNode<T> extends ImmutableGraphNode<T> implements ContainableGraphNode<T> {
 
     private final Set<GraphNode<T>> parents;
 
@@ -38,8 +36,7 @@ public class ImmutableContainableGraphNode<T>
         super(node);
         if (node instanceof ContainableGraphNode<T> containable) {
             this.parents = Set.copyOf(containable.parents());
-        }
-        else {
+        } else {
             this.parents = Set.of();
         }
     }

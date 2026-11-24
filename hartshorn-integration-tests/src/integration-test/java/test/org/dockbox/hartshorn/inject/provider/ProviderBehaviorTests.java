@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -30,11 +34,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.org.dockbox.hartshorn.inject.populate.PopulatedType;
-
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 class ProviderBehaviorTests {
@@ -124,8 +123,7 @@ class ProviderBehaviorTests {
         assertThatExceptionOfType(ComponentResolutionException.class)
                 .isThrownBy(() -> this.applicationContext.get(SampleInterface.class));
 
-        SampleInterface provided =
-            this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
+        SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
         assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -153,34 +151,30 @@ class ProviderBehaviorTests {
 
     @Test
     void failureInComponentConstructorYieldsInitializationException() {
-        ComponentResolutionException exception = assertThatExceptionOfType(
-                ComponentResolutionException.class
-        ).isThrownBy(() -> this.applicationContext.get(ErrorInConstructorObject.class)).actual();
+        ComponentResolutionException exception = assertThatExceptionOfType(ComponentResolutionException.class)
+                .isThrownBy(() -> this.applicationContext.get(ErrorInConstructorObject.class))
+                .actual();
         Throwable cause = exception.getCause();
         assertThat(cause).isInstanceOf(ApplicationException.class);
 
         ApplicationException applicationException = (ApplicationException) cause;
-        assertThat(applicationException.getMessage()).isEqualTo(
-                "Failed to create instance of type "
-                        + ErrorInConstructorObject.class.getName()
-        );
+        assertThat(applicationException.getMessage())
+                .isEqualTo("Failed to create instance of type " + ErrorInConstructorObject.class.getName());
     }
 
     @Test
     void failingConstructorIsRethrown() {
-        ComponentResolutionException exception = assertThatExceptionOfType(
-                ComponentResolutionException.class
-        ).isThrownBy(() -> this.applicationContext.get(TypeWithFailingConstructor.class)).actual();
+        ComponentResolutionException exception = assertThatExceptionOfType(ComponentResolutionException.class)
+                .isThrownBy(() -> this.applicationContext.get(TypeWithFailingConstructor.class))
+                .actual();
         Throwable cause = exception.getCause();
         assertThat(cause).isInstanceOf(ApplicationException.class);
 
         ApplicationException applicationException = (ApplicationException) cause;
         assertThat(applicationException.getCause()).isInstanceOf(IllegalStateException.class);
 
-        IllegalStateException illegalStateException = (IllegalStateException) applicationException
-                .getCause();
-        assertThat(illegalStateException.getMessage())
-                .isEqualTo(TypeWithFailingConstructor.ERROR_MESSAGE);
+        IllegalStateException illegalStateException = (IllegalStateException) applicationException.getCause();
+        assertThat(illegalStateException.getMessage()).isEqualTo(TypeWithFailingConstructor.ERROR_MESSAGE);
     }
 
     @Test
@@ -194,28 +188,21 @@ class ProviderBehaviorTests {
     @ParameterizedTest
     @MethodSource("providers")
     @TestComponents({SampleFieldImplementation.class, SampleProviderConfiguration.class})
-    void providersCanApply(
-        String meta,
-        String name,
-        boolean field,
-        String fieldMeta,
-        boolean singleton
-    ) {
+    void providersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
         if (field) {
             if (fieldMeta == null) {
                 this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);
-            }
-            else {
-                this.applicationContext.bind(ComponentKey.of(SampleField.class, fieldMeta))
-                    .to(SampleFieldImplementation.class);
+            } else {
+                this.applicationContext
+                        .bind(ComponentKey.of(SampleField.class, fieldMeta))
+                        .to(SampleFieldImplementation.class);
             }
         }
 
         ProvidedInterface provided;
         if (meta == null) {
             provided = this.applicationContext.get(ProvidedInterface.class);
-        }
-        else {
+        } else {
             provided = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
         }
         assertThat(provided).isNotNull();
@@ -228,24 +215,19 @@ class ProviderBehaviorTests {
             ProvidedInterface second;
             if (meta == null) {
                 second = this.applicationContext.get(ProvidedInterface.class);
+            } else {
+                second = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
             }
-            else {
-                second =
-                    this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
-            }
-            assertThat(second)
-                    .isNotNull()
-                    .isSameAs(provided);
+            assertThat(second).isNotNull().isSameAs(provided);
         }
     }
 
     private static Stream<Arguments> providers() {
         return Stream.of(
-            Arguments.of(null, "Provision", false, null, false),
-            Arguments.of("named", "NamedProvision", false, null, false),
-            Arguments.of("parameter", "ParameterProvision", true, null, false),
-            Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
-            Arguments.of("singleton", "SingletonProvision", false, null, true)
-        );
+                Arguments.of(null, "Provision", false, null, false),
+                Arguments.of("named", "NamedProvision", false, null, false),
+                Arguments.of("parameter", "ParameterProvision", true, null, false),
+                Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
+                Arguments.of("singleton", "SingletonProvision", false, null, true));
     }
 }

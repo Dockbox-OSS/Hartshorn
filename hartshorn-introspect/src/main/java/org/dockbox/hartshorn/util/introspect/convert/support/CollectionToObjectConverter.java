@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
@@ -24,15 +26,12 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
  * Converts any {@link Collection} to an {@link Object} by returning the first and only element of
  * the collection. The collection must have exactly one element.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CollectionToObjectConverter implements GenericConverter, ConditionalConverter {
@@ -45,16 +44,13 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     @Override
     public boolean canConvert(Object source, Class<?> targetType) {
         return source instanceof Collection<?> collection
-            && collection.size() == 1
-            && CollectionUtilities.first(collection).getClass().isAssignableFrom(targetType);
+                && collection.size() == 1
+                && CollectionUtilities.first(collection).getClass().isAssignableFrom(targetType);
     }
 
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         assert source != null;
         Collection<?> collection = (Collection<?>) source;
         return CollectionUtilities.first(collection);

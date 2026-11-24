@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
@@ -27,17 +29,15 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class RangeExpressionTests {
 
     @Test
     void rangeYieldsLeftRightInclusiveArray(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "1..5")
-            .expressionParser(new RangeExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .expressionParser(new RangeExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Array array = assertThat(value)
@@ -49,9 +49,9 @@ class RangeExpressionTests {
     @Test
     void rangeWithSameValueYieldsSingleElementArray(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "2..2")
-            .expressionParser(new RangeExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .build();
+                .expressionParser(new RangeExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Array array = assertThat(value)
@@ -63,12 +63,12 @@ class RangeExpressionTests {
     @Test
     void rangeSupportsIdentifierValues(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "min..max")
-            .expressionParser(new RangeExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .defineLocal("min", 1)
-            .defineLocal("max", 5)
-            .build();
+                .expressionParser(new RangeExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .defineLocal("min", 1)
+                .defineLocal("max", 5)
+                .build();
 
         Object value = helper.interpretValue();
         Array array = assertThat(value)

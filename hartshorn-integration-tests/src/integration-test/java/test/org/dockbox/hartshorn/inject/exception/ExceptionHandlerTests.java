@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.exception;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -24,12 +26,9 @@ import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(
-    includeBasePackages = false,
-    customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class
-)
+        includeBasePackages = false,
+        customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class)
 class ExceptionHandlerTests {
 
     public static class ExceptionHandlerTestsCustomizer implements TestApplicationCustomizer {
@@ -42,6 +41,7 @@ class ExceptionHandlerTests {
 
     @Inject
     private ApplicationContext applicationContext;
+
     private static CachingExceptionHandler HANDLE;
 
     @Test

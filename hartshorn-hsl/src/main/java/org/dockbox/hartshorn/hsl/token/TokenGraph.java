@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import java.util.Collection;
+import java.util.Objects;
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraph;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
-
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Represents a graph of tokens, where each node is a character in a token and each edge is a
@@ -77,11 +76,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         return graph;
     }
 
-    private static void visitTokenCharacters(
-        TokenType tokenType,
-        TokenCharacter[] characters,
-        TokenGraph graph
-    ) {
+    private static void visitTokenCharacters(TokenType tokenType, TokenCharacter[] characters, TokenGraph graph) {
         MutableGraphNode<TokenNode> previous = null;
         for (int i = 0; i < characters.length; i++) {
             TokenCharacter character = characters[i];
@@ -92,14 +87,15 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
     }
 
     private static MutableGraphNode<TokenNode> visitToken(
-        TokenGraph graph, MutableGraphNode<TokenNode> node,
-        TokenCharacter character, TokenType nodeType, MutableGraphNode<TokenNode> previous
-    ) {
+            TokenGraph graph,
+            MutableGraphNode<TokenNode> node,
+            TokenCharacter character,
+            TokenType nodeType,
+            MutableGraphNode<TokenNode> previous) {
         if (node == null) {
             node = new SimpleGraphNode<>(new TokenNode(character, nodeType));
             graph.addRoot(node);
-        }
-        else if (nodeType != null && node.value().character == character) {
+        } else if (nodeType != null && node.value().character == character) {
             node.value().tokenType(nodeType);
         }
         previous = finalizeNode(previous, node);
@@ -107,26 +103,17 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
     }
 
     private static MutableGraphNode<TokenNode> findExistingNode(
-        MutableGraphNode<TokenNode> previous, TokenGraph graph,
-        TokenCharacter character
-    ) {
-        Collection<GraphNode<TokenNode>> candidates =
-            previous != null ? previous.children() : graph.roots();
+            MutableGraphNode<TokenNode> previous, TokenGraph graph, TokenCharacter character) {
+        Collection<GraphNode<TokenNode>> candidates = previous != null ? previous.children() : graph.roots();
         return getExisting(candidates, character);
     }
 
-    private static TokenType determineNodeType(
-        TokenType tokenType,
-        int i,
-        TokenCharacter[] characters
-    ) {
+    private static TokenType determineNodeType(TokenType tokenType, int i, TokenCharacter[] characters) {
         return i == characters.length - 1 ? tokenType : null;
     }
 
     private static MutableGraphNode<TokenNode> finalizeNode(
-        MutableGraphNode<TokenNode> previous,
-        MutableGraphNode<TokenNode> node
-    ) {
+            MutableGraphNode<TokenNode> previous, MutableGraphNode<TokenNode> node) {
         if (previous != null) {
             previous.addChild(node);
         }
@@ -135,13 +122,11 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
     }
 
     private static MutableGraphNode<TokenNode> getExisting(
-        Collection<GraphNode<TokenNode>> candidates,
-        TokenCharacter character
-    ) {
+            Collection<GraphNode<TokenNode>> candidates, TokenCharacter character) {
         return (MutableGraphNode<TokenNode>) candidates.stream()
-            .filter(node -> node.value().character().equals(character))
-            .findFirst()
-            .orElse(null);
+                .filter(node -> node.value().character().equals(character))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -212,8 +197,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
                 return false;
             }
             var that = (TokenNode) obj;
-            return Objects.equals(this.character, that.character) &&
-                Objects.equals(this.tokenType, that.tokenType);
+            return Objects.equals(this.character, that.character) && Objects.equals(this.tokenType, that.tokenType);
         }
 
         @Override
@@ -224,9 +208,9 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         @Override
         public String toString() {
             return ObjectDescriber.of(this)
-                .field("character", this.character)
-                .field("tokenType", this.tokenType)
-                .describe();
+                    .field("character", this.character)
+                    .field("tokenType", this.tokenType)
+                    .describe();
         }
     }
 }

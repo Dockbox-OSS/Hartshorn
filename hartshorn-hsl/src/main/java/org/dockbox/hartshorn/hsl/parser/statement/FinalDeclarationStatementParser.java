@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
@@ -34,8 +35,6 @@ import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Set;
-
 /**
  * A parser for {@link FinalizableStatement} nodes, supporting final declarations for functions,
  * variables, and classes.
@@ -47,10 +46,7 @@ import java.util.Set;
 public class FinalDeclarationStatementParser implements StatementParser<FinalizableStatement> {
 
     @Override
-    public Option<? extends FinalizableStatement> parse(
-        TokenParser parser,
-        TokenStepValidator validator
-    ) {
+    public Option<? extends FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(MemberModifierTokenType.FINAL)) {
 
             Token current = parser.peek();
@@ -61,49 +57,38 @@ public class FinalDeclarationStatementParser implements StatementParser<Finaliza
                         parser.advance();
                         if (parser.check(FunctionTokenType.FUNCTION)) {
                             yield lookupFinalizableFunction(parser, validator, parser.peek());
-                        }
-                        else {
+                        } else {
                             throw ScriptEvaluationError.builder(Phase.PARSING)
-                                .message(DiagnosticMessage.UNEXPECTED_TOKEN, current.lexeme())
-                                .at(current)
-                                .build();
+                                    .message(DiagnosticMessage.UNEXPECTED_TOKEN, current.lexeme())
+                                    .at(current)
+                                    .build();
                         }
                     }
                     case FUNCTION -> lookupFinalizableFunction(parser, validator, current);
-                    case NATIVE -> delegateParseStatement(parser,
-                        validator,
-                        NativeFunctionStatement.class,
-                        "native function",
-                        current);
-                    default -> throw ScriptEvaluationError.builder(Phase.PARSING)
-                        .message(DiagnosticMessage.ILLEGAL_USE_OF_X,
-                            MemberModifierTokenType.FINAL.representation(),
-                            current.type())
+                    case NATIVE ->
+                        delegateParseStatement(
+                                parser, validator, NativeFunctionStatement.class, "native function", current);
+                    default ->
+                        throw ScriptEvaluationError.builder(Phase.PARSING)
+                                .message(
+                                        DiagnosticMessage.ILLEGAL_USE_OF_X,
+                                        MemberModifierTokenType.FINAL.representation(),
+                                        current.type())
+                                .at(current)
+                                .build();
+                };
+            } else if (current.type() == VariableTokenType.VAR) {
+                finalizable = delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
+            } else if (current.type() == ClassTokenType.CLASS) {
+                finalizable = delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
+            } else {
+                throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(
+                                DiagnosticMessage.ILLEGAL_USE_OF_X,
+                                MemberModifierTokenType.FINAL.representation(),
+                                current.type())
                         .at(current)
                         .build();
-                };
-            }
-            else if (current.type() == VariableTokenType.VAR) {
-                finalizable = delegateParseStatement(parser,
-                    validator,
-                    VariableStatement.class,
-                    "variable",
-                    current);
-            }
-            else if (current.type() == ClassTokenType.CLASS) {
-                finalizable = delegateParseStatement(parser,
-                    validator,
-                    ClassStatement.class,
-                    "class",
-                    current);
-            }
-            else {
-                throw ScriptEvaluationError.builder(Phase.PARSING)
-                    .message(DiagnosticMessage.ILLEGAL_USE_OF_X,
-                        MemberModifierTokenType.FINAL.representation(),
-                        current.type())
-                    .at(current)
-                    .build();
             }
             return Option.of(finalizable).peek(FinalizableStatement::makeFinal);
         }
@@ -112,32 +97,27 @@ public class FinalDeclarationStatementParser implements StatementParser<Finaliza
 
     @NonNull
     private static FinalizableStatement delegateParseStatement(
-        TokenParser parser,
-        TokenStepValidator validator,
-        Class<? extends FinalizableStatement> statement,
-        String statementType,
-        Token current
-    ) {
+            TokenParser parser,
+            TokenStepValidator validator,
+            Class<? extends FinalizableStatement> statement,
+            String statementType,
+            Token current) {
         return parser.firstCompatibleParser(statement)
-            .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-            .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.FAILED_TO_PARSE_X_STATEMENT, statementType)
-                .at(current)
-                .build());
+                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
+                .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.FAILED_TO_PARSE_X_STATEMENT, statementType)
+                        .at(current)
+                        .build());
     }
 
     @NonNull
-    private static Function lookupFinalizableFunction(
-        TokenParser parser,
-        TokenStepValidator validator,
-        Token current
-    ) {
+    private static Function lookupFinalizableFunction(TokenParser parser, TokenStepValidator validator, Token current) {
         return parser.firstCompatibleParser(Function.class)
-            .flatMap(functionParser -> functionParser.parse(parser, validator))
-            .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
-                .message(DiagnosticMessage.FAILED_TO_PARSE_X_STATEMENT, "function")
-                .at(current)
-                .build());
+                .flatMap(functionParser -> functionParser.parse(parser, validator))
+                .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.FAILED_TO_PARSE_X_STATEMENT, "function")
+                        .at(current)
+                        .build());
     }
 
     @Override

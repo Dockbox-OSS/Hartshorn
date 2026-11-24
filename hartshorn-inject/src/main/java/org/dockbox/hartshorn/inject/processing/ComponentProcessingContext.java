@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,12 +43,11 @@ public class ComponentProcessingContext<T> extends DataContext {
     protected ObjectContainer<T> container;
 
     public ComponentProcessingContext(
-        InjectionCapableApplication application,
-        ComponentRequestContext requestContext,
-        ComponentKey<T> key,
-        ObjectContainer<T> container,
-        boolean permitsProxying
-    ) {
+            InjectionCapableApplication application,
+            ComponentRequestContext requestContext,
+            ComponentKey<T> key,
+            ObjectContainer<T> container,
+            boolean permitsProxying) {
         this.application = application;
         this.requestContext = requestContext;
         this.key = key;

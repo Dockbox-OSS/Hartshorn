@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -30,9 +32,6 @@ import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
  * {@link org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime} to wrap the script body in a
@@ -45,8 +44,7 @@ import java.util.List;
  */
 public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
-    public static final String VALIDATION_ID =
-        ScriptContext.createSafeRuntimeVariable("validation");
+    public static final String VALIDATION_ID = ScriptContext.createSafeRuntimeVariable("validation");
 
     public ExpressionCustomizer() {
         super(Phase.SEMANTIC_ANALYSIS);
@@ -64,13 +62,14 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     private void verifyIsExpression(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ExpressionStatement
-            || (lastStatement instanceof ReturnStatement returnStatement
-            && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
+                || (lastStatement instanceof ReturnStatement returnStatement
+                        && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
             throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                .at(lastStatement)
-                .message(DiagnosticMessage.INVALID_EXPRESSION,
-                    lastStatement.getClass().getSimpleName())
-                .build();
+                    .at(lastStatement)
+                    .message(
+                            DiagnosticMessage.INVALID_EXPRESSION,
+                            lastStatement.getClass().getSimpleName())
+                    .build();
         }
     }
 
@@ -79,13 +78,12 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
         if (lastStatement instanceof ExpressionStatement expressionStatement) {
             Token returnToken = Token.of(ControlTokenType.YIELD)
-                .lexeme(VALIDATION_ID)
-                .virtual()
-                .build();
+                    .lexeme(VALIDATION_ID)
+                    .virtual()
+                    .build();
 
-            ReturnStatement returnStatement = new ReturnStatement(returnToken,
-                expressionStatement.expression(),
-                ReturnStatement.ReturnType.YIELD);
+            ReturnStatement returnStatement = new ReturnStatement(
+                    returnToken, expressionStatement.expression(), ReturnStatement.ReturnType.YIELD);
             statements.set(statements.size() - 1, returnStatement);
         }
 

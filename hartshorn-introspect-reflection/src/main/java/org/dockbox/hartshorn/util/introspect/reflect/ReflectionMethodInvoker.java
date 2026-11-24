@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * A {@link MethodInvoker} that uses reflection to invoke methods. This requires the method to be
@@ -49,8 +48,7 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
             //noinspection unchecked
             T checkedResult = primitive ? (T) result : method.returnType().cast(result);
             return Option.of(checkedResult);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }

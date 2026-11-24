@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
  * as building blocks for more complex tokens.
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public enum BaseTokenType implements EnumTokenType {
@@ -66,10 +66,10 @@ public enum BaseTokenType implements EnumTokenType {
 
     BaseTokenType(TokenCharacter character) {
         this.metaData = TokenMetaData.builder(this)
-            .representation(String.valueOf(character.character()))
-            .defaultLexeme(String.valueOf(character.character()))
-            .characters(character)
-            .build();
+                .representation(String.valueOf(character.character()))
+                .defaultLexeme(String.valueOf(character.character()))
+                .characters(character)
+                .build();
     }
 
     @Override

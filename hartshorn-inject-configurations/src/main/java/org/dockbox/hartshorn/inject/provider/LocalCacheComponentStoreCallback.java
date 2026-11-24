@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,7 @@ public class LocalCacheComponentStoreCallback implements ComponentStoreCallback 
 
     @Override
     public <T> void store(ComponentKey<T> key, ObjectContainer<T> container) {
-        this.actOnSingletonOnly(container,
-            () -> this.singletonCache.put(key, container.instance()));
+        this.actOnSingletonOnly(container, () -> this.singletonCache.put(key, container.instance()));
     }
 
     @Override
@@ -66,8 +65,7 @@ public class LocalCacheComponentStoreCallback implements ComponentStoreCallback 
             case PROTOTYPE -> {
                 // Do nothing, as prototypes are not stored in the cache
             }
-            default -> throw new IllegalModificationException("Unknown lifecycle type "
-                + container.lifecycleType());
+            default -> throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
         }
     }
 }

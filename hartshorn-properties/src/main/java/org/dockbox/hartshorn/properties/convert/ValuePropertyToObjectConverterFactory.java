@@ -28,11 +28,11 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * converted to the target type.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ValuePropertyToObjectConverterFactory
-    implements ConverterFactory<ValueProperty, Object>, ConditionalConverter {
+        implements ConverterFactory<ValueProperty, Object>, ConditionalConverter {
 
     private final ConversionService conversionService;
 
@@ -45,8 +45,8 @@ public class ValuePropertyToObjectConverterFactory
         return (property, contexts) -> {
             assert property != null;
             return property.value()
-                .map(value -> this.conversionService.convert(value, targetType, contexts))
-                .orNull();
+                    .map(value -> this.conversionService.convert(value, targetType, contexts))
+                    .orNull();
         };
     }
 

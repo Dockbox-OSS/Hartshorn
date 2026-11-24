@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.lang.reflect.Array;
+import java.util.Set;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Array;
-import java.util.Set;
 
 /**
  * Converts any array to an {@link Object} by returning the first and only element of the array. The
@@ -55,10 +54,7 @@ public class ArrayToObjectConverter implements GenericConverter, ConditionalConv
 
     @Override
     public @Nullable <I, O> Object convert(
-        @Nullable Object source,
-        @NonNull Class<I> sourceType,
-        @NonNull Class<O> targetType,
-        Context... contexts) {
+            @Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType, Context... contexts) {
         if (sourceType.isArray()) {
             if (Array.getLength(source) != 1) {
                 return null;
@@ -67,11 +63,9 @@ public class ArrayToObjectConverter implements GenericConverter, ConditionalConv
             Object firstElement = Array.get(source, 0);
             if (firstElement == null) {
                 return null;
-            }
-            else if (targetType.isAssignableFrom(firstElement.getClass())) {
+            } else if (targetType.isAssignableFrom(firstElement.getClass())) {
                 return firstElement;
-            }
-            else {
+            } else {
                 return this.conversionService.convert(firstElement, targetType);
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.util.Arrays;
 import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
-import java.util.Arrays;
 
 /**
  * Utility interface to provide common methods for all proxies. This may be implemented by any
@@ -43,9 +42,9 @@ public interface ProxyObject<T> {
      */
     default boolean isEqualsMethod(Invokable invokable) {
         return "equals".equals(invokable.name())
-            && invokable.returnType().equals(boolean.class)
-            && invokable.parameterTypes().length == 1
-            && invokable.parameterTypes()[0].equals(Object.class);
+                && invokable.returnType().equals(boolean.class)
+                && invokable.parameterTypes().length == 1
+                && invokable.parameterTypes()[0].equals(Object.class);
     }
 
     /**
@@ -57,8 +56,8 @@ public interface ProxyObject<T> {
      */
     default boolean isToStringMethod(Invokable invokable) {
         return "toString".equals(invokable.name())
-            && invokable.parameterTypes().length == 0
-            && invokable.returnType().equals(String.class);
+                && invokable.parameterTypes().length == 0
+                && invokable.returnType().equals(String.class);
     }
 
     /**
@@ -70,8 +69,8 @@ public interface ProxyObject<T> {
      */
     default boolean isHashCodeMethod(Invokable invokable) {
         return "hashCode".equals(invokable.name())
-            && invokable.parameterTypes().length == 0
-            && invokable.returnType().equals(int.class);
+                && invokable.parameterTypes().length == 0
+                && invokable.returnType().equals(int.class);
     }
 
     /**
@@ -85,16 +84,16 @@ public interface ProxyObject<T> {
     default boolean proxyEquals(Object obj) {
         if (obj == null) {
             return false;
-        }
-        else if (this.manager().proxy() == obj) {
+        } else if (this.manager().proxy() == obj) {
             return true;
-        }
-        else {
+        } else {
             return this.manager().delegate().test(delegate -> {
                 if (this.manager().orchestrator().isProxy(obj)) {
-                    return this.manager().orchestrator().manager(obj)
-                        .flatMap(ProxyManager::delegate)
-                        .test(delegate::equals);
+                    return this.manager()
+                            .orchestrator()
+                            .manager(obj)
+                            .flatMap(ProxyManager::delegate)
+                            .test(delegate::equals);
                 }
                 return delegate.equals(obj);
             });
@@ -116,13 +115,13 @@ public interface ProxyObject<T> {
         ProxyManager<T> manager = this.manager();
         String canonicalName = manager.targetClass().getCanonicalName();
         String[] interfaces = Arrays.stream(self.getClass().getInterfaces())
-            .map(Class::getCanonicalName)
-            .toArray(String[]::new);
+                .map(Class::getCanonicalName)
+                .toArray(String[]::new);
 
         return ObjectDescriber.of(self)
-            .field("targetClass", canonicalName)
-            .field("interfaces", interfaces)
-            .describe();
+                .field("targetClass", canonicalName)
+                .field("interfaces", interfaces)
+                .describe();
     }
 
     /**

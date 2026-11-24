@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class NumberCharBitwiseAdditionStrategy implements BitwiseAdditionStrateg
     @Override
     public boolean supports(Object left, Object right) {
         return (left instanceof Number && right instanceof Character)
-            || (left instanceof Character && right instanceof Number);
+                || (left instanceof Character && right instanceof Number);
     }
 
     @Override

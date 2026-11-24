@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Set;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
@@ -32,25 +35,19 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class NativeFunctionStatementInterpreterTests {
 
     @Test
-    void nativeFunctionImportsIndividualMethodFromModule(
-        @Inject ApplicationContext applicationContext
-    ) {
+    void nativeFunctionImportsIndividualMethodFromModule(@Inject ApplicationContext applicationContext) {
         HSLTestHelper helper = HSLTestHelper.of(applicationContext, "native function math:log(a)")
-            .statementParser(new NativeFunctionStatementParser())
-            .statementParser(new BlockStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new LiteralExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
-            .build();
+                .statementParser(new NativeFunctionStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .module("math", new UtilityClassNativeModule(Math.class, applicationContext))
+                .build();
 
         helper.interpret();
 
@@ -68,11 +65,8 @@ class NativeFunctionStatementInterpreterTests {
     }
 
     @Test
-    void nativeFunctionImportsAmbiguousOverloadMethodsFromModule(
-        @Inject ApplicationContext applicationContext
-    ) {
-        HSLTestHelper helper =
-            HSLTestHelper.of(applicationContext, "native function math:max(a, b)")
+    void nativeFunctionImportsAmbiguousOverloadMethodsFromModule(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "native function math:max(a, b)")
                 .statementParser(new NativeFunctionStatementParser())
                 .statementParser(new BlockStatementParser())
                 .expressionParser(new CallExpressionParser())

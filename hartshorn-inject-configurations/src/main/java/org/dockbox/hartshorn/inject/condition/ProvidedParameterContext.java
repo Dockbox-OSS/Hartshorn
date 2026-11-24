@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -65,20 +64,16 @@ public final class ProvidedParameterContext extends DefaultFallbackCompatibleCon
      *
      * @throws IllegalArgumentException if the size of the given lists is not equal
      */
-    public static ProvidedParameterContext of(
-        List<ParameterView<?>> parameters,
-        List<Object> arguments
-    ) {
+    public static ProvidedParameterContext of(List<ParameterView<?>> parameters, List<Object> arguments) {
         if (parameters.size() != arguments.size()) {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
-        Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
-            .collect(
-                HashMap::new,
-                (parameterViews, index) -> parameterViews.put(parameters.get(index),
-                    arguments.get(index)),
-                Map::putAll
-            );
+        Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size())
+                .boxed()
+                .collect(
+                        HashMap::new,
+                        (parameterViews, index) -> parameterViews.put(parameters.get(index), arguments.get(index)),
+                        Map::putAll);
         return new ProvidedParameterContext(argumentMap);
     }
 
@@ -96,10 +91,7 @@ public final class ProvidedParameterContext extends DefaultFallbackCompatibleCon
      * @throws IllegalArgumentException if the size of the given list is not equal to the number of
      * parameters of the executable
      */
-    public static ProvidedParameterContext of(
-        ExecutableElementView<?> executable,
-        List<Object> arguments
-    ) {
+    public static ProvidedParameterContext of(ExecutableElementView<?> executable, List<Object> arguments) {
         return of(executable.parameters().all(), arguments);
     }
 

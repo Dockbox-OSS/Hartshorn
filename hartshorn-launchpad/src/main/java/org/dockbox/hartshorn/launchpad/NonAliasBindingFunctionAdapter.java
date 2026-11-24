@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,7 @@ public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T
     private AliasBindingFunction<T> currentOrNextAdapter(BindingFunction<T> function) {
         if (function == this.delegate) {
             return this;
-        }
-        else {
+        } else {
             return new NonAliasBindingFunctionAdapter<>(function);
         }
     }
@@ -81,8 +80,7 @@ public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T
 
     @Override
     public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
-        return this.currentOrNextAdapter(this.delegate.processAfterInitialization(
-            processAfterInitialization));
+        return this.currentOrNextAdapter(this.delegate.processAfterInitialization(processAfterInitialization));
     }
 
     @Override

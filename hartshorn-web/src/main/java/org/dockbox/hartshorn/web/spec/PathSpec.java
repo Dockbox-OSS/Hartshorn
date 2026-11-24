@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.web.spec;
 
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * Specification for a path pattern, consisting of multiple {@link PathPartSpec} instances. This
@@ -42,10 +41,7 @@ public final class PathSpec {
     private final char pathSeparator;
     private final String pathSeparatorPattern;
 
-    public PathSpec(
-            List<PathPartSpec> parts,
-            char pathSeparator
-    ) {
+    public PathSpec(List<PathPartSpec> parts, char pathSeparator) {
         this.parts = parts;
         this.pattern = parts.stream()
                 .map(PathPartSpec::stringValue)
@@ -121,10 +117,7 @@ public final class PathSpec {
      * otherwise
      */
     public boolean matches(String path, Map<String, String> pathParameters) {
-        String[] parts = StringUtilities.trimWith(
-                this.pathSeparator,
-                path
-        ).split(this.pathSeparatorPattern);
+        String[] parts = StringUtilities.trimWith(this.pathSeparator, path).split(this.pathSeparatorPattern);
         if (parts.length != this.parts.size()) {
             return false;
         }
@@ -153,15 +146,10 @@ public final class PathSpec {
      */
     public PathSpec combineWith(PathSpec other) {
         if (other.pathSeparator != this.pathSeparator) {
-            throw new IllegalArgumentException(
-                    "Cannot merge PathSpecs with different path separators: %s and %s"
-                            .formatted(this.pathSeparator, other.pathSeparator)
-            );
+            throw new IllegalArgumentException("Cannot merge PathSpecs with different path separators: %s and %s"
+                    .formatted(this.pathSeparator, other.pathSeparator));
         }
-        List<PathPartSpec> parts = CollectionUtilities.mergeList(
-                this.parts(),
-                other.parts()
-        );
+        List<PathPartSpec> parts = CollectionUtilities.mergeList(this.parts(), other.parts());
         return new PathSpec(parts, this.pathSeparator);
     }
 
@@ -207,5 +195,4 @@ public final class PathSpec {
                 .field("parts", this.parts)
                 .describe();
     }
-
 }

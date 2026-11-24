@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject.graph.strategy;
 
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A simple implementation of the {@link DependencyContextResolverRegistry} interface, which allows
@@ -35,13 +34,13 @@ import java.util.Set;
  * @author Guus Lieben
  */
 public class SimpleDependencyContextResolverRegistry extends DefaultContext
-    implements DependencyContextResolverRegistry {
+        implements DependencyContextResolverRegistry {
 
     private final MultiMap<BindingStrategyPriority, DependencyContextResolver> strategies =
-        MultiMap.<BindingStrategyPriority, DependencyContextResolver>builder()
-            .mapSupplier(() -> new EnumMap<>(BindingStrategyPriority.class))
-            .collectionSupplier(HashSet::new)
-            .build();
+            MultiMap.<BindingStrategyPriority, DependencyContextResolver>builder()
+                    .mapSupplier(() -> new EnumMap<>(BindingStrategyPriority.class))
+                    .collectionSupplier(HashSet::new)
+                    .build();
 
     @Override
     public Set<DependencyContextResolver> strategies() {
@@ -77,12 +76,9 @@ public class SimpleDependencyContextResolverRegistry extends DefaultContext
                 }
             }
             if (matchingStrategies.size() > 1) {
-                throw new IllegalStateException("Multiple strategies found for "
-                    + context
-                    + " at priority "
-                    + priority);
-            }
-            else if (!matchingStrategies.isEmpty()) {
+                throw new IllegalStateException(
+                        "Multiple strategies found for " + context + " at priority " + priority);
+            } else if (!matchingStrategies.isEmpty()) {
                 return Option.of(matchingStrategies.getFirst());
             }
         }

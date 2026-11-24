@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
-import org.dockbox.hartshorn.hsl.token.TokenCharacter;
-
 import java.util.Arrays;
 import java.util.Objects;
+import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
 /**
  * Represents a simple token type, which is a basic implementation of the {@link TokenType}
@@ -39,21 +38,21 @@ import java.util.Objects;
  * @param characters the characters that the token type can be represented with
  *
  * @see TokenType
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public record SimpleTokenType(
-    String tokenName,
-    String representation,
-    boolean keyword,
-    boolean standaloneStatement,
-    boolean reserved,
-    TokenType assignsWith,
-    String defaultLexeme,
-    TokenCharacter[] characters
-) implements TokenType {
+        String tokenName,
+        String representation,
+        boolean keyword,
+        boolean standaloneStatement,
+        boolean reserved,
+        TokenType assignsWith,
+        String defaultLexeme,
+        TokenCharacter[] characters)
+        implements TokenType {
 
     @Override
     public String toString() {
@@ -66,13 +65,13 @@ public record SimpleTokenType(
         if (o == null || this.getClass() != o.getClass()) return false;
         TokenType that = (TokenType) o;
         return this.keyword == that.keyword()
-            && this.standaloneStatement == that.standaloneStatement()
-            && this.reserved == that.reserved()
-            && Objects.equals(this.tokenName, that.tokenName())
-            && Objects.equals(this.representation, that.representation())
-            && Objects.equals(this.assignsWith, that.assignsWith())
-            && Objects.equals(this.defaultLexeme, that.defaultLexeme())
-            && Arrays.equals(this.characters, that.characters());
+                && this.standaloneStatement == that.standaloneStatement()
+                && this.reserved == that.reserved()
+                && Objects.equals(this.tokenName, that.tokenName())
+                && Objects.equals(this.representation, that.representation())
+                && Objects.equals(this.assignsWith, that.assignsWith())
+                && Objects.equals(this.defaultLexeme, that.defaultLexeme())
+                && Arrays.equals(this.characters, that.characters());
     }
 
     @Override
@@ -84,8 +83,7 @@ public record SimpleTokenType(
                 this.standaloneStatement,
                 this.reserved,
                 this.assignsWith,
-                this.defaultLexeme
-        );
+                this.defaultLexeme);
         result = 31 * result + Arrays.hashCode(this.characters);
         return result;
     }
@@ -256,15 +254,14 @@ public record SimpleTokenType(
          */
         public TokenType build() {
             return new SimpleTokenType(
-                this.tokenName,
-                this.representation,
-                this.keyword,
-                this.standaloneStatement,
-                this.reserved,
-                this.assignsWith,
-                this.defaultLexeme,
-                this.characters
-            );
+                    this.tokenName,
+                    this.representation,
+                    this.keyword,
+                    this.standaloneStatement,
+                    this.reserved,
+                    this.assignsWith,
+                    this.defaultLexeme,
+                    this.characters);
         }
     }
 }

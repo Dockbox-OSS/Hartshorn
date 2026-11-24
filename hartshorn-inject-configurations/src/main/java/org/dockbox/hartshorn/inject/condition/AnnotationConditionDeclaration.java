@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
-import org.dockbox.hartshorn.inject.ObjectFactory;
-
 import java.util.Objects;
+import org.dockbox.hartshorn.inject.ObjectFactory;
 
 /**
  * Represents an annotation-based condition declaration. This may represent a direct use of the
@@ -26,9 +25,9 @@ import java.util.Objects;
  * {@link RequiresCondition} annotation.
  *
  * @see RequiresCondition
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class AnnotationConditionDeclaration implements ConditionDeclaration {

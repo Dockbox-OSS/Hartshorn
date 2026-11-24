@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriterConsumer;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.ValueAdapterDiagnosticsPropertyWriterConsumer;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,6 +23,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.inject.annotations.Named;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriterConsumer;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.ValueAdapterDiagnosticsPropertyWriterConsumer;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A {@link QualifierKey} is a key that can be used to qualify a {@link ComponentKey}. It is a
@@ -86,10 +85,7 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
      *
      * @return The new {@link QualifierKey} instance.
      */
-    public static <T extends Annotation> QualifierKey<T> of(
-        Class<T> type,
-        Map<String, Object> meta
-    ) {
+    public static <T extends Annotation> QualifierKey<T> of(Class<T> type, Map<String, Object> meta) {
         checkValidMetadata(type, meta);
         return new QualifierKey<>(type, meta);
     }
@@ -121,23 +117,22 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
 
     private static <T> void checkValidMetadata(Class<T> type, Map<String, Object> meta) {
         Set<String> methodNames = Arrays.stream(type.getDeclaredMethods())
-            .filter(method -> !method.isAnnotationPresent(Deprecated.class))
-            .map(Method::getName)
-            .collect(Collectors.toSet());
+                .filter(method -> !method.isAnnotationPresent(Deprecated.class))
+                .map(Method::getName)
+                .collect(Collectors.toSet());
 
         if (methodNames.size() != meta.size()) {
-            throw new IllegalArgumentException("Meta size does not match method count on type '"
-                + type.getSimpleName()
-                + "'");
+            throw new IllegalArgumentException(
+                    "Meta size does not match method count on type '" + type.getSimpleName() + "'");
         }
 
         for (String metaName : meta.keySet()) {
             if (!methodNames.contains(metaName)) {
                 throw new IllegalArgumentException("Meta key '"
-                    + metaName
-                    + "' is not a valid method name on type '"
-                    + type.getSimpleName()
-                    + "'");
+                        + metaName
+                        + "' is not a valid method name on type '"
+                        + type.getSimpleName()
+                        + "'");
             }
         }
     }
@@ -149,8 +144,7 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
             return false;
         }
         QualifierKey<?> qualifierKey = (QualifierKey<?>) o;
-        return Objects.equals(this.type, qualifierKey.type) && Objects.equals(this.meta,
-            qualifierKey.meta);
+        return Objects.equals(this.type, qualifierKey.type) && Objects.equals(this.meta, qualifierKey.meta);
     }
 
     @Override
@@ -161,9 +155,9 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("type", this.type.getSimpleName())
-            .field("meta", this.meta)
-            .describe();
+                .field("type", this.type.getSimpleName())
+                .field("meta", this.meta)
+                .describe();
     }
 
     @Override
@@ -171,8 +165,7 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
         collector.property("type").writeString(this.type.getSimpleName());
         collector.property("meta").writeDelegate(metaCollector -> {
             this.meta.forEach((key, value) -> {
-                DiagnosticsPropertyWriterConsumer consumer =
-                    new ValueAdapterDiagnosticsPropertyWriterConsumer(value);
+                DiagnosticsPropertyWriterConsumer consumer = new ValueAdapterDiagnosticsPropertyWriterConsumer(value);
                 consumer.writeTo(metaCollector.property(key));
             });
         });

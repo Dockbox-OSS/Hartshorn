@@ -16,24 +16,23 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 /**
  * A composite validator that can be used to combine multiple validators into a single validator.
  *
  * @see DependencyGraphValidator
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CompositeDependencyGraphValidator implements DependencyGraphValidator {
@@ -56,9 +55,8 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
 
     @Override
     public void validateBeforeConfiguration(
-        DependencyGraph dependencyGraph, Introspector introspector,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            DependencyGraph dependencyGraph, Introspector introspector, ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
             validator.validateBeforeConfiguration(dependencyGraph, introspector, orchestrator);
         }
@@ -66,16 +64,13 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
 
     @Override
     public void validateAfterConfiguration(
-        DependencyGraph dependencyGraph,
-        Introspector introspector,
-        Set<GraphNode<DependencyContext<?>>> visited,
-        ComponentProviderOrchestrator orchestrator
-    ) throws ApplicationException {
+            DependencyGraph dependencyGraph,
+            Introspector introspector,
+            Set<GraphNode<DependencyContext<?>>> visited,
+            ComponentProviderOrchestrator orchestrator)
+            throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
-            validator.validateAfterConfiguration(dependencyGraph,
-                introspector,
-                visited,
-                orchestrator);
+            validator.validateAfterConfiguration(dependencyGraph, introspector, visited, orchestrator);
         }
     }
 }

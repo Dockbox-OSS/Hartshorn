@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -35,8 +37,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 class ClassStatementInterpreterTests {
 
@@ -51,12 +51,12 @@ class ClassStatementInterpreterTests {
                 }
                 capture(Person())
                 """)
-            .withCaptureModule()
-            .statementParser(new ClassStatementParser())
-            .classMemberParser(new FieldStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser())
+                .classMemberParser(new FieldStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         helper.interpret();
 
@@ -85,12 +85,12 @@ class ClassStatementInterpreterTests {
                 }
                 capture(Person())
                 """)
-            .withCaptureModule()
-            .statementParser(new ClassStatementParser())
-            .classMemberParser(new FieldStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser())
+                .classMemberParser(new FieldStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         helper.interpret();
 
@@ -122,12 +122,12 @@ class ClassStatementInterpreterTests {
                 }
                 capture(Person())
                 """)
-            .withCaptureModule()
-            .statementParser(new ClassStatementParser())
-            .classMemberParser(new FieldStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser())
+                .classMemberParser(new FieldStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         helper.interpret();
 
@@ -173,15 +173,15 @@ class ClassStatementInterpreterTests {
                 }
                 capture(Person())
                 """)
-            .withCaptureModule()
-            .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
-                context.runtime().imports(ExternalThing.class);
-            }))
-            .statementParser(new ClassStatementParser())
-            .classMemberParser(new FieldStatementParser())
-            .expressionParser(new CallExpressionParser())
-            .expressionParser(new IdentifierExpressionParser())
-            .build();
+                .withCaptureModule()
+                .customize(CodeCustomizer.of(Phase.INTERPRETING, context -> {
+                    context.runtime().imports(ExternalThing.class);
+                }))
+                .statementParser(new ClassStatementParser())
+                .classMemberParser(new FieldStatementParser())
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         helper.interpret();
 

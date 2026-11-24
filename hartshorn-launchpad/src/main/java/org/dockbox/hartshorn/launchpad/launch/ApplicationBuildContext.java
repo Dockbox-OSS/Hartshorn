@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
+import java.util.List;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Basic instruction context for the application. This context is used to determine the main class
@@ -41,20 +40,11 @@ public class ApplicationBuildContext extends DefaultContext {
     private final String applicationName;
     private final Logger logger;
 
-    public ApplicationBuildContext(
-            Class<?> mainClass,
-            List<String> arguments,
-            String applicationName
-    ) {
+    public ApplicationBuildContext(Class<?> mainClass, List<String> arguments, String applicationName) {
         this(mainClass, arguments, applicationName, LoggerFactory.getLogger(mainClass));
     }
 
-    public ApplicationBuildContext(
-            Class<?> mainClass,
-            List<String> arguments,
-            String applicationName,
-            Logger logger
-    ) {
+    public ApplicationBuildContext(Class<?> mainClass, List<String> arguments, String applicationName, Logger logger) {
         this.mainClass = mainClass;
         this.arguments = arguments;
         this.applicationName = applicationName;

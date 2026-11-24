@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
@@ -37,10 +40,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ExpressionConditionTests {
@@ -50,12 +49,12 @@ public class ExpressionConditionTests {
 
     public static Stream<Arguments> scripts() {
         return Stream.of(
-            Arguments.of("1==1", true), // Yield true
-            Arguments.of("1==2", false), // Yield false
-            Arguments.of("1==a", false), // Undefined variable, runtime error
-            Arguments.of("1@=1", false), // Tokenizing error
-            Arguments.of("1++=1", false) // Parsing error
-        );
+                Arguments.of("1==1", true), // Yield true
+                Arguments.of("1==2", false), // Yield false
+                Arguments.of("1==a", false), // Undefined variable, runtime error
+                Arguments.of("1@=1", false), // Tokenizing error
+                Arguments.of("1++=1", false) // Parsing error
+                );
     }
 
     @ParameterizedTest
@@ -68,10 +67,9 @@ public class ExpressionConditionTests {
     @Test
     void applicationContextIsOptInAvailable() {
         ExpressionConditionContext context =
-            new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
-        String expression =
-            "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass()
-                .getName());
+                new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
+        String expression = "applicationContext.getClass().getName() == \"%s\""
+                .formatted(this.applicationContext.getClass().getName());
         ConditionResult result = this.match(expression, context);
         assertThat(result.matches()).isTrue();
     }
@@ -86,11 +84,7 @@ public class ExpressionConditionTests {
     ConditionResult match(String expression, ContextView... contexts) {
         ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
         AnnotatedElementView element = this.createAnnotatedElement(expression);
-        ConditionContext context = new IntrospectedConditionContext(
-            this.applicationContext,
-            element,
-            null
-        );
+        ConditionContext context = new IntrospectedConditionContext(this.applicationContext, element, null);
         for (ContextView child : contexts) {
             context.addContext(child);
         }
@@ -99,10 +93,8 @@ public class ExpressionConditionTests {
 
     private AnnotatedElementView createAnnotatedElement(String expression) {
         RequiresExpression condition = TypeUtils.annotation(RequiresExpression.class, expression);
-        ElementAnnotationsIntrospector annotationsIntrospector =
-            Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(RequiresExpression.class))
-            .thenReturn(Option.of(condition));
+        ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
 
         AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
         Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);

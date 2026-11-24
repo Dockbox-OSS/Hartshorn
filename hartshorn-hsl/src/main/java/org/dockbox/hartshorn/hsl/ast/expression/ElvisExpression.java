@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * false (truthy), otherwise it will return {@code defaultValue}.
  *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 public class ElvisExpression extends Expression {
@@ -35,11 +35,7 @@ public class ElvisExpression extends Expression {
     private final Token elvisOpe;
     private final Expression rightExp;
 
-    public ElvisExpression(
-        Expression condition,
-        Token elvisOpe,
-        Expression rightExp
-    ) {
+    public ElvisExpression(Expression condition, Token elvisOpe, Expression rightExp) {
         super(elvisOpe);
         this.condition = condition;
         this.elvisOpe = elvisOpe;

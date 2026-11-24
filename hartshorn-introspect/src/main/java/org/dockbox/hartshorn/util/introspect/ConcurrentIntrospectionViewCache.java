@@ -16,14 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.PackageView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -31,6 +23,13 @@ import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * Concurrent implementation of {@link IntrospectionViewCache}. This implementation is thread-safe
@@ -43,7 +42,7 @@ import java.util.function.Supplier;
  * effective value. If this is not the case, it is recommended to use a synchronized cache.
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache {
@@ -53,24 +52,18 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     private final Map<Method, MethodView<?, ?>> methodViewCache = new ConcurrentHashMap<>();
     private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
     private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
-    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache =
-        new ConcurrentHashMap<>();
+    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
     private final Map<Package, PackageView> packageViewCache = new ConcurrentHashMap<>();
     // checkstyle:on LineLength
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
         return TypeUtils.unchecked(
-            this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()),
-            TypeView.class
-        );
+                this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()), TypeView.class);
     }
 
     @Override
-    public MethodView<?, ?> computeIfAbsent(
-        Method method,
-        Supplier<MethodView<?, ?>> viewSupplier
-    ) {
+    public MethodView<?, ?> computeIfAbsent(Method method, Supplier<MethodView<?, ?>> viewSupplier) {
         return this.methodViewCache.computeIfAbsent(method, key0 -> viewSupplier.get());
     }
 
@@ -80,22 +73,16 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     }
 
     @Override
-    public ParameterView<?> computeIfAbsent(
-        Parameter parameter,
-        Supplier<ParameterView<?>> viewSupplier
-    ) {
+    public ParameterView<?> computeIfAbsent(Parameter parameter, Supplier<ParameterView<?>> viewSupplier) {
         return this.parameterViewCache.computeIfAbsent(parameter, key0 -> viewSupplier.get());
     }
 
     @Override
     public <T> ConstructorView<T> computeIfAbsent(
-        Constructor<T> constructor,
-        Supplier<ConstructorView<T>> viewSupplier
-    ) {
-        return TypeUtils.unchecked(this.constructorViewCache.computeIfAbsent(
-            constructor,
-            key0 -> viewSupplier.get()
-        ), ConstructorView.class);
+            Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
+        return TypeUtils.unchecked(
+                this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get()),
+                ConstructorView.class);
     }
 
     @Override

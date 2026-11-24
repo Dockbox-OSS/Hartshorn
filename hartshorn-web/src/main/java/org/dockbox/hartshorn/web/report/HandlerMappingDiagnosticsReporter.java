@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.web.report;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.web.route.PathHandlerSpec;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-
-import java.util.Collection;
 
 /**
  * A diagnostics reporter for a {@link PathSpec} and its associated {@link PathHandlerSpec}s. This
@@ -37,10 +36,7 @@ public class HandlerMappingDiagnosticsReporter implements Reportable {
     private final PathSpec pathSpec;
     private final Reportable handlerSpecsReporter;
 
-    public HandlerMappingDiagnosticsReporter(
-            PathSpec pathSpec,
-            Collection<PathHandlerSpec> pathHandlerSpecs
-    ) {
+    public HandlerMappingDiagnosticsReporter(PathSpec pathSpec, Collection<PathHandlerSpec> pathHandlerSpecs) {
         this.pathSpec = pathSpec;
         this.handlerSpecsReporter = new PathHandlerSpecsDiagnosticsReporter(pathHandlerSpecs);
     }
@@ -51,14 +47,14 @@ public class HandlerMappingDiagnosticsReporter implements Reportable {
         collector.property("handlers").writeDelegate(this.handlerSpecsReporter);
     }
 
-    private record PathHandlerSpecsDiagnosticsReporter(
-            Collection<PathHandlerSpec> pathHandlerSpecs
-    ) implements Reportable {
+    private record PathHandlerSpecsDiagnosticsReporter(Collection<PathHandlerSpec> pathHandlerSpecs)
+            implements Reportable {
 
         @Override
         public void report(DiagnosticsPropertyCollector delegate) {
             for (PathHandlerSpec spec : this.pathHandlerSpecs) {
-                DiagnosticsPropertyWriter writer = delegate.property(spec.method().name());
+                DiagnosticsPropertyWriter writer =
+                        delegate.property(spec.method().name());
                 if (spec.handler() instanceof Reportable reportable) {
                     writer.writeDelegate(reportable);
                 } else {

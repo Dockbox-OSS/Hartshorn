@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collection;
+import java.util.Set;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -24,11 +28,6 @@ import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToCollectionC
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ObjectToCollectionConverterFactoryTests {
 
     @Test
@@ -36,7 +35,8 @@ class ObjectToCollectionConverterFactoryTests {
         String element = "test";
         Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isInstanceOf(Set.class)
+        assertThat(converted)
+                .isInstanceOf(Set.class)
                 .asInstanceOf(InstanceOfAssertFactories.set(String.class))
                 .hasSize(1)
                 .first()
@@ -57,10 +57,8 @@ class ObjectToCollectionConverterFactoryTests {
     }
 
     private static Converter<Object, Set<String>> createConverter() {
-        Introspector introspector =
-            ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
-        ConverterFactory<Object, Collection<?>> factory =
-            new ObjectToCollectionConverterFactory(introspector);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
+        ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
         return TypeUtils.unchecked(factory.create(Set.class), Converter.class);
     }
 }

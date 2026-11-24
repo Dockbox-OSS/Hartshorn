@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,12 +50,7 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeField(
-        StringBuilder builder,
-        Object object,
-        String fieldName,
-        Object fieldValue
-    ) {
+    public void describeField(StringBuilder builder, Object object, String fieldName, Object fieldValue) {
         builder.append(fieldName).append(": ").append(fieldValue);
     }
 
@@ -66,11 +61,7 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
 
     @Override
     public void describeArrayStart(
-        StringBuilder builder,
-        Object collectionObject,
-        int length,
-        boolean includeTypeName
-    ) {
+            StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
         if (includeTypeName) {
             builder.append(collectionObject.getClass().getSimpleName());
         }
@@ -83,21 +74,12 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeArrayElement(
-        StringBuilder builder,
-        Object collectionObject,
-        int index,
-        Object element
-    ) {
+    public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
         builder.append(element);
     }
 
     @Override
-    public void describeArrayElementSeparator(
-        StringBuilder builder,
-        Object collectionObject,
-        int index
-    ) {
+    public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
         builder.append(", ");
     }
 }

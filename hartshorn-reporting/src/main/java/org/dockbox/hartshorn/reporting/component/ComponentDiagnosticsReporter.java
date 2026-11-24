@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
@@ -28,12 +33,6 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.jspecify.annotations.NonNull;
 
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * A {@link Reportable} that reports information about the components that are registered in the
  * application context. This reporter can be configured to group components by their
@@ -41,14 +40,13 @@ import java.util.stream.Collectors;
  * {@link ComponentContainerReporter}s.
  *
  * @see ComponentContainerReporter
- * 
+ *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ComponentDiagnosticsReporter
-    implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>,
-    CategorizedDiagnosticsReporter {
+        implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     public static final String COMPONENTS_CATEGORY = "components";
 
@@ -57,8 +55,7 @@ public class ComponentDiagnosticsReporter
     private static final String STEREOTYPE_ROUTER = "router";
     private static final String STEREOTYPE_MAIN = "main";
 
-    private final ComponentReportingConfiguration configuration =
-        new ComponentReportingConfiguration();
+    private final ComponentReportingConfiguration configuration = new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ComponentDiagnosticsReporter(ApplicationContext applicationContext) {
@@ -72,22 +69,19 @@ public class ComponentDiagnosticsReporter
         if (this.configuration.groupBy() == ComponentAttribute.NONE) {
             Reportable[] reporters = this.diagnosticsReporters(componentRegistry.containers());
             collector.property("all").writeDelegates(reporters);
-        }
-        else {
-            Map<String, List<ComponentContainer<?>>> groupedContainers =
-                componentRegistry.containers().stream()
+        } else {
+            Map<String, List<ComponentContainer<?>>> groupedContainers = componentRegistry.containers().stream()
                     .collect(Collectors.groupingBy(container -> {
                         return switch (this.configuration.groupBy()) {
                             case STEREOTYPE -> stereotype(container);
                             case PACKAGE -> container.type().packageInfo().name();
-                            default -> throw new IllegalStateException("Unexpected value: "
-                                + this.configuration.groupBy());
+                            default ->
+                                throw new IllegalStateException("Unexpected value: " + this.configuration.groupBy());
                         };
                     }));
 
             for (String key : groupedContainers.keySet()) {
-                collector.property(key)
-                    .writeDelegates(this.diagnosticsReporters(groupedContainers.get(key)));
+                collector.property(key).writeDelegates(this.diagnosticsReporters(groupedContainers.get(key)));
             }
         }
     }
@@ -95,10 +89,9 @@ public class ComponentDiagnosticsReporter
     @NonNull
     private Reportable[] diagnosticsReporters(Collection<ComponentContainer<?>> containers) {
         return containers.stream()
-            .map(container -> (Reportable) new ComponentContainerReporter(this,
-                this.applicationContext.environment(),
-                container))
-            .toArray(Reportable[]::new);
+                .map(container -> (Reportable)
+                        new ComponentContainerReporter(this, this.applicationContext.environment(), container))
+                .toArray(Reportable[]::new);
     }
 
     /**
@@ -113,17 +106,15 @@ public class ComponentDiagnosticsReporter
     public static String stereotype(ComponentContainer<?> container) {
         if (container instanceof ApplicationMainComponentContainer<?>) {
             return STEREOTYPE_MAIN;
-        }
-        else {
-            Component component = container.type().annotations().get(Component.class).get();
+        } else {
+            Component component =
+                    container.type().annotations().get(Component.class).get();
             Class<? extends Annotation> annotationType = component.annotationType();
             if (Configuration.class.getCanonicalName().equals(annotationType.getCanonicalName())) {
                 return STEREOTYPE_CONFIGURATION;
-            }
-            else if ("org.dockbox.hartshorn.web.Router".equals(annotationType.getCanonicalName())) {
+            } else if ("org.dockbox.hartshorn.web.Router".equals(annotationType.getCanonicalName())) {
                 return STEREOTYPE_ROUTER;
-            }
-            else {
+            } else {
                 return STEREOTYPE_COMPONENT;
             }
         }

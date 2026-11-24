@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.util.ApplicationException;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * A proxy constructor function that uses Javassist to create a proxy instance.
@@ -31,9 +29,9 @@ import javassist.util.proxy.ProxyFactory;
  * @param <T> the type of the proxy
  *
  * @see ProxyFactory
- * 
+ *
  * @since 0.4.13
- * 
+ *
  * @author Guus Lieben
  */
 public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
@@ -42,11 +40,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     private final ProxyFactory factory;
     private final MethodHandler methodHandler;
 
-    public JavassistProxyConstructorFunction(
-        Class<T> type,
-        ProxyFactory factory,
-        MethodHandler methodHandler
-    ) {
+    public JavassistProxyConstructorFunction(Class<T> type, ProxyFactory factory, MethodHandler methodHandler) {
         this.type = type;
         this.factory = factory;
         this.methodHandler = methodHandler;
@@ -55,25 +49,26 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     @Override
     public T create() throws ApplicationException {
         try {
-            return this.type.cast(this.factory.create(new Class<?>[0],
-                new Object[0],
-                this.methodHandler));
-        }
-        catch (RuntimeException | InvocationTargetException | NoSuchMethodException |
-               InstantiationException | IllegalAccessException e) {
+            return this.type.cast(this.factory.create(new Class<?>[0], new Object[0], this.methodHandler));
+        } catch (RuntimeException
+                | InvocationTargetException
+                | NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }
 
     @Override
-    public T create(Constructor<? extends T> constructor, Object[] args)
-        throws ApplicationException {
+    public T create(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         try {
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             return this.type.cast(this.factory.create(parameterTypes, args, this.methodHandler));
-        }
-        catch (RuntimeException | InvocationTargetException | NoSuchMethodException |
-               InstantiationException | IllegalAccessException e) {
+        } catch (RuntimeException
+                | InvocationTargetException
+                | NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }

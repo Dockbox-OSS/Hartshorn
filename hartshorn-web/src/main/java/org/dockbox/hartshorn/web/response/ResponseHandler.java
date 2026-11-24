@@ -39,9 +39,5 @@ public interface ResponseHandler {
      * @param result the result to write to the response
      * @throws Exception if an error occurs while writing the result to the response
      */
-    void handleResponse(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object result
-    ) throws Exception;
+    void handleResponse(HttpServletRequest request, HttpServletResponse response, Object result) throws Exception;
 }

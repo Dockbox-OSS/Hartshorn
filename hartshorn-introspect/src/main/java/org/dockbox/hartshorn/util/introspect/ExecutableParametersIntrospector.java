@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
 
 /**
  * Provides information about the parameters of a method or constructor.

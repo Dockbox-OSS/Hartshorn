@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import javax.xml.transform.Result;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +34,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.xml.transform.Result;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present,
@@ -135,8 +134,7 @@ public interface Option<T> extends Context, Iterable<T> {
                 return new None<>();
             }
             return new Some<>(value);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new None<>();
         }
     }
@@ -524,10 +522,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return a {@link Map} containing the wrapped value as both key and value, as returned by the
      * given {@link Function functions}.
      */
-    default <K, V> Map<K, V> toMap(
-        @NonNull Function<T, K> keyMapper,
-        @NonNull Function<T, V> valueMapper
-    ) {
+    default <K, V> Map<K, V> toMap(@NonNull Function<T, K> keyMapper, @NonNull Function<T, V> valueMapper) {
         return this.collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
@@ -540,10 +535,7 @@ public interface Option<T> extends Context, Iterable<T> {
     @Override
     @NonNull
     default Iterator<T> iterator() {
-        return Objects.requireNonNull(this
-                .map(List::of)
-                .map(List::iterator)
-                .orElseGet(Collections::emptyIterator));
+        return Objects.requireNonNull(this.map(List::of).map(List::iterator).orElseGet(Collections::emptyIterator));
     }
 
     /**

@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
+import java.lang.classfile.Annotation;
+import java.lang.classfile.AttributedElement;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.SequencedCollection;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentProviderObjectFactoryAdapter;
@@ -30,17 +40,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.ClassFileUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.classfile.Annotation;
-import java.lang.classfile.AttributedElement;
-import java.util.ArrayDeque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.SequencedCollection;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * A matcher that can be used to match {@link RequiresCondition} annotations against a given set of
@@ -60,15 +59,13 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public final class ConditionMatcher extends DefaultContext
-    implements InjectionApplicationAwareContext {
+public final class ConditionMatcher extends DefaultContext implements InjectionApplicationAwareContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConditionMatcher.class);
 
     private record ConditionCacheKey(ConditionContext context, ConditionDeclaration declaration) {}
 
-    private final LFUCache<ConditionCacheKey, ConditionResult> conditionResultCache =
-            new LFUCache<>(32);
+    private final LFUCache<ConditionCacheKey, ConditionResult> conditionResultCache = new LFUCache<>(32);
     private final Supplier<InjectionCapableApplication> applicationSupplier;
     private boolean includeEnclosingConditions = true;
 
@@ -134,36 +131,27 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public ConditionResult match(
-            AnnotatedElementView annotatedElementContext,
-            ContextView... contexts
-    ) {
+    public ConditionResult match(AnnotatedElementView annotatedElementContext, ContextView... contexts) {
         SequencedCollection<AnnotatedElementView> views = this.includeEnclosingConditions()
-            ? this.collectEnclosedViews(annotatedElementContext)
-            : List.of(annotatedElementContext);
+                ? this.collectEnclosedViews(annotatedElementContext)
+                : List.of(annotatedElementContext);
 
         if (views.isEmpty()) {
-            throw new IllegalStateException("No views found for element "
-                + annotatedElementContext);
+            throw new IllegalStateException("No views found for element " + annotatedElementContext);
         }
 
         for (AnnotatedElementView elementView : views) {
-            Set<ConditionDeclaration> declarations = elementView.annotations()
-                .all(RequiresCondition.class)
-                .stream()
-                .map(AnnotationConditionDeclaration::new)
-                .collect(Collectors.toSet());
+            Set<ConditionDeclaration> declarations = elementView.annotations().all(RequiresCondition.class).stream()
+                    .map(AnnotationConditionDeclaration::new)
+                    .collect(Collectors.toSet());
 
-            ConditionResult result = this.matchAnnotatedElement(
-                    elementView,
-                    declarations,
-                    contexts
-            );
+            ConditionResult result = this.matchAnnotatedElement(elementView, declarations, contexts);
             if (!result.matches()) {
                 return result;
             }
 
-            result = elementView.classFileElement()
+            result = elementView
+                    .classFileElement()
                     .ofType(AttributedElement.class)
                     .map(element -> this.match(element, contexts))
                     .orElseGet(ConditionResult::matched);
@@ -187,22 +175,11 @@ public final class ConditionMatcher extends DefaultContext
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
     public ConditionResult match(AttributedElement element, ContextView... contexts) {
-        List<Annotation> annotations = ClassFileUtilities.getMetaAnnotations(
-                element,
-                RequiresReferenceCondition.class
-        );
+        List<Annotation> annotations = ClassFileUtilities.getMetaAnnotations(element, RequiresReferenceCondition.class);
         for (Annotation annotation : annotations) {
             var declaration = ReferenceConditionDeclaration.createFromMetaAnnotation(annotation);
-            ReferenceConditionContext conditionContext =
-                    new ReferenceConditionContext(
-                            declaration,
-                            element
-                    );
-            ConditionResult result = this.matchConditionContext(
-                    conditionContext,
-                    declaration,
-                    contexts
-            );
+            ReferenceConditionContext conditionContext = new ReferenceConditionContext(declaration, element);
+            ConditionResult result = this.matchConditionContext(conditionContext, declaration, contexts);
             if (!result.matches()) {
                 return result;
             }
@@ -226,21 +203,13 @@ public final class ConditionMatcher extends DefaultContext
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
     private ConditionResult matchAnnotatedElement(
-        AnnotatedElementView annotatedElementContext,
-        Set<ConditionDeclaration> declarationContexts,
-        ContextView... contexts
-    ) {
+            AnnotatedElementView annotatedElementContext,
+            Set<ConditionDeclaration> declarationContexts,
+            ContextView... contexts) {
         for (ConditionDeclaration declarationContext : declarationContexts) {
-            ConditionContext context = new IntrospectedConditionContext(
-                this.application(),
-                annotatedElementContext,
-                declarationContext
-            );
-            ConditionResult result = this.matchConditionContext(
-                    context,
-                    declarationContext,
-                    contexts
-            );
+            ConditionContext context =
+                    new IntrospectedConditionContext(this.application(), annotatedElementContext, declarationContext);
+            ConditionResult result = this.matchConditionContext(context, declarationContext, contexts);
             if (!result.matches()) {
                 return result;
             }
@@ -263,10 +232,7 @@ public final class ConditionMatcher extends DefaultContext
      * @return {@code true} if the condition matches, {@code false} otherwise
      */
     private ConditionResult matchConditionContext(
-        ConditionContext context,
-        ConditionDeclaration declarationContext,
-        ContextView... contexts
-    ) {
+            ConditionContext context, ConditionDeclaration declarationContext, ContextView... contexts) {
         ConditionCacheKey cacheKey = new ConditionCacheKey(context, declarationContext);
         final ConditionResult result;
         if (this.conditionResultCache.containsKey(cacheKey)) {
@@ -282,11 +248,8 @@ public final class ConditionMatcher extends DefaultContext
                 initialized application.
                 """;
                 objectFactory = new ReflectionObjectFactory();
-            }
-            else {
-                objectFactory = new ComponentProviderObjectFactoryAdapter(
-                        application.defaultProvider()
-                );
+            } else {
+                objectFactory = new ComponentProviderObjectFactoryAdapter(application.defaultProvider());
             }
 
             Condition condition = declarationContext.condition(objectFactory);
@@ -298,14 +261,17 @@ public final class ConditionMatcher extends DefaultContext
             if (LOG.isDebugEnabled()) {
                 String location = switch (context) {
                     case ReferenceConditionContext referenceConditionContext ->
-                            referenceConditionContext.element().toString();
+                        referenceConditionContext.element().toString();
                     case IntrospectedConditionContext introspectedConditionContext ->
-                            introspectedConditionContext.annotatedElement().qualifiedName();
+                        introspectedConditionContext.annotatedElement().qualifiedName();
                     default -> "unknown context";
                 };
-                LOG.debug("Matched condition {} with context {}: {} ({})",
+                LOG.debug(
+                        "Matched condition {} with context {}: {} ({})",
                         condition.getClass().getSimpleName(),
-                        location, result.matches(), result.message());
+                        location,
+                        result.matches(),
+                        result.message());
             }
             if (declarationContext.cacheable()) {
                 this.conditionResultCache.put(cacheKey, result);
@@ -328,9 +294,7 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return a collection of enclosed views, ordered from least to most enclosed
      */
-    private SequencedCollection<AnnotatedElementView> collectEnclosedViews(
-        AnnotatedElementView element
-    ) {
+    private SequencedCollection<AnnotatedElementView> collectEnclosedViews(AnnotatedElementView element) {
         List<AnnotatedElementView> elements = new LinkedList<>();
         elements.add(element);
 

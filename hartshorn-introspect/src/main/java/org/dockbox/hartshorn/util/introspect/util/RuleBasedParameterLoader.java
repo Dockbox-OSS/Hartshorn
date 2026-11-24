@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.option.Option;
-import org.jspecify.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link ParameterLoader} that loads parameters based on a set of rules. The rules are evaluated
@@ -69,9 +68,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
      *
      * @return a new instance of {@link RuleBasedParameterLoader} with the provided context type
      */
-    public static <C extends ParameterLoaderContext> RuleBasedParameterLoader<C> create(
-        Class<C> contextType
-    ) {
+    public static <C extends ParameterLoaderContext> RuleBasedParameterLoader<C> create(Class<C> contextType) {
         return new RuleBasedParameterLoader<>(contextType);
     }
 
@@ -102,15 +99,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
     }
 
     @Override
-    public @Nullable Object loadArgument(
-        ParameterLoaderContext context,
-        int index,
-        Object... args
-    ) {
+    public @Nullable Object loadArgument(ParameterLoaderContext context, int index, Object... args) {
         if (!this.isCompatible(context)) {
             return null;
         }
-        Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
+        Option<ParameterView<?>> parameterCandidate =
+                context.executable().parameters().at(index);
         if (parameterCandidate.present()) {
             C adjustedContext = this.contextType.cast(context);
             ParameterView<?> parameter = parameterCandidate.get();
@@ -119,12 +113,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
         return null;
     }
 
-    private Object loadArgument(
-        int index,
-        Object[] args,
-        ParameterView<?> parameter,
-        C adjustedContext
-    ) {
+    private Object loadArgument(int index, Object[] args, ParameterView<?> parameter, C adjustedContext) {
         for (ParameterLoaderRule<C> rule : this.rules()) {
             if (rule.accepts(parameter, index, adjustedContext, args)) {
                 Option<?> argument = rule.load(parameter, index, adjustedContext, args);

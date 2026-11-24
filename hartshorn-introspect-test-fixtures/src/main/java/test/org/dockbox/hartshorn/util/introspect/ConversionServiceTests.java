@@ -16,6 +16,15 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -30,16 +39,6 @@ import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Tests for the {@link ConversionService} interface, driven by configurable {@link Introspector}
@@ -61,17 +60,14 @@ public abstract class ConversionServiceTests {
     void primitiveWrapperFromEmptyString() {
         ConversionService conversionService = this.conversionService();
         Integer empty = conversionService.convert("", Integer.class);
-        assertThat(empty)
-                .isZero();
+        assertThat(empty).isZero();
     }
 
     @Test
     void numberFromString() {
         ConversionService conversionService = this.conversionService();
         Integer valid = conversionService.convert("12", Integer.class);
-        assertThat(valid)
-                .isNotNull()
-                .isEqualTo(12);
+        assertThat(valid).isNotNull().isEqualTo(12);
     }
 
     @Test
@@ -85,9 +81,7 @@ public abstract class ConversionServiceTests {
     void enumFromString() {
         ConversionService conversionService = this.conversionService();
         TestEnumType a = conversionService.convert("A", TestEnumType.class);
-        assertThat(a)
-                .isNotNull()
-                .isSameAs(TestEnumType.A);
+        assertThat(a).isNotNull().isSameAs(TestEnumType.A);
 
         TestEnumType d = conversionService.convert("D", TestEnumType.class);
         assertThat(d).isNull();
@@ -106,9 +100,7 @@ public abstract class ConversionServiceTests {
     void objectFromOption() {
         ConversionService conversionService = this.conversionService();
         String converted = conversionService.convert(Option.of("test"), String.class);
-        assertThat(converted)
-                .isNotNull()
-                .isEqualTo("test");
+        assertThat(converted).isNotNull().isEqualTo("test");
     }
 
     @Test
@@ -138,17 +130,14 @@ public abstract class ConversionServiceTests {
     void primitiveWrapperDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Integer integerFromNull = conversionService.convert(null, Integer.class);
-        assertThat(integerFromNull)
-                .isZero();
+        assertThat(integerFromNull).isZero();
     }
 
     @Test
     void concreteSetDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Set<?> hashSet = conversionService.convert(null, TreeSet.class);
-        assertThat(hashSet)
-                .isInstanceOf(TreeSet.class)
-                .isEmpty();
+        assertThat(hashSet).isInstanceOf(TreeSet.class).isEmpty();
     }
 
     @Test
@@ -171,37 +160,28 @@ public abstract class ConversionServiceTests {
     void concreteListDefaultValue() {
         ConversionService conversionService = this.conversionService();
         List<?> arrayList = conversionService.convert(null, CopyOnWriteArrayList.class);
-        assertThat(arrayList)
-                .isInstanceOf(CopyOnWriteArrayList.class)
-                .isEmpty();
+        assertThat(arrayList).isInstanceOf(CopyOnWriteArrayList.class).isEmpty();
     }
 
     @Test
     void collectionFromObject() {
         ConversionService conversionService = this.conversionService();
         List<?> linkedList = conversionService.convert("test", LinkedList.class);
-        assertThat(linkedList)
-                .isNotEmpty()
-                .first()
-                .isEqualTo("test");
+        assertThat(linkedList).isNotEmpty().first().isEqualTo("test");
     }
 
     @Test
     void collectionFromCollection() {
         ConversionService conversionService = this.conversionService();
         Set<?> setFromList = conversionService.convert(List.of(1, 2, 3), Set.class);
-        assertThat(setFromList)
-                .isNotEmpty()
-                .hasSize(3);
+        assertThat(setFromList).isNotEmpty().hasSize(3);
     }
 
     @Test
     void collectionFromOption() {
         ConversionService conversionService = this.conversionService();
         List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
-        assertThat(listFromOption)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(listFromOption).isNotEmpty().hasSize(1);
         assertThat(listFromOption.get(0)).isEqualTo("123");
     }
 
@@ -228,19 +208,15 @@ public abstract class ConversionServiceTests {
     @Test
     void implicitlyTypedConverterIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-            registry -> registry.addConverter(new SimpleConverter()),
-            "1", Integer.class,
-            ConverterType.CONVERTER
-        );
+                registry -> registry.addConverter(new SimpleConverter()), "1", Integer.class, ConverterType.CONVERTER);
     }
 
     @Test
     void lambdaConverterWithoutExplicitTypesIsRejected() {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
-        ConverterRegistry registry = new StandardConversionService(this.introspector(),
-            converterCache,
-            defaultValueProviderCache);
+        ConverterRegistry registry =
+                new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
         // Not allowed because the source and target types cannot practically be determined due to
         // type erasure
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
@@ -251,21 +227,20 @@ public abstract class ConversionServiceTests {
     @Test
     void lambdaConverterWithExplicitTypesIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-            registry -> registry.addConverter(String.class,
+                registry -> registry.addConverter(
+                        String.class, Integer.class, (source, contexts) -> Integer.parseInt(source)),
+                "1",
                 Integer.class,
-                (source, contexts) -> Integer.parseInt(source)),
-            "1", Integer.class,
-            ConverterType.CONVERTER
-        );
+                ConverterType.CONVERTER);
     }
 
     @Test
     void explicitlyTypedConverterIsAdapterCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-            registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
-            "1", Integer.class,
-            ConverterType.CONVERTER
-        );
+                registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
+                "1",
+                Integer.class,
+                ConverterType.CONVERTER);
     }
 
     @Test
@@ -275,46 +250,44 @@ public abstract class ConversionServiceTests {
         // supported in any practical scenario.
         //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
-            registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
-                @Override
-                public String defaultValue() {
-                    return "";
-                }
-            }),
-            NullAccess.getInstance(), String.class,
-            ConverterType.DEFAULT_VALUE_PROVIDER
-        );
+                registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
+                    @Override
+                    public String defaultValue() {
+                        return "";
+                    }
+                }),
+                NullAccess.getInstance(),
+                String.class,
+                ConverterType.DEFAULT_VALUE_PROVIDER);
     }
 
     @Test
     void explicitDefaultValueProviderIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-            registry -> registry.addDefaultValueProvider(String.class, () -> ""),
-            NullAccess.getInstance(), String.class,
-            ConverterType.DEFAULT_VALUE_PROVIDER
-        );
+                registry -> registry.addDefaultValueProvider(String.class, () -> ""),
+                NullAccess.getInstance(),
+                String.class,
+                ConverterType.DEFAULT_VALUE_PROVIDER);
     }
 
     private void testConverterTypeIsAdaptedCorrectly(
-        Consumer<ConverterRegistry> registerAction,
-        Object source,
-        Class<?> targetType,
-        ConverterType converterType
-    ) {
+            Consumer<ConverterRegistry> registerAction,
+            Object source,
+            Class<?> targetType,
+            ConverterType converterType) {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
-        ConverterRegistry registry = new StandardConversionService(this.introspector(),
-            converterCache,
-            defaultValueProviderCache);
+        ConverterRegistry registry =
+                new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
         assertThat(converterCache.converters()).isEmpty();
         assertThat(defaultValueProviderCache.converters()).isEmpty();
 
         registerAction.accept(registry);
 
         ConverterCache shouldBeEmpty =
-            converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
+                converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
         ConverterCache shouldBePopulated =
-            converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
+                converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
 
         assertThat(shouldBeEmpty.converters()).isEmpty();
         assertThat(shouldBePopulated.converters()).isNotEmpty();

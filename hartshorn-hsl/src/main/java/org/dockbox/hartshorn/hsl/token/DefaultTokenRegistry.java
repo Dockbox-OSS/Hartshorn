@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
@@ -39,26 +49,15 @@ import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * Default {@link TokenRegistry} implementation, supporting all default token types defined in the
  * {@link org.dockbox.hartshorn.hsl.token.type} package. This implementation is mutable, and can be
  * used to add custom token types.
  *
  * @see TokenRegistry
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public final class DefaultTokenRegistry implements MutableTokenRegistry {
@@ -104,8 +103,7 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public TokenCharacter character(char character) {
-        return this.characterMapping()
-            .computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
+        return this.characterMapping().computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
     }
 
     @Override
@@ -115,19 +113,16 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public Set<TokenType> tokenTypes() {
-        List<TokenType> commentTokenTypes = this.comments().commentTypes()
-            .allValues().stream()
-            .flatMap(tokenTypePair -> Stream.of(tokenTypePair.open(), tokenTypePair.close()))
-            .filter(Objects::nonNull) // Closing tokens are optional, thus may be null
-            .toList();
+        List<TokenType> commentTokenTypes = this.comments().commentTypes().allValues().stream()
+                .flatMap(tokenTypePair -> Stream.of(tokenTypePair.open(), tokenTypePair.close()))
+                .filter(Objects::nonNull) // Closing tokens are optional, thus may be null
+                .toList();
         return CollectionUtilities.merge(this.types, commentTokenTypes);
     }
 
     @Override
     public Set<TokenType> tokenTypes(Predicate<TokenType> predicate) {
-        return this.tokenTypes().stream()
-            .filter(predicate)
-            .collect(Collectors.toUnmodifiableSet());
+        return this.tokenTypes().stream().filter(predicate).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -184,12 +179,11 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
     private void collectSpecialTokens(Map<Character, TokenCharacter> allCharacters) {
         TokenCharacterList characterList = this.characterList();
         Set<TokenCharacter> specialCharacters = Set.of(
-            characterList.nullCharacter(),
-            characterList.charCharacter(),
-            characterList.quoteCharacter(),
-            characterList.numberDelimiter(),
-            characterList.numberSeparator()
-        );
+                characterList.nullCharacter(),
+                characterList.charCharacter(),
+                characterList.quoteCharacter(),
+                characterList.numberDelimiter(),
+                characterList.numberSeparator());
         for (TokenCharacter character : specialCharacters) {
             allCharacters.put(character.character(), character);
         }

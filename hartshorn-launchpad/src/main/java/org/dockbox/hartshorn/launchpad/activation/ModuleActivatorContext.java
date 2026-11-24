@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Carrier context for {@link ModuleActivator} annotations. This context is used to store all
@@ -51,15 +50,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ModuleActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
 
-    private final Map<Class<? extends Annotation>, Annotation> activators =
-        new ConcurrentHashMap<>();
+    private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
 
     public ModuleActivatorContext(Set<Annotation> moduleActivators) {
         for (Annotation moduleActivator : moduleActivators) {
             if (!moduleActivator.annotationType().isAnnotationPresent(ModuleActivator.class)) {
-                throw new IllegalArgumentException("Annotation "
-                    + moduleActivator
-                    + " is not a valid module activator");
+                throw new IllegalArgumentException(
+                        "Annotation " + moduleActivator + " is not a valid module activator");
             }
             this.activators.put(moduleActivator.annotationType(), moduleActivator);
         }
@@ -91,9 +88,9 @@ public class ModuleActivatorContext extends DefaultFallbackCompatibleContext imp
     public boolean hasActivator(Class<? extends Annotation> activator) {
         if (!activator.isAnnotationPresent(ModuleActivator.class)) {
             throw new InvalidActivatorException("Requested activator "
-                + activator.getSimpleName()
-                + " is not decorated with @"
-                + ModuleActivator.class.getSimpleName());
+                    + activator.getSimpleName()
+                    + " is not decorated with @"
+                    + ModuleActivator.class.getSimpleName());
         }
         return this.activators.containsKey(activator);
     }
@@ -120,15 +117,13 @@ public class ModuleActivatorContext extends DefaultFallbackCompatibleContext imp
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         String[] activators = this.activators().stream()
-            .map(activator -> activator.annotationType().getCanonicalName())
-            .toArray(String[]::new);
+                .map(activator -> activator.annotationType().getCanonicalName())
+                .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);
     }
 
     @Override
     public String toString() {
-        return ObjectDescriber.of(this)
-            .field("activators", this.activators)
-            .describe();
+        return ObjectDescriber.of(this).field("activators", this.activators).describe();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 
 /**
@@ -49,9 +48,8 @@ public class AggregateReporterConfiguration {
      */
     public void add(CategorizedDiagnosticsReporter reporter) {
         if (this.reporters.containsKey(reporter.category())) {
-            throw new IllegalArgumentException("Reporter with category '"
-                + reporter.category()
-                + "' already registered");
+            throw new IllegalArgumentException(
+                    "Reporter with category '" + reporter.category() + "' already registered");
         }
         this.reporters.put(reporter.category(), reporter);
     }

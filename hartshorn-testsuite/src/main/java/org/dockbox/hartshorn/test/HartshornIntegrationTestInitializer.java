@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.test;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.SequencedCollection;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
@@ -32,23 +39,15 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jspecify.annotations.NonNull;
 
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.SequencedCollection;
-import java.util.stream.Collectors;
-
 /**
  * Initializes the test environment for integration tests. This class is responsible for invoking
  * any custom test environment modifiers, preparing the application factory and creating the
  * application context, and performing additional injection on the test instance if necessary.
  *
  * @see HartshornJUnitIntegrationTestBootstrapCallback
- * 
+ *
  * @since 0.7.0
- * 
+ *
  * @author Guus Lieben
  */
 public class HartshornIntegrationTestInitializer {
@@ -67,22 +66,18 @@ public class HartshornIntegrationTestInitializer {
      */
     @NonNull
     public ApplicationContext createTestApplicationContext(
-        Class<?> testClass,
-        Object testInstance,
-        AnnotatedElement[] testComponentSources
-    ) {
+            Class<?> testClass, Object testInstance, AnnotatedElement[] testComponentSources) {
         if (testClass == null) {
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
         List<AnnotatedElement> elements = Arrays.stream(testComponentSources)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
         elements.add(testClass);
 
         TestApplicationCustomizer customizer = this.resolveCustomizer(elements);
-        ApplicationBuilder<?> applicationBuilder =
-            this.prepareFactory(testClass, elements, customizer);
+        ApplicationBuilder<?> applicationBuilder = this.prepareFactory(testClass, elements, customizer);
         ApplicationContext applicationContext = applicationBuilder.create();
 
         if (applicationContext == null) {
@@ -97,11 +92,11 @@ public class HartshornIntegrationTestInitializer {
 
     private TestApplicationCustomizer resolveCustomizer(List<AnnotatedElement> elements) {
         List<TestApplicationCustomizer> customizers = elements.stream()
-            .filter(element -> element.isAnnotationPresent(HartshornIntegrationTest.class))
-            .map(element -> element.getAnnotation(HartshornIntegrationTest.class))
-            .flatMap(integrationTest -> Arrays.stream(integrationTest.customizers()))
-            .map(OBJECT_FACTORY::create)
-            .collect(Collectors.toList());
+                .filter(element -> element.isAnnotationPresent(HartshornIntegrationTest.class))
+                .map(element -> element.getAnnotation(HartshornIntegrationTest.class))
+                .flatMap(integrationTest -> Arrays.stream(integrationTest.customizers()))
+                .map(OBJECT_FACTORY::create)
+                .collect(Collectors.toList());
         return new CompositeTestApplicationCustomizer(customizers);
     }
 
@@ -114,54 +109,47 @@ public class HartshornIntegrationTestInitializer {
      */
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
         SimpleSingleElementContext<ApplicationContext> elementContext =
-            SimpleSingleElementContext.create(applicationContext);
+                SimpleSingleElementContext.create(applicationContext);
         ComponentPopulator populator =
-            StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);
+                StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);
         populator.populate(instance, applicationContext.scope());
     }
 
     private ApplicationBuilder<?> prepareFactory(
-        Class<?> testClass,
-        List<AnnotatedElement> testComponentSources,
-        TestApplicationCustomizer applicationCustomizer
-    ) {
-        Customizer<StandardApplicationBuilder.Configurer> builderCustomizer =
-            Customizer.useDefaults();
+            Class<?> testClass,
+            List<AnnotatedElement> testComponentSources,
+            TestApplicationCustomizer applicationCustomizer) {
+        Customizer<StandardApplicationBuilder.Configurer> builderCustomizer = Customizer.useDefaults();
         builderCustomizer = builderCustomizer.compose(builder -> {
             customizeBuilderWithTestSources(testClass, testComponentSources, builder);
 
             Customizer<StandardApplicationContextFactory.Configurer> customizer =
-                new IntegrationTestApplicationFactoryCustomizer(testClass,
-                    testComponentSources,
-                    applicationCustomizer);
+                    new IntegrationTestApplicationFactoryCustomizer(
+                            testClass, testComponentSources, applicationCustomizer);
             builder.applicationContextFactory(StandardApplicationContextFactory.create(
-                customizer.compose(applicationCustomizer::customizeFactory)
-            ));
+                    customizer.compose(applicationCustomizer::customizeFactory)));
         });
 
-        return StandardApplicationBuilder.create(builderCustomizer.compose(
-            applicationCustomizer::customizeBuilder
-        ));
+        return StandardApplicationBuilder.create(builderCustomizer.compose(applicationCustomizer::customizeBuilder));
     }
 
     private void customizeBuilderWithTestSources(
-        Class<?> testClass,
-        SequencedCollection<AnnotatedElement> testComponentSources,
-        StandardApplicationBuilder.Configurer builder
-    ) {
+            Class<?> testClass,
+            SequencedCollection<AnnotatedElement> testComponentSources,
+            StandardApplicationBuilder.Configurer builder) {
         // Note: initial default, may be overwritten by either the test decorator, or test
         // customizers
         builder.mainClass(testClass);
 
         for (AnnotatedElement element : testComponentSources) {
             Option.of(element.getAnnotation(HartshornIntegrationTest.class))
-                .map(HartshornIntegrationTest::mainClass)
-                .filter(mainClass -> mainClass != Void.class)
-                .peek(builder::mainClass);
+                    .map(HartshornIntegrationTest::mainClass)
+                    .filter(mainClass -> mainClass != Void.class)
+                    .peek(builder::mainClass);
 
             Option.of(element.getAnnotation(TestProperties.class))
-                .map(TestProperties::value)
-                .peek(properties -> builder.arguments(args -> args.addAll(properties)));
+                    .map(TestProperties::value)
+                    .peek(properties -> builder.arguments(args -> args.addAll(properties)));
         }
     }
 }

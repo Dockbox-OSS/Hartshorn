@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import java.lang.annotation.Annotation;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.annotation.Annotation;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * An introspector for {@link Annotation} instances that are proxied with a
@@ -29,19 +28,15 @@ import java.lang.annotation.Annotation;
  * @param <T> The type of annotation that is proxied
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
-public class AnnotationAdapterProxyIntrospector<T extends Annotation>
-    implements ProxyIntrospector<T> {
+public class AnnotationAdapterProxyIntrospector<T extends Annotation> implements ProxyIntrospector<T> {
 
     private final Annotation annotation;
     private final AnnotationAdapterProxy<T> adapterProxy;
 
-    public AnnotationAdapterProxyIntrospector(
-        Annotation annotation,
-        AnnotationAdapterProxy<T> adapterProxy
-    ) {
+    public AnnotationAdapterProxyIntrospector(Annotation annotation, AnnotationAdapterProxy<T> adapterProxy) {
         this.annotation = annotation;
         this.adapterProxy = adapterProxy;
     }
@@ -64,8 +59,6 @@ public class AnnotationAdapterProxyIntrospector<T extends Annotation>
 
     @Override
     public Option<T> delegate() {
-        return Option.of(
-            this.adapterProxy.targetAnnotationClass().cast(this.adapterProxy.actualAnnotation())
-        );
+        return Option.of(this.adapterProxy.targetAnnotationClass().cast(this.adapterProxy.actualAnnotation()));
     }
 }

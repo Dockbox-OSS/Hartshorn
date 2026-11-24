@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
@@ -23,9 +25,6 @@ import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A resolver for dependencies of components based on introspection. For types, it resolves the
@@ -43,9 +42,7 @@ public final class IntrospectionDependencyResolver {
     private final ComponentKeyResolver componentKeyResolver;
 
     public IntrospectionDependencyResolver(
-        ComponentInjectionPointsResolver injectionPointsResolver,
-        ComponentKeyResolver componentKeyResolver
-    ) {
+            ComponentInjectionPointsResolver injectionPointsResolver, ComponentKeyResolver componentKeyResolver) {
         this.injectionPointsResolver = injectionPointsResolver;
         this.componentKeyResolver = componentKeyResolver;
     }
@@ -59,12 +56,11 @@ public final class IntrospectionDependencyResolver {
      * @return a set of component keys representing the dependencies of the type
      */
     public Set<ComponentKey<?>> resolveDependencies(TypeView<?> type) {
-        Set<? extends ComponentInjectionPoint<?>> points =
-            this.injectionPointsResolver.resolve(type);
+        Set<? extends ComponentInjectionPoint<?>> points = this.injectionPointsResolver.resolve(type);
         return points.stream()
-            .map(ComponentInjectionPoint::declaration)
-            .map(this.componentKeyResolver::resolve)
-            .collect(Collectors.toSet());
+                .map(ComponentInjectionPoint::declaration)
+                .map(this.componentKeyResolver::resolve)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -78,8 +74,8 @@ public final class IntrospectionDependencyResolver {
      */
     public Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
-            .filter(parameter -> !parameter.type().isChildOf(ContextView.class))
-            .map(this.componentKeyResolver::resolve)
-            .collect(Collectors.toSet());
+                .filter(parameter -> !parameter.type().isChildOf(ContextView.class))
+                .map(this.componentKeyResolver::resolve)
+                .collect(Collectors.toSet());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 public abstract class AbstractBitwiseOrLogicalExpressionParser implements ExpressionParser {
 
     @Override
-    public Expression parse(
-        TokenParser parser,
-        TokenStepValidator validator,
-        ExpressionParserChain chain
-    ) {
+    public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {
         Expression expression = chain.next(parser, validator);
         while (parser.match(this.whileMatching())) {
             Token operator = parser.previous();

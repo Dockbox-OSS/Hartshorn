@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
+import java.lang.annotation.Annotation;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Populate;
@@ -27,12 +32,6 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
-import java.lang.annotation.Annotation;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * A {@link ComponentInjectionPointsResolver} that resolves the injection points of a component by
  * inspecting the methods and fields of the component. The injection points are resolved based on
@@ -41,40 +40,39 @@ import java.util.Set;
  *
  * @see Populate
  * @see ComponentInjectionPoint
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
     private final Set<Class<? extends Annotation>> injectAnnotations;
 
-    public MethodsAndFieldsInjectionPointResolver(
-        Set<Class<? extends Annotation>> injectAnnotations
-    ) {
+    public MethodsAndFieldsInjectionPointResolver(Set<Class<? extends Annotation>> injectAnnotations) {
         this.injectAnnotations = injectAnnotations;
     }
 
     @Override
     public <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type) {
-        Set<Populate.Type> types = type.annotations().get(Populate.class)
-            .map(Populate::value)
-            .map(value -> EnumSet.copyOf(Set.of(value)))
-            .orElseGet(() -> EnumSet.allOf(Populate.Type.class));
+        Set<Populate.Type> types = type.annotations()
+                .get(Populate.class)
+                .map(Populate::value)
+                .map(value -> EnumSet.copyOf(Set.of(value)))
+                .orElseGet(() -> EnumSet.allOf(Populate.Type.class));
 
         Set<ComponentInjectionPoint<T>> injectionPoints = new HashSet<>();
         if (types.contains(Populate.Type.EXECUTABLES)) {
             type.methods().all().stream()
-                .filter(this::isInjectable)
-                .map(ComponentMethodInjectionPoint::new)
-                .forEach(injectionPoints::add);
+                    .filter(this::isInjectable)
+                    .map(ComponentMethodInjectionPoint::new)
+                    .forEach(injectionPoints::add);
         }
         if (types.contains(Populate.Type.FIELDS)) {
             type.fields().all().stream()
-                .filter(this::isInjectable)
-                .map(ComponentFieldInjectionPoint::new)
-                .forEach(injectionPoints::add);
+                    .filter(this::isInjectable)
+                    .map(ComponentFieldInjectionPoint::new)
+                    .forEach(injectionPoints::add);
         }
         return injectionPoints;
     }
@@ -93,14 +91,13 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
      *
      * @return A contextual initializer for the resolver
      */
-    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver>
-    create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> create(
+            Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            List<Class<? extends Annotation>> annotationTypes =
-                configurer.annotations.initialize(context);
+            List<Class<? extends Annotation>> annotationTypes = configurer.annotations.initialize(context);
             return new MethodsAndFieldsInjectionPointResolver(Set.copyOf(annotationTypes));
         };
     }
@@ -115,8 +112,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>
-            annotations = LazyStreamableConfigurer.of(Inject.class);
+        private final LazyStreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>> annotations =
+                LazyStreamableConfigurer.of(Inject.class);
 
         /**
          * Configures the annotations to be used for injection points. By default, this only
@@ -154,9 +151,7 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          * @return The current configurer, for chaining
          */
         public Configurer annotations(
-            Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>>
-                customizer
-        ) {
+                Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
         }
@@ -171,8 +166,7 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.forName("javax.inject.Inject", Annotation.class).peek(collection::add);
-                TypeUtils.forName("javax.annotation.Resource", Annotation.class)
-                    .peek(collection::add);
+                TypeUtils.forName("javax.annotation.Resource", Annotation.class).peek(collection::add);
             });
         }
 
@@ -187,7 +181,7 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
             return this.annotations(collection -> {
                 TypeUtils.forName("jakarta.inject.Inject", Annotation.class).peek(collection::add);
                 TypeUtils.forName("jakarta.annotation.Resource", Annotation.class)
-                    .peek(collection::add);
+                        .peek(collection::add);
             });
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,12 +50,7 @@ public interface ProxyMethodInterceptHandler<T> {
      * @throws Throwable if an error occurs during the method invocation
      */
     Object handleNonInterceptedMethod(
-        T self,
-        MethodInvokable source,
-        Invokable proxy,
-        T callbackTarget,
-        Object[] arguments
-    ) throws Throwable;
+            T self, MethodInvokable source, Invokable proxy, T callbackTarget, Object[] arguments) throws Throwable;
 
     /**
      * Handles a method invocation that is intercepted by the given {@link MethodInterceptor}.
@@ -72,12 +67,12 @@ public interface ProxyMethodInterceptHandler<T> {
      * @throws Throwable if an error occurs during the method invocation
      */
     Object handleInterceptedMethod(
-        MethodInvokable source,
-        T callbackTarget,
-        CustomInvocation<?> customInvocation,
-        Object[] arguments,
-        MethodInterceptor<T, Object> interceptor
-    ) throws Throwable;
+            MethodInvokable source,
+            T callbackTarget,
+            CustomInvocation<?> customInvocation,
+            Object[] arguments,
+            MethodInterceptor<T, Object> interceptor)
+            throws Throwable;
 
     /**
      * Returns the {@link ProxyMethodInvoker} that is used by this handler.

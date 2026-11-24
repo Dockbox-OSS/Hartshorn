@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,35 +45,37 @@ public class ManagedComponentProviderStrategy implements ComponentProviderStrate
 
     @Override
     public <T> ObjectContainer<T> get(
-        ComponentKey<T> componentKey,
-        ComponentRequestContext requestContext,
-        ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException, ApplicationException {
-        if (chain.application()
-            .defaultProvider() instanceof ComponentRegistryAwareComponentProvider
-            componentRegistryAware) {
+            ComponentKey<T> componentKey,
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain)
+            throws ComponentResolutionException, ApplicationException {
+        if (chain.application().defaultProvider()
+                instanceof ComponentRegistryAwareComponentProvider componentRegistryAware) {
             ComponentRegistry componentRegistry = componentRegistryAware.componentRegistry();
             if (componentRegistry.container(componentKey).present()) {
                 // Only redirect if the request is for another scope than the application scope. If
                 // we're already providing a component in the application scope, we can continue
                 // with the chain as usual.
-                boolean isScopedRequest = componentKey.scope()
-                    .map(Scope::installableScopeType)
-                    .test(key -> {
-                        ScopeKey applicationScope =
-                            chain.application().defaultProvider().scope().installableScopeType();
-                        return !key.equals(applicationScope);
-                    });
+                boolean isScopedRequest = componentKey
+                        .scope()
+                        .map(Scope::installableScopeType)
+                        .test(key -> {
+                            ScopeKey applicationScope = chain.application()
+                                    .defaultProvider()
+                                    .scope()
+                                    .installableScopeType();
+                            return !key.equals(applicationScope);
+                        });
                 if (isScopedRequest) {
-                    ComponentKey<T> rescopedKey = componentKey.mutable()
-                        .scope(chain.application().defaultProvider().scope())
-                        .build();
+                    ComponentKey<T> rescopedKey = componentKey
+                            .mutable()
+                            .scope(chain.application().defaultProvider().scope())
+                            .build();
 
                     // Redirect outside the chain to ensure that the component is resolved with the
                     // correct scope.
                     T instance = chain.application().defaultProvider().get(rescopedKey);
-                    ComponentObjectContainer<T> container =
-                        ComponentObjectContainer.ofSingleton(instance);
+                    ComponentObjectContainer<T> container = ComponentObjectContainer.ofSingleton(instance);
                     container.processed(true);
                     return container;
                 }

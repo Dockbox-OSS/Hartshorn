@@ -20,14 +20,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.message.RequestAttributes;
 import org.dockbox.hartshorn.web.route.RequestHandler;
 import org.dockbox.hartshorn.web.spec.PathSpec;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A servlet that routes incoming HTTP requests to the appropriate request handlers based on the
@@ -52,10 +51,7 @@ public class RequestRoutingServlet extends HttpServlet {
     }
 
     private interface ServletFunction {
-        void handle(
-            HttpServletRequest request,
-            HttpServletResponse response
-        ) throws ServletException, IOException;
+        void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
     }
 
     /**
@@ -71,18 +67,14 @@ public class RequestRoutingServlet extends HttpServlet {
      * @throws ServletException if an error occurs while handling the request
      */
     private void handleRequest(
-        HttpMethod method,
-        HttpServletRequest req,
-        HttpServletResponse resp,
-        ServletFunction fallback
-    ) throws ServletException, IOException {
+            HttpMethod method, HttpServletRequest req, HttpServletResponse resp, ServletFunction fallback)
+            throws ServletException, IOException {
         Map<String, String> pathParameters = new HashMap<>();
         String fullPath = req.getServletPath();
         if (req.getPathInfo() != null) {
             fullPath += req.getPathInfo();
         }
-        if (pathSpec.matches(fullPath, pathParameters)
-                && this.handlers.containsKey(method)) {
+        if (pathSpec.matches(fullPath, pathParameters) && this.handlers.containsKey(method)) {
             RequestAttributes.setPathParameters(req, pathParameters);
             try {
                 this.handlers.get(method).handle(req, resp);
@@ -93,73 +85,48 @@ public class RequestRoutingServlet extends HttpServlet {
                 // handling.
                 throw new ServletException(e);
             }
-        }
-        else {
+        } else {
             fallback.handle(req, resp);
         }
     }
 
     @Override
-    protected void doGet(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.GET, req, resp, super::doGet);
     }
 
     @Override
-    protected void doHead(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.HEAD, req, resp, super::doHead);
     }
 
     @Override
-    protected void doPatch(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.PATCH, req, resp, super::doPatch);
     }
 
     @Override
-    protected void doPost(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.POST, req, resp, super::doPost);
     }
 
     @Override
-    protected void doPut(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.PUT, req, resp, super::doPut);
     }
 
     @Override
-    protected void doDelete(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.DELETE, req, resp, super::doDelete);
     }
 
     @Override
-    protected void doOptions(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.OPTIONS, req, resp, super::doOptions);
     }
 
     @Override
-    protected void doTrace(
-        HttpServletRequest req,
-        HttpServletResponse resp
-    ) throws ServletException, IOException {
+    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.handleRequest(HttpMethod.TRACE, req, resp, super::doTrace);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
+import java.util.Collection;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
 
 /**
  * A resolver to look up advisors for a given method. This resolver can be used by

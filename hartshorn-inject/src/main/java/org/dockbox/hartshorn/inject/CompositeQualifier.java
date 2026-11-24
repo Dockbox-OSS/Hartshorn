@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.dockbox.hartshorn.inject.annotations.Named;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a
@@ -35,9 +34,9 @@ import java.util.Set;
  *
  * @see QualifierKey
  * @see ComponentKey
- * 
+ *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class CompositeQualifier implements Reportable {
@@ -137,14 +136,13 @@ public class CompositeQualifier implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("qualifiers")
-            .writeDelegates(this.qualifiers.values().toArray(Reportable[]::new));
+        collector.property("qualifiers").writeDelegates(this.qualifiers.values().toArray(Reportable[]::new));
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-            .field("qualifiers", this.qualifiers.values())
-            .describe();
+                .field("qualifiers", this.qualifiers.values())
+                .describe();
     }
 }

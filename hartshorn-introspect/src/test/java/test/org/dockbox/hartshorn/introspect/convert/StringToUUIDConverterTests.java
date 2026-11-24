@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
+import org.junit.jupiter.api.Test;
 
 class StringToUUIDConverterTests {
 
@@ -29,16 +28,14 @@ class StringToUUIDConverterTests {
     void validUUIDFormatCanConvert() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert("123e4567-e89b-12d3-a456-426655440000");
-        assertThat(uuid)
-                .hasToString("123e4567-e89b-12d3-a456-426655440000");
+        assertThat(uuid).hasToString("123e4567-e89b-12d3-a456-426655440000");
     }
 
     @Test
     void shortUUIDCanConvert() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert("1-2-3-4-5");
-        assertThat(uuid)
-                .hasToString("00000001-0002-0003-0004-000000000005");
+        assertThat(uuid).hasToString("00000001-0002-0003-0004-000000000005");
     }
 
     @Test

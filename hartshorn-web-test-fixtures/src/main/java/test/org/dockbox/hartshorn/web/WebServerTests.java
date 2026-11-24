@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.web.GetRoute;
@@ -23,20 +27,13 @@ import org.dockbox.hartshorn.web.Router;
 import org.dockbox.hartshorn.web.WebServer;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.http.HttpResponse;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public abstract class WebServerTests extends AbstractWebInteractionTest {
 
     protected abstract Class<? extends WebServer> expectedInstanceType();
 
     @Test
     @TestComponents(TestRouter.class)
-    void testBasicRequestResponseFlow(
-            @Inject WebServer server
-    ) throws IOException, InterruptedException {
+    void testBasicRequestResponseFlow(@Inject WebServer server) throws IOException, InterruptedException {
         assertThat(server).isInstanceOf(this.expectedInstanceType());
         assertRequest("hello", HttpResponse.BodyHandlers.ofString()).hasBody("hello");
     }

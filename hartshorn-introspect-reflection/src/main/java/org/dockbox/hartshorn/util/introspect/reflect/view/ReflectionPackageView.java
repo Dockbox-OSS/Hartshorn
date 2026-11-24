@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.classfile.ClassFileElement;
+import java.lang.reflect.AnnotatedElement;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.classfile.ClassFileElement;
-import java.lang.reflect.AnnotatedElement;
 
 /**
  * A view that provides access to a package. This view is backed by a {@link Package} instance.
@@ -100,11 +99,7 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
         writeIfNotEmpty(collector, "SpecificationVersion", this.specificationVersion());
     }
 
-    private void writeIfNotEmpty(
-        DiagnosticsPropertyCollector collector,
-        String propertyName,
-        String value
-    ) {
+    private void writeIfNotEmpty(DiagnosticsPropertyCollector collector, String propertyName, String value) {
         if (value != null && !value.isEmpty()) {
             collector.property(propertyName).writeString(value);
         }

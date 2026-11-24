@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -29,8 +30,6 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the
@@ -54,7 +53,7 @@ import java.util.List;
  * {@link Resolver}.
  *
  * @since 0.6.0
- * 
+ *
  * @author Guus Lieben
  */
 public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Interpreter {
@@ -70,10 +69,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     private boolean isRunning;
 
     public SimpleVisitorInterpreter(
-        ResultCollector resultCollector,
-        ApplicationContext applicationContext,
-        TokenRegistry tokenRegistry
-    ) {
+            ResultCollector resultCollector, ApplicationContext applicationContext, TokenRegistry tokenRegistry) {
         this.resultCollector = resultCollector;
         this.applicationContext = applicationContext;
         this.tokenRegistry = tokenRegistry;
@@ -125,15 +121,14 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     public void interpret(List<Statement> statements) {
         if (this.isRunning) {
             throw new ConcurrentInterpreterExecutionException(
-                "Cannot reuse the same interpreter instance for multiple executions");
+                    "Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
             for (Statement statement : statements) {
                 this.execute(statement);
             }
-        }
-        finally {
+        } finally {
             this.isRunning = false;
         }
     }
@@ -142,8 +137,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     public Object evaluate(Expression expression) {
         if (expression instanceof CustomASTNode<?, ?> customASTNode) {
             return customASTNode.interpret(this.visitor().interpreter());
-        }
-        else {
+        } else {
             return expression.accept(this.visitor());
         }
     }
@@ -152,8 +146,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
     public void execute(Statement statement) {
         if (statement instanceof CustomASTNode<?, ?> customASTNode) {
             customASTNode.interpret(this.visitor().interpreter());
-        }
-        else {
+        } else {
             statement.accept(this.visitor());
         }
     }
@@ -169,8 +162,7 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
             for (Statement statement : statementList) {
                 try {
                     this.execute(statement);
-                }
-                catch (FlowControlKeyword type) {
+                } catch (FlowControlKeyword type) {
                     if (type.moveType() == FlowControlKeyword.MoveType.CONTINUE) {
                         break;
                     }

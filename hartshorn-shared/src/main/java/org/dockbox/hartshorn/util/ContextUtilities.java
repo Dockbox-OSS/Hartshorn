@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.List;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.context.SimpleContextIdentity;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 /**
  * Utility methods for working with {@link Context contexts}.
@@ -33,8 +32,7 @@ import java.util.List;
  */
 public final class ContextUtilities {
 
-    private ContextUtilities() {
-    }
+    private ContextUtilities() {}
 
     /**
      * Finds the first context of the given type in the provided iterable of contexts.
@@ -46,10 +44,7 @@ public final class ContextUtilities {
      * @return An {@link Option} containing the first context of the given type, or an empty option
      * if no such context is found.
      */
-    public static <C extends Context> Option<C> first(
-            Iterable<Context> contexts,
-            Class<C> type
-    ) {
+    public static <C extends Context> Option<C> first(Iterable<Context> contexts, Class<C> type) {
         return first(contexts, new SimpleContextIdentity<>(type));
     }
 
@@ -63,18 +58,14 @@ public final class ContextUtilities {
      * @return An {@link Option} containing the first context matching the given identity, or an
      * empty option if no such context is found.
      */
-    public static <C extends Context> Option<C> first(
-            Iterable<Context> contexts,
-            ContextIdentity<C> identity
-    ) {
+    public static <C extends Context> Option<C> first(Iterable<Context> contexts, ContextIdentity<C> identity) {
         for (Context context : contexts) {
             if (identity.type().isInstance(context)) {
                 if (context instanceof NamedContext namedContext && identity.name() != null) {
                     if (identity.name().equals(namedContext.name())) {
                         return Option.of(identity.type().cast(context));
                     }
-                }
-                else {
+                } else {
                     return Option.of(identity.type().cast(context));
                 }
             }
@@ -92,10 +83,7 @@ public final class ContextUtilities {
      * @return An {@link Option} containing the first context of the given type, or an empty option
      * if no such context is found.
      */
-    public static <C extends Context> Option<C> first(
-            Context[] contexts,
-            Class<C> type
-    ) {
+    public static <C extends Context> Option<C> first(Context[] contexts, Class<C> type) {
         return first(contexts, new SimpleContextIdentity<>(type));
     }
 
@@ -109,10 +97,7 @@ public final class ContextUtilities {
      * @return An {@link Option} containing the first context matching the given identity, or an
      * empty option if no such context is found.
      */
-    public static <C extends Context> Option<C> first(
-            Context[] contexts,
-            ContextIdentity<C> identity
-    ) {
+    public static <C extends Context> Option<C> first(Context[] contexts, ContextIdentity<C> identity) {
         return first(List.of(contexts), identity);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,37 +43,27 @@ public class IntrospectionProxyResultValidator implements ProxyResultValidator {
         TypeView<?> returnType = source.toIntrospector().returnType();
         if (returnType.isVoid()) {
             return null;
-        }
-        else if (returnType.isPrimitive()) {
+        } else if (returnType.isPrimitive()) {
             if (result == null) {
                 return returnType.defaultOrNull();
-            }
-            else {
+            } else {
                 TypeView<Object> resultView = this.introspector.introspect(result);
                 if (resultView.isPrimitive() || resultView.isChildOf(returnType.type())) {
                     return result;
-                }
-                else {
-                    throw new IllegalArgumentException("Invalid return type: "
-                        + resultView.name()
-                        + " for "
-                        + source.qualifiedName());
+                } else {
+                    throw new IllegalArgumentException(
+                            "Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
                 }
             }
-        }
-        else if (result == null) {
+        } else if (result == null) {
             return null;
-        }
-        else {
+        } else {
             TypeView<Object> resultView = this.introspector.introspect(result);
             if (resultView.isChildOf(returnType.type())) {
                 return result;
-            }
-            else {
-                throw new IllegalArgumentException("Invalid return type: "
-                    + resultView.name()
-                    + " for "
-                    + source.qualifiedName());
+            } else {
+                throw new IllegalArgumentException(
+                        "Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
             }
         }
     }

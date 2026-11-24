@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.web.spec;
 
-import org.dockbox.hartshorn.web.spec.parser.PathPartSpecParser;
-
 import java.util.Map;
+import org.dockbox.hartshorn.web.spec.parser.PathPartSpecParser;
 
 /**
  * Specification for a single part of a path pattern. This is used by the {@link PathSpec} to match

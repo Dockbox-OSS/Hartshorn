@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.List;
 
 /**
  * A switch statement, which allows for conditional branching based on the value of an expression.
@@ -49,12 +48,7 @@ public class SwitchStatement extends Statement {
     private final List<SwitchCase> cases;
     private final SwitchCase defaultCase;
 
-    public SwitchStatement(
-        Token switchToken,
-        Expression expression,
-        List<SwitchCase> cases,
-        SwitchCase defaultCase
-    ) {
+    public SwitchStatement(Token switchToken, Expression expression, List<SwitchCase> cases, SwitchCase defaultCase) {
         super(switchToken);
         this.expression = expression;
         this.cases = cases;

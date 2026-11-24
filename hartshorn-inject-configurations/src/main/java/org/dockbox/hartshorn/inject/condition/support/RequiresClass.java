@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
-import org.dockbox.hartshorn.inject.condition.RequiresReferenceCondition;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.inject.condition.RequiresReferenceCondition;
 
 /**
  * A condition that requires classes to be present in the classpath. As this condition is evaluated
@@ -35,9 +34,9 @@ import java.lang.annotation.Target;
  * cases, use separate conditionally loaded configuration classes.
  *
  * @see ClassCondition
- * 
+ *
  * @since 0.4.12
- * 
+ *
  * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

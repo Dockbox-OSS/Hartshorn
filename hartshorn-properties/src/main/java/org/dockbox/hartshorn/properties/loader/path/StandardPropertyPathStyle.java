@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,9 @@ public class StandardPropertyPathStyle implements PropertyPathStyle {
     @Override
     public String[] resolveIndexes(String path) {
         return INDEX_PATTERN
-            .matcher(path)
-            .results()
-            .map(result -> result.group(1)) // Group 0 is the entire match, group 1 is the index
-            .toArray(String[]::new);
+                .matcher(path)
+                .results()
+                .map(result -> result.group(1)) // Group 0 is the entire match, group 1 is the index
+                .toArray(String[]::new);
     }
 }

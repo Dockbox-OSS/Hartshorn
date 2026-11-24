@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
-import org.dockbox.hartshorn.util.Timer;
-import org.jspecify.annotations.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,6 +32,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import org.dockbox.hartshorn.util.Timer;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A classpath scanner that can be used to scan the classpath for resources. This scanner is capable
@@ -116,8 +115,7 @@ public final class ClassPathScanner {
             try {
                 URL url = file.toURI().toURL();
                 this.addUrlForScanning(url);
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 // Ignore
             }
         }
@@ -164,9 +162,7 @@ public final class ClassPathScanner {
      *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    public synchronized ClassPathScanner scan(
-        ResourceHandler handler
-    ) throws ClassPathWalkingException {
+    public synchronized ClassPathScanner scan(ResourceHandler handler) throws ClassPathWalkingException {
         this.classNames.clear();
 
         Timer timer = Timer.start();
@@ -188,10 +184,8 @@ public final class ClassPathScanner {
      *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    private void scanClassLoaderResources(
-        ResourceHandler handler,
-        URLClassLoader classLoader
-    ) throws ClassPathWalkingException {
+    private void scanClassLoaderResources(ResourceHandler handler, URLClassLoader classLoader)
+            throws ClassPathWalkingException {
         for (URL url : classLoader.getURLs()) {
             if (url.getFile() != null && !url.getFile().isEmpty()) {
 
@@ -203,14 +197,11 @@ public final class ClassPathScanner {
                 if (file.exists()) {
                     if (file.isDirectory()) {
                         this.processDirectoryResource(handler, classLoader, file);
-                    }
-                    else if (file.isFile()
-                        && file.getName().toLowerCase(Locale.ROOT).endsWith(".jar")
-                    ) {
+                    } else if (file.isFile()
+                            && file.getName().toLowerCase(Locale.ROOT).endsWith(".jar")) {
                         this.processJarFileResource(handler, classLoader, file);
                     }
-                }
-                else {
+                } else {
                     throw new ClassPathWalkingException("Unsupported classpath resource: " + url);
                 }
             }
@@ -226,11 +217,7 @@ public final class ClassPathScanner {
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param jarFile The jar file
      */
-    private void processJarFileResource(
-        ResourceHandler handler,
-        URLClassLoader classLoader,
-        File jarFile
-    ) {
+    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, File jarFile) {
         try (JarFile file = new JarFile(jarFile)) {
             Enumeration<JarEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
@@ -240,8 +227,7 @@ public final class ClassPathScanner {
                     this.processPathResource(handler, classLoader, name, jarFile.toPath());
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Handle exception
         }
     }
@@ -258,26 +244,15 @@ public final class ClassPathScanner {
      *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    private void processDirectoryResource(
-        ResourceHandler handler,
-        URLClassLoader classLoader,
-        File directory
-    ) throws ClassPathWalkingException {
+    private void processDirectoryResource(ResourceHandler handler, URLClassLoader classLoader, File directory)
+            throws ClassPathWalkingException {
         try {
             File rootDir = directory.getCanonicalFile();
             int rootDirNameLen = rootDir.getCanonicalPath().length();
-            Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(
-                this,
-                rootDirNameLen,
-                handler,
-                classLoader
-            ));
-        }
-        catch (IOException e) {
-            throw new ClassPathWalkingException(
-                "Could not process directory resource " + directory.getPath(),
-                e
-            );
+            Files.walkFileTree(
+                    rootDir.toPath(), new DirectoryFileTreeWalker(this, rootDirNameLen, handler, classLoader));
+        } catch (IOException e) {
+            throw new ClassPathWalkingException("Could not process directory resource " + directory.getPath(), e);
         }
     }
 
@@ -291,32 +266,21 @@ public final class ClassPathScanner {
      * @param resourceName The name of the resource
      * @param path The path to the resource
      */
-    void processPathResource(
-        ResourceHandler handler,
-        URLClassLoader classLoader,
-        String resourceName,
-        Path path
-    ) {
+    void processPathResource(ResourceHandler handler, URLClassLoader classLoader, String resourceName, Path path) {
         // If there's nowhere to delegate the resource to, don't process it
         if (handler == null) {
             return;
         }
 
         boolean isClassResource = resourceName.toLowerCase(Locale.ROOT).endsWith(".class");
-        String checkedResourceName = !isClassResource
-            ? resourceName
-            : this.resourceToCanonicalName(resourceName);
+        String checkedResourceName = !isClassResource ? resourceName : this.resourceToCanonicalName(resourceName);
 
         if (!this.shouldProcessResource(isClassResource, checkedResourceName)) {
             return;
         }
 
-        ClassPathResource resource = new ClassCandidateResource(
-            classLoader,
-            path,
-            checkedResourceName,
-            isClassResource
-        );
+        ClassPathResource resource =
+                new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
         handler.handle(resource);
     }
 
@@ -368,18 +332,17 @@ public final class ClassPathScanner {
         }
 
         // Skip package-info classes
-        return !this.excludePackageInfo
-            || !isClassResource
-            || !checkedResourceName.endsWith("package-info");
+        return !this.excludePackageInfo || !isClassResource || !checkedResourceName.endsWith("package-info");
 
         // If none of the above conditions are met, we should process the resource
     }
 
     @NonNull
     private String resourceToCanonicalName(String resourceName) {
-        return resourceName.substring(0, resourceName.length() - 6)
-            .replace('/', '.')
-            .replace('\\', '.');
+        return resourceName
+                .substring(0, resourceName.length() - 6)
+                .replace('/', '.')
+                .replace('\\', '.');
     }
 
     /**

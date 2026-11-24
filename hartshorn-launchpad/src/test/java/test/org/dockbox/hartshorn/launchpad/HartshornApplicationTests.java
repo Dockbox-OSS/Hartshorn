@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,33 @@
 
 package test.org.dockbox.hartshorn.launchpad;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.InvalidActivationSourceException;
+import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.launchpad.activators.AbstractActivator;
 import test.org.dockbox.hartshorn.launchpad.activators.InterfaceActivator;
 import test.org.dockbox.hartshorn.launchpad.activators.ValidActivator;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 class HartshornApplicationTests {
 
     @Test
     void creationFailsWithAbstractActivator() {
-        assertThatExceptionOfType(InvalidActivationSourceException.class).isThrownBy(() -> HartshornApplication.create(AbstractActivator.class));
+        assertThatExceptionOfType(InvalidActivationSourceException.class)
+                .isThrownBy(() -> HartshornApplication.create(AbstractActivator.class));
     }
 
     @Test
     void creationFailsWithInterfaceActivator() {
-        assertThatExceptionOfType(InvalidActivationSourceException.class).isThrownBy(() -> HartshornApplication.create(InterfaceActivator.class));
+        assertThatExceptionOfType(InvalidActivationSourceException.class)
+                .isThrownBy(() -> HartshornApplication.create(InterfaceActivator.class));
     }
 
     @Test
     void creationSucceedsWithValidActivator() {
-        assertThatCode(() -> HartshornApplication.create(ValidActivator.class))
-                .doesNotThrowAnyException();
+        assertThatCode(() -> HartshornApplication.create(ValidActivator.class)).doesNotThrowAnyException();
     }
 
     @Test

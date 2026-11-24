@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ public class NumberBitwiseAdditionStrategy implements BitwiseAdditionStrategy {
     public Object add(Object left, Object right) {
         Number leftNumber = (Number) left;
         Number rightNumber = (Number) right;
-        BigDecimal sum = BigDecimal.valueOf(leftNumber.doubleValue())
-            .add(BigDecimal.valueOf(rightNumber.doubleValue()));
+        BigDecimal sum =
+                BigDecimal.valueOf(leftNumber.doubleValue()).add(BigDecimal.valueOf(rightNumber.doubleValue()));
         return sum.doubleValue();
     }
 }

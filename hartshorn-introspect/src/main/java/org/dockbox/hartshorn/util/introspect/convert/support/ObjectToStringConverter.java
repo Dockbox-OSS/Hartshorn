@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  * @see String#valueOf(Object)
  *
  * @since 0.5.0
- * 
+ *
  * @author Guus Lieben
  */
 public class ObjectToStringConverter implements Converter<Object, String> {

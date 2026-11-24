@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
-import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
-import org.dockbox.hartshorn.util.introspect.convert.support.CollectionDefaultValueProviderFactory;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.beans.beancontext.BeanContext;
 import java.util.ArrayList;
@@ -32,8 +28,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.CollectionDefaultValueProviderFactory;
+import org.junit.jupiter.api.Test;
 
 class CollectionDefaultValueProviderFactoryTests {
 
@@ -42,9 +41,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<ArrayList> provider = createProvider(ArrayList.class, ArrayList::new);
 
         List<?> list = provider.defaultValue();
-        assertThat(list)
-                .isInstanceOf(ArrayList.class)
-                .isEmpty();
+        assertThat(list).isInstanceOf(ArrayList.class).isEmpty();
     }
 
     @Test
@@ -60,9 +57,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<List> provider = createProvider(List.class);
 
         List<?> list = provider.defaultValue();
-        assertThat(list)
-                .isInstanceOf(ArrayList.class)
-                .isEmpty();
+        assertThat(list).isInstanceOf(ArrayList.class).isEmpty();
     }
 
     @Test
@@ -70,9 +65,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<Collection> provider = createProvider(Collection.class);
 
         Collection<?> collection = provider.defaultValue();
-        assertThat(collection)
-                .isInstanceOf(ArrayList.class)
-                .isEmpty();
+        assertThat(collection).isInstanceOf(ArrayList.class).isEmpty();
     }
 
     @Test
@@ -80,9 +73,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<Set> provider = createProvider(Set.class);
 
         Set<?> set = provider.defaultValue();
-        assertThat(set)
-                .isInstanceOf(HashSet.class)
-                .isEmpty();
+        assertThat(set).isInstanceOf(HashSet.class).isEmpty();
     }
 
     @Test
@@ -90,9 +81,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<Queue> provider = createProvider(Queue.class);
 
         Queue<?> queue = provider.defaultValue();
-        assertThat(queue)
-                .isInstanceOf(LinkedList.class)
-                .isEmpty();
+        assertThat(queue).isInstanceOf(LinkedList.class).isEmpty();
     }
 
     @Test
@@ -100,9 +89,7 @@ class CollectionDefaultValueProviderFactoryTests {
         DefaultValueProvider<Deque> provider = createProvider(Deque.class);
 
         Deque<?> deque = provider.defaultValue();
-        assertThat(deque)
-                .isInstanceOf(LinkedList.class)
-                .isEmpty();
+        assertThat(deque).isInstanceOf(LinkedList.class).isEmpty();
     }
 
     @Test
@@ -118,17 +105,13 @@ class CollectionDefaultValueProviderFactoryTests {
     }
 
     private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(
-            Class<T> type,
-            Supplier<T> supplier
-    ) {
-        Introspector introspector =
-                ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
+            Class<T> type, Supplier<T> supplier) {
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
         DefaultValueProviderFactory<Collection<?>> factory =
                 new CollectionDefaultValueProviderFactory(introspector).withDefaults();
 
         DefaultValueProvider<T> provider = factory.create(type);
-        assertThat(provider)
-                .isNotNull();
+        assertThat(provider).isNotNull();
 
         return provider;
     }

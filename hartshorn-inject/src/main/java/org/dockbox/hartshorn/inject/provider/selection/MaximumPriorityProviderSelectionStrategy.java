@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.inject.provider.selection;
 
+import java.util.SortedSet;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-
-import java.util.SortedSet;
 
 /**
  * A {@link ProviderSelectionStrategy} which selects the provider with the highest priority, as long
@@ -35,9 +34,8 @@ import java.util.SortedSet;
  *
  * @author Guus Lieben
  */
-public record MaximumPriorityProviderSelectionStrategy(
-        long maximumPriorityExclusive
-) implements ProviderSelectionStrategy {
+public record MaximumPriorityProviderSelectionStrategy(long maximumPriorityExclusive)
+        implements ProviderSelectionStrategy {
 
     @Override
     public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {
@@ -46,11 +44,10 @@ public record MaximumPriorityProviderSelectionStrategy(
         SortedSet<Integer> priorities = hierarchy.priorities();
         for (Integer priority : priorities.reversed()) {
             if (priority < this.maximumPriorityExclusive) {
-                return hierarchy.get(priority)
+                return hierarchy
+                        .get(priority)
                         .orElseThrow(() -> new IllegalStateException(
-                                "No provider found for priority %d, but priority was reported."
-                                        .formatted(priority)
-                        ));
+                                "No provider found for priority %d, but priority was reported.".formatted(priority)));
             }
         }
         return null;

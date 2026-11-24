@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-
 import java.lang.reflect.InvocationTargetException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
  * Reflection-based implementation of {@link ObjectFactory}. This implementation uses reflection to
@@ -35,11 +34,11 @@ public class ReflectionObjectFactory implements ObjectFactory {
         try {
             return type.getConstructor().newInstance();
         } catch (InstantiationException
-                 | IllegalAccessException
-                 | IllegalArgumentException
-                 | InvocationTargetException
-                 | NoSuchMethodException
-                 | SecurityException e) {
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException
+                | NoSuchMethodException
+                | SecurityException e) {
             throw new ApplicationRuntimeException(e);
         }
     }

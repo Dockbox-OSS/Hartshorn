@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import org.dockbox.hartshorn.context.SingleElementContext;
-import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.StringUtilities;
-
 import java.io.StringReader;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * Abstract base class for resolving custom properties.
@@ -36,13 +35,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractCustomPropertiesResolver implements CustomPropertiesResolver {
 
     @Override
-    public Properties resolveProperties(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext
-    ) {
+    public Properties resolveProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
         Properties properties = new Properties();
         String propertyString = this.resolveStringProperties(initializerContext).stream()
-            .filter(StringUtilities::notEmpty)
-            .collect(Collectors.joining("\n"));
+                .filter(StringUtilities::notEmpty)
+                .collect(Collectors.joining("\n"));
         this.safeLoadProperties(properties, new StringReader(propertyString));
         return properties;
     }
@@ -50,12 +47,9 @@ public abstract class AbstractCustomPropertiesResolver implements CustomProperti
     private void safeLoadProperties(Properties properties, StringReader stringReader) {
         try {
             properties.load(stringReader);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Should never happen, as the StringReader is created from a stable String
-            throw new ComponentInitializationException(
-                "Failed to load command line arguments as properties",
-                e);
+            throw new ComponentInitializationException("Failed to load command line arguments as properties", e);
         }
     }
 
@@ -68,6 +62,5 @@ public abstract class AbstractCustomPropertiesResolver implements CustomProperti
      * @return a list of string properties
      */
     protected abstract List<String> resolveStringProperties(
-        SingleElementContext<? extends ApplicationEnvironment> initializerContext
-    );
+            SingleElementContext<? extends ApplicationEnvironment> initializerContext);
 }

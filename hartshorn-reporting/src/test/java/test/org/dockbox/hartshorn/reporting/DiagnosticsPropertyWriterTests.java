@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package test.org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.util.properties.ArrayNode;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+import java.util.List;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.util.properties.ArrayNode;
 import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.SimpleNode;
-import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsPropertyWriter;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 class DiagnosticsPropertyWriterTests {
 
@@ -264,9 +263,8 @@ class DiagnosticsPropertyWriterTests {
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeDelegates(
-            collector -> collector.property("test2").writeString("test2"),
-            collector -> collector.property("test3").writeString("test3")
-        );
+                collector -> collector.property("test2").writeString("test2"),
+                collector -> collector.property("test3").writeString("test3"));
         assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);

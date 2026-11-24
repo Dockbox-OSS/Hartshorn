@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
+import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader

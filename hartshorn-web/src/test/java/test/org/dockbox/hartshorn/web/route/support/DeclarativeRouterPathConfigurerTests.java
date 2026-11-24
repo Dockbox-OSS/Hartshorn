@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.web.route.support;
 
+import java.util.Collection;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.dockbox.hartshorn.inject.SimpleComponentKeyMatcher;
 import org.dockbox.hartshorn.inject.annotations.Inject;
@@ -42,9 +44,6 @@ import org.dockbox.hartshorn.web.spec.StaticPathPartSpec;
 import org.dockbox.hartshorn.web.spec.parser.SimplePathParser;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.List;
-
 @HartshornIntegrationTest(includeBasePackages = false)
 public class DeclarativeRouterPathConfigurerTests {
 
@@ -53,19 +52,18 @@ public class DeclarativeRouterPathConfigurerTests {
 
     @Test
     void routerComponentsWithRoutesAreRegistered() {
-        SimpleComponentRegistry componentRegistry = new SimpleComponentRegistry(
-                SimpleComponentKeyMatcher.StrictComponentKeyMatcher.INSTANCE
-        );
+        SimpleComponentRegistry componentRegistry =
+                new SimpleComponentRegistry(SimpleComponentKeyMatcher.StrictComponentKeyMatcher.INSTANCE);
         TypeView<TestRouter> view = this.introspector.introspect(TestRouter.class);
         componentRegistry.addCustomContainer(new AnnotatedComponentContainer<>(view));
 
         RouterCustomizer configurer = new DeclarativeRouterPathConfigurer(
                 PathSpec.empty(),
-                componentRegistry, null, null, null,
-                new SimplePathParser('/', List.of(
-                        StaticPathPartSpec::parse
-                ))
-        );
+                componentRegistry,
+                null,
+                null,
+                null,
+                new SimplePathParser('/', List.of(StaticPathPartSpec::parse)));
         HandlerMappingRegistry registry = new SimpleHandlerMappingRegistry();
         HandlerMappingRegistrar registrar = new SimpleHandlerMappingRegistrar(registry);
         configurer.configure(registrar);
