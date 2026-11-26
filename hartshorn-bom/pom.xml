@@ -117,6 +117,11 @@
       </dependency>
       <dependency>
         <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-sessions</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-hsl</artifactId>
         <version>${hartshorn.version}</version>
       </dependency>
